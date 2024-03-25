@@ -35,6 +35,7 @@
 
 ### Internal
 
+* 👷 Update latest-changes token permissions. PR [#5](https://github.com/fastapilabs/cloud/pull/5) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Add GitHub templates for discussions and issues, and security policy. PR [#1105](https://github.com/tiangolo/full-stack-fastapi-template/pull/1105) by [@alejsdev](https://github.com/alejsdev).
 * ⬆ Bump dawidd6/action-download-artifact from 3.1.2 to 3.1.4. PR [#1103](https://github.com/tiangolo/full-stack-fastapi-template/pull/1103) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🔧 Add Biome to pre-commit config. PR [#1098](https://github.com/tiangolo/full-stack-fastapi-template/pull/1098) by [@alejsdev](https://github.com/alejsdev).
