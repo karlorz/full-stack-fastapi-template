@@ -35,6 +35,7 @@
 
 ### Internal
 
+* 👷 Update CI token for private coverage. PR [#3](https://github.com/fastapilabs/cloud/pull/3) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Allow Smokeshow to run on a private repo. PR [#2](https://github.com/fastapilabs/cloud/pull/2) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add token for latest-changes GitHub Action. PR [#1](https://github.com/fastapilabs/cloud/pull/1) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update latest-changes token permissions. PR [#5](https://github.com/fastapilabs/cloud/pull/5) by [@tiangolo](https://github.com/tiangolo).
