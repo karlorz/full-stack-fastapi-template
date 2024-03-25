@@ -41,6 +41,7 @@
 
 ### Internal
 
+* 👷 Update CI to allow deploying envs to the same server. PR [#6](https://github.com/fastapilabs/cloud/pull/6) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update config for Smokeshow, to allow setting a commit status. PR [#4](https://github.com/fastapilabs/cloud/pull/4) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update CI token for private coverage. PR [#3](https://github.com/fastapilabs/cloud/pull/3) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Allow Smokeshow to run on a private repo. PR [#2](https://github.com/fastapilabs/cloud/pull/2) by [@tiangolo](https://github.com/tiangolo).
