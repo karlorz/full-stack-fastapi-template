@@ -43,6 +43,7 @@
 
 ### Internal
 
+* 👷 Enable tmate for remote debugging. PR [#10](https://github.com/fastapilabs/cloud/pull/10) by [@tiangolo](https://github.com/tiangolo).
 * 🎨 Ignore alembic from ruff lint and format. PR [#8](https://github.com/fastapilabs/cloud/pull/8) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Update CI to allow deploying envs to the same server. PR [#6](https://github.com/fastapilabs/cloud/pull/6) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update config for Smokeshow, to allow setting a commit status. PR [#4](https://github.com/fastapilabs/cloud/pull/4) by [@tiangolo](https://github.com/tiangolo).
