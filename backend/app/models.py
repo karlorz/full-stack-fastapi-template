@@ -1,4 +1,22 @@
+from enum import Enum
+
 from sqlmodel import Field, Relationship, SQLModel
+
+
+class Role(str, Enum):
+    member = "member"
+    admin = "admin"
+
+
+class UserOrganization(SQLModel, table=True):
+    user_id: int | None = Field(default=None, foreign_key="user.id", primary_key=True)
+    organization_id: int | None = Field(
+        default=None, foreign_key="organization.id", primary_key=True
+    )
+    role: Role
+
+    user: "User" = Relationship(back_populates="organization_links")
+    organization: "Organization" = Relationship(back_populates="user_links")
 
 
 # Shared properties
@@ -45,6 +63,7 @@ class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str
     items: list["Item"] = Relationship(back_populates="owner")
+    organization_links: list[UserOrganization] = Relationship(back_populates="user")
 
 
 # Properties to return via API, id is always required
@@ -111,3 +130,30 @@ class TokenPayload(SQLModel):
 class NewPassword(SQLModel):
     token: str
     new_password: str
+
+
+class OrganizationBase(SQLModel):
+    name: str
+    description: str | None = None
+
+
+class Organization(OrganizationBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    user_links: list[UserOrganization] = Relationship(back_populates="organization")
+
+
+class OrganizationCreate(OrganizationBase):
+    pass
+
+
+class OrganizationUpdate(OrganizationBase):
+    pass
+
+
+class OrganizationOut(OrganizationBase):
+    id: int
+
+
+class organizationsOut(SQLModel):
+    data: list[OrganizationOut]
+    count: int
