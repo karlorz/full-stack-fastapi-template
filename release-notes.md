@@ -17,6 +17,7 @@
 
 ### Refactors
 
+* 🥅 Set up Sentry for FastAPI applications. PR [#11](https://github.com/fastapilabs/cloud/pull/11) by [@estebanx64](https://github.com/estebanx64).
 * ♻️ Sign Up refactor. PR [#12](https://github.com/fastapilabs/cloud/pull/12) by [@alejsdev](https://github.com/alejsdev).
 * 🔥 Remove deprecated Docker Compose version key. PR [#1129](https://github.com/tiangolo/full-stack-fastapi-template/pull/1129) by [@tiangolo](https://github.com/tiangolo).
 * 🎨 Format with Biome . PR [#1097](https://github.com/tiangolo/full-stack-fastapi-template/pull/1097) by [@alejsdev](https://github.com/alejsdev).
