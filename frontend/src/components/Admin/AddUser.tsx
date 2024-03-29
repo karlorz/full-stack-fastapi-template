@@ -14,13 +14,13 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react"
-import type React from "react"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { useForm, type SubmitHandler } from "react-hook-form"
 import { useMutation, useQueryClient } from "react-query"
 
-import { type UserCreate, UsersService } from "../../client"
+import { UsersService, type UserCreate } from "../../client"
 import type { ApiError } from "../../client/core/ApiError"
 import useCustomToast from "../../hooks/useCustomToast"
+import { emailPattern } from "../../utils"
 
 interface AddUserProps {
   isOpen: boolean
@@ -31,7 +31,7 @@ interface UserCreateForm extends UserCreate {
   confirm_password: string
 }
 
-const AddUser: React.FC<AddUserProps> = ({ isOpen, onClose }) => {
+const AddUser = ({ isOpen, onClose }: AddUserProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const {
@@ -95,10 +95,7 @@ const AddUser: React.FC<AddUserProps> = ({ isOpen, onClose }) => {
                 id="email"
                 {...register("email", {
                   required: "Email is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                    message: "Invalid email address",
-                  },
+                  pattern: emailPattern,
                 })}
                 placeholder="Email"
                 type="email"
