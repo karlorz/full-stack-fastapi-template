@@ -1,16 +1,18 @@
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
 import {
+  Box,
   Button,
-  Center,
   Container,
+  Flex,
   FormControl,
   FormErrorMessage,
   Icon,
-  Image,
   Input,
   InputGroup,
+  InputLeftElement,
   InputRightElement,
   Link,
+  Text,
   useBoolean,
 } from "@chakra-ui/react"
 import {
@@ -18,12 +20,12 @@ import {
   createFileRoute,
   redirect,
 } from "@tanstack/react-router"
-import React from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
+import { FaEnvelope, FaKey } from "react-icons/fa"
 
-import Logo from "../assets/images/fastapi-logo.svg"
-import type { ApiError } from "../client"
 import type { Body_login_login_access_token as AccessToken } from "../client/models/Body_login_login_access_token"
+import AuthOptions from "../components/Auth/AuthOptions"
+import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import { emailPattern } from "../utils"
 
@@ -40,8 +42,7 @@ export const Route = createFileRoute("/login")({
 
 function Login() {
   const [show, setShow] = useBoolean()
-  const { login } = useAuth()
-  const [error, setError] = React.useState<string | null>(null)
+  const { loginMutation, error } = useAuth()
   const {
     register,
     handleSubmit,
@@ -56,79 +57,92 @@ function Login() {
   })
 
   const onSubmit: SubmitHandler<AccessToken> = async (data) => {
-    try {
-      await login(data)
-    } catch (err) {
-      const errDetail = (err as ApiError).body.detail
-      setError(errDetail)
-    }
+    loginMutation.mutate(data)
   }
 
   return (
     <>
-      <Container
-        as="form"
-        onSubmit={handleSubmit(onSubmit)}
-        h="100vh"
-        maxW="sm"
-        alignItems="stretch"
-        justifyContent="center"
-        gap={4}
-        centerContent
-      >
-        <Image
-          src={Logo}
-          alt="FastAPI logo"
-          height="auto"
-          maxW="2xs"
-          alignSelf="center"
-          mb={4}
-        />
-        <FormControl id="username" isInvalid={!!errors.username || !!error}>
-          <Input
-            id="username"
-            {...register("username", {
-              pattern: emailPattern,
-            })}
-            placeholder="Email"
-            type="email"
-          />
-          {errors.username && (
-            <FormErrorMessage>{errors.username.message}</FormErrorMessage>
-          )}
-        </FormControl>
-        <FormControl id="password" isInvalid={!!error}>
-          <InputGroup>
-            <Input
-              {...register("password")}
-              type={show ? "text" : "password"}
-              placeholder="Password"
-            />
-            <InputRightElement
-              color="gray.400"
-              _hover={{
-                cursor: "pointer",
-              }}
-            >
-              <Icon
-                onClick={setShow.toggle}
-                aria-label={show ? "Hide password" : "Show password"}
+      <Flex flexDir={{ base: "column", md: "row" }} justify="center" h="100vh">
+        <BackgroundPanel />
+        <Container
+          as="form"
+          onSubmit={handleSubmit(onSubmit)}
+          maxW={{ base: "xs", md: "md" }}
+          flexDir="column"
+          alignItems="stretch"
+          justifyContent="center"
+          centerContent
+          gap={4}
+        >
+          <Box>
+            <Text fontWeight="bolder" fontSize="2xl">
+              Welcome!
+            </Text>
+            <Text fontSize="md" color="gray.500">
+              Sign in to your account
+            </Text>
+          </Box>
+          <FormControl id="username" isInvalid={!!errors.username || !!error}>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Icon as={FaEnvelope} color="ui.dim" />
+              </InputLeftElement>
+              <Input
+                id="username"
+                {...register("username", {
+                  pattern: emailPattern,
+                })}
+                placeholder="Email"
+                type="email"
+              />
+            </InputGroup>
+            {errors.username && (
+              <FormErrorMessage>{errors.username.message}</FormErrorMessage>
+            )}
+          </FormControl>
+          <FormControl id="password" isInvalid={!!error}>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Icon as={FaKey} color="ui.dim" />
+              </InputLeftElement>
+              <Input
+                {...register("password")}
+                type={show ? "text" : "password"}
+                placeholder="Password"
+              />
+              <InputRightElement
+                color="ui.dim"
+                _hover={{
+                  cursor: "pointer",
+                }}
               >
-                {show ? <ViewOffIcon /> : <ViewIcon />}
-              </Icon>
-            </InputRightElement>
-          </InputGroup>
-          {error && <FormErrorMessage>{error}</FormErrorMessage>}
-        </FormControl>
-        <Center>
-          <Link as={RouterLink} to="/recover-password" color="blue.500">
+                <Icon
+                  onClick={setShow.toggle}
+                  aria-label={show ? "Hide password" : "Show password"}
+                >
+                  {show ? <ViewOffIcon /> : <ViewIcon />}
+                </Icon>
+              </InputRightElement>
+            </InputGroup>
+            {error && <FormErrorMessage>{error}</FormErrorMessage>}
+          </FormControl>
+          <Link
+            as={RouterLink}
+            to="/recover-password"
+            color="ui.main"
+            fontWeight="bolder"
+          >
             Forgot password?
           </Link>
-        </Center>
-        <Button variant="primary" type="submit" isLoading={isSubmitting}>
-          Log In
-        </Button>
-      </Container>
+          <Button variant="primary" type="submit" isLoading={isSubmitting}>
+            Log In
+          </Button>
+          <AuthOptions
+            description={"Don't have an account?"}
+            path={"/signup"}
+          />
+        </Container>
+      </Flex>
     </>
   )
 }

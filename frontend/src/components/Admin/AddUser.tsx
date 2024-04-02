@@ -20,7 +20,7 @@ import { useMutation, useQueryClient } from "react-query"
 import { type UserCreate, UsersService } from "../../client"
 import type { ApiError } from "../../client/core/ApiError"
 import useCustomToast from "../../hooks/useCustomToast"
-import { emailPattern } from "../../utils"
+import { confirmPasswordRules, emailPattern, passwordRules } from "../../utils"
 
 interface AddUserProps {
   isOpen: boolean
@@ -120,13 +120,7 @@ const AddUser = ({ isOpen, onClose }: AddUserProps) => {
               <FormLabel htmlFor="password">Set Password</FormLabel>
               <Input
                 id="password"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 8,
-                    message: "Password must be at least 8 characters",
-                  },
-                })}
+                {...register("password", passwordRules())}
                 placeholder="Password"
                 type="password"
               />
@@ -142,12 +136,10 @@ const AddUser = ({ isOpen, onClose }: AddUserProps) => {
               <FormLabel htmlFor="confirm_password">Confirm Password</FormLabel>
               <Input
                 id="confirm_password"
-                {...register("confirm_password", {
-                  required: "Please confirm your password",
-                  validate: (value) =>
-                    value === getValues().password ||
-                    "The passwords do not match",
-                })}
+                {...register(
+                  "confirm_password",
+                  confirmPasswordRules(getValues),
+                )}
                 placeholder="Password"
                 type="password"
               />

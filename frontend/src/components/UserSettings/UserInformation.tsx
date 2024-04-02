@@ -27,7 +27,7 @@ import { emailPattern } from "../../utils"
 
 const UserInformation = () => {
   const queryClient = useQueryClient()
-  const color = useColorModeValue("inherit", "ui.white")
+  const color = useColorModeValue("inherit", "ui.light")
   const showToast = useCustomToast()
   const [editMode, setEditMode] = useState(false)
   const { user: currentUser } = useAuth()
@@ -99,7 +99,7 @@ const UserInformation = () => {
               <Text
                 size="md"
                 py={2}
-                color={!currentUser?.full_name ? "gray.400" : "inherit"}
+                color={!currentUser?.full_name ? "ui.dim" : "inherit"}
               >
                 {currentUser?.full_name || "N/A"}
               </Text>
