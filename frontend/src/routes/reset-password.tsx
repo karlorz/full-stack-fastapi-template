@@ -64,7 +64,7 @@ function ResetPassword() {
       navigate({ to: "/login" })
     },
     onError: (err: ApiError) => {
-      const errDetail = err.body?.detail
+      const errDetail = (err.body as any)?.detail
       showToast("Something went wrong.", `${errDetail}`, "error")
     },
   })
@@ -120,5 +120,3 @@ function ResetPassword() {
     </Container>
   )
 }
-
-export default ResetPassword

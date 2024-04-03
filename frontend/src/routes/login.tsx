@@ -23,7 +23,7 @@ import {
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { FaEnvelope, FaKey } from "react-icons/fa"
 
-import type { Body_login_login_access_token as AccessToken } from "../client/models/Body_login_login_access_token"
+import type { Body_login_login_access_token as AccessToken } from "../client"
 import AuthOptions from "../components/Auth/AuthOptions"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
@@ -146,5 +146,3 @@ function Login() {
     </>
   )
 }
-
-export default Login

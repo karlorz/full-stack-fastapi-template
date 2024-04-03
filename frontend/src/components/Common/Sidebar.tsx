@@ -13,8 +13,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 import { FiMenu } from "react-icons/fi"
-
 import { FaSignOutAlt } from "react-icons/fa"
+
 import Logo from "../../assets/images/fastapi-logo.svg"
 import useAuth from "../../hooks/useAuth"
 import SidebarItems from "./SidebarItems"
