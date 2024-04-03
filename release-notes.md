@@ -20,6 +20,7 @@
 
 ### Refactors
 
+* ♻️ Upgrade from Upstream. PR [#19](https://github.com/fastapilabs/cloud/pull/19) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Restructure UserMenu and Sidebar. PR [#17](https://github.com/fastapilabs/cloud/pull/17) by [@alejsdev](https://github.com/alejsdev).
 * ♻️  Upgrade from full-stack-fastapi-template. PR [#18](https://github.com/fastapilabs/cloud/pull/18) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Upgrade from upstream. PR [#13](https://github.com/fastapilabs/cloud/pull/13) by [@alejsdev](https://github.com/alejsdev).
