@@ -19,6 +19,7 @@
 
 ### Refactors
 
+* ✨ Restructure UserMenu and Sidebar. PR [#17](https://github.com/fastapilabs/cloud/pull/17) by [@alejsdev](https://github.com/alejsdev).
 * ♻️  Upgrade from full-stack-fastapi-template. PR [#18](https://github.com/fastapilabs/cloud/pull/18) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Upgrade from upstream. PR [#13](https://github.com/fastapilabs/cloud/pull/13) by [@alejsdev](https://github.com/alejsdev).
 * 🥅 Set up Sentry for FastAPI applications. PR [#11](https://github.com/fastapilabs/cloud/pull/11) by [@estebanx64](https://github.com/estebanx64).
