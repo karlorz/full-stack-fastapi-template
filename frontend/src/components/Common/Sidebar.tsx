@@ -1,5 +1,6 @@
 import {
   Box,
+  Center,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -9,23 +10,16 @@ import {
   IconButton,
   Image,
   Text,
-  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react"
-import { FiLogOut, FiMenu } from "react-icons/fi"
-import { useQueryClient } from "react-query"
+import { FiMenu } from "react-icons/fi"
 
+import { FaSignOutAlt } from "react-icons/fa"
 import Logo from "../../assets/images/fastapi-logo.svg"
-import type { UserOut } from "../../client"
 import useAuth from "../../hooks/useAuth"
 import SidebarItems from "./SidebarItems"
 
 const Sidebar = () => {
-  const queryClient = useQueryClient()
-  const bgColor = useColorModeValue("ui.light", "ui.dark")
-  const textColor = useColorModeValue("ui.dark", "ui.light")
-  const secBgColor = useColorModeValue("ui.secondary", "ui.darkSlate")
-  const currentUser = queryClient.getQueryData<UserOut>("currentUser")
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { logout } = useAuth()
 
@@ -37,13 +31,13 @@ const Sidebar = () => {
     <>
       {/* Mobile */}
       <IconButton
+        icon={<FiMenu />}
         onClick={onOpen}
         display={{ base: "flex", md: "none" }}
         aria-label="Open Menu"
         position="absolute"
         fontSize="20px"
         m={4}
-        icon={<FiMenu />}
       />
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay />
@@ -57,20 +51,15 @@ const Sidebar = () => {
                 <Flex
                   as="button"
                   onClick={handleLogout}
-                  p={2}
-                  color="ui.danger"
-                  fontWeight="bold"
                   alignItems="center"
+                  gap={4}
+                  px={4}
+                  py={2}
                 >
-                  <FiLogOut />
-                  <Text ml={2}>Log out</Text>
+                  <FaSignOutAlt fontSize="18px" />
+                  <Text>Log out</Text>
                 </Flex>
               </Box>
-              {currentUser?.email && (
-                <Text color={textColor} noOfLines={2} fontSize="sm" p={2}>
-                  Logged in as: {currentUser.email}
-                </Text>
-              )}
             </Flex>
           </DrawerBody>
         </DrawerContent>
@@ -78,36 +67,19 @@ const Sidebar = () => {
 
       {/* Desktop */}
       <Box
-        bg={bgColor}
-        p={3}
-        h="100vh"
         position="sticky"
-        top="0"
         display={{ base: "none", md: "flex" }}
+        minW="250px"
+        h="100vh"
+        top="0"
+        p={4}
       >
-        <Flex
-          flexDir="column"
-          justify="space-between"
-          bg={secBgColor}
-          p={4}
-          borderRadius={12}
-        >
-          <Box>
-            <Image src={Logo} alt="Logo" w="180px" maxW="2xs" p={6} />
-            <SidebarItems />
-          </Box>
-          {currentUser?.email && (
-            <Text
-              color={textColor}
-              noOfLines={2}
-              fontSize="sm"
-              p={2}
-              maxW="180px"
-            >
-              Logged in as: {currentUser.email}
-            </Text>
-          )}
-        </Flex>
+        <Box justifyContent="center" w="100%">
+          <Center>
+            <Image src={Logo} alt="Logo" maxW="140px" py={6} />
+          </Center>
+          <SidebarItems />
+        </Box>
       </Box>
     </>
   )

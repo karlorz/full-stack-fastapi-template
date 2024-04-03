@@ -18,8 +18,13 @@ import { Route as LoginImport } from './routes/login'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
+import { Route as LayoutResourcesImport } from './routes/_layout/resources'
+import { Route as LayoutProjectsImport } from './routes/_layout/projects'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
+import { Route as LayoutHelpImport } from './routes/_layout/help'
+import { Route as LayoutBillingImport } from './routes/_layout/billing'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutOrganizationNewImport } from './routes/_layout/organization/new'
 
 // Create/Update Routes
 
@@ -58,13 +63,38 @@ const LayoutSettingsRoute = LayoutSettingsImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutResourcesRoute = LayoutResourcesImport.update({
+  path: '/resources',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutProjectsRoute = LayoutProjectsImport.update({
+  path: '/projects',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 const LayoutItemsRoute = LayoutItemsImport.update({
   path: '/items',
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutHelpRoute = LayoutHelpImport.update({
+  path: '/help',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutBillingRoute = LayoutBillingImport.update({
+  path: '/billing',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 const LayoutAdminRoute = LayoutAdminImport.update({
   path: '/admin',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutOrganizationNewRoute = LayoutOrganizationNewImport.update({
+  path: '/organization/new',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -96,8 +126,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/billing': {
+      preLoaderRoute: typeof LayoutBillingImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/help': {
+      preLoaderRoute: typeof LayoutHelpImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/items': {
       preLoaderRoute: typeof LayoutItemsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/projects': {
+      preLoaderRoute: typeof LayoutProjectsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/resources': {
+      preLoaderRoute: typeof LayoutResourcesImport
       parentRoute: typeof LayoutImport
     }
     '/_layout/settings': {
@@ -108,6 +154,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/organization/new': {
+      preLoaderRoute: typeof LayoutOrganizationNewImport
+      parentRoute: typeof LayoutImport
+    }
   }
 }
 
@@ -116,9 +166,14 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   LayoutRoute.addChildren([
     LayoutAdminRoute,
+    LayoutBillingRoute,
+    LayoutHelpRoute,
     LayoutItemsRoute,
+    LayoutProjectsRoute,
+    LayoutResourcesRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
+    LayoutOrganizationNewRoute,
   ]),
   LoginRoute,
   RecoverPasswordRoute,

@@ -1,4 +1,5 @@
 import { extendTheme } from "@chakra-ui/react"
+import "./fonts.css"
 
 const disabledStyles = {
   _disabled: {
@@ -7,10 +8,13 @@ const disabledStyles = {
 }
 
 const theme = extendTheme({
+  fonts: {
+    heading: "Ubuntu",
+    body: "Ubuntu",
+  },
   colors: {
     ui: {
       main: "#009688",
-      secondary: "#EDF2F7",
       success: "#48BB78",
       danger: "#E53E3E",
       light: "#FAFAFA",

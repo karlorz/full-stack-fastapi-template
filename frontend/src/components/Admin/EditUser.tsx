@@ -24,7 +24,12 @@ import {
   UsersService,
 } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
-import { confirmPasswordRules, emailPattern, passwordRules } from "../../utils"
+import {
+  confirmPasswordRules,
+  emailPattern,
+  namePattern,
+  passwordRules,
+} from "../../utils"
 
 interface EditUserProps {
   user: UserOut
@@ -114,7 +119,7 @@ const EditUser = ({ user, isOpen, onClose }: EditUserProps) => {
               <FormLabel htmlFor="name">Full name</FormLabel>
               <Input
                 id="name"
-                {...register("full_name")}
+                {...register("full_name", { pattern: namePattern })}
                 placeholder="Full name"
                 type="text"
               />

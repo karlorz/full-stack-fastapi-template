@@ -3,6 +3,11 @@ export const emailPattern = {
   message: "Invalid email address",
 }
 
+export const namePattern = {
+  value: /^[A-Za-z\s]+$/,
+  message: "Invalid name",
+}
+
 export const passwordRules = (isRequired = true) => {
   const rules: any = {
     minLength: {

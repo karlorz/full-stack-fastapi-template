@@ -14,13 +14,18 @@ import {
 } from "@chakra-ui/react"
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
-import { FaEnvelope, FaKey } from "react-icons/fa"
+import { FaEnvelope, FaKey, FaUser } from "react-icons/fa"
 
 import type { UserRegister } from "../client"
 import AuthOptions from "../components/Auth/AuthOptions"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import useAuth from "../hooks/useAuth"
-import { confirmPasswordRules, emailPattern, passwordRules } from "../utils"
+import {
+  confirmPasswordRules,
+  emailPattern,
+  namePattern,
+  passwordRules,
+} from "../utils"
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
@@ -70,10 +75,29 @@ function SignUp() {
             <Text fontWeight="bolder" fontSize="2xl">
               Sign Up
             </Text>
-            <Text fontSize="mds" color="gray.500">
+            <Text fontSize="md" color="gray.500">
               Create your account
             </Text>
           </Box>
+          <FormControl id="full_name" isInvalid={!!errors.email}>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Icon as={FaUser} color="ui.dim" />
+              </InputLeftElement>
+              <Input
+                id="full_name"
+                {...register("full_name", {
+                  required: "Name is required",
+                  pattern: namePattern,
+                })}
+                placeholder="Name"
+                type="text"
+              />
+            </InputGroup>
+            {errors.full_name && (
+              <FormErrorMessage>{errors.full_name.message}</FormErrorMessage>
+            )}
+          </FormControl>
           <FormControl id="email" isInvalid={!!errors.email}>
             <InputGroup>
               <InputLeftElement pointerEvents="none">
@@ -123,7 +147,7 @@ function SignUp() {
                   "confirm_password",
                   confirmPasswordRules(getValues),
                 )}
-                placeholder="Password"
+                placeholder="Repeat Password"
                 type="password"
               />
             </InputGroup>

@@ -20,7 +20,12 @@ import { useMutation, useQueryClient } from "react-query"
 import { type UserCreate, UsersService } from "../../client"
 import type { ApiError } from "../../client/core/ApiError"
 import useCustomToast from "../../hooks/useCustomToast"
-import { confirmPasswordRules, emailPattern, passwordRules } from "../../utils"
+import {
+  confirmPasswordRules,
+  emailPattern,
+  namePattern,
+  passwordRules,
+} from "../../utils"
 
 interface AddUserProps {
   isOpen: boolean
@@ -107,7 +112,7 @@ const AddUser = ({ isOpen, onClose }: AddUserProps) => {
               <FormLabel htmlFor="name">Full name</FormLabel>
               <Input
                 id="name"
-                {...register("full_name")}
+                {...register("full_name", { pattern: namePattern })}
                 placeholder="Full name"
                 type="text"
               />

@@ -1,18 +1,26 @@
+import { ChevronDownIcon } from "@chakra-ui/icons"
 import {
   Box,
-  IconButton,
+  Button,
+  Divider,
+  Flex,
+  Icon,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
+  Text,
 } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
-import { FaUserAstronaut } from "react-icons/fa"
-import { FiLogOut, FiUser } from "react-icons/fi"
+import { FaCog, FaPlus, FaSignOutAlt, FaUser, FaUsers } from "react-icons/fa"
+import { useQueryClient } from "react-query"
 
+import type { UserOut } from "../../client"
 import useAuth from "../../hooks/useAuth"
 
 const UserMenu = () => {
+  const queryClient = useQueryClient()
+  const currentUser = queryClient.getQueryData<UserOut>("currentUser")
   const { logout } = useAuth()
 
   const handleLogout = async () => {
@@ -26,26 +34,44 @@ const UserMenu = () => {
         display={{ base: "none", md: "block" }}
         position="fixed"
         top={4}
-        right={4}
+        right={8}
       >
         <Menu>
           <MenuButton
-            as={IconButton}
-            aria-label="Options"
-            icon={<FaUserAstronaut color="white" fontSize="18px" />}
-            bg="ui.main"
-            isRound
-          />
-          <MenuList>
-            <MenuItem icon={<FiUser fontSize="18px" />} as={Link} to="settings">
-              My profile
+            as={Button}
+            fontWeight="light"
+            variant="unstyled"
+            width="auto"
+          >
+            <Flex justify="space-between">
+              <Box display="flex" alignItems="center">
+                <Icon as={FaUser} />
+                <Text mx={2}>{currentUser?.full_name}</Text>
+              </Box>
+              <ChevronDownIcon alignSelf="center" />
+            </Flex>
+          </MenuButton>
+          <MenuList p={4}>
+            <MenuItem as={Link} to="/" gap={2} py={2}>
+              <Icon as={FaUser} />
+              {currentUser?.full_name}
             </MenuItem>
-            <MenuItem
-              icon={<FiLogOut fontSize="18px" />}
-              onClick={handleLogout}
-              color="ui.danger"
-              fontWeight="bold"
-            >
+            <MenuItem as={Link} to="/" gap={2} py={2}>
+              <Icon as={FaUsers} />
+              FastAPI Labs
+            </MenuItem>
+            <MenuItem as={Link} to="/organization/new" gap={2} py={2}>
+              <Icon as={FaPlus} />
+              Create a new organization
+            </MenuItem>
+            <Divider />
+            <MenuItem as={Link} to="/settings" gap={2}>
+              <Icon as={FaCog} />
+              Settings
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={handleLogout} gap={2}>
+              <Icon as={FaSignOutAlt} />
               Log out
             </MenuItem>
           </MenuList>

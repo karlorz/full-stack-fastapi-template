@@ -52,7 +52,7 @@ function Admin() {
         users && (
           <Container maxW="full">
             <Heading
-              size="lg"
+              size="md"
               textAlign={{ base: "center", md: "left" }}
               pt={12}
             >
