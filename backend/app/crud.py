@@ -3,7 +3,16 @@ from typing import Any
 from sqlmodel import Session, select
 
 from app.core.security import get_password_hash, verify_password
-from app.models import Item, ItemCreate, User, UserCreate, UserUpdate
+from app.models import (
+    Item,
+    ItemCreate,
+    Organization,
+    Role,
+    User,
+    UserCreate,
+    UserOrganizationLink,
+    UserUpdate,
+)
 
 
 def create_user(*, session: Session, user_create: UserCreate) -> User:
@@ -51,3 +60,19 @@ def create_item(*, session: Session, item_in: ItemCreate, owner_id: int) -> Item
     session.commit()
     session.refresh(db_item)
     return db_item
+
+
+def add_user_to_organization(
+    *,
+    session: Session,
+    user: User,
+    organization: Organization,
+    role: Role,
+) -> UserOrganizationLink:
+    user_org_link = UserOrganizationLink(
+        user=user, organization=organization, role=role
+    )
+    session.add(user_org_link)
+    session.commit()
+    session.refresh(user_org_link)
+    return user_org_link

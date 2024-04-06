@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +15,10 @@ from app.core.config import settings
 class EmailData:
     html_content: str
     subject: str
+
+
+def get_datetime_utc() -> datetime:
+    return datetime.now(timezone.utc)
 
 
 def render_email_template(*, template_name: str, context: dict[str, Any]) -> str:
@@ -97,7 +101,7 @@ def generate_new_account_email(
 
 def generate_password_reset_token(email: str) -> str:
     delta = timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
-    now = datetime.utcnow()
+    now = get_datetime_utc()
     expires = now + delta
     exp = expires.timestamp()
     encoded_jwt = jwt.encode(

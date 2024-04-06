@@ -8,7 +8,7 @@ class Role(str, Enum):
     admin = "admin"
 
 
-class UserOrganization(SQLModel, table=True):
+class UserOrganizationLink(SQLModel, table=True):
     user_id: int | None = Field(default=None, foreign_key="user.id", primary_key=True)
     organization_id: int | None = Field(
         default=None, foreign_key="organization.id", primary_key=True
@@ -63,16 +63,26 @@ class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str
     items: list["Item"] = Relationship(back_populates="owner")
-    organization_links: list[UserOrganization] = Relationship(back_populates="user")
+    organization_links: list[UserOrganizationLink] = Relationship(back_populates="user")
 
 
 # Properties to return via API, id is always required
-class UserOut(UserBase):
+class UserPublic(UserBase):
     id: int
 
 
-class UsersOut(SQLModel):
-    data: list[UserOut]
+class UsersPublic(SQLModel):
+    data: list[UserPublic]
+    count: int
+
+
+class UserLinkPublic(SQLModel):
+    role: Role
+    user: UserPublic
+
+
+class UsersLinksPublic(SQLModel):
+    data: list[UserLinkPublic]
     count: int
 
 
@@ -96,18 +106,19 @@ class ItemUpdate(ItemBase):
 class Item(ItemBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     title: str
+
     owner_id: int | None = Field(default=None, foreign_key="user.id", nullable=False)
     owner: User | None = Relationship(back_populates="items")
 
 
 # Properties to return via API, id is always required
-class ItemOut(ItemBase):
+class ItemPublic(ItemBase):
     id: int
     owner_id: int
 
 
-class ItemsOut(SQLModel):
-    data: list[ItemOut]
+class ItemsPublic(SQLModel):
+    data: list[ItemPublic]
     count: int
 
 
@@ -139,21 +150,41 @@ class OrganizationBase(SQLModel):
 
 class Organization(OrganizationBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    user_links: list[UserOrganization] = Relationship(back_populates="organization")
+    user_links: list[UserOrganizationLink] = Relationship(back_populates="organization")
 
 
 class OrganizationCreate(OrganizationBase):
     pass
 
 
-class OrganizationUpdate(OrganizationBase):
-    pass
+class OrganizationUpdate(SQLModel):
+    name: str | None = None
+    description: str | None = None
 
 
-class OrganizationOut(OrganizationBase):
+class OrganizationPublic(OrganizationBase):
     id: int
 
 
-class organizationsOut(SQLModel):
-    data: list[OrganizationOut]
+class OrganizationsPublic(SQLModel):
+    data: list[OrganizationPublic]
     count: int
+
+
+class OrganizationWithUserPublic(OrganizationPublic):
+    user_links: list[UserLinkPublic]
+
+
+class OrganizationCreateMember(SQLModel):
+    user_id: int
+    role: Role
+
+
+class OrganizationUpdateMember(SQLModel):
+    role: Role
+
+
+class UserOrganizationLinkPublic(SQLModel):
+    user: UserPublic
+    organization: OrganizationPublic
+    role: Role
