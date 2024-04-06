@@ -9,6 +9,7 @@
 
 ### Features
 
+* ✨ Add organizations initial routes. PR [#16](https://github.com/fastapilabs/cloud/pull/16) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add SignUp and Login views. PR [#15](https://github.com/fastapilabs/cloud/pull/15) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add role, organization and UserOrganization link table. PR [#9](https://github.com/fastapilabs/cloud/pull/9) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add support for deploying multiple environments (staging, production) to the same server. PR [#1128](https://github.com/tiangolo/full-stack-fastapi-template/pull/1128) by [@tiangolo](https://github.com/tiangolo).
