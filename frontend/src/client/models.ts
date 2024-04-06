@@ -22,7 +22,7 @@ export type ItemCreate = {
 
 
 
-export type ItemOut = {
+export type ItemPublic = {
 	title: string;
 	description?: string | null;
 	id: number;
@@ -38,8 +38,8 @@ export type ItemUpdate = {
 
 
 
-export type ItemsOut = {
-	data: Array<ItemOut>;
+export type ItemsPublic = {
+	data: Array<ItemPublic>;
 	count: number;
 };
 
@@ -55,6 +55,61 @@ export type NewPassword = {
 	token: string;
 	new_password: string;
 };
+
+
+
+export type OrganizationCreate = {
+	name: string;
+	description?: string | null;
+};
+
+
+
+export type OrganizationCreateMember = {
+	user_id: number;
+	role: Role;
+};
+
+
+
+export type OrganizationPublic = {
+	name: string;
+	description?: string | null;
+	id: number;
+};
+
+
+
+export type OrganizationUpdate = {
+	name?: string | null;
+	description?: string | null;
+};
+
+
+
+export type OrganizationUpdateMember = {
+	role: Role;
+};
+
+
+
+export type OrganizationWithUserPublic = {
+	name: string;
+	description?: string | null;
+	id: number;
+	user_links: Array<UserLinkPublic>;
+};
+
+
+
+export type OrganizationsPublic = {
+	data: Array<OrganizationPublic>;
+	count: number;
+};
+
+
+
+export type Role = 'member' | 'admin';
 
 
 
@@ -82,7 +137,22 @@ export type UserCreate = {
 
 
 
-export type UserOut = {
+export type UserLinkPublic = {
+	role: Role;
+	user: UserPublic;
+};
+
+
+
+export type UserOrganizationLinkPublic = {
+	user: UserPublic;
+	organization: OrganizationPublic;
+	role: Role;
+};
+
+
+
+export type UserPublic = {
 	email: string;
 	is_active?: boolean;
 	is_superuser?: boolean;
@@ -117,8 +187,8 @@ export type UserUpdateMe = {
 
 
 
-export type UsersOut = {
-	data: Array<UserOut>;
+export type UsersPublic = {
+	data: Array<UserPublic>;
 	count: number;
 };
 

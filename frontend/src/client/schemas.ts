@@ -68,7 +68,7 @@ export const $ItemCreate = {
 	},
 } as const;
 
-export const $ItemOut = {
+export const $ItemPublic = {
 	properties: {
 		title: {
 	type: 'string',
@@ -114,12 +114,12 @@ export const $ItemUpdate = {
 	},
 } as const;
 
-export const $ItemsOut = {
+export const $ItemsPublic = {
 	properties: {
 		data: {
 	type: 'array',
 	contains: {
-		type: 'ItemOut',
+		type: 'ItemPublic',
 	},
 	isRequired: true,
 },
@@ -150,6 +150,136 @@ export const $NewPassword = {
 	isRequired: true,
 },
 	},
+} as const;
+
+export const $OrganizationCreate = {
+	properties: {
+		name: {
+	type: 'string',
+	isRequired: true,
+},
+		description: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+}, {
+	type: 'null',
+}],
+},
+	},
+} as const;
+
+export const $OrganizationCreateMember = {
+	properties: {
+		user_id: {
+	type: 'number',
+	isRequired: true,
+},
+		role: {
+	type: 'Role',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $OrganizationPublic = {
+	properties: {
+		name: {
+	type: 'string',
+	isRequired: true,
+},
+		description: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+}, {
+	type: 'null',
+}],
+},
+		id: {
+	type: 'number',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $OrganizationUpdate = {
+	properties: {
+		name: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+}, {
+	type: 'null',
+}],
+},
+		description: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+}, {
+	type: 'null',
+}],
+},
+	},
+} as const;
+
+export const $OrganizationUpdateMember = {
+	properties: {
+		role: {
+	type: 'Role',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $OrganizationWithUserPublic = {
+	properties: {
+		name: {
+	type: 'string',
+	isRequired: true,
+},
+		description: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+}, {
+	type: 'null',
+}],
+},
+		id: {
+	type: 'number',
+	isRequired: true,
+},
+		user_links: {
+	type: 'array',
+	contains: {
+		type: 'UserLinkPublic',
+	},
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $OrganizationsPublic = {
+	properties: {
+		data: {
+	type: 'array',
+	contains: {
+		type: 'OrganizationPublic',
+	},
+	isRequired: true,
+},
+		count: {
+	type: 'number',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $Role = {
+	type: 'Enum',
+	enum: ['member','admin',],
 } as const;
 
 export const $Token = {
@@ -207,7 +337,37 @@ export const $UserCreate = {
 	},
 } as const;
 
-export const $UserOut = {
+export const $UserLinkPublic = {
+	properties: {
+		role: {
+	type: 'Role',
+	isRequired: true,
+},
+		user: {
+	type: 'UserPublic',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $UserOrganizationLinkPublic = {
+	properties: {
+		user: {
+	type: 'UserPublic',
+	isRequired: true,
+},
+		organization: {
+	type: 'OrganizationPublic',
+	isRequired: true,
+},
+		role: {
+	type: 'Role',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $UserPublic = {
 	properties: {
 		email: {
 	type: 'string',
@@ -315,12 +475,12 @@ export const $UserUpdateMe = {
 	},
 } as const;
 
-export const $UsersOut = {
+export const $UsersPublic = {
 	properties: {
 		data: {
 	type: 'array',
 	contains: {
-		type: 'UserOut',
+		type: 'UserPublic',
 	},
 	isRequired: true,
 },

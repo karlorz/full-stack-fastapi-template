@@ -19,7 +19,7 @@ import { useMutation, useQueryClient } from "react-query"
 
 import {
   type ApiError,
-  type UserOut,
+  type UserPublic,
   type UserUpdate,
   UsersService,
 } from "../../client"
@@ -32,7 +32,7 @@ import {
 } from "../../utils"
 
 interface EditUserProps {
-  user: UserOut
+  user: UserPublic
   isOpen: boolean
   onClose: () => void
 }

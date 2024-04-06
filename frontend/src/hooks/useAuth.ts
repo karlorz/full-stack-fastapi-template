@@ -6,7 +6,7 @@ import {
   type Body_login_login_access_token as AccessToken,
   type ApiError,
   LoginService,
-  type UserOut,
+  type UserPublic,
   type UserRegister,
   UsersService,
 } from "../client"
@@ -21,7 +21,7 @@ const useAuth = () => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const navigate = useNavigate()
-  const { data: user, isLoading } = useQuery<UserOut | null, Error>(
+  const { data: user, isLoading } = useQuery<UserPublic | null, Error>(
     "currentUser",
     UsersService.readUserMe,
     {

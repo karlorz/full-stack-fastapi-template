@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserOut,UpdatePassword,UserCreate,UserRegister,UsersOut,UserUpdate,UserUpdateMe,ItemCreate,ItemOut,ItemsOut,ItemUpdate } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UsersPublic,UserUpdate,UserUpdateMe,ItemCreate,ItemPublic,ItemsPublic,ItemUpdate,OrganizationCreate,OrganizationCreateMember,OrganizationPublic,OrganizationsPublic,OrganizationUpdate,OrganizationUpdateMember,OrganizationWithUserPublic,UserOrganizationLinkPublic } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -47,10 +47,10 @@ formData,
 	/**
 	 * Test Token
 	 * Test access token
-	 * @returns UserOut Successful Response
+	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static testToken(): CancelablePromise<UserOut> {
+	public static testToken(): CancelablePromise<UserPublic> {
 				return __request(OpenAPI, {
 			method: 'POST',
 			url: '/api/v1/login/test-token',
@@ -164,10 +164,10 @@ export class UsersService {
 	/**
 	 * Read Users
 	 * Retrieve users.
-	 * @returns UsersOut Successful Response
+	 * @returns UsersPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readUsers(data: TDataReadUsers = {}): CancelablePromise<UsersOut> {
+	public static readUsers(data: TDataReadUsers = {}): CancelablePromise<UsersPublic> {
 		const {
 limit = 100,
 skip = 0,
@@ -187,10 +187,10 @@ skip = 0,
 	/**
 	 * Create User
 	 * Create new user.
-	 * @returns UserOut Successful Response
+	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static createUser(data: TDataCreateUser): CancelablePromise<UserOut> {
+	public static createUser(data: TDataCreateUser): CancelablePromise<UserPublic> {
 		const {
 requestBody,
 } = data;
@@ -208,10 +208,10 @@ requestBody,
 	/**
 	 * Read User Me
 	 * Get current user.
-	 * @returns UserOut Successful Response
+	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readUserMe(): CancelablePromise<UserOut> {
+	public static readUserMe(): CancelablePromise<UserPublic> {
 				return __request(OpenAPI, {
 			method: 'GET',
 			url: '/api/v1/users/me',
@@ -221,10 +221,10 @@ requestBody,
 	/**
 	 * Update User Me
 	 * Update own user.
-	 * @returns UserOut Successful Response
+	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static updateUserMe(data: TDataUpdateUserMe): CancelablePromise<UserOut> {
+	public static updateUserMe(data: TDataUpdateUserMe): CancelablePromise<UserPublic> {
 		const {
 requestBody,
 } = data;
@@ -263,10 +263,10 @@ requestBody,
 	/**
 	 * Register User
 	 * Create new user without the need to be logged in.
-	 * @returns UserOut Successful Response
+	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static registerUser(data: TDataRegisterUser): CancelablePromise<UserOut> {
+	public static registerUser(data: TDataRegisterUser): CancelablePromise<UserPublic> {
 		const {
 requestBody,
 } = data;
@@ -284,10 +284,10 @@ requestBody,
 	/**
 	 * Read User By Id
 	 * Get a specific user by id.
-	 * @returns UserOut Successful Response
+	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readUserById(data: TDataReadUserById): CancelablePromise<UserOut> {
+	public static readUserById(data: TDataReadUserById): CancelablePromise<UserPublic> {
 		const {
 userId,
 } = data;
@@ -306,10 +306,10 @@ userId,
 	/**
 	 * Update User
 	 * Update a user.
-	 * @returns UserOut Successful Response
+	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static updateUser(data: TDataUpdateUser): CancelablePromise<UserOut> {
+	public static updateUser(data: TDataUpdateUser): CancelablePromise<UserPublic> {
 		const {
 requestBody,
 userId,
@@ -411,10 +411,10 @@ export class ItemsService {
 	/**
 	 * Read Items
 	 * Retrieve items.
-	 * @returns ItemsOut Successful Response
+	 * @returns ItemsPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readItems(data: TDataReadItems = {}): CancelablePromise<ItemsOut> {
+	public static readItems(data: TDataReadItems = {}): CancelablePromise<ItemsPublic> {
 		const {
 limit = 100,
 skip = 0,
@@ -434,10 +434,10 @@ skip = 0,
 	/**
 	 * Create Item
 	 * Create new item.
-	 * @returns ItemOut Successful Response
+	 * @returns ItemPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static createItem(data: TDataCreateItem): CancelablePromise<ItemOut> {
+	public static createItem(data: TDataCreateItem): CancelablePromise<ItemPublic> {
 		const {
 requestBody,
 } = data;
@@ -455,10 +455,10 @@ requestBody,
 	/**
 	 * Read Item
 	 * Get item by ID.
-	 * @returns ItemOut Successful Response
+	 * @returns ItemPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readItem(data: TDataReadItem): CancelablePromise<ItemOut> {
+	public static readItem(data: TDataReadItem): CancelablePromise<ItemPublic> {
 		const {
 id,
 } = data;
@@ -477,10 +477,10 @@ id,
 	/**
 	 * Update Item
 	 * Update an item.
-	 * @returns ItemOut Successful Response
+	 * @returns ItemPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static updateItem(data: TDataUpdateItem): CancelablePromise<ItemOut> {
+	public static updateItem(data: TDataUpdateItem): CancelablePromise<ItemPublic> {
 		const {
 id,
 requestBody,
@@ -514,6 +514,236 @@ id,
 			url: '/api/v1/items/{id}',
 			path: {
 				id
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+}
+
+export type TDataGetOrganizations = {
+                limit?: number
+skip?: number
+                
+            }
+export type TDataCreateOrganization = {
+                requestBody: OrganizationCreate
+                
+            }
+export type TDataGetOrganization = {
+                orgId: number
+                
+            }
+export type TDataUpdateOrganization = {
+                orgId: number
+requestBody: OrganizationUpdate
+                
+            }
+export type TDataDeleteOrganization = {
+                orgId: number
+                
+            }
+export type TDataAddMemberToOrganization = {
+                orgId: number
+requestBody: OrganizationCreateMember
+                
+            }
+export type TDataUpdateMemberInOrganization = {
+                orgId: number
+requestBody: OrganizationUpdateMember
+userId: number
+                
+            }
+export type TDataRemoveMemberFromOrganization = {
+                orgId: number
+userId: number
+                
+            }
+
+export class OrganizationsService {
+
+	/**
+	 * Get Organizations
+	 * Retrieve a list of organizations accessible to the current user.
+	 * @returns OrganizationsPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static getOrganizations(data: TDataGetOrganizations = {}): CancelablePromise<OrganizationsPublic> {
+		const {
+limit = 100,
+skip = 0,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/organizations/',
+			query: {
+				skip, limit
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Create Organization
+	 * Create a new organization with the provided details.
+	 * @returns OrganizationPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static createOrganization(data: TDataCreateOrganization): CancelablePromise<OrganizationPublic> {
+		const {
+requestBody,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/organizations/',
+			body: requestBody,
+			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Get Organization
+	 * Retrieve an organization by its ID and returns it along with its associated users.
+	 * @returns OrganizationWithUserPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static getOrganization(data: TDataGetOrganization): CancelablePromise<OrganizationWithUserPublic> {
+		const {
+orgId,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/organizations/{org_id}',
+			path: {
+				org_id: orgId
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Update Organization
+	 * Update an organization by its ID.
+	 * @returns OrganizationPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static updateOrganization(data: TDataUpdateOrganization): CancelablePromise<OrganizationPublic> {
+		const {
+orgId,
+requestBody,
+} = data;
+		return __request(OpenAPI, {
+			method: 'PUT',
+			url: '/api/v1/organizations/{org_id}',
+			path: {
+				org_id: orgId
+			},
+			body: requestBody,
+			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Delete Organization
+	 * Delete an organization from the database.
+	 * @returns Message Successful Response
+	 * @throws ApiError
+	 */
+	public static deleteOrganization(data: TDataDeleteOrganization): CancelablePromise<Message> {
+		const {
+orgId,
+} = data;
+		return __request(OpenAPI, {
+			method: 'DELETE',
+			url: '/api/v1/organizations/{org_id}',
+			path: {
+				org_id: orgId
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Add Member To Organization
+	 * Add a user to an organization.
+	 * @returns UserOrganizationLinkPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static addMemberToOrganization(data: TDataAddMemberToOrganization): CancelablePromise<UserOrganizationLinkPublic> {
+		const {
+orgId,
+requestBody,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/organizations/{org_id}/users/',
+			path: {
+				org_id: orgId
+			},
+			body: requestBody,
+			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Update Member In Organization
+	 * Update a member in an organization.
+	 * @returns UserOrganizationLinkPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static updateMemberInOrganization(data: TDataUpdateMemberInOrganization): CancelablePromise<UserOrganizationLinkPublic> {
+		const {
+orgId,
+requestBody,
+userId,
+} = data;
+		return __request(OpenAPI, {
+			method: 'PUT',
+			url: '/api/v1/organizations/{org_id}/users/{user_id}',
+			path: {
+				org_id: orgId, user_id: userId
+			},
+			body: requestBody,
+			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Remove Member From Organization
+	 * Remove a member from an organization.
+	 * @returns Message Successful Response
+	 * @throws ApiError
+	 */
+	public static removeMemberFromOrganization(data: TDataRemoveMemberFromOrganization): CancelablePromise<Message> {
+		const {
+orgId,
+userId,
+} = data;
+		return __request(OpenAPI, {
+			method: 'DELETE',
+			url: '/api/v1/organizations/{org_id}/users/{user_id}',
+			path: {
+				org_id: orgId, user_id: userId
 			},
 			errors: {
 				422: `Validation Error`,
