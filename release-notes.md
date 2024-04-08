@@ -22,6 +22,7 @@
 
 ### Refactors
 
+* ♻️ Upgrade . PR [#22](https://github.com/fastapilabs/cloud/pull/22) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Regenerate frontend client. PR [#21](https://github.com/fastapilabs/cloud/pull/21) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Upgrade from Upstream. PR [#19](https://github.com/fastapilabs/cloud/pull/19) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Restructure UserMenu and Sidebar. PR [#17](https://github.com/fastapilabs/cloud/pull/17) by [@alejsdev](https://github.com/alejsdev).
