@@ -9,8 +9,8 @@ import {
   Input,
   useColorModeValue,
 } from "@chakra-ui/react"
+import { useMutation } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
-import { useMutation } from "react-query"
 
 import { type ApiError, type UpdatePassword, UsersService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
@@ -34,20 +34,18 @@ const ChangePassword = () => {
     criteriaMode: "all",
   })
 
-  const mutation = useMutation(
-    (data: UpdatePassword) =>
+  const mutation = useMutation({
+    mutationFn: (data: UpdatePassword) =>
       UsersService.updatePasswordMe({ requestBody: data }),
-    {
-      onSuccess: () => {
-        showToast("Success!", "Password updated.", "success")
-        reset()
-      },
-      onError: (err: ApiError) => {
-        const errDetail = (err.body as any)?.detail
-        showToast("Something went wrong.", `${errDetail}`, "error")
-      },
+    onSuccess: () => {
+      showToast("Success!", "Password updated.", "success")
+      reset()
     },
-  )
+    onError: (err: ApiError) => {
+      const errDetail = (err.body as any)?.detail
+      showToast("Something went wrong.", `${errDetail}`, "error")
+    },
+  })
 
   const onSubmit: SubmitHandler<UpdatePasswordForm> = async (data) => {
     mutation.mutate(data)

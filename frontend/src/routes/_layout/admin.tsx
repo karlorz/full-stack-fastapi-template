@@ -13,8 +13,8 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { useQuery, useQueryClient } from "react-query"
 
 import { type UserPublic, UsersService } from "../../client"
 import ActionsMenu from "../../components/Common/ActionsMenu"
@@ -28,13 +28,16 @@ export const Route = createFileRoute("/_layout/admin")({
 function Admin() {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
-  const currentUser = queryClient.getQueryData<UserPublic>("currentUser")
+  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const {
     data: users,
     isLoading,
     isError,
     error,
-  } = useQuery("users", () => UsersService.readUsers({}))
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => UsersService.readUsers({}),
+  })
 
   if (isError) {
     const errDetail = (error as any).body?.detail

@@ -3,6 +3,7 @@
 ## Latest Changes
 
 * ♻️ Upgrade. PR [#14](https://github.com/fastapilabs/cloud/pull/14) by [@alejsdev](https://github.com/alejsdev).
+* 🆙 Update React Query to TanStack Query. PR [#1153](https://github.com/tiangolo/full-stack-fastapi-template/pull/1153) by [@patrick91](https://github.com/patrick91).
 * Bump vite from 5.0.12 to 5.0.13 in /frontend. PR [#1149](https://github.com/tiangolo/full-stack-fastapi-template/pull/1149) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🔥 Remove ESLint and Prettier from pre-commit config. PR [#1096](https://github.com/tiangolo/full-stack-fastapi-template/pull/1096) by [@alejsdev](https://github.com/alejsdev).
 * 📝 Update `README.md`. PR [#716](https://github.com/tiangolo/full-stack-fastapi-template/pull/716) by [@alejsdev](https://github.com/alejsdev).
@@ -28,6 +29,8 @@
 * ♻️ Upgrade from upstream. PR [#13](https://github.com/fastapilabs/cloud/pull/13) by [@alejsdev](https://github.com/alejsdev).
 * 🥅 Set up Sentry for FastAPI applications. PR [#11](https://github.com/fastapilabs/cloud/pull/11) by [@estebanx64](https://github.com/estebanx64).
 * ♻️ Sign Up refactor. PR [#12](https://github.com/fastapilabs/cloud/pull/12) by [@alejsdev](https://github.com/alejsdev).
+* ♻️ Regenerate frontend client. PR [#1156](https://github.com/tiangolo/full-stack-fastapi-template/pull/1156) by [@alejsdev](https://github.com/alejsdev).
+* ♻️ Refactor rename ModelsOut to ModelsPublic. PR [#1154](https://github.com/tiangolo/full-stack-fastapi-template/pull/1154) by [@estebanx64](https://github.com/estebanx64).
 * ♻️ Migrate frontend client generation from `openapi-typescript-codegen` to `@hey-api/openapi-ts`. PR [#1151](https://github.com/tiangolo/full-stack-fastapi-template/pull/1151) by [@alejsdev](https://github.com/alejsdev).
 * 🔥 Remove unused exports and update dependencies. PR [#1146](https://github.com/tiangolo/full-stack-fastapi-template/pull/1146) by [@alejsdev](https://github.com/alejsdev).
 * 🔧 Update sentry dns initialization following the environment settings. PR [#1145](https://github.com/tiangolo/full-stack-fastapi-template/pull/1145) by [@estebanx64](https://github.com/estebanx64).
@@ -71,6 +74,9 @@
 * 👷 Allow Smokeshow to run on a private repo. PR [#2](https://github.com/fastapilabs/cloud/pull/2) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add token for latest-changes GitHub Action. PR [#1](https://github.com/fastapilabs/cloud/pull/1) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update latest-changes token permissions. PR [#5](https://github.com/fastapilabs/cloud/pull/5) by [@tiangolo](https://github.com/tiangolo).
+* 🔧 Update mypy config to ignore .venv directories. PR [#1155](https://github.com/tiangolo/full-stack-fastapi-template/pull/1155) by [@tiangolo](https://github.com/tiangolo).
+* 🚨 Enable `ARG001` to prevent unused arguments. PR [#1152](https://github.com/tiangolo/full-stack-fastapi-template/pull/1152) by [@patrick91](https://github.com/patrick91).
+* 🔥 Remove isort configuration, since we use Ruff now. PR [#1144](https://github.com/tiangolo/full-stack-fastapi-template/pull/1144) by [@patrick91](https://github.com/patrick91).
 * 🔧 Update pre-commit config to exclude generated client folder. PR [#1150](https://github.com/tiangolo/full-stack-fastapi-template/pull/1150) by [@alejsdev](https://github.com/alejsdev).
 * 🔧 Change `.nvmrc` format. PR [#1148](https://github.com/tiangolo/full-stack-fastapi-template/pull/1148) by [@patrick91](https://github.com/patrick91).
 * 🎨 Ignore alembic from ruff lint and format. PR [#1131](https://github.com/tiangolo/full-stack-fastapi-template/pull/1131) by [@estebanx64](https://github.com/estebanx64).

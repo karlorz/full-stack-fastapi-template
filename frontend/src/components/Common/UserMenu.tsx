@@ -11,16 +11,16 @@ import {
   MenuList,
   Text,
 } from "@chakra-ui/react"
+import { useQueryClient } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { FaCog, FaPlus, FaSignOutAlt, FaUser, FaUsers } from "react-icons/fa"
-import { useQueryClient } from "react-query"
 
 import type { UserPublic } from "../../client"
 import useAuth from "../../hooks/useAuth"
 
 const UserMenu = () => {
   const queryClient = useQueryClient()
-  const currentUser = queryClient.getQueryData<UserPublic>("currentUser")
+  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const { logout } = useAuth()
 
   const handleLogout = async () => {

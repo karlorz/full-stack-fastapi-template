@@ -93,7 +93,7 @@ def test_get_organization(client: TestClient, db: Session) -> None:
         assert "full_name" in item["user"]
 
 
-def test_get_organization_not_found(client: TestClient, db: Session) -> None:
+def test_get_organization_not_found(client: TestClient) -> None:
     user_auth_headers = user_authentication_headers(
         client=client,
         email=settings.FIRST_SUPERUSER,
@@ -110,7 +110,7 @@ def test_get_organization_not_found(client: TestClient, db: Session) -> None:
     assert data["detail"] == "Organization not found for the current user"
 
 
-def test_create_organization(client: TestClient, db: Session) -> None:
+def test_create_organization(client: TestClient) -> None:
     user_auth_headers = user_authentication_headers(
         client=client,
         email=settings.FIRST_SUPERUSER,
@@ -159,7 +159,7 @@ def test_update_organization(client: TestClient, db: Session) -> None:
     assert data["description"] == organization_in["description"]
 
 
-def test_update_organization_not_found(client: TestClient, db: Session) -> None:
+def test_update_organization_not_found(client: TestClient) -> None:
     user_auth_headers = user_authentication_headers(
         client=client,
         email=settings.FIRST_SUPERUSER,
@@ -234,7 +234,7 @@ def test_delete_organization(client: TestClient, db: Session) -> None:
     assert data["message"] == "Organization deleted"
 
 
-def test_delete_organization_not_found(client: TestClient, db: Session) -> None:
+def test_delete_organization_not_found(client: TestClient) -> None:
     user_auth_headers = user_authentication_headers(
         client=client,
         email=settings.FIRST_SUPERUSER,
