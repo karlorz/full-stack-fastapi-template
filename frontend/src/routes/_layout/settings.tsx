@@ -35,8 +35,8 @@ function UserSettings() {
     : tabsConfig
 
   return (
-    <Container maxW="full">
-      <Heading size="md" textAlign={{ base: "center", md: "left" }} py={12}>
+    <Container maxW="full" p={12}>
+      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={12}>
         User Settings
       </Heading>
       <Tabs variant="enclosed">

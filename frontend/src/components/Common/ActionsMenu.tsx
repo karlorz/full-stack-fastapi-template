@@ -7,8 +7,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 import { BsThreeDotsVertical } from "react-icons/bs"
-import { FiEdit, FiTrash } from "react-icons/fi"
 
+import { FaEdit, FaTrash } from "react-icons/fa"
 import type { ItemPublic, UserPublic } from "../../client"
 import EditUser from "../Admin/EditUser"
 import EditItem from "../Items/EditItem"
@@ -36,13 +36,13 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
         <MenuList>
           <MenuItem
             onClick={editUserModal.onOpen}
-            icon={<FiEdit fontSize="16px" />}
+            icon={<FaEdit fontSize="16px" />}
           >
             Edit {type}
           </MenuItem>
           <MenuItem
             onClick={deleteModal.onOpen}
-            icon={<FiTrash fontSize="16px" />}
+            icon={<FaTrash fontSize="16px" />}
             color="ui.danger"
           >
             Delete {type}

@@ -166,6 +166,7 @@ const EditUser = ({ user, isOpen, onClose }: EditUserProps) => {
           </ModalBody>
 
           <ModalFooter gap={3}>
+            <Button onClick={onCancel}>Cancel</Button>
             <Button
               variant="primary"
               type="submit"
@@ -174,7 +175,6 @@ const EditUser = ({ user, isOpen, onClose }: EditUserProps) => {
             >
               Save
             </Button>
-            <Button onClick={onCancel}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

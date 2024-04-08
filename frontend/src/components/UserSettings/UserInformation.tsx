@@ -82,7 +82,7 @@ const UserInformation = () => {
         <Heading size="sm" py={4}>
           User Information
         </Heading>
-        <Box w={{ sm: "full", md: "50%" }}>
+        <Box>
           <FormControl>
             <FormLabel color={color} htmlFor="name">
               Full name
@@ -93,6 +93,7 @@ const UserInformation = () => {
                 {...register("full_name", { pattern: namePattern })}
                 type="text"
                 size="md"
+                w="auto"
               />
             ) : (
               <Text
@@ -117,6 +118,7 @@ const UserInformation = () => {
                 })}
                 type="email"
                 size="md"
+                w="auto"
               />
             ) : (
               <Text size="md" py={2}>

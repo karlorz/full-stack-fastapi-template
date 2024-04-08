@@ -15,8 +15,8 @@ function Dashboard() {
 
   return (
     <>
-      <Container maxW="full">
-        <Box pt={12} m={4}>
+      <Container maxW="full" p={12}>
+        <Box>
           <Text fontSize="2xl">
             Hi, {currentUser?.full_name || currentUser?.email} 👋🏼
           </Text>

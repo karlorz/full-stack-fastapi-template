@@ -30,12 +30,7 @@ const UserMenu = () => {
   return (
     <>
       {/* Desktop */}
-      <Box
-        display={{ base: "none", md: "block" }}
-        position="fixed"
-        top={4}
-        right={8}
-      >
+      <Flex mr={8}>
         <Menu>
           <MenuButton
             as={Button}
@@ -76,7 +71,7 @@ const UserMenu = () => {
             </MenuItem>
           </MenuList>
         </Menu>
-      </Box>
+      </Flex>
     </>
   )
 }

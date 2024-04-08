@@ -7,8 +7,8 @@ export const Route = createFileRoute("/_layout/help")({
 
 function Help() {
   return (
-    <Container maxW="full">
-      <Heading size="md" textAlign={{ base: "center", md: "left" }} py={12}>
+    <Container maxW="full" p={12}>
+      <Heading size="md" textAlign={{ base: "center", md: "left" }}>
         Help
       </Heading>
     </Container>

@@ -92,15 +92,15 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
             </AlertDialogBody>
 
             <AlertDialogFooter gap={3}>
-              <Button variant="danger" type="submit" isLoading={isSubmitting}>
-                Delete
-              </Button>
               <Button
                 ref={cancelRef}
                 onClick={onClose}
                 isDisabled={isSubmitting}
               >
                 Cancel
+              </Button>
+              <Button variant="danger" type="submit" isLoading={isSubmitting}>
+                Delete
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

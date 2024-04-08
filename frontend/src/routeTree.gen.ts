@@ -25,6 +25,7 @@ import { Route as LayoutHelpImport } from './routes/_layout/help'
 import { Route as LayoutBillingImport } from './routes/_layout/billing'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
 import { Route as LayoutOrganizationNewImport } from './routes/_layout/organization/new'
+import { Route as LayoutOrganizationInvitationsImport } from './routes/_layout/organization/invitations'
 
 // Create/Update Routes
 
@@ -98,6 +99,12 @@ const LayoutOrganizationNewRoute = LayoutOrganizationNewImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutOrganizationInvitationsRoute =
+  LayoutOrganizationInvitationsImport.update({
+    path: '/organization/invitations',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -154,6 +161,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/organization/invitations': {
+      preLoaderRoute: typeof LayoutOrganizationInvitationsImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/organization/new': {
       preLoaderRoute: typeof LayoutOrganizationNewImport
       parentRoute: typeof LayoutImport
@@ -173,6 +184,7 @@ export const routeTree = rootRoute.addChildren([
     LayoutResourcesRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
+    LayoutOrganizationInvitationsRoute,
     LayoutOrganizationNewRoute,
   ]),
   LoginRoute,

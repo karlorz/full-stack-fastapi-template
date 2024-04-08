@@ -166,10 +166,10 @@ const AddUser = ({ isOpen, onClose }: AddUserProps) => {
             </Flex>
           </ModalBody>
           <ModalFooter gap={3}>
+            <Button onClick={onClose}>Cancel</Button>
             <Button variant="primary" type="submit" isLoading={isSubmitting}>
               Save
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

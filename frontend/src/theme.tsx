@@ -21,7 +21,15 @@ const theme = extendTheme({
       dark: "#1A202C",
       darkSlate: "#252D3D",
       dim: "#CBD5E0",
+      defaultText: "#5D7285",
     },
+  },
+  styles: {
+    global: (props: any) => ({
+      body: {
+        color: props.colorMode === "dark" ? "ui.light" : "ui.defaultText",
+      },
+    }),
   },
   components: {
     Button: {

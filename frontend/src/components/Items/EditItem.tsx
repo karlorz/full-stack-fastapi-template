@@ -105,6 +105,7 @@ const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
             </FormControl>
           </ModalBody>
           <ModalFooter gap={3}>
+            <Button onClick={onCancel}>Cancel</Button>
             <Button
               variant="primary"
               type="submit"
@@ -113,7 +114,6 @@ const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
             >
               Save
             </Button>
-            <Button onClick={onCancel}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

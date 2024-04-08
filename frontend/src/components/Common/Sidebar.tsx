@@ -69,10 +69,11 @@ const Sidebar = () => {
       <Box
         position="sticky"
         display={{ base: "none", md: "flex" }}
+        boxShadow="md"
         minW="250px"
         h="100vh"
         top="0"
-        p={4}
+        p={6}
       >
         <Box justifyContent="center" w="100%">
           <Center>
