@@ -26,7 +26,7 @@ router = APIRouter()
 
 
 @router.get("/", response_model=OrganizationsPublic)
-def get_organizations(
+def read_organizations(
     session: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100
 ) -> Any:
     """
@@ -58,7 +58,7 @@ def get_organizations(
 
 
 @router.get("/{org_id}", response_model=OrganizationWithUserPublic)
-def get_organization(
+def read_organization(
     session: SessionDep, current_user: CurrentUser, org_id: int
 ) -> Any:
     """

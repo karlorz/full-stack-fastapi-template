@@ -10,7 +10,7 @@ from app.tests.utils.organization import create_random_organization
 from app.tests.utils.user import create_user, user_authentication_headers
 
 
-def test_get_organizations(client: TestClient, db: Session) -> None:
+def test_read_organizations(client: TestClient, db: Session) -> None:
     # Create test data in the database using db fixture
     org1 = create_random_organization(db)
     org2 = create_random_organization(db)
@@ -62,7 +62,7 @@ def test_get_organizations(client: TestClient, db: Session) -> None:
     assert organizations[0]["id"] == org3.id
 
 
-def test_get_organization(client: TestClient, db: Session) -> None:
+def test_read_organization(client: TestClient, db: Session) -> None:
     organization = create_random_organization(db)
     user = create_user(session=db, email="org2@fastapi.com", password="test123")
     add_user_to_organization(
@@ -93,7 +93,7 @@ def test_get_organization(client: TestClient, db: Session) -> None:
         assert "full_name" in item["user"]
 
 
-def test_get_organization_not_found(client: TestClient) -> None:
+def test_read_organization_not_found(client: TestClient) -> None:
     user_auth_headers = user_authentication_headers(
         client=client,
         email=settings.FIRST_SUPERUSER,
