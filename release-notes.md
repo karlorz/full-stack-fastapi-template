@@ -23,6 +23,7 @@
 
 ### Refactors
 
+* ♻️ Regenerate frontend client. PR [#24](https://github.com/fastapilabs/cloud/pull/24) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Rename routes and tests for consistency. PR [#23](https://github.com/fastapilabs/cloud/pull/23) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Upgrade . PR [#22](https://github.com/fastapilabs/cloud/pull/22) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Regenerate frontend client. PR [#21](https://github.com/fastapilabs/cloud/pull/21) by [@alejsdev](https://github.com/alejsdev).
