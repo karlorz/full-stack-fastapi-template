@@ -523,7 +523,7 @@ id,
 
 }
 
-export type TDataGetOrganizations = {
+export type TDataReadOrganizations = {
                 limit?: number
 skip?: number
                 
@@ -532,7 +532,7 @@ export type TDataCreateOrganization = {
                 requestBody: OrganizationCreate
                 
             }
-export type TDataGetOrganization = {
+export type TDataReadOrganization = {
                 orgId: number
                 
             }
@@ -565,12 +565,12 @@ userId: number
 export class OrganizationsService {
 
 	/**
-	 * Get Organizations
+	 * Read Organizations
 	 * Retrieve a list of organizations accessible to the current user.
 	 * @returns OrganizationsPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static getOrganizations(data: TDataGetOrganizations = {}): CancelablePromise<OrganizationsPublic> {
+	public static readOrganizations(data: TDataReadOrganizations = {}): CancelablePromise<OrganizationsPublic> {
 		const {
 limit = 100,
 skip = 0,
@@ -609,12 +609,12 @@ requestBody,
 	}
 
 	/**
-	 * Get Organization
+	 * Read Organization
 	 * Retrieve an organization by its ID and returns it along with its associated users.
 	 * @returns OrganizationWithUserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static getOrganization(data: TDataGetOrganization): CancelablePromise<OrganizationWithUserPublic> {
+	public static readOrganization(data: TDataReadOrganization): CancelablePromise<OrganizationWithUserPublic> {
 		const {
 orgId,
 } = data;
