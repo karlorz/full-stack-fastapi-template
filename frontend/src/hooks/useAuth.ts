@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
+import { AxiosError } from "axios"
 import { useState } from "react"
 
 import {
@@ -36,7 +37,12 @@ const useAuth = () => {
       navigate({ to: "/" })
     },
     onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
+      let errDetail = (err.body as any)?.detail
+
+      if (err instanceof AxiosError) {
+        errDetail = err.message
+      }
+
       showToast("Something went wrong.", `${errDetail}`, "error")
     },
     onSettled: () => {
@@ -74,6 +80,7 @@ const useAuth = () => {
     user,
     isLoading,
     error,
+    resetError: () => setError(null),
   }
 }
 
