@@ -2,6 +2,7 @@
 
 ## Latest Changes
 
+* 🚸 Improve login form. PR [#26](https://github.com/fastapilabs/cloud/pull/26) by [@patrick91](https://github.com/patrick91).
 * ♻️ Upgrade. PR [#14](https://github.com/fastapilabs/cloud/pull/14) by [@alejsdev](https://github.com/alejsdev).
 * 🆙 Update React Query to TanStack Query. PR [#1153](https://github.com/tiangolo/full-stack-fastapi-template/pull/1153) by [@patrick91](https://github.com/patrick91).
 * Bump vite from 5.0.12 to 5.0.13 in /frontend. PR [#1149](https://github.com/tiangolo/full-stack-fastapi-template/pull/1149) by [@dependabot[bot]](https://github.com/apps/dependabot).
