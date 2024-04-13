@@ -24,7 +24,8 @@ import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutHelpImport } from './routes/_layout/help'
 import { Route as LayoutBillingImport } from './routes/_layout/billing'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
-import { Route as LayoutOrganizationNewImport } from './routes/_layout/organization/new'
+import { Route as LayoutOrganizationsNewImport } from './routes/_layout/organizations/new'
+import { Route as LayoutOrganizationsAllImport } from './routes/_layout/organizations/all'
 import { Route as LayoutOrganizationInvitationsImport } from './routes/_layout/organization/invitations'
 
 // Create/Update Routes
@@ -94,8 +95,13 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutOrganizationNewRoute = LayoutOrganizationNewImport.update({
-  path: '/organization/new',
+const LayoutOrganizationsNewRoute = LayoutOrganizationsNewImport.update({
+  path: '/organizations/new',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutOrganizationsAllRoute = LayoutOrganizationsAllImport.update({
+  path: '/organizations/all',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -165,8 +171,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutOrganizationInvitationsImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/organization/new': {
-      preLoaderRoute: typeof LayoutOrganizationNewImport
+    '/_layout/organizations/all': {
+      preLoaderRoute: typeof LayoutOrganizationsAllImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/organizations/new': {
+      preLoaderRoute: typeof LayoutOrganizationsNewImport
       parentRoute: typeof LayoutImport
     }
   }
@@ -185,7 +195,8 @@ export const routeTree = rootRoute.addChildren([
     LayoutSettingsRoute,
     LayoutIndexRoute,
     LayoutOrganizationInvitationsRoute,
-    LayoutOrganizationNewRoute,
+    LayoutOrganizationsAllRoute,
+    LayoutOrganizationsNewRoute,
   ]),
   LoginRoute,
   RecoverPasswordRoute,

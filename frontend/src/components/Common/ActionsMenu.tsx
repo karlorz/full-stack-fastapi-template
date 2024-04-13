@@ -7,16 +7,16 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 import { BsThreeDotsVertical } from "react-icons/bs"
-
 import { FaEdit, FaTrash } from "react-icons/fa"
-import type { ItemPublic, UserPublic } from "../../client"
+
+import type { ItemPublic, OrganizationPublic, UserPublic } from "../../client"
 import EditUser from "../Admin/EditUser"
 import EditItem from "../Items/EditItem"
 import Delete from "./DeleteAlert"
 
 interface ActionsMenuProps {
   type: string
-  value: ItemPublic | UserPublic
+  value: ItemPublic | UserPublic | OrganizationPublic
   disabled?: boolean
 }
 

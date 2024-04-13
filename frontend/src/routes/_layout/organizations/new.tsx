@@ -9,7 +9,7 @@ import {
   Input,
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
 import {
@@ -20,11 +20,12 @@ import {
 import Plans from "../../../components/Billing/Plans"
 import useCustomToast from "../../../hooks/useCustomToast"
 
-export const Route = createFileRoute("/_layout/organization/new")({
+export const Route = createFileRoute("/_layout/organizations/new")({
   component: NewOrg,
 })
 
 function NewOrg() {
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const {
@@ -43,6 +44,7 @@ function NewOrg() {
     onSuccess: () => {
       showToast("Success!", "Organization created successfully.", "success")
       reset()
+      navigate({ to: "/organizations/all" })
     },
     onError: (err: ApiError) => {
       const errDetail = (err.body as any)?.detail
@@ -50,6 +52,7 @@ function NewOrg() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] })
+      queryClient.invalidateQueries({ queryKey: ["organizations"] })
     },
   })
 

@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-
 import { FaCheckCircle } from "react-icons/fa"
 import { FaCircleXmark } from "react-icons/fa6"
 

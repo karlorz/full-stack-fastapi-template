@@ -11,16 +11,27 @@ import {
   MenuList,
   Text,
 } from "@chakra-ui/react"
-import { useQueryClient } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
-import { FaCog, FaPlus, FaSignOutAlt, FaUser, FaUsers } from "react-icons/fa"
+import {
+  FaCog,
+  FaList,
+  FaPlus,
+  FaSignOutAlt,
+  FaUser,
+  FaUsers,
+} from "react-icons/fa"
 
-import type { UserPublic } from "../../client"
+import { OrganizationsService, type UserPublic } from "../../client"
 import useAuth from "../../hooks/useAuth"
 
 const UserMenu = () => {
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
+  const { data: organizations } = useQuery({
+    queryKey: ["organizations"],
+    queryFn: () => OrganizationsService.readOrganizations({}),
+  })
   const { logout } = useAuth()
 
   const handleLogout = async () => {
@@ -51,11 +62,17 @@ const UserMenu = () => {
               <Icon as={FaUser} />
               {currentUser?.full_name}
             </MenuItem>
-            <MenuItem as={Link} to="/" gap={2} py={2}>
-              <Icon as={FaUsers} />
-              FastAPI Labs
+            {organizations?.data.slice(0, 3).map((org) => (
+              <MenuItem key={org.id} gap={2} py={2}>
+                <Icon as={FaUsers} />
+                {org.name}
+              </MenuItem>
+            ))}
+            <MenuItem as={Link} to="/organizations/all" gap={2} py={2}>
+              <Icon as={FaList} />
+              View all organizations
             </MenuItem>
-            <MenuItem as={Link} to="/organization/new" gap={2} py={2}>
+            <MenuItem as={Link} to="/organizations/new" gap={2} py={2}>
               <Icon as={FaPlus} />
               Create a new organization
             </MenuItem>
