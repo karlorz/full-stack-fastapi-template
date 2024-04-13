@@ -11,6 +11,7 @@
 
 ### Features
 
+* ✨ View organizations. PR [#27](https://github.com/fastapilabs/cloud/pull/27) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Create an organization. PR [#20](https://github.com/fastapilabs/cloud/pull/20) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add organizations initial routes. PR [#16](https://github.com/fastapilabs/cloud/pull/16) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add SignUp and Login views. PR [#15](https://github.com/fastapilabs/cloud/pull/15) by [@alejsdev](https://github.com/alejsdev).
