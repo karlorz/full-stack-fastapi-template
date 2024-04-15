@@ -130,6 +130,8 @@ def update_organization(
     update_dict = organization_in.model_dump(exclude_unset=True)
     org = link.organization
     org.sqlmodel_update(update_dict)
+    session.add(org)
+    session.commit()
     return org
 
 

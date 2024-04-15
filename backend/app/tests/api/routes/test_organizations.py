@@ -154,9 +154,10 @@ def test_update_organization(client: TestClient, db: Session) -> None:
 
     assert response.status_code == 200
     data = response.json()
+    db.refresh(organization)
     assert data["id"] == organization.id
-    assert data["name"] == organization_in["name"]
-    assert data["description"] == organization_in["description"]
+    assert organization.name == organization_in["name"]
+    assert organization.description == organization_in["description"]
 
 
 def test_update_organization_not_found(client: TestClient) -> None:
