@@ -9,10 +9,12 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  SkeletonText,
   Text,
 } from "@chakra-ui/react"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
+import { Suspense } from "react"
 import {
   FaCog,
   FaList,
@@ -22,12 +24,16 @@ import {
   FaUsers,
 } from "react-icons/fa"
 
-import { OrganizationsService, type UserPublic } from "../../client"
-import useAuth from "../../hooks/useAuth"
+import { OrganizationsService } from "../../client"
+import useAuth, { useCurrentUser } from "../../hooks/useAuth"
+
+const CurrentUser = () => {
+  const currentUser = useCurrentUser()
+
+  return currentUser?.full_name || ""
+}
 
 const UserMenu = () => {
-  const queryClient = useQueryClient()
-  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const { data: organizations } = useQuery({
     queryKey: ["organizations"],
     queryFn: () => OrganizationsService.readOrganizations({}),
@@ -52,7 +58,13 @@ const UserMenu = () => {
             <Flex justify="space-between">
               <Box display="flex" alignItems="center">
                 <Icon as={FaUser} />
-                <Text mx={2}>{currentUser?.full_name}</Text>
+                <Text mx={2}>
+                  <Suspense
+                    fallback={<SkeletonText noOfLines={1} width={100} />}
+                  >
+                    <CurrentUser />
+                  </Suspense>
+                </Text>
               </Box>
               <ChevronDownIcon alignSelf="center" />
             </Flex>
@@ -60,7 +72,9 @@ const UserMenu = () => {
           <MenuList p={4}>
             <MenuItem as={Link} to="/" gap={2} py={2}>
               <Icon as={FaUser} />
-              {currentUser?.full_name}
+              <Suspense fallback={<SkeletonText noOfLines={1} width={100} />}>
+                <CurrentUser />
+              </Suspense>
             </MenuItem>
             {organizations?.data.slice(0, 3).map((org) => (
               <MenuItem key={org.id} gap={2} py={2}>

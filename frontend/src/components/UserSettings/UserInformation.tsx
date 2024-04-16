@@ -21,7 +21,7 @@ import {
   type UserUpdateMe,
   UsersService,
 } from "../../client"
-import useAuth from "../../hooks/useAuth"
+import { useCurrentUser } from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
 import { emailPattern, namePattern } from "../../utils"
 
@@ -30,7 +30,7 @@ const UserInformation = () => {
   const color = useColorModeValue("inherit", "ui.light")
   const showToast = useCustomToast()
   const [editMode, setEditMode] = useState(false)
-  const { user: currentUser } = useAuth()
+  const currentUser = useCurrentUser()
   const {
     register,
     handleSubmit,

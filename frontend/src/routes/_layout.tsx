@@ -1,10 +1,10 @@
-import { Box, Divider, Flex, Spinner } from "@chakra-ui/react"
+import { Box, Divider, Flex } from "@chakra-ui/react"
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
 import Searchbar from "../components/Common/Searchbar"
 import Sidebar from "../components/Common/Sidebar"
 import UserMenu from "../components/Common/UserMenu"
-import useAuth, { isLoggedIn } from "../hooks/useAuth"
+import { isLoggedIn } from "../hooks/useAuth"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,
@@ -18,8 +18,6 @@ export const Route = createFileRoute("/_layout")({
 })
 
 function Layout() {
-  const { isLoading } = useAuth()
-
   return (
     <Flex maxW="large" h="auto" position="relative">
       <Sidebar />
@@ -35,14 +33,7 @@ function Layout() {
           <UserMenu />
         </Box>
         <Divider />
-        {/* Main content */}
-        {isLoading ? (
-          <Flex justify="center" align="center">
-            <Spinner size="xl" color="ui.main" />
-          </Flex>
-        ) : (
-          <Outlet />
-        )}
+        <Outlet />
       </Flex>
     </Flex>
   )

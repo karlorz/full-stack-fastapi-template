@@ -1,4 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { AxiosError } from "axios"
 import { useState } from "react"
@@ -17,16 +21,20 @@ const isLoggedIn = () => {
   return localStorage.getItem("access_token") !== null
 }
 
+const useCurrentUser = () => {
+  const { data } = useSuspenseQuery<UserPublic | null, Error>({
+    queryKey: ["currentUser"],
+    queryFn: () => (isLoggedIn() ? UsersService.readUserMe() : null),
+  })
+
+  return data
+}
+
 const useAuth = () => {
   const [error, setError] = useState<string | null>(null)
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const navigate = useNavigate()
-  const { data: user, isLoading } = useQuery<UserPublic | null, Error>({
-    queryKey: ["currentUser"],
-    queryFn: UsersService.readUserMe,
-    enabled: isLoggedIn(),
-  })
 
   const signUpMutation = useMutation({
     mutationFn: (data: UserRegister) =>
@@ -77,12 +85,10 @@ const useAuth = () => {
     signUpMutation,
     loginMutation,
     logout,
-    user,
-    isLoading,
     error,
     resetError: () => setError(null),
   }
 }
 
-export { isLoggedIn }
+export { isLoggedIn, useCurrentUser }
 export default useAuth
