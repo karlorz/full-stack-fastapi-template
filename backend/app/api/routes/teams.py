@@ -49,8 +49,8 @@ def read_teams(
     return TeamsPublic(data=teams, count=count)
 
 
-@router.get("/{org_id}", response_model=TeamWithUserPublic)
-def read_team(session: SessionDep, current_user: CurrentUser, org_id: int) -> Any:
+@router.get("/{team_id}", response_model=TeamWithUserPublic)
+def read_team(session: SessionDep, current_user: CurrentUser, team_id: int) -> Any:
     """
     Retrieve an team by its ID and returns it along with its associated users.
     """
@@ -58,7 +58,7 @@ def read_team(session: SessionDep, current_user: CurrentUser, org_id: int) -> An
         selectinload(Team.user_links).selectinload(UserTeamLink.user)  # type: ignore
     )
     query = query.where(
-        Team.id == org_id,
+        Team.id == team_id,
         col(Team.user_links).any(col(UserTeamLink.user) == current_user),
     )
     team = session.exec(query).first()
@@ -85,11 +85,11 @@ def create_team(
     return team
 
 
-@router.put("/{org_id}", response_model=TeamPublic)
+@router.put("/{team_id}", response_model=TeamPublic)
 def update_team(
     session: SessionDep,
     current_user: CurrentUser,
-    org_id: int,
+    team_id: int,
     team_in: TeamUpdate,
 ) -> Any:
     """
@@ -99,7 +99,7 @@ def update_team(
         select(UserTeamLink)
         .options(selectinload(UserTeamLink.team))  # type: ignore
         .where(
-            UserTeamLink.team_id == org_id,
+            UserTeamLink.team_id == team_id,
             UserTeamLink.user == current_user,
         )
     )
@@ -122,8 +122,10 @@ def update_team(
     return org
 
 
-@router.delete("/{org_id}", response_model=Message)
-def delete_team(session: SessionDep, current_user: CurrentUser, org_id: int) -> Message:
+@router.delete("/{team_id}", response_model=Message)
+def delete_team(
+    session: SessionDep, current_user: CurrentUser, team_id: int
+) -> Message:
     """
     Delete an team from the database.
     """
@@ -131,7 +133,7 @@ def delete_team(session: SessionDep, current_user: CurrentUser, org_id: int) -> 
         select(UserTeamLink)
         .options(selectinload(UserTeamLink.team))  # type: ignore
         .where(
-            UserTeamLink.team_id == org_id,
+            UserTeamLink.team_id == team_id,
             UserTeamLink.user == current_user,
         )
     )
@@ -154,11 +156,11 @@ def delete_team(session: SessionDep, current_user: CurrentUser, org_id: int) -> 
     return Message(message="Team deleted")
 
 
-@router.post("/{org_id}/users/", response_model=UserTeamLinkPublic)
+@router.post("/{team_id}/users/", response_model=UserTeamLinkPublic)
 def add_member_to_team(
     session: SessionDep,
     current_user: CurrentUser,
-    org_id: int,
+    team_id: int,
     member_in: TeamCreateMember,
 ) -> Any:
     """
@@ -172,7 +174,7 @@ def add_member_to_team(
             )
         )
         .where(
-            UserTeamLink.team_id == org_id,
+            UserTeamLink.team_id == team_id,
             UserTeamLink.user == current_user,
         )
     )
@@ -201,11 +203,11 @@ def add_member_to_team(
     return user_team
 
 
-@router.put("/{org_id}/users/{user_id}", response_model=UserTeamLinkPublic)
+@router.put("/{team_id}/users/{user_id}", response_model=UserTeamLinkPublic)
 def update_member_in_team(
     session: SessionDep,
     current_user: CurrentUser,
-    org_id: int,
+    team_id: int,
     user_id: int,
     member_in: TeamUpdateMember,
 ) -> Any:
@@ -220,7 +222,7 @@ def update_member_in_team(
             )
         )
         .where(
-            UserTeamLink.team_id == org_id,
+            UserTeamLink.team_id == team_id,
             UserTeamLink.user == current_user,
         )
     )
@@ -251,11 +253,11 @@ def update_member_in_team(
     return member_link
 
 
-@router.delete("/{org_id}/users/{user_id}", response_model=Message)
+@router.delete("/{team_id}/users/{user_id}", response_model=Message)
 def remove_member_from_team(
     session: SessionDep,
     current_user: CurrentUser,
-    org_id: int,
+    team_id: int,
     user_id: int,
 ) -> Message:
     """
@@ -274,7 +276,7 @@ def remove_member_from_team(
             )
         )
         .where(
-            UserTeamLink.team_id == org_id,
+            UserTeamLink.team_id == team_id,
             UserTeamLink.user == current_user,
         )
     )
