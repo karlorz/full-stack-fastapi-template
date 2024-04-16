@@ -18,15 +18,13 @@ class InvitationStatus(str, Enum):
     expired = "expired"
 
 
-class UserOrganizationLink(SQLModel, table=True):
+class UserTeamLink(SQLModel, table=True):
     user_id: int | None = Field(default=None, foreign_key="user.id", primary_key=True)
-    organization_id: int | None = Field(
-        default=None, foreign_key="organization.id", primary_key=True
-    )
+    team_id: int | None = Field(default=None, foreign_key="team.id", primary_key=True)
     role: Role
 
-    user: "User" = Relationship(back_populates="organization_links")
-    organization: "Organization" = Relationship(back_populates="user_links")
+    user: "User" = Relationship(back_populates="team_links")
+    team: "Team" = Relationship(back_populates="user_links")
 
 
 # Shared properties
@@ -74,7 +72,7 @@ class User(UserBase, table=True):
     hashed_password: str
 
     items: list["Item"] = Relationship(back_populates="owner")
-    organization_links: list[UserOrganizationLink] = Relationship(back_populates="user")
+    team_links: list[UserTeamLink] = Relationship(back_populates="user")
     invitations: list["Invitation"] = Relationship(
         back_populates="receiver",
         sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_user_id]"},
@@ -162,52 +160,52 @@ class NewPassword(SQLModel):
     new_password: str
 
 
-class OrganizationBase(SQLModel):
+class TeamBase(SQLModel):
     name: str
     description: str | None = None
 
 
-class Organization(OrganizationBase, table=True):
+class Team(TeamBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
-    user_links: list[UserOrganizationLink] = Relationship(back_populates="organization")
-    invitations: list["Invitation"] = Relationship(back_populates="organization")
+    user_links: list[UserTeamLink] = Relationship(back_populates="team")
+    invitations: list["Invitation"] = Relationship(back_populates="team")
 
 
-class OrganizationCreate(OrganizationBase):
+class TeamCreate(TeamBase):
     pass
 
 
-class OrganizationUpdate(SQLModel):
+class TeamUpdate(SQLModel):
     name: str | None = None
     description: str | None = None
 
 
-class OrganizationPublic(OrganizationBase):
+class TeamPublic(TeamBase):
     id: int
 
 
-class OrganizationsPublic(SQLModel):
-    data: list[OrganizationPublic]
+class TeamsPublic(SQLModel):
+    data: list[TeamPublic]
     count: int
 
 
-class OrganizationWithUserPublic(OrganizationPublic):
+class TeamWithUserPublic(TeamPublic):
     user_links: list[UserLinkPublic]
 
 
-class OrganizationCreateMember(SQLModel):
+class TeamCreateMember(SQLModel):
     user_id: int
     role: Role
 
 
-class OrganizationUpdateMember(SQLModel):
+class TeamUpdateMember(SQLModel):
     role: Role
 
 
-class UserOrganizationLinkPublic(SQLModel):
+class UserTeamLinkPublic(SQLModel):
     user: UserPublic
-    organization: OrganizationPublic
+    team: TeamPublic
     role: Role
 
 
@@ -217,13 +215,13 @@ class InvitationBase(SQLModel):
 
 
 class InvitationCreate(InvitationBase):
-    organization_id: int
+    team_id: int
     invited_user_id: int | None = None
 
 
 class InvitationPublic(InvitationBase):
     id: int
-    organization_id: int
+    team_id: int
     invited_by_id: int
     invited_user_id: int | None = None
     status: InvitationStatus
@@ -233,7 +231,7 @@ class InvitationPublic(InvitationBase):
 
 class Invitation(InvitationBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    organization_id: int = Field(foreign_key="organization.id")
+    team_id: int = Field(foreign_key="team.id")
     invited_by_id: int = Field(foreign_key="user.id")
     invited_user_id: int | None = Field(default=None, foreign_key="user.id")
     status: InvitationStatus
@@ -248,4 +246,4 @@ class Invitation(InvitationBase, table=True):
         back_populates="invitations_sent",
         sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_by_id]"},
     )
-    organization: Organization = Relationship(back_populates="invitations")
+    team: Team = Relationship(back_populates="invitations")

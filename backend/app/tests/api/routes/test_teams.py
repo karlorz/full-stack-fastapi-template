@@ -4,77 +4,75 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session
 
 from app.core.config import settings
-from app.crud import add_user_to_organization
+from app.crud import add_user_to_team
 from app.models import Role
-from app.tests.utils.organization import create_random_organization
+from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 
 
-def test_read_organizations(client: TestClient, db: Session) -> None:
+def test_read_teams(client: TestClient, db: Session) -> None:
     # Create test data in the database using db fixture
-    org1 = create_random_organization(db)
-    org2 = create_random_organization(db)
-    org3 = create_random_organization(db)
+    org1 = create_random_team(db)
+    org2 = create_random_team(db)
+    org3 = create_random_team(db)
 
-    # Create a user and link it to the first organization
+    # Create a user and link it to the first team
     user1 = create_user(session=db, email="test@fastapi.com", password="test123")
-    add_user_to_organization(session=db, user=user1, organization=org1, role=Role.admin)
-    add_user_to_organization(session=db, user=user1, organization=org2, role=Role.admin)
+    add_user_to_team(session=db, user=user1, team=org1, role=Role.admin)
+    add_user_to_team(session=db, user=user1, team=org2, role=Role.admin)
     user2 = create_user(session=db, email="user2@example.com", password="secret2")
-    add_user_to_organization(session=db, user=user2, organization=org3, role=Role.admin)
+    add_user_to_team(session=db, user=user2, team=org3, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
         client=client, email=user1.email, password="test123"
     )
 
-    # Make a request to the get_organizations route using the client fixture and superuser_token_headers
+    # Make a request to the get_teams route using the client fixture and superuser_token_headers
     response = client.get(
-        f"{settings.API_V1_STR}/organizations/",
+        f"{settings.API_V1_STR}/teams/",
         headers=user_auth_headers,
     )
 
     # Assert the response and the expected behavior
     assert response.status_code == 200
     data = response.json()
-    organizations = data["data"]
+    teams = data["data"]
     count = data["count"]
-    assert len(organizations) == 2
+    assert len(teams) == 2
     assert count == 2
-    assert organizations[0]["id"] == org1.id
-    assert organizations[1]["id"] == org2.id
+    assert teams[0]["id"] == org1.id
+    assert teams[1]["id"] == org2.id
 
     # Get the second org, with the second user, the data shouldn't be mixed
     user2_auth_headers = user_authentication_headers(
         client=client, email=user2.email, password="secret2"
     )
     response = client.get(
-        f"{settings.API_V1_STR}/organizations/",
+        f"{settings.API_V1_STR}/teams/",
         headers=user2_auth_headers,
     )
 
     # Assert the response and the expected behavior
     assert response.status_code == 200
     data = response.json()
-    organizations = data["data"]
+    teams = data["data"]
     count = data["count"]
-    assert len(organizations) == 1
+    assert len(teams) == 1
     assert count == 1
-    assert organizations[0]["id"] == org3.id
+    assert teams[0]["id"] == org3.id
 
 
-def test_read_organization(client: TestClient, db: Session) -> None:
-    organization = create_random_organization(db)
+def test_read_team(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
     user = create_user(session=db, email="org2@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org2@fastapi.com", password="test123"
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/organizations/{organization.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}",
         headers=user_auth_headers,
     )
 
@@ -93,7 +91,7 @@ def test_read_organization(client: TestClient, db: Session) -> None:
         assert "full_name" in item["user"]
 
 
-def test_read_organization_not_found(client: TestClient) -> None:
+def test_read_team_not_found(client: TestClient) -> None:
     user_auth_headers = user_authentication_headers(
         client=client,
         email=settings.FIRST_SUPERUSER,
@@ -101,114 +99,106 @@ def test_read_organization_not_found(client: TestClient) -> None:
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/organizations/99999",
+        f"{settings.API_V1_STR}/teams/99999",
         headers=user_auth_headers,
     )
 
     assert response.status_code == 404
     data = response.json()
-    assert data["detail"] == "Organization not found for the current user"
+    assert data["detail"] == "Team not found for the current user"
 
 
-def test_create_organization(client: TestClient) -> None:
+def test_create_team(client: TestClient) -> None:
     user_auth_headers = user_authentication_headers(
         client=client,
         email=settings.FIRST_SUPERUSER,
         password=settings.FIRST_SUPERUSER_PASSWORD,
     )
 
-    organization_in = {"name": "test", "description": "test description"}
+    team_in = {"name": "test", "description": "test description"}
     response = client.post(
-        f"{settings.API_V1_STR}/organizations/",
+        f"{settings.API_V1_STR}/teams/",
         headers=user_auth_headers,
-        json=organization_in,
+        json=team_in,
     )
 
     assert response.status_code == 200
     data = response.json()
     assert data["id"]
-    assert data["name"] == organization_in["name"]
-    assert data["description"] == organization_in["description"]
+    assert data["name"] == team_in["name"]
+    assert data["description"] == team_in["description"]
 
 
-def test_update_organization(client: TestClient, db: Session) -> None:
-    organization = create_random_organization(db)
+def test_update_team(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
     user = create_user(session=db, email="org3@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org3@fastapi.com", password="test123"
     )
 
-    organization_in = {
+    team_in = {
         "name": "test updated",
         "description": "test description updated",
     }
     response = client.put(
-        f"{settings.API_V1_STR}/organizations/{organization.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}",
         headers=user_auth_headers,
-        json=organization_in,
+        json=team_in,
     )
 
     assert response.status_code == 200
     data = response.json()
-    db.refresh(organization)
-    assert data["id"] == organization.id
-    assert data["name"] == organization_in["name"]
-    assert data["description"] == organization_in["description"]
-    assert organization.name == organization_in["name"]
-    assert organization.description == organization_in["description"]
+    db.refresh(team)
+    assert data["id"] == team.id
+    assert data["name"] == team_in["name"]
+    assert data["description"] == team_in["description"]
+    assert team.name == team_in["name"]
+    assert team.description == team_in["description"]
 
 
-def test_update_organization_not_found(client: TestClient) -> None:
+def test_update_team_not_found(client: TestClient) -> None:
     user_auth_headers = user_authentication_headers(
         client=client,
         email=settings.FIRST_SUPERUSER,
         password=settings.FIRST_SUPERUSER_PASSWORD,
     )
 
-    organization_in = {
+    team_in = {
         "name": "test updated",
         "description": "test description updated",
     }
     response = client.put(
-        f"{settings.API_V1_STR}/organizations/99999",
+        f"{settings.API_V1_STR}/teams/99999",
         headers=user_auth_headers,
-        json=organization_in,
+        json=team_in,
     )
 
     assert response.status_code == 404
     data = response.json()
-    assert data["detail"] == "Organization not found for the current user"
+    assert data["detail"] == "Team not found for the current user"
 
 
-def test_update_organization_not_enough_permissions(
-    client: TestClient, db: Session
-) -> None:
-    organization = create_random_organization(db)
+def test_update_team_not_enough_permissions(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
     user = create_user(session=db, email="org4@fastapi.com", password="test123")
     user_member = create_user(session=db, email="org5@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
-    add_user_to_organization(
-        session=db, user=user_member, organization=organization, role=Role.member
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+    add_user_to_team(session=db, user=user_member, team=team, role=Role.member)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org5@fastapi.com", password="test123"
     )
 
-    organization_in = {
+    team_in = {
         "name": "test updated",
         "description": "test description updated",
     }
     response = client.put(
-        f"{settings.API_V1_STR}/organizations/{organization.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}",
         headers=user_auth_headers,
-        json=organization_in,
+        json=team_in,
     )
 
     assert response.status_code == 400
@@ -216,28 +206,26 @@ def test_update_organization_not_enough_permissions(
     assert data["detail"] == "Not enough permissions to execute this action"
 
 
-def test_delete_organization(client: TestClient, db: Session) -> None:
-    organization = create_random_organization(db)
+def test_delete_team(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
     user = create_user(session=db, email="org6@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org6@fastapi.com", password="test123"
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/organizations/{organization.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}",
         headers=user_auth_headers,
     )
 
     assert response.status_code == 200
     data = response.json()
-    assert data["message"] == "Organization deleted"
+    assert data["message"] == "Team deleted"
 
 
-def test_delete_organization_not_found(client: TestClient) -> None:
+def test_delete_team_not_found(client: TestClient) -> None:
     user_auth_headers = user_authentication_headers(
         client=client,
         email=settings.FIRST_SUPERUSER,
@@ -245,34 +233,28 @@ def test_delete_organization_not_found(client: TestClient) -> None:
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/organizations/99999",
+        f"{settings.API_V1_STR}/teams/99999",
         headers=user_auth_headers,
     )
 
     assert response.status_code == 404
     data = response.json()
-    assert data["detail"] == "Organization not found for the current user"
+    assert data["detail"] == "Team not found for the current user"
 
 
-def test_delete_organization_not_enough_permissions(
-    client: TestClient, db: Session
-) -> None:
-    organization = create_random_organization(db)
+def test_delete_team_not_enough_permissions(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
     user = create_user(session=db, email="org7@fastapi.com", password="test123")
     user_member = create_user(session=db, email="org8@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
-    add_user_to_organization(
-        session=db, user=user_member, organization=organization, role=Role.member
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+    add_user_to_team(session=db, user=user_member, team=team, role=Role.member)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org8@fastapi.com", password="test123"
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/organizations/{organization.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}",
         headers=user_auth_headers,
     )
 
@@ -281,12 +263,10 @@ def test_delete_organization_not_enough_permissions(
     assert data["detail"] == "Not enough permissions to execute this action"
 
 
-def test_add_member_to_organization(client: TestClient, db: Session) -> None:
-    organization = create_random_organization(db)
+def test_add_member_to_team(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
     user = create_user(session=db, email="org9@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org9@fastapi.com", password="test123"
@@ -295,7 +275,7 @@ def test_add_member_to_organization(client: TestClient, db: Session) -> None:
     user_member = create_user(session=db, email="org10@fastapi.com", password="test123")
 
     response = client.post(
-        f"{settings.API_V1_STR}/organizations/{organization.id}/users",
+        f"{settings.API_V1_STR}/teams/{team.id}/users",
         headers=user_auth_headers,
         json={"user_id": user_member.id, "role": "member"},
     )
@@ -304,29 +284,25 @@ def test_add_member_to_organization(client: TestClient, db: Session) -> None:
     data = response.json()
     assert data["user"]["id"] == user_member.id
     assert data["role"] == "member"
-    assert data["organization"]["id"] == organization.id
+    assert data["team"]["id"] == team.id
 
 
-def test_add_member_to_organization_not_enough_permissions(
+def test_add_member_to_team_not_enough_permissions(
     client: TestClient, db: Session
 ) -> None:
-    organization = create_random_organization(db)
+    team = create_random_team(db)
     user = create_user(session=db, email="org11@fastapi.com", password="test123")
     user_member = create_user(session=db, email="org12@fastapi.com", password="test123")
     user_to_add = create_user(session=db, email="org13@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
-    add_user_to_organization(
-        session=db, user=user_member, organization=organization, role=Role.member
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+    add_user_to_team(session=db, user=user_member, team=team, role=Role.member)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org12@fastapi.com", password="test123"
     )
 
     response = client.post(
-        f"{settings.API_V1_STR}/organizations/{organization.id}/users",
+        f"{settings.API_V1_STR}/teams/{team.id}/users",
         headers=user_auth_headers,
         json={"user_id": user_to_add.id, "role": "member"},
     )
@@ -336,21 +312,17 @@ def test_add_member_to_organization_not_enough_permissions(
     assert data["detail"] == "Not enough permissions to execute this action"
 
 
-def test_add_member_to_organization_user_not_found(
-    client: TestClient, db: Session
-) -> None:
-    organization = create_random_organization(db)
+def test_add_member_to_team_user_not_found(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
     user = create_user(session=db, email="org14@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org14@fastapi.com", password="test123"
     )
 
     response = client.post(
-        f"{settings.API_V1_STR}/organizations/{organization.id}/users",
+        f"{settings.API_V1_STR}/teams/{team.id}/users",
         headers=user_auth_headers,
         json={"user_id": 99999, "role": "member"},
     )
@@ -360,62 +332,56 @@ def test_add_member_to_organization_user_not_found(
     assert data["detail"] == "User not found"
 
 
-def test_add_member_to_organization_organization_not_found(
-    client: TestClient, db: Session
-) -> None:
+def test_add_member_to_team_team_not_found(client: TestClient, db: Session) -> None:
     user = create_user(session=db, email="org15@fastapi.com", password="test123")
     user_auth_headers = user_authentication_headers(
         client=client, email="org15@fastapi.com", password="test123"
     )
 
     response = client.post(
-        f"{settings.API_V1_STR}/organizations/999/users",
+        f"{settings.API_V1_STR}/teams/999/users",
         headers=user_auth_headers,
         json={"user_id": user.id, "role": "member"},
     )
 
     assert response.status_code == 404
     data = response.json()
-    assert data["detail"] == "Organization not found for the current user"
+    assert data["detail"] == "Team not found for the current user"
 
 
-def test_add_member_to_organization_user_already_in_organization(
+def test_add_member_to_team_user_already_in_team(
     client: TestClient, db: Session
 ) -> None:
-    organization = create_random_organization(db)
+    team = create_random_team(db)
     user = create_user(session=db, email="org16@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org16@fastapi.com", password="test123"
     )
 
     response = client.post(
-        f"{settings.API_V1_STR}/organizations/{organization.id}/users",
+        f"{settings.API_V1_STR}/teams/{team.id}/users",
         headers=user_auth_headers,
         json={"user_id": user.id, "role": "member"},
     )
 
     assert response.status_code == 400
     data = response.json()
-    assert data["detail"] == "User already in organization"
+    assert data["detail"] == "User already in team"
 
 
-def test_update_member_in_organization(client: TestClient, db: Session) -> None:
-    organization = create_random_organization(db)
+def test_update_member_in_team(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
     user = create_user(session=db, email="org17@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org17@fastapi.com", password="test123"
     )
 
     response = client.put(
-        f"{settings.API_V1_STR}/organizations/{organization.id}/users/{user.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user.id}",
         headers=user_auth_headers,
         json={"role": "member"},
     )
@@ -423,26 +389,24 @@ def test_update_member_in_organization(client: TestClient, db: Session) -> None:
     assert response.status_code == 200
     data = response.json()
     assert data["role"] == "member"
-    assert data["organization"]["id"] == organization.id
+    assert data["team"]["id"] == team.id
     assert data["user"]["id"] == user.id
 
 
-def test_update_member_in_organization_not_enough_permissions(
+def test_update_member_in_team_not_enough_permissions(
     client: TestClient, db: Session
 ) -> None:
-    organization = create_random_organization(db)
+    team = create_random_team(db)
     user = create_user(session=db, email="org18@fastapi.com", password="test123")
     user_member = create_user(session=db, email="org19@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user_member, organization=organization, role=Role.member
-    )
+    add_user_to_team(session=db, user=user_member, team=team, role=Role.member)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org19@fastapi.com", password="test123"
     )
 
     response = client.put(
-        f"{settings.API_V1_STR}/organizations/{organization.id}/users/{user.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user.id}",
         headers=user_auth_headers,
         json={"role": "admin"},
     )
@@ -452,96 +416,84 @@ def test_update_member_in_organization_not_enough_permissions(
     assert data["detail"] == "Not enough permissions to execute this action"
 
 
-def test_update_member_in_organization_user_not_in_organization(
+def test_update_member_in_team_user_not_in_team(
     client: TestClient, db: Session
 ) -> None:
-    organization = create_random_organization(db)
+    team = create_random_team(db)
     user = create_user(session=db, email="org20@fastapi.com", password="test123")
     user_to_update = create_user(
         session=db, email="org21@fastapi.com", password="test123"
     )
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org20@fastapi.com", password="test123"
     )
 
     response = client.put(
-        f"{settings.API_V1_STR}/organizations/{organization.id}/users/{user_to_update.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user_to_update.id}",
         headers=user_auth_headers,
         json={"role": "admin"},
     )
 
     assert response.status_code == 404
     data = response.json()
-    assert data["detail"] == "User not in organization"
+    assert data["detail"] == "User not in team"
 
 
-def test_update_member_in_organization_not_found(
-    client: TestClient, db: Session
-) -> None:
+def test_update_member_in_team_not_found(client: TestClient, db: Session) -> None:
     user = create_user(session=db, email="org22@fastapi.com", password="test123")
     user_auth_headers = user_authentication_headers(
         client=client, email="org22@fastapi.com", password="test123"
     )
 
     response = client.put(
-        f"{settings.API_V1_STR}/organizations/999/users/{user.id}",
+        f"{settings.API_V1_STR}/teams/999/users/{user.id}",
         headers=user_auth_headers,
         json={"role": "admin"},
     )
 
     assert response.status_code == 404
     data = response.json()
-    assert data["detail"] == "Organization not found for the current user"
+    assert data["detail"] == "Team not found for the current user"
 
 
-def test_remove_member_from_organization(client: TestClient, db: Session) -> None:
-    organization = create_random_organization(db)
+def test_remove_member_from_team(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
     user = create_user(session=db, email="org23@fastapi.com", password="test123")
     user_member = create_user(session=db, email="org24@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
-    add_user_to_organization(
-        session=db, user=user_member, organization=organization, role=Role.member
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+    add_user_to_team(session=db, user=user_member, team=team, role=Role.member)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org23@fastapi.com", password="test123"
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/organizations/{organization.id}/users/{user_member.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user_member.id}",
         headers=user_auth_headers,
     )
 
     assert response.status_code == 200
     data = response.json()
-    assert data["message"] == "User removed from organization"
+    assert data["message"] == "User removed from team"
 
 
-def test_remove_member_from_organization_not_enough_permissions(
+def test_remove_member_from_team_not_enough_permissions(
     client: TestClient, db: Session
 ) -> None:
-    organization = create_random_organization(db)
+    team = create_random_team(db)
     user = create_user(session=db, email="org25@fastapi.com", password="test123")
     user_member = create_user(session=db, email="org26@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
-    add_user_to_organization(
-        session=db, user=user_member, organization=organization, role=Role.member
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+    add_user_to_team(session=db, user=user_member, team=team, role=Role.member)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org26@fastapi.com", password="test123"
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/organizations/{organization.id}/users/{user.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user.id}",
         headers=user_auth_headers,
     )
 
@@ -550,65 +502,57 @@ def test_remove_member_from_organization_not_enough_permissions(
     assert data["detail"] == "Not enough permissions to execute this action"
 
 
-def test_remove_member_from_organization_not_found(
-    client: TestClient, db: Session
-) -> None:
+def test_remove_member_from_team_not_found(client: TestClient, db: Session) -> None:
     create_user(session=db, email="org27@fastapi.com", password="test123")
     user_auth_headers = user_authentication_headers(
         client=client, email="org27@fastapi.com", password="test123"
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/organizations/999/users/9999",
+        f"{settings.API_V1_STR}/teams/999/users/9999",
         headers=user_auth_headers,
     )
 
     assert response.status_code == 404
     data = response.json()
-    assert data["detail"] == "Organization not found for the current user"
+    assert data["detail"] == "Team not found for the current user"
 
 
-def test_remove_member_from_organization_user_not_found(
+def test_remove_member_from_team_user_not_found(
     client: TestClient, db: Session
 ) -> None:
-    organization = create_random_organization(db)
+    team = create_random_team(db)
     user = create_user(session=db, email="org28@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org28@fastapi.com", password="test123"
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/organizations/{organization.id}/users/9999",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/9999",
         headers=user_auth_headers,
     )
 
     assert response.status_code == 404
     data = response.json()
-    assert data["detail"] == "User not found in organization"
+    assert data["detail"] == "User not found in team"
 
 
-def test_remove_from_organization_not_allow_yourself(
-    client: TestClient, db: Session
-) -> None:
-    organization = create_random_organization(db)
+def test_remove_from_team_not_allow_yourself(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
     user = create_user(session=db, email="org29@fastapi.com", password="test123")
-    add_user_to_organization(
-        session=db, user=user, organization=organization, role=Role.admin
-    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
         client=client, email="org29@fastapi.com", password="test123"
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/organizations/{organization.id}/users/{user.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user.id}",
         headers=user_auth_headers,
     )
 
     assert response.status_code == 400
     data = response.json()
-    assert data["detail"] == "You cannot remove yourself from the organization"
+    assert data["detail"] == "You cannot remove yourself from the team"

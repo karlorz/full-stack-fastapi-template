@@ -6,11 +6,11 @@ from app.core.security import get_password_hash, verify_password
 from app.models import (
     Item,
     ItemCreate,
-    Organization,
     Role,
+    Team,
     User,
     UserCreate,
-    UserOrganizationLink,
+    UserTeamLink,
     UserUpdate,
 )
 
@@ -62,16 +62,14 @@ def create_item(*, session: Session, item_in: ItemCreate, owner_id: int) -> Item
     return db_item
 
 
-def add_user_to_organization(
+def add_user_to_team(
     *,
     session: Session,
     user: User,
-    organization: Organization,
+    team: Team,
     role: Role,
-) -> UserOrganizationLink:
-    user_org_link = UserOrganizationLink(
-        user=user, organization=organization, role=role
-    )
+) -> UserTeamLink:
+    user_org_link = UserTeamLink(user=user, team=team, role=role)
     session.add(user_org_link)
     session.commit()
     session.refresh(user_org_link)

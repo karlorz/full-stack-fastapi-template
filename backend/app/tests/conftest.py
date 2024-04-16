@@ -7,7 +7,7 @@ from sqlmodel import Session, delete
 from app.core.config import settings
 from app.core.db import engine, init_db
 from app.main import app
-from app.models import Item, Organization, User, UserOrganizationLink
+from app.models import Item, Team, User, UserTeamLink
 from app.tests.utils.user import authentication_token_from_email
 from app.tests.utils.utils import get_superuser_token_headers
 
@@ -19,9 +19,9 @@ def db() -> Generator[Session, None, None]:
         yield session
         statement = delete(Item)
         session.exec(statement)  # type: ignore
-        statement = delete(UserOrganizationLink)
+        statement = delete(UserTeamLink)
         session.exec(statement)  # type: ignore
-        statement = delete(Organization)
+        statement = delete(Team)
         session.exec(statement)  # type: ignore
         statement = delete(User)
         session.exec(statement)  # type: ignore
