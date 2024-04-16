@@ -17,8 +17,10 @@ import {
 import { createFileRoute } from "@tanstack/react-router"
 import { FaEnvelope } from "react-icons/fa"
 
-export const Route = createFileRoute("/_layout/organization/invitations")({
-  component: NewOrg,
+export const Route = createFileRoute(
+  "/_layout/organization/$orgId/invitations",
+)({
+  component: Invitations,
 })
 
 const users = [
@@ -44,7 +46,7 @@ const users = [
   },
 ]
 
-function NewOrg() {
+function Invitations() {
   return (
     <>
       <Container maxW="full" p={12}>

@@ -77,16 +77,16 @@ const UserMenu = () => {
               </Suspense>
             </MenuItem>
             {organizations?.data.slice(0, 3).map((org) => (
-              <MenuItem key={org.id} gap={2} py={2}>
+              <MenuItem as={Link} key={org.id} gap={2} py={2}>
                 <Icon as={FaUsers} />
                 {org.name}
               </MenuItem>
             ))}
-            <MenuItem as={Link} to="/organizations/all" gap={2} py={2}>
+            <MenuItem as={Link} to="/organization/all" gap={2} py={2}>
               <Icon as={FaList} />
               View all organizations
             </MenuItem>
-            <MenuItem as={Link} to="/organizations/new" gap={2} py={2}>
+            <MenuItem as={Link} to="/organization/new" gap={2} py={2}>
               <Icon as={FaPlus} />
               Create a new organization
             </MenuItem>

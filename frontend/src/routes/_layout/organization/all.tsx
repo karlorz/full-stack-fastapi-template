@@ -18,7 +18,7 @@ import { OrganizationsService } from "../../../client"
 import ActionsMenu from "../../../components/Common/ActionsMenu"
 import useCustomToast from "../../../hooks/useCustomToast"
 
-export const Route = createFileRoute("/_layout/organizations/all")({
+export const Route = createFileRoute("/_layout/organization/all")({
   component: All,
 })
 

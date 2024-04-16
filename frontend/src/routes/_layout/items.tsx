@@ -16,7 +16,6 @@ import { createFileRoute } from "@tanstack/react-router"
 
 import { ItemsService } from "../../client"
 import ActionsMenu from "../../components/Common/ActionsMenu"
-import TableActionsButtons from "../../components/Common/TableActionsButtons"
 import useCustomToast from "../../hooks/useCustomToast"
 
 export const Route = createFileRoute("/_layout/items")({
@@ -49,7 +48,7 @@ function Items() {
         </Flex>
       ) : (
         items && (
-          <Container maxW="large" px={12} py={2}>
+          <Container maxW="large" p={12}>
             <Flex
               flexDir={{ base: "column", md: "row" }}
               justify="space-between"
@@ -58,7 +57,6 @@ function Items() {
               <Heading size="md" textAlign={{ base: "center", md: "left" }}>
                 Items Management
               </Heading>
-              <TableActionsButtons type={"Item"} />
             </Flex>
             <TableContainer>
               <Table size={{ base: "sm", md: "md" }}>

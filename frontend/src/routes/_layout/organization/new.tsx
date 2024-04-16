@@ -20,7 +20,7 @@ import {
 import Plans from "../../../components/Billing/Plans"
 import useCustomToast from "../../../hooks/useCustomToast"
 
-export const Route = createFileRoute("/_layout/organizations/new")({
+export const Route = createFileRoute("/_layout/organization/new")({
   component: NewOrg,
 })
 
@@ -44,7 +44,7 @@ function NewOrg() {
     onSuccess: () => {
       showToast("Success!", "Organization created successfully.", "success")
       reset()
-      navigate({ to: "/organizations/all" })
+      navigate({ to: "/organization/all" })
     },
     onError: (err: ApiError) => {
       const errDetail = (err.body as any)?.detail

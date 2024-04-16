@@ -12,7 +12,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-import { FaHamburger, FaSignOutAlt } from "react-icons/fa"
+import { FaBars, FaSignOutAlt } from "react-icons/fa"
 
 import Logo from "../../assets/images/fastapi-logo.svg"
 import useAuth from "../../hooks/useAuth"
@@ -30,7 +30,7 @@ const Sidebar = () => {
     <>
       {/* Mobile */}
       <IconButton
-        icon={<FaHamburger />}
+        icon={<FaBars />}
         onClick={onOpen}
         display={{ base: "flex", md: "none" }}
         aria-label="Open Menu"

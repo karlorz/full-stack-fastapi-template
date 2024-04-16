@@ -11,17 +11,24 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import React from "react"
 import { useForm } from "react-hook-form"
 
-import { ItemsService, UsersService } from "../../client"
+import { OrganizationsService, type Role, type UserPublic } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
-interface DeleteProps {
-  type: string
-  id: number
+interface ChangeRoleProps {
+  userRole?: string
+  orgId?: string
+  user: UserPublic
   isOpen: boolean
   onClose: () => void
 }
 
-const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
+const ChangeRole = ({
+  userRole,
+  orgId,
+  user,
+  isOpen,
+  onClose,
+}: ChangeRoleProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const cancelRef = React.useRef<HTMLButtonElement | null>(null)
@@ -30,42 +37,32 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
     formState: { isSubmitting },
   } = useForm()
 
-  const deleteEntity = async (id: number) => {
-    if (type === "Item") {
-      await ItemsService.deleteItem({ id: id })
-    } else if (type === "User") {
-      await UsersService.deleteUser({ userId: id })
-    } else {
-      throw new Error(`Unexpected type: ${type}`)
-    }
-  }
-
   const mutation = useMutation({
-    mutationFn: deleteEntity,
+    mutationFn: (data: { newRole: Role }) =>
+      OrganizationsService.updateMemberInOrganization({
+        orgId: Number(orgId),
+        requestBody: { role: data.newRole },
+        userId: user.id,
+      }),
     onSuccess: () => {
-      showToast(
-        "Success",
-        `The ${type.toLowerCase()} was deleted successfully.`,
-        "success",
-      )
+      showToast("Success", "The role was updated successfully.", "success")
       onClose()
     },
     onError: () => {
       showToast(
         "An error occurred.",
-        `An error occurred while deleting the ${type.toLowerCase()}.`,
+        "An error occurred while updating the role.",
         "error",
       )
     },
     onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: [type === "Item" ? "items" : "users"],
-      })
+      queryClient.invalidateQueries()
     },
   })
 
   const onSubmit = async () => {
-    mutation.mutate(id)
+    const newRole = userRole === "admin" ? "member" : "admin"
+    mutation.mutate({ newRole })
   }
 
   return (
@@ -79,16 +76,20 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
       >
         <AlertDialogOverlay>
           <AlertDialogContent as="form" onSubmit={handleSubmit(onSubmit)}>
-            <AlertDialogHeader>Delete {type}</AlertDialogHeader>
+            <AlertDialogHeader>Change Role</AlertDialogHeader>
 
             <AlertDialogBody>
-              {type === "User" && (
-                <span>
-                  All items associated with this user will also be{" "}
-                  <strong>permantly deleted. </strong>
-                </span>
+              {userRole === "member" ? (
+                <>
+                  Are you sure you want to promote the user to{" "}
+                  <strong>Admin</strong>?
+                </>
+              ) : (
+                <>
+                  Are you sure you want to demote the user to{" "}
+                  <strong>Member</strong>?
+                </>
               )}
-              Are you sure? You will not be able to undo this action.
             </AlertDialogBody>
 
             <AlertDialogFooter gap={3}>
@@ -100,7 +101,7 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
                 Cancel
               </Button>
               <Button variant="danger" type="submit" isLoading={isSubmitting}>
-                Delete
+                Confirm
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -110,4 +111,4 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
   )
 }
 
-export default Delete
+export default ChangeRole

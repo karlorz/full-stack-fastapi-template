@@ -23,10 +23,10 @@ import { Route as LayoutProjectsImport } from './routes/_layout/projects'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutHelpImport } from './routes/_layout/help'
 import { Route as LayoutBillingImport } from './routes/_layout/billing'
-import { Route as LayoutAdminImport } from './routes/_layout/admin'
-import { Route as LayoutOrganizationsNewImport } from './routes/_layout/organizations/new'
-import { Route as LayoutOrganizationsAllImport } from './routes/_layout/organizations/all'
-import { Route as LayoutOrganizationInvitationsImport } from './routes/_layout/organization/invitations'
+import { Route as LayoutOrganizationNewImport } from './routes/_layout/organization/new'
+import { Route as LayoutOrganizationAllImport } from './routes/_layout/organization/all'
+import { Route as LayoutOrganizationOrgIdIndexImport } from './routes/_layout/organization/$orgId/index'
+import { Route as LayoutOrganizationOrgIdInvitationsImport } from './routes/_layout/organization/$orgId/invitations'
 
 // Create/Update Routes
 
@@ -90,24 +90,25 @@ const LayoutBillingRoute = LayoutBillingImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutAdminRoute = LayoutAdminImport.update({
-  path: '/admin',
+const LayoutOrganizationNewRoute = LayoutOrganizationNewImport.update({
+  path: '/organization/new',
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutOrganizationsNewRoute = LayoutOrganizationsNewImport.update({
-  path: '/organizations/new',
+const LayoutOrganizationAllRoute = LayoutOrganizationAllImport.update({
+  path: '/organization/all',
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutOrganizationsAllRoute = LayoutOrganizationsAllImport.update({
-  path: '/organizations/all',
-  getParentRoute: () => LayoutRoute,
-} as any)
+const LayoutOrganizationOrgIdIndexRoute =
+  LayoutOrganizationOrgIdIndexImport.update({
+    path: '/organization/$orgId/',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 
-const LayoutOrganizationInvitationsRoute =
-  LayoutOrganizationInvitationsImport.update({
-    path: '/organization/invitations',
+const LayoutOrganizationOrgIdInvitationsRoute =
+  LayoutOrganizationOrgIdInvitationsImport.update({
+    path: '/organization/$orgId/invitations',
     getParentRoute: () => LayoutRoute,
   } as any)
 
@@ -134,10 +135,6 @@ declare module '@tanstack/react-router' {
     '/signup': {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
-    }
-    '/_layout/admin': {
-      preLoaderRoute: typeof LayoutAdminImport
-      parentRoute: typeof LayoutImport
     }
     '/_layout/billing': {
       preLoaderRoute: typeof LayoutBillingImport
@@ -167,16 +164,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/organization/invitations': {
-      preLoaderRoute: typeof LayoutOrganizationInvitationsImport
+    '/_layout/organization/all': {
+      preLoaderRoute: typeof LayoutOrganizationAllImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/organizations/all': {
-      preLoaderRoute: typeof LayoutOrganizationsAllImport
+    '/_layout/organization/new': {
+      preLoaderRoute: typeof LayoutOrganizationNewImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/organizations/new': {
-      preLoaderRoute: typeof LayoutOrganizationsNewImport
+    '/_layout/organization/$orgId/invitations': {
+      preLoaderRoute: typeof LayoutOrganizationOrgIdInvitationsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/organization/$orgId/': {
+      preLoaderRoute: typeof LayoutOrganizationOrgIdIndexImport
       parentRoute: typeof LayoutImport
     }
   }
@@ -186,7 +187,6 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   LayoutRoute.addChildren([
-    LayoutAdminRoute,
     LayoutBillingRoute,
     LayoutHelpRoute,
     LayoutItemsRoute,
@@ -194,9 +194,10 @@ export const routeTree = rootRoute.addChildren([
     LayoutResourcesRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
-    LayoutOrganizationInvitationsRoute,
-    LayoutOrganizationsAllRoute,
-    LayoutOrganizationsNewRoute,
+    LayoutOrganizationAllRoute,
+    LayoutOrganizationNewRoute,
+    LayoutOrganizationOrgIdInvitationsRoute,
+    LayoutOrganizationOrgIdIndexRoute,
   ]),
   LoginRoute,
   RecoverPasswordRoute,

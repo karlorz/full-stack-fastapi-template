@@ -7,20 +7,29 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 import { BsThreeDotsVertical } from "react-icons/bs"
-import { FaEdit, FaTrash } from "react-icons/fa"
+import { FaExchangeAlt, FaTrash } from "react-icons/fa"
 
 import type { ItemPublic, OrganizationPublic, UserPublic } from "../../client"
-import EditUser from "../Admin/EditUser"
 import EditItem from "../Items/EditItem"
-import Delete from "./DeleteAlert"
+import ChangeRole from "../Organization/ChangeRole"
+import Remove from "./RemoveAlert"
 
 interface ActionsMenuProps {
+  userRole?: string
+  orgId?: string
   type: string
   value: ItemPublic | UserPublic | OrganizationPublic
   disabled?: boolean
 }
 
-const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
+const ActionsMenu = ({
+  userRole,
+  orgId,
+  type,
+  value,
+  disabled,
+}: ActionsMenuProps) => {
+  const changeRoleModal = useDisclosure()
   const editUserModal = useDisclosure()
   const deleteModal = useDisclosure()
 
@@ -35,24 +44,26 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
         />
         <MenuList>
           <MenuItem
-            onClick={editUserModal.onOpen}
-            icon={<FaEdit fontSize="16px" />}
+            onClick={changeRoleModal.onOpen}
+            icon={<FaExchangeAlt fontSize="16px" />}
           >
-            Edit {type}
+            Change Role
           </MenuItem>
           <MenuItem
             onClick={deleteModal.onOpen}
             icon={<FaTrash fontSize="16px" />}
             color="ui.danger"
           >
-            Delete {type}
+            Remove {type}
           </MenuItem>
         </MenuList>
         {type === "User" ? (
-          <EditUser
+          <ChangeRole
+            userRole={userRole}
+            orgId={orgId}
             user={value as UserPublic}
-            isOpen={editUserModal.isOpen}
-            onClose={editUserModal.onClose}
+            isOpen={changeRoleModal.isOpen}
+            onClose={changeRoleModal.onClose}
           />
         ) : (
           <EditItem
@@ -61,7 +72,8 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
             onClose={editUserModal.onClose}
           />
         )}
-        <Delete
+        <Remove
+          orgId={orgId}
           type={type}
           id={value.id}
           isOpen={deleteModal.isOpen}
