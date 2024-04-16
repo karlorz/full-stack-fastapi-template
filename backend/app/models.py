@@ -1,11 +1,21 @@
+from datetime import datetime
 from enum import Enum
 
 from sqlmodel import Field, Relationship, SQLModel
+
+from app.utils import get_datetime_utc
 
 
 class Role(str, Enum):
     member = "member"
     admin = "admin"
+
+
+class InvitationStatus(str, Enum):
+    pending = "pending"
+    accepted = "accepted"
+    declined = "declined"
+    expired = "expired"
 
 
 class UserOrganizationLink(SQLModel, table=True):
@@ -62,8 +72,17 @@ class UpdatePassword(SQLModel):
 class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str
+
     items: list["Item"] = Relationship(back_populates="owner")
     organization_links: list[UserOrganizationLink] = Relationship(back_populates="user")
+    invitations: list["Invitation"] = Relationship(
+        back_populates="receiver",
+        sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_user_id]"},
+    )
+    invitations_sent: list["Invitation"] = Relationship(
+        back_populates="sender",
+        sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_by_id]"},
+    )
 
 
 # Properties to return via API, id is always required
@@ -150,7 +169,9 @@ class OrganizationBase(SQLModel):
 
 class Organization(OrganizationBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
+
     user_links: list[UserOrganizationLink] = Relationship(back_populates="organization")
+    invitations: list["Invitation"] = Relationship(back_populates="organization")
 
 
 class OrganizationCreate(OrganizationBase):
@@ -188,3 +209,43 @@ class UserOrganizationLinkPublic(SQLModel):
     user: UserPublic
     organization: OrganizationPublic
     role: Role
+
+
+class InvitationBase(SQLModel):
+    role: Role
+    email: str | None = None
+
+
+class InvitationCreate(InvitationBase):
+    organization_id: int
+    invited_user_id: int | None = None
+
+
+class InvitationPublic(InvitationBase):
+    id: int
+    organization_id: int
+    invited_by_id: int
+    invited_user_id: int | None = None
+    status: InvitationStatus
+    created_at: datetime
+    expires_at: datetime
+
+
+class Invitation(InvitationBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    organization_id: int = Field(foreign_key="organization.id")
+    invited_by_id: int = Field(foreign_key="user.id")
+    invited_user_id: int | None = Field(default=None, foreign_key="user.id")
+    status: InvitationStatus
+    created_at: datetime = Field(default_factory=get_datetime_utc)
+    expires_at: datetime
+
+    receiver: User = Relationship(
+        back_populates="invitations",
+        sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_user_id]"},
+    )
+    sender: User = Relationship(
+        back_populates="invitations_sent",
+        sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_by_id]"},
+    )
+    organization: Organization = Relationship(back_populates="invitations")
