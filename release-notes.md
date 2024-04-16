@@ -29,6 +29,7 @@
 
 ### Refactors
 
+* ✨ View, edit and remove users in organizations. PR [#28](https://github.com/fastapilabs/cloud/pull/28) by [@alejsdev](https://github.com/alejsdev).
 * 🚚 Rename organization resources to team. PR [#32](https://github.com/fastapilabs/cloud/pull/32) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add useCurrentUser hook with suspense. PR [#34](https://github.com/fastapilabs/cloud/pull/34) by [@patrick91](https://github.com/patrick91).
 * ♻️ Update organization test. PR [#30](https://github.com/fastapilabs/cloud/pull/30) by [@alejsdev](https://github.com/alejsdev).
