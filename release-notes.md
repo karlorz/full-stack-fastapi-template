@@ -2,6 +2,7 @@
 
 ## Latest Changes
 
+* 🔧 Ignore `src/routeTree.gen.ts` in biome. PR [#35](https://github.com/fastapilabs/cloud/pull/35) by [@patrick91](https://github.com/patrick91).
 * 🚸 Improve login form. PR [#26](https://github.com/fastapilabs/cloud/pull/26) by [@patrick91](https://github.com/patrick91).
 * ♻️ Upgrade. PR [#14](https://github.com/fastapilabs/cloud/pull/14) by [@alejsdev](https://github.com/alejsdev).
 * 🆙 Update React Query to TanStack Query. PR [#1153](https://github.com/tiangolo/full-stack-fastapi-template/pull/1153) by [@patrick91](https://github.com/patrick91).
