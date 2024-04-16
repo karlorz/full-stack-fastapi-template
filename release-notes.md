@@ -12,6 +12,7 @@
 
 ### Features
 
+* 🗃️ Add invitations table definition. PR [#25](https://github.com/fastapilabs/cloud/pull/25) by [@estebanx64](https://github.com/estebanx64).
 * ✨ View organizations. PR [#27](https://github.com/fastapilabs/cloud/pull/27) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Create an organization. PR [#20](https://github.com/fastapilabs/cloud/pull/20) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add organizations initial routes. PR [#16](https://github.com/fastapilabs/cloud/pull/16) by [@estebanx64](https://github.com/estebanx64).
