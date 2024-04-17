@@ -11,18 +11,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import React from "react"
 import { useForm } from "react-hook-form"
 
-import { OrganizationsService } from "../../client"
+import { type TDataRemoveMemberFromTeam, TeamsService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
 interface DeleteProps {
-  orgId?: string
+  teamId?: string
   type: string
   id: number
   isOpen: boolean
   onClose: () => void
 }
 
-const Remove = ({ orgId, type, id, isOpen, onClose }: DeleteProps) => {
+const Remove = ({ teamId, type, id, isOpen, onClose }: DeleteProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const cancelRef = React.useRef<HTMLButtonElement | null>(null)
@@ -32,12 +32,9 @@ const Remove = ({ orgId, type, id, isOpen, onClose }: DeleteProps) => {
   } = useForm()
 
   const mutation = useMutation({
-    mutationFn: async ({
-      orgId,
-      userId,
-    }: { orgId: number; userId: number }): Promise<void> => {
-      await OrganizationsService.removeMemberFromOrganization({
-        orgId,
+    mutationFn: async ({ teamId, userId }: TDataRemoveMemberFromTeam) => {
+      await TeamsService.removeMemberFromTeam({
+        teamId,
         userId,
       })
     },
@@ -62,7 +59,7 @@ const Remove = ({ orgId, type, id, isOpen, onClose }: DeleteProps) => {
   })
 
   const onSubmit = async () => {
-    mutation.mutate({ orgId: Number(orgId), userId: id })
+    mutation.mutate({ teamId: Number(teamId), userId: id })
   }
 
   return (
@@ -80,13 +77,13 @@ const Remove = ({ orgId, type, id, isOpen, onClose }: DeleteProps) => {
 
             <AlertDialogBody>
               <span>
-                This user will no longer have access to this organization. All{" "}
+                This user will no longer have access to this team. All{" "}
                 <strong>
                   associated data and permissions will be revoked.
                 </strong>{" "}
               </span>
-              To restore access, you'll need to invite this user to the
-              organization again.
+              To restore access, you'll need to invite this user to the team
+              again.
             </AlertDialogBody>
 
             <AlertDialogFooter gap={3}>

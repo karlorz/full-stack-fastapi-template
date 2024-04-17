@@ -17,9 +17,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router"
 import { FaEnvelope } from "react-icons/fa"
 
-export const Route = createFileRoute(
-  "/_layout/organization/$orgId/invitations",
-)({
+export const Route = createFileRoute("/_layout/teams/$teamId/invitations")({
   component: Invitations,
 })
 
@@ -67,7 +65,7 @@ function Invitations() {
               New Invitation
             </Heading>
             <Box as="form">
-              <Text>Invite someone to join your organization.</Text>
+              <Text>Invite someone to join your team.</Text>
               <FormControl>
                 <Input
                   id="title"

@@ -9,22 +9,22 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { FaExchangeAlt, FaTrash } from "react-icons/fa"
 
-import type { ItemPublic, OrganizationPublic, UserPublic } from "../../client"
+import type { ItemPublic, TeamPublic, UserPublic } from "../../client"
 import EditItem from "../Items/EditItem"
-import ChangeRole from "../Organization/ChangeRole"
+import ChangeRole from "../Teams/ChangeRole"
 import Remove from "./RemoveAlert"
 
 interface ActionsMenuProps {
   userRole?: string
-  orgId?: string
+  teamId?: string
   type: string
-  value: ItemPublic | UserPublic | OrganizationPublic
+  value: ItemPublic | UserPublic | TeamPublic
   disabled?: boolean
 }
 
 const ActionsMenu = ({
   userRole,
-  orgId,
+  teamId,
   type,
   value,
   disabled,
@@ -60,7 +60,7 @@ const ActionsMenu = ({
         {type === "User" ? (
           <ChangeRole
             userRole={userRole}
-            orgId={orgId}
+            teamId={teamId}
             user={value as UserPublic}
             isOpen={changeRoleModal.isOpen}
             onClose={changeRoleModal.onClose}
@@ -73,7 +73,7 @@ const ActionsMenu = ({
           />
         )}
         <Remove
-          orgId={orgId}
+          teamId={teamId}
           type={type}
           id={value.id}
           isOpen={deleteModal.isOpen}

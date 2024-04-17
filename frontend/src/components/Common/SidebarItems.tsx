@@ -14,7 +14,7 @@ const items = [
   { icon: FaHome, title: "Dashboard", path: "/" },
   { icon: FaCubes, title: "Projects", path: "/projects" },
   { icon: FaTools, title: "Resources", path: "/items" },
-  { icon: FaUsers, title: "Organization", path: "/organization/1" },
+  { icon: FaUsers, title: "Team", path: "/teams/1" },
   { icon: FaCog, title: "Settings", path: "/settings" },
   { icon: FaCreditCard, title: "Billing", path: "/billing" },
   { icon: FaQuestionCircle, title: "Help", path: "/help" },

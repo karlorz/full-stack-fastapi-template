@@ -24,7 +24,7 @@ import {
   FaUsers,
 } from "react-icons/fa"
 
-import { OrganizationsService } from "../../client"
+import { TeamsService } from "../../client"
 import useAuth, { useCurrentUser } from "../../hooks/useAuth"
 
 const CurrentUser = () => {
@@ -34,9 +34,9 @@ const CurrentUser = () => {
 }
 
 const UserMenu = () => {
-  const { data: organizations } = useQuery({
-    queryKey: ["organizations"],
-    queryFn: () => OrganizationsService.readOrganizations({}),
+  const { data: teams } = useQuery({
+    queryKey: ["teams"],
+    queryFn: () => TeamsService.readTeams({}),
   })
   const { logout } = useAuth()
 
@@ -76,19 +76,19 @@ const UserMenu = () => {
                 <CurrentUser />
               </Suspense>
             </MenuItem>
-            {organizations?.data.slice(0, 3).map((org) => (
-              <MenuItem as={Link} key={org.id} gap={2} py={2}>
+            {teams?.data.slice(0, 3).map((team) => (
+              <MenuItem as={Link} key={team.id} gap={2} py={2}>
                 <Icon as={FaUsers} />
-                {org.name}
+                {team.name}
               </MenuItem>
             ))}
-            <MenuItem as={Link} to="/organization/all" gap={2} py={2}>
+            <MenuItem as={Link} to="/teams/all" gap={2} py={2}>
               <Icon as={FaList} />
-              View all organizations
+              View all teams
             </MenuItem>
-            <MenuItem as={Link} to="/organization/new" gap={2} py={2}>
+            <MenuItem as={Link} to="/teams/new" gap={2} py={2}>
               <Icon as={FaPlus} />
-              Create a new organization
+              Create a new team
             </MenuItem>
             <Divider />
             <MenuItem as={Link} to="/settings" gap={2}>

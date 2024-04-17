@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UsersPublic,UserUpdate,UserUpdateMe,ItemCreate,ItemPublic,ItemsPublic,ItemUpdate,OrganizationCreate,OrganizationCreateMember,OrganizationPublic,OrganizationsPublic,OrganizationUpdate,OrganizationUpdateMember,OrganizationWithUserPublic,UserOrganizationLinkPublic } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UsersPublic,UserUpdate,UserUpdateMe,ItemCreate,ItemPublic,ItemsPublic,ItemUpdate,TeamCreate,TeamCreateMember,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -523,61 +523,61 @@ id,
 
 }
 
-export type TDataReadOrganizations = {
+export type TDataReadTeams = {
                 limit?: number
 skip?: number
                 
             }
-export type TDataCreateOrganization = {
-                requestBody: OrganizationCreate
+export type TDataCreateTeam = {
+                requestBody: TeamCreate
                 
             }
-export type TDataReadOrganization = {
-                orgId: number
+export type TDataReadTeam = {
+                teamId: number
                 
             }
-export type TDataUpdateOrganization = {
-                orgId: number
-requestBody: OrganizationUpdate
+export type TDataUpdateTeam = {
+                requestBody: TeamUpdate
+teamId: number
                 
             }
-export type TDataDeleteOrganization = {
-                orgId: number
+export type TDataDeleteTeam = {
+                teamId: number
                 
             }
-export type TDataAddMemberToOrganization = {
-                orgId: number
-requestBody: OrganizationCreateMember
+export type TDataAddMemberToTeam = {
+                requestBody: TeamCreateMember
+teamId: number
                 
             }
-export type TDataUpdateMemberInOrganization = {
-                orgId: number
-requestBody: OrganizationUpdateMember
+export type TDataUpdateMemberInTeam = {
+                requestBody: TeamUpdateMember
+teamId: number
 userId: number
                 
             }
-export type TDataRemoveMemberFromOrganization = {
-                orgId: number
+export type TDataRemoveMemberFromTeam = {
+                teamId: number
 userId: number
                 
             }
 
-export class OrganizationsService {
+export class TeamsService {
 
 	/**
-	 * Read Organizations
-	 * Retrieve a list of organizations accessible to the current user.
-	 * @returns OrganizationsPublic Successful Response
+	 * Read Teams
+	 * Retrieve a list of teams accessible to the current user.
+	 * @returns TeamsPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readOrganizations(data: TDataReadOrganizations = {}): CancelablePromise<OrganizationsPublic> {
+	public static readTeams(data: TDataReadTeams = {}): CancelablePromise<TeamsPublic> {
 		const {
 limit = 100,
 skip = 0,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: '/api/v1/organizations/',
+			url: '/api/v1/teams/',
 			query: {
 				skip, limit
 			},
@@ -588,18 +588,18 @@ skip = 0,
 	}
 
 	/**
-	 * Create Organization
-	 * Create a new organization with the provided details.
-	 * @returns OrganizationPublic Successful Response
+	 * Create Team
+	 * Create a new team with the provided details.
+	 * @returns TeamPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static createOrganization(data: TDataCreateOrganization): CancelablePromise<OrganizationPublic> {
+	public static createTeam(data: TDataCreateTeam): CancelablePromise<TeamPublic> {
 		const {
 requestBody,
 } = data;
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: '/api/v1/organizations/',
+			url: '/api/v1/teams/',
 			body: requestBody,
 			mediaType: 'application/json',
 			errors: {
@@ -609,20 +609,20 @@ requestBody,
 	}
 
 	/**
-	 * Read Organization
-	 * Retrieve an organization by its ID and returns it along with its associated users.
-	 * @returns OrganizationWithUserPublic Successful Response
+	 * Read Team
+	 * Retrieve an team by its ID and returns it along with its associated users.
+	 * @returns TeamWithUserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readOrganization(data: TDataReadOrganization): CancelablePromise<OrganizationWithUserPublic> {
+	public static readTeam(data: TDataReadTeam): CancelablePromise<TeamWithUserPublic> {
 		const {
-orgId,
+teamId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: '/api/v1/organizations/{org_id}',
+			url: '/api/v1/teams/{team_id}',
 			path: {
-				org_id: orgId
+				team_id: teamId
 			},
 			errors: {
 				422: `Validation Error`,
@@ -631,21 +631,21 @@ orgId,
 	}
 
 	/**
-	 * Update Organization
-	 * Update an organization by its ID.
-	 * @returns OrganizationPublic Successful Response
+	 * Update Team
+	 * Update an team by its ID.
+	 * @returns TeamPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static updateOrganization(data: TDataUpdateOrganization): CancelablePromise<OrganizationPublic> {
+	public static updateTeam(data: TDataUpdateTeam): CancelablePromise<TeamPublic> {
 		const {
-orgId,
 requestBody,
+teamId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'PUT',
-			url: '/api/v1/organizations/{org_id}',
+			url: '/api/v1/teams/{team_id}',
 			path: {
-				org_id: orgId
+				team_id: teamId
 			},
 			body: requestBody,
 			mediaType: 'application/json',
@@ -656,20 +656,20 @@ requestBody,
 	}
 
 	/**
-	 * Delete Organization
-	 * Delete an organization from the database.
+	 * Delete Team
+	 * Delete an team from the database.
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static deleteOrganization(data: TDataDeleteOrganization): CancelablePromise<Message> {
+	public static deleteTeam(data: TDataDeleteTeam): CancelablePromise<Message> {
 		const {
-orgId,
+teamId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'DELETE',
-			url: '/api/v1/organizations/{org_id}',
+			url: '/api/v1/teams/{team_id}',
 			path: {
-				org_id: orgId
+				team_id: teamId
 			},
 			errors: {
 				422: `Validation Error`,
@@ -678,21 +678,21 @@ orgId,
 	}
 
 	/**
-	 * Add Member To Organization
-	 * Add a user to an organization.
-	 * @returns UserOrganizationLinkPublic Successful Response
+	 * Add Member To Team
+	 * Add a user to an team.
+	 * @returns UserTeamLinkPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static addMemberToOrganization(data: TDataAddMemberToOrganization): CancelablePromise<UserOrganizationLinkPublic> {
+	public static addMemberToTeam(data: TDataAddMemberToTeam): CancelablePromise<UserTeamLinkPublic> {
 		const {
-orgId,
 requestBody,
+teamId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: '/api/v1/organizations/{org_id}/users/',
+			url: '/api/v1/teams/{team_id}/users/',
 			path: {
-				org_id: orgId
+				team_id: teamId
 			},
 			body: requestBody,
 			mediaType: 'application/json',
@@ -703,22 +703,22 @@ requestBody,
 	}
 
 	/**
-	 * Update Member In Organization
-	 * Update a member in an organization.
-	 * @returns UserOrganizationLinkPublic Successful Response
+	 * Update Member In Team
+	 * Update a member in an team.
+	 * @returns UserTeamLinkPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static updateMemberInOrganization(data: TDataUpdateMemberInOrganization): CancelablePromise<UserOrganizationLinkPublic> {
+	public static updateMemberInTeam(data: TDataUpdateMemberInTeam): CancelablePromise<UserTeamLinkPublic> {
 		const {
-orgId,
 requestBody,
+teamId,
 userId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'PUT',
-			url: '/api/v1/organizations/{org_id}/users/{user_id}',
+			url: '/api/v1/teams/{team_id}/users/{user_id}',
 			path: {
-				org_id: orgId, user_id: userId
+				team_id: teamId, user_id: userId
 			},
 			body: requestBody,
 			mediaType: 'application/json',
@@ -729,21 +729,21 @@ userId,
 	}
 
 	/**
-	 * Remove Member From Organization
-	 * Remove a member from an organization.
+	 * Remove Member From Team
+	 * Remove a member from an team.
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static removeMemberFromOrganization(data: TDataRemoveMemberFromOrganization): CancelablePromise<Message> {
+	public static removeMemberFromTeam(data: TDataRemoveMemberFromTeam): CancelablePromise<Message> {
 		const {
-orgId,
+teamId,
 userId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'DELETE',
-			url: '/api/v1/organizations/{org_id}/users/{user_id}',
+			url: '/api/v1/teams/{team_id}/users/{user_id}',
 			path: {
-				org_id: orgId, user_id: userId
+				team_id: teamId, user_id: userId
 			},
 			errors: {
 				422: `Validation Error`,

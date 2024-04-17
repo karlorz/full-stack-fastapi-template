@@ -14,24 +14,24 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { OrganizationsService } from "../../../client"
+import { TeamsService } from "../../../client"
 import ActionsMenu from "../../../components/Common/ActionsMenu"
 import useCustomToast from "../../../hooks/useCustomToast"
 
-export const Route = createFileRoute("/_layout/organization/all")({
+export const Route = createFileRoute("/_layout/teams/all")({
   component: All,
 })
 
 function All() {
   const showToast = useCustomToast()
   const {
-    data: organizations,
+    data: teams,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["organizations"],
-    queryFn: () => OrganizationsService.readOrganizations({}),
+    queryKey: ["teams"],
+    queryFn: () => TeamsService.readTeams({}),
   })
 
   if (isError) {
@@ -49,7 +49,7 @@ function All() {
       ) : (
         <Container maxW="large" p={12}>
           <Heading size="md" textAlign={{ base: "center", md: "left" }}>
-            All Organizations
+            All Teams
           </Heading>
           <TableContainer py={6}>
             <Table size={{ base: "sm", md: "md" }}>
@@ -60,11 +60,11 @@ function All() {
                 </Tr>
               </Thead>
               <Tbody>
-                {organizations?.data.map((org) => (
-                  <Tr key={org.id}>
-                    <Td>{org.name}</Td>
+                {teams?.data.map((team) => (
+                  <Tr key={team.id}>
+                    <Td>{team.name}</Td>
                     <Td>
-                      <ActionsMenu type="Organization" value={org} />
+                      <ActionsMenu type="Team" value={team} />
                     </Td>
                   </Tr>
                 ))}

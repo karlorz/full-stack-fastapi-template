@@ -9,14 +9,19 @@ import {
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import React from "react"
-import { useForm } from "react-hook-form"
+import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { OrganizationsService, type Role, type UserPublic } from "../../client"
+import {
+  type Role,
+  type TeamUpdateMember,
+  TeamsService,
+  type UserPublic,
+} from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
 interface ChangeRoleProps {
   userRole?: string
-  orgId?: string
+  teamId?: string
   user: UserPublic
   isOpen: boolean
   onClose: () => void
@@ -24,7 +29,7 @@ interface ChangeRoleProps {
 
 const ChangeRole = ({
   userRole,
-  orgId,
+  teamId,
   user,
   isOpen,
   onClose,
@@ -35,12 +40,12 @@ const ChangeRole = ({
   const {
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm()
+  } = useForm<TeamUpdateMember>()
 
   const mutation = useMutation({
     mutationFn: (data: { newRole: Role }) =>
-      OrganizationsService.updateMemberInOrganization({
-        orgId: Number(orgId),
+      TeamsService.updateMemberInTeam({
+        teamId: Number(teamId),
         requestBody: { role: data.newRole },
         userId: user.id,
       }),
@@ -60,7 +65,7 @@ const ChangeRole = ({
     },
   })
 
-  const onSubmit = async () => {
+  const onSubmit: SubmitHandler<TeamUpdateMember> = async () => {
     const newRole = userRole === "admin" ? "member" : "admin"
     mutation.mutate({ newRole })
   }

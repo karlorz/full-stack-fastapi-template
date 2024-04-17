@@ -26,21 +26,20 @@ import { ErrorBoundary } from "react-error-boundary"
 import { FaCheckCircle, FaEdit } from "react-icons/fa"
 import { FaCircleXmark } from "react-icons/fa6"
 
-import { OrganizationsService, type UserPublic } from "../../../../client"
+import { TeamsService, type UserPublic } from "../../../../client"
 import ActionsMenu from "../../../../components/Common/ActionsMenu"
 
-export const Route = createFileRoute("/_layout/organization/$orgId/")({
-  component: Organization,
+export const Route = createFileRoute("/_layout/teams/$teamId/")({
+  component: Team,
 })
 
-function OrgTableBody() {
-  const { orgId } = Route.useParams()
+function TeamTableBody() {
+  const { teamId } = Route.useParams()
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const { data: org } = useSuspenseQuery({
-    queryKey: ["org", orgId],
-    queryFn: () =>
-      OrganizationsService.readOrganization({ orgId: Number(orgId) }),
+    queryKey: ["team", teamId],
+    queryFn: () => TeamsService.readTeam({ teamId: Number(teamId) }),
   })
 
   const currentUserRole = org.user_links.find(
@@ -74,7 +73,7 @@ function OrgTableBody() {
           <Td>
             <ActionsMenu
               userRole={role}
-              orgId={orgId}
+              teamId={teamId}
               type="User"
               value={user}
               disabled={
@@ -90,7 +89,7 @@ function OrgTableBody() {
   )
 }
 
-function OrgTable() {
+function TeamTable() {
   return (
     <TableContainer>
       <Table size={{ base: "sm", md: "md" }}>
@@ -127,7 +126,7 @@ function OrgTable() {
               </Tbody>
             }
           >
-            <OrgTableBody />
+            <TeamTableBody />
           </Suspense>
         </ErrorBoundary>
       </Table>
@@ -135,12 +134,11 @@ function OrgTable() {
   )
 }
 
-function Organization() {
-  const { orgId } = Route.useParams()
+function Team() {
+  const { teamId } = Route.useParams()
   const { data: org } = useQuery({
-    queryKey: ["org", orgId],
-    queryFn: () =>
-      OrganizationsService.readOrganization({ orgId: Number(orgId) }),
+    queryKey: ["team", teamId],
+    queryFn: () => TeamsService.readTeam({ teamId: Number(teamId) }),
   })
 
   return (
@@ -157,10 +155,10 @@ function Organization() {
           </Flex>
           <Button variant="primary" gap={2}>
             <Icon as={FaEdit} />
-            Edit Organization
+            Edit Team
           </Button>
         </Flex>
-        <OrgTable />
+        <TeamTable />
       </Container>
     </>
   )

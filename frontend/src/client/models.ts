@@ -58,21 +58,25 @@ export type NewPassword = {
 
 
 
-export type OrganizationCreate = {
+export type Role = 'member' | 'admin';
+
+
+
+export type TeamCreate = {
 	name: string;
 	description?: string | null;
 };
 
 
 
-export type OrganizationCreateMember = {
+export type TeamCreateMember = {
 	user_id: number;
 	role: Role;
 };
 
 
 
-export type OrganizationPublic = {
+export type TeamPublic = {
 	name: string;
 	description?: string | null;
 	id: number;
@@ -80,20 +84,20 @@ export type OrganizationPublic = {
 
 
 
-export type OrganizationUpdate = {
+export type TeamUpdate = {
 	name?: string | null;
 	description?: string | null;
 };
 
 
 
-export type OrganizationUpdateMember = {
+export type TeamUpdateMember = {
 	role: Role;
 };
 
 
 
-export type OrganizationWithUserPublic = {
+export type TeamWithUserPublic = {
 	name: string;
 	description?: string | null;
 	id: number;
@@ -102,14 +106,10 @@ export type OrganizationWithUserPublic = {
 
 
 
-export type OrganizationsPublic = {
-	data: Array<OrganizationPublic>;
+export type TeamsPublic = {
+	data: Array<TeamPublic>;
 	count: number;
 };
-
-
-
-export type Role = 'member' | 'admin';
 
 
 
@@ -144,14 +144,6 @@ export type UserLinkPublic = {
 
 
 
-export type UserOrganizationLinkPublic = {
-	user: UserPublic;
-	organization: OrganizationPublic;
-	role: Role;
-};
-
-
-
 export type UserPublic = {
 	email: string;
 	is_active?: boolean;
@@ -166,6 +158,14 @@ export type UserRegister = {
 	email: string;
 	password: string;
 	full_name?: string | null;
+};
+
+
+
+export type UserTeamLinkPublic = {
+	user: UserPublic;
+	team: TeamPublic;
+	role: Role;
 };
 
 

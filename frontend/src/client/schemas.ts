@@ -152,7 +152,12 @@ export const $NewPassword = {
 	},
 } as const;
 
-export const $OrganizationCreate = {
+export const $Role = {
+	type: 'Enum',
+	enum: ['member','admin',],
+} as const;
+
+export const $TeamCreate = {
 	properties: {
 		name: {
 	type: 'string',
@@ -169,7 +174,7 @@ export const $OrganizationCreate = {
 	},
 } as const;
 
-export const $OrganizationCreateMember = {
+export const $TeamCreateMember = {
 	properties: {
 		user_id: {
 	type: 'number',
@@ -182,7 +187,7 @@ export const $OrganizationCreateMember = {
 	},
 } as const;
 
-export const $OrganizationPublic = {
+export const $TeamPublic = {
 	properties: {
 		name: {
 	type: 'string',
@@ -203,7 +208,7 @@ export const $OrganizationPublic = {
 	},
 } as const;
 
-export const $OrganizationUpdate = {
+export const $TeamUpdate = {
 	properties: {
 		name: {
 	type: 'any-of',
@@ -224,7 +229,7 @@ export const $OrganizationUpdate = {
 	},
 } as const;
 
-export const $OrganizationUpdateMember = {
+export const $TeamUpdateMember = {
 	properties: {
 		role: {
 	type: 'Role',
@@ -233,7 +238,7 @@ export const $OrganizationUpdateMember = {
 	},
 } as const;
 
-export const $OrganizationWithUserPublic = {
+export const $TeamWithUserPublic = {
 	properties: {
 		name: {
 	type: 'string',
@@ -261,12 +266,12 @@ export const $OrganizationWithUserPublic = {
 	},
 } as const;
 
-export const $OrganizationsPublic = {
+export const $TeamsPublic = {
 	properties: {
 		data: {
 	type: 'array',
 	contains: {
-		type: 'OrganizationPublic',
+		type: 'TeamPublic',
 	},
 	isRequired: true,
 },
@@ -275,11 +280,6 @@ export const $OrganizationsPublic = {
 	isRequired: true,
 },
 	},
-} as const;
-
-export const $Role = {
-	type: 'Enum',
-	enum: ['member','admin',],
 } as const;
 
 export const $Token = {
@@ -350,23 +350,6 @@ export const $UserLinkPublic = {
 	},
 } as const;
 
-export const $UserOrganizationLinkPublic = {
-	properties: {
-		user: {
-	type: 'UserPublic',
-	isRequired: true,
-},
-		organization: {
-	type: 'OrganizationPublic',
-	isRequired: true,
-},
-		role: {
-	type: 'Role',
-	isRequired: true,
-},
-	},
-} as const;
-
 export const $UserPublic = {
 	properties: {
 		email: {
@@ -413,6 +396,23 @@ export const $UserRegister = {
 }, {
 	type: 'null',
 }],
+},
+	},
+} as const;
+
+export const $UserTeamLinkPublic = {
+	properties: {
+		user: {
+	type: 'UserPublic',
+	isRequired: true,
+},
+		team: {
+	type: 'TeamPublic',
+	isRequired: true,
+},
+		role: {
+	type: 'Role',
+	isRequired: true,
 },
 	},
 } as const;
