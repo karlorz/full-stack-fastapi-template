@@ -23,6 +23,7 @@
 
 ### Fixes
 
+* 🚨 Fix `<div>` cannot appear as a descendant of `<p>`. PR [#38](https://github.com/fastapilabs/cloud/pull/38) by [@patrick91](https://github.com/patrick91).
 * 🐛 Fix bug, refactor utils and update regex for password. PR [#31](https://github.com/fastapilabs/cloud/pull/31) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix bug in update_organization and refactor test. PR [#29](https://github.com/fastapilabs/cloud/pull/29) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix 403 when the frontend has a directory without an index.html. PR [#1094](https://github.com/tiangolo/full-stack-fastapi-template/pull/1094) by [@tiangolo](https://github.com/tiangolo).
