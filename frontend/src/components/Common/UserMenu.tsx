@@ -58,7 +58,7 @@ const UserMenu = () => {
             <Flex justify="space-between">
               <Box display="flex" alignItems="center">
                 <Icon as={FaUser} />
-                <Text mx={2}>
+                <Text mx={2} as="div">
                   <Suspense
                     fallback={<SkeletonText noOfLines={1} width={100} />}
                   >
@@ -72,7 +72,9 @@ const UserMenu = () => {
           <MenuList p={4}>
             <MenuItem as={Link} to="/" gap={2} py={2}>
               <Icon as={FaUser} />
-              <Suspense fallback={<SkeletonText noOfLines={1} width={100} />}>
+              <Suspense
+                fallback={<SkeletonText noOfLines={1} width={100} as="span" />}
+              >
                 <CurrentUser />
               </Suspense>
             </MenuItem>
