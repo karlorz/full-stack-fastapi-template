@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
+import { Suspense } from "react"
 
 import type { UserPublic } from "../../client"
 import Appearance from "../../components/UserSettings/Appearance"
@@ -48,7 +49,9 @@ function UserSettings() {
         <TabPanels>
           {finalTabs.map((tab, index) => (
             <TabPanel key={index}>
-              <tab.component />
+              <Suspense>
+                <tab.component />
+              </Suspense>
             </TabPanel>
           ))}
         </TabPanels>
