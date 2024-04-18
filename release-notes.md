@@ -12,6 +12,7 @@
 
 ### Features
 
+* ✨ Edit Team and other tweaks. PR [#40](https://github.com/fastapilabs/cloud/pull/40) by [@alejsdev](https://github.com/alejsdev).
 * 🗃️ Add invitations table definition. PR [#25](https://github.com/fastapilabs/cloud/pull/25) by [@estebanx64](https://github.com/estebanx64).
 * ✨ View organizations. PR [#27](https://github.com/fastapilabs/cloud/pull/27) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Create an organization. PR [#20](https://github.com/fastapilabs/cloud/pull/20) by [@alejsdev](https://github.com/alejsdev).
