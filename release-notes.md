@@ -24,6 +24,7 @@
 
 ### Fixes
 
+* 🐛 Fix "A component suspended while responding to synchronous input". PR [#41](https://github.com/fastapilabs/cloud/pull/41) by [@patrick91](https://github.com/patrick91).
 * 🚨 Fix `<div>` cannot appear as a descendant of `<p>`. PR [#38](https://github.com/fastapilabs/cloud/pull/38) by [@patrick91](https://github.com/patrick91).
 * 🐛 Fix bug, refactor utils and update regex for password. PR [#31](https://github.com/fastapilabs/cloud/pull/31) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix bug in update_organization and refactor test. PR [#29](https://github.com/fastapilabs/cloud/pull/29) by [@alejsdev](https://github.com/alejsdev).
