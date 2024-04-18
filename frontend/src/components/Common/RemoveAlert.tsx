@@ -14,15 +14,15 @@ import { useForm } from "react-hook-form"
 import { type TDataRemoveMemberFromTeam, TeamsService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
-interface DeleteProps {
-  teamId?: string
+interface RemoveProps {
+  teamId?: number
   type: string
   id: number
   isOpen: boolean
   onClose: () => void
 }
 
-const Remove = ({ teamId, type, id, isOpen, onClose }: DeleteProps) => {
+const Remove = ({ teamId, type, id, isOpen, onClose }: RemoveProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const cancelRef = React.useRef<HTMLButtonElement | null>(null)
@@ -59,7 +59,7 @@ const Remove = ({ teamId, type, id, isOpen, onClose }: DeleteProps) => {
   })
 
   const onSubmit = async () => {
-    mutation.mutate({ teamId: Number(teamId), userId: id })
+    mutation.mutate({ teamId: teamId!, userId: id })
   }
 
   return (

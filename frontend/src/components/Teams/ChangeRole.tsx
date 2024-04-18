@@ -21,7 +21,7 @@ import useCustomToast from "../../hooks/useCustomToast"
 
 interface ChangeRoleProps {
   userRole?: string
-  teamId?: string
+  teamId?: number
   user: UserPublic
   isOpen: boolean
   onClose: () => void
@@ -45,7 +45,7 @@ const ChangeRole = ({
   const mutation = useMutation({
     mutationFn: (data: { newRole: Role }) =>
       TeamsService.updateMemberInTeam({
-        teamId: Number(teamId),
+        teamId: teamId!,
         requestBody: { role: data.newRole },
         userId: user.id,
       }),

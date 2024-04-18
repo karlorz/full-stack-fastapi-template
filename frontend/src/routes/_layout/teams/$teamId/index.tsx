@@ -37,18 +37,18 @@ function TeamTableBody() {
   const { teamId } = Route.useParams()
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
-  const { data: org } = useSuspenseQuery({
+  const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamId],
     queryFn: () => TeamsService.readTeam({ teamId: Number(teamId) }),
   })
 
-  const currentUserRole = org.user_links.find(
+  const currentUserRole = team.user_links.find(
     ({ user }) => user.id === currentUser?.id,
   )?.role
 
   return (
     <Tbody>
-      {org.user_links.map(({ role, user }) => (
+      {team.user_links.map(({ role, user }) => (
         <Tr key={user.id}>
           <Td color={!user.full_name ? "ui.dim" : "inherit"}>
             {user.full_name || "N/A"}
@@ -73,7 +73,7 @@ function TeamTableBody() {
           <Td>
             <ActionsMenu
               userRole={role}
-              teamId={teamId}
+              team={team}
               type="User"
               value={user}
               disabled={
@@ -136,7 +136,7 @@ function TeamTable() {
 
 function Team() {
   const { teamId } = Route.useParams()
-  const { data: org } = useQuery({
+  const { data: team } = useQuery({
     queryKey: ["team", teamId],
     queryFn: () => TeamsService.readTeam({ teamId: Number(teamId) }),
   })
@@ -147,7 +147,7 @@ function Team() {
         <Flex flexDir="row" justify="space-between" align="center">
           <Flex flexDir="column">
             <Heading size="md" textAlign={{ base: "center", md: "left" }}>
-              {org?.name}
+              {team?.name}
             </Heading>
             <Heading size="sm" textTransform="uppercase" my={8}>
               Members

@@ -7,16 +7,16 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 import { BsThreeDotsVertical } from "react-icons/bs"
-import { FaExchangeAlt, FaTrash } from "react-icons/fa"
+import { FaEdit, FaExchangeAlt, FaTrash } from "react-icons/fa"
 
 import type { ItemPublic, TeamPublic, UserPublic } from "../../client"
-import EditItem from "../Items/EditItem"
 import ChangeRole from "../Teams/ChangeRole"
+import EditTeam from "../Teams/EditTeam"
 import Remove from "./RemoveAlert"
 
 interface ActionsMenuProps {
   userRole?: string
-  teamId?: string
+  team?: TeamPublic
   type: string
   value: ItemPublic | UserPublic | TeamPublic
   disabled?: boolean
@@ -24,7 +24,7 @@ interface ActionsMenuProps {
 
 const ActionsMenu = ({
   userRole,
-  teamId,
+  team,
   type,
   value,
   disabled,
@@ -43,12 +43,21 @@ const ActionsMenu = ({
           variant="unstyled"
         />
         <MenuList>
-          <MenuItem
-            onClick={changeRoleModal.onOpen}
-            icon={<FaExchangeAlt fontSize="16px" />}
-          >
-            Change Role
-          </MenuItem>
+          {type === "User" ? (
+            <MenuItem
+              onClick={changeRoleModal.onOpen}
+              icon={<FaExchangeAlt fontSize="16px" />}
+            >
+              Change Role
+            </MenuItem>
+          ) : (
+            <MenuItem
+              onClick={editUserModal.onOpen}
+              icon={<FaEdit fontSize="16px" />}
+            >
+              Edit {type}
+            </MenuItem>
+          )}
           <MenuItem
             onClick={deleteModal.onOpen}
             icon={<FaTrash fontSize="16px" />}
@@ -60,20 +69,20 @@ const ActionsMenu = ({
         {type === "User" ? (
           <ChangeRole
             userRole={userRole}
-            teamId={teamId}
+            teamId={team?.id}
             user={value as UserPublic}
             isOpen={changeRoleModal.isOpen}
             onClose={changeRoleModal.onClose}
           />
         ) : (
-          <EditItem
-            item={value as ItemPublic}
+          <EditTeam
+            team={value as TeamPublic}
             isOpen={editUserModal.isOpen}
             onClose={editUserModal.onClose}
           />
         )}
         <Remove
-          teamId={teamId}
+          teamId={team?.id}
           type={type}
           id={value.id}
           isOpen={deleteModal.isOpen}
