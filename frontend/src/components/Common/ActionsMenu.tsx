@@ -12,7 +12,8 @@ import { FaEdit, FaExchangeAlt, FaTrash } from "react-icons/fa"
 import type { ItemPublic, TeamPublic, UserPublic } from "../../client"
 import ChangeRole from "../Teams/ChangeRole"
 import EditTeam from "../Teams/EditTeam"
-import Remove from "./RemoveAlert"
+import DeleteTeam from "./DeleteTeam"
+import RemoveUser from "./RemoveUser"
 
 interface ActionsMenuProps {
   userRole?: string
@@ -31,7 +32,8 @@ const ActionsMenu = ({
 }: ActionsMenuProps) => {
   const changeRoleModal = useDisclosure()
   const editUserModal = useDisclosure()
-  const deleteModal = useDisclosure()
+  const deleteTeamModal = useDisclosure()
+  const removeUserModal = useDisclosure()
 
   return (
     <>
@@ -59,11 +61,13 @@ const ActionsMenu = ({
             </MenuItem>
           )}
           <MenuItem
-            onClick={deleteModal.onOpen}
+            onClick={
+              type === "User" ? removeUserModal.onOpen : deleteTeamModal.onOpen
+            }
             icon={<FaTrash fontSize="16px" />}
             color="ui.danger"
           >
-            Remove {type}
+            {type === "User" ? "Remove" : "Delete"} {type}
           </MenuItem>
         </MenuList>
         {type === "User" ? (
@@ -81,12 +85,16 @@ const ActionsMenu = ({
             onClose={editUserModal.onClose}
           />
         )}
-        <Remove
+        <DeleteTeam
+          teamId={value?.id}
+          isOpen={deleteTeamModal.isOpen}
+          onClose={deleteTeamModal.onClose}
+        />
+        <RemoveUser
+          userId={value.id}
           teamId={team?.id}
-          type={type}
-          id={value.id}
-          isOpen={deleteModal.isOpen}
-          onClose={deleteModal.onClose}
+          isOpen={removeUserModal.isOpen}
+          onClose={removeUserModal.onClose}
         />
       </Menu>
     </>

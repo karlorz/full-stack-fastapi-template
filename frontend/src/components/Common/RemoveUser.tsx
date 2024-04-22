@@ -16,40 +16,32 @@ import useCustomToast from "../../hooks/useCustomToast"
 
 interface RemoveProps {
   teamId?: number
-  type: string
-  id: number
+  userId: number
   isOpen: boolean
   onClose: () => void
 }
 
-const Remove = ({ teamId, type, id, isOpen, onClose }: RemoveProps) => {
+const RemoveUser = ({ teamId, userId, isOpen, onClose }: RemoveProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const cancelRef = React.useRef<HTMLButtonElement | null>(null)
   const {
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm()
+  } = useForm<TDataRemoveMemberFromTeam>()
 
   const mutation = useMutation({
-    mutationFn: async ({ teamId, userId }: TDataRemoveMemberFromTeam) => {
-      await TeamsService.removeMemberFromTeam({
-        teamId,
-        userId,
-      })
+    mutationFn: async (data: TDataRemoveMemberFromTeam) => {
+      await TeamsService.removeMemberFromTeam(data)
     },
     onSuccess: () => {
-      showToast(
-        "Success",
-        `The ${type.toLowerCase()} was removed successfully.`,
-        "success",
-      )
+      showToast("Success", "The user was removed successfully.", "success")
       onClose()
     },
     onError: () => {
       showToast(
         "An error occurred.",
-        `An error occurred while deleting the ${type.toLowerCase()}.`,
+        "An error occurred while removing the user.",
         "error",
       )
     },
@@ -59,7 +51,7 @@ const Remove = ({ teamId, type, id, isOpen, onClose }: RemoveProps) => {
   })
 
   const onSubmit = async () => {
-    mutation.mutate({ teamId: teamId!, userId: id })
+    mutation.mutate({ teamId: teamId!, userId })
   }
 
   return (
@@ -73,17 +65,21 @@ const Remove = ({ teamId, type, id, isOpen, onClose }: RemoveProps) => {
       >
         <AlertDialogOverlay>
           <AlertDialogContent as="form" onSubmit={handleSubmit(onSubmit)}>
-            <AlertDialogHeader>Remove {type}</AlertDialogHeader>
+            <AlertDialogHeader>Remove User</AlertDialogHeader>
 
             <AlertDialogBody>
-              <span>
-                This user will no longer have access to this team. All{" "}
-                <strong>
-                  associated data and permissions will be revoked.
-                </strong>{" "}
-              </span>
-              To restore access, you'll need to invite this user to the team
-              again.
+              <>
+                <span>
+                  This user will no longer have access to this team. All{" "}
+                  <strong>
+                    associated data and permissions will be revoked.
+                  </strong>{" "}
+                </span>
+                <span>
+                  To restore access, you'll need to invite this user to the team
+                  again.
+                </span>
+              </>
             </AlertDialogBody>
 
             <AlertDialogFooter gap={3}>
@@ -95,7 +91,7 @@ const Remove = ({ teamId, type, id, isOpen, onClose }: RemoveProps) => {
                 Cancel
               </Button>
               <Button variant="danger" type="submit" isLoading={isSubmitting}>
-                Remove User
+                Remove
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -105,4 +101,4 @@ const Remove = ({ teamId, type, id, isOpen, onClose }: RemoveProps) => {
   )
 }
 
-export default Remove
+export default RemoveUser
