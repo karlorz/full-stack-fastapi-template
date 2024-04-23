@@ -1,11 +1,11 @@
 from typing import Any
 
 from fastapi.testclient import TestClient
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.core.config import settings
 from app.crud import add_user_to_team
-from app.models import Role
+from app.models import Role, Team, UserTeamLink
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 
@@ -108,7 +108,7 @@ def test_read_team_not_found(client: TestClient) -> None:
     assert data["detail"] == "Team not found for the current user"
 
 
-def test_create_team(client: TestClient) -> None:
+def test_create_team(client: TestClient, db: Session) -> None:
     user_auth_headers = user_authentication_headers(
         client=client,
         email=settings.FIRST_SUPERUSER,
@@ -127,6 +127,12 @@ def test_create_team(client: TestClient) -> None:
     assert data["id"]
     assert data["name"] == team_in["name"]
     assert data["description"] == team_in["description"]
+
+    team_query = select(Team).where(Team.id == data["id"])
+    team_db = db.exec(team_query).first()
+    assert team_db
+    assert team_db.name == team_in["name"]
+    assert team_db.description == team_in["description"]
 
 
 def test_update_team(client: TestClient, db: Session) -> None:
@@ -223,6 +229,10 @@ def test_delete_team(client: TestClient, db: Session) -> None:
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Team deleted"
+
+    team_query = select(Team).where(Team.id == team.id)
+    team_db = db.exec(team_query).first()
+    assert team_db is None
 
 
 def test_delete_team_not_found(client: TestClient) -> None:
@@ -392,6 +402,14 @@ def test_update_member_in_team(client: TestClient, db: Session) -> None:
     assert data["team"]["id"] == team.id
     assert data["user"]["id"] == user.id
 
+    user_team_query = select(UserTeamLink).where(UserTeamLink.user == user)
+    user_team_db = db.exec(user_team_query).first()
+    db.refresh(user_team_db)
+    assert user_team_db
+    assert user_team_db.role == data["role"]
+    assert user_team_db.team_id == data["team"]["id"]
+    assert user_team_db.user_id == data["user"]["id"]
+
 
 def test_update_member_in_team_not_enough_permissions(
     client: TestClient, db: Session
@@ -477,6 +495,10 @@ def test_remove_member_from_team(client: TestClient, db: Session) -> None:
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "User removed from team"
+
+    user_team_query = select(UserTeamLink).where(UserTeamLink.user == user_member)
+    user_team_db = db.exec(user_team_query).first()
+    assert not user_team_db
 
 
 def test_remove_member_from_team_not_enough_permissions(
