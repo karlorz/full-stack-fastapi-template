@@ -48,9 +48,11 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
-def get_current_active_superuser(current_user: CurrentUser) -> User:
-    if not current_user.is_superuser:
+def get_first_superuser(current_user: CurrentUser) -> User:
+    if current_user.email != settings.FIRST_SUPERUSER:
         raise HTTPException(
-            status_code=400, detail="The user doesn't have enough privileges"
+            status_code=400,
+            detail="The user doesn't have enough permissions to execute this action",
         )
+
     return current_user

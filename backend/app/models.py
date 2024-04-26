@@ -32,7 +32,6 @@ class UserTeamLink(SQLModel, table=True):
 class UserBase(SQLModel):
     email: str = Field(unique=True, index=True)
     is_active: bool = True
-    is_superuser: bool = False
     full_name: str | None = None
 
 
@@ -71,7 +70,6 @@ class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str
 
-    items: list["Item"] = Relationship(back_populates="owner")
     team_links: list[UserTeamLink] = Relationship(back_populates="user")
     invitations: list["Invitation"] = Relationship(
         back_populates="receiver",
@@ -100,42 +98,6 @@ class UserLinkPublic(SQLModel):
 
 class UsersLinksPublic(SQLModel):
     data: list[UserLinkPublic]
-    count: int
-
-
-# Shared properties
-class ItemBase(SQLModel):
-    title: str
-    description: str | None = None
-
-
-# Properties to receive on item creation
-class ItemCreate(ItemBase):
-    title: str
-
-
-# Properties to receive on item update
-class ItemUpdate(ItemBase):
-    title: str | None = None  # type: ignore
-
-
-# Database model, database table inferred from class name
-class Item(ItemBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    title: str
-
-    owner_id: int | None = Field(default=None, foreign_key="user.id", nullable=False)
-    owner: User | None = Relationship(back_populates="items")
-
-
-# Properties to return via API, id is always required
-class ItemPublic(ItemBase):
-    id: int
-    owner_id: int
-
-
-class ItemsPublic(SQLModel):
-    data: list[ItemPublic]
     count: int
 
 
