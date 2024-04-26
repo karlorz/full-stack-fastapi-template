@@ -12,7 +12,6 @@ from app.core.security import get_password_hash, verify_password
 from app.models import (
     Message,
     UpdatePassword,
-    User,
     UserCreate,
     UserPublic,
     UserRegister,
@@ -90,6 +89,16 @@ def update_password_me(
     return Message(message="Password updated successfully")
 
 
+@router.delete("/me", response_model=Message)
+def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
+    """
+    Delete own user.
+    """
+    session.delete(current_user)
+    session.commit()
+    return Message(message="User deleted successfully")
+
+
 @router.get("/me", response_model=UserPublic)
 def read_user_me(current_user: CurrentUser) -> Any:
     """
@@ -117,23 +126,3 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     user_create = UserCreate.model_validate(user_in)
     user = crud.create_user(session=session, user_create=user_create)
     return user
-
-
-@router.delete("/{user_id}")
-def delete_user(
-    session: SessionDep, current_user: CurrentUser, user_id: int
-) -> Message:
-    """
-    Delete a user.
-    """
-    user = session.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    elif user != current_user:
-        raise HTTPException(
-            status_code=403, detail="The user doesn't have enough privileges"
-        )
-
-    session.delete(user)
-    session.commit()
-    return Message(message="User deleted successfully")

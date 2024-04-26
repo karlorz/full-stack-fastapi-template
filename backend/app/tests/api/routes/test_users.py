@@ -256,7 +256,7 @@ def test_register_user_already_exists_error(client: TestClient) -> None:
         )
 
 
-def test_delete_user_current_user(client: TestClient, db: Session) -> None:
+def test_delete_user_me(client: TestClient, db: Session) -> None:
     username = random_email()
     password = random_lower_string()
     user_in = UserCreate(email=username, password=password)
@@ -273,40 +273,11 @@ def test_delete_user_current_user(client: TestClient, db: Session) -> None:
     headers = {"Authorization": f"Bearer {a_token}"}
 
     r = client.delete(
-        f"{settings.API_V1_STR}/users/{user_id}",
+        f"{settings.API_V1_STR}/users/me",
         headers=headers,
     )
     assert r.status_code == 200
     deleted_user = r.json()
     assert deleted_user["message"] == "User deleted successfully"
-
-    user_query = select(User).where(User.id == user_id)
-    user_db = db.execute(user_query).first()
-    assert user_db is None
-
-
-def test_delete_user_not_found(
-    client: TestClient, superuser_token_headers: dict[str, str]
-) -> None:
-    r = client.delete(
-        f"{settings.API_V1_STR}/users/99999999",
-        headers=superuser_token_headers,
-    )
-    assert r.status_code == 404
-    assert r.json()["detail"] == "User not found"
-
-
-def test_delete_user_without_privileges(
-    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
-) -> None:
-    username = random_email()
-    password = random_lower_string()
-    user_in = UserCreate(email=username, password=password)
-    user = crud.create_user(session=db, user_create=user_in)
-
-    r = client.delete(
-        f"{settings.API_V1_STR}/users/{user.id}",
-        headers=normal_user_token_headers,
-    )
-    assert r.status_code == 403
-    assert r.json()["detail"] == "The user doesn't have enough privileges"
+    result = db.exec(select(User).where(User.id == user_id)).first()
+    assert result is None
