@@ -1,15 +1,15 @@
 import { Container, Heading } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
 
-export const Route = createFileRoute("/_layout/resources")({
-  component: Resources,
+export const Route = createFileRoute("/_layout/$team/billing")({
+  component: Billing,
 })
 
-function Resources() {
+function Billing() {
   return (
     <Container maxW="full" p={12}>
       <Heading size="md" textAlign={{ base: "center", md: "left" }}>
-        Resources
+        Billing
       </Heading>
     </Container>
   )

@@ -17,14 +17,15 @@ import { Route as RecoverPasswordImport } from './routes/recover-password'
 import { Route as LoginImport } from './routes/login'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
-import { Route as LayoutSettingsImport } from './routes/_layout/settings'
-import { Route as LayoutResourcesImport } from './routes/_layout/resources'
-import { Route as LayoutProjectsImport } from './routes/_layout/projects'
-import { Route as LayoutItemsImport } from './routes/_layout/items'
-import { Route as LayoutHelpImport } from './routes/_layout/help'
-import { Route as LayoutBillingImport } from './routes/_layout/billing'
+import { Route as LayoutTeamIndexImport } from './routes/_layout/$team/index'
 import { Route as LayoutTeamsNewImport } from './routes/_layout/teams/new'
 import { Route as LayoutTeamsAllImport } from './routes/_layout/teams/all'
+import { Route as LayoutTeamSettingsImport } from './routes/_layout/$team/settings'
+import { Route as LayoutTeamResourcesImport } from './routes/_layout/$team/resources'
+import { Route as LayoutTeamProjectsImport } from './routes/_layout/$team/projects'
+import { Route as LayoutTeamItemsImport } from './routes/_layout/$team/items'
+import { Route as LayoutTeamHelpImport } from './routes/_layout/$team/help'
+import { Route as LayoutTeamBillingImport } from './routes/_layout/$team/billing'
 import { Route as LayoutTeamsTeamIdIndexImport } from './routes/_layout/teams/$teamId/index'
 import { Route as LayoutTeamsTeamIdInvitationsImport } from './routes/_layout/teams/$teamId/invitations'
 
@@ -60,33 +61,8 @@ const LayoutIndexRoute = LayoutIndexImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutSettingsRoute = LayoutSettingsImport.update({
-  path: '/settings',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutResourcesRoute = LayoutResourcesImport.update({
-  path: '/resources',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutProjectsRoute = LayoutProjectsImport.update({
-  path: '/projects',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutItemsRoute = LayoutItemsImport.update({
-  path: '/items',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutHelpRoute = LayoutHelpImport.update({
-  path: '/help',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutBillingRoute = LayoutBillingImport.update({
-  path: '/billing',
+const LayoutTeamIndexRoute = LayoutTeamIndexImport.update({
+  path: '/$team/',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -97,6 +73,36 @@ const LayoutTeamsNewRoute = LayoutTeamsNewImport.update({
 
 const LayoutTeamsAllRoute = LayoutTeamsAllImport.update({
   path: '/teams/all',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutTeamSettingsRoute = LayoutTeamSettingsImport.update({
+  path: '/$team/settings',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutTeamResourcesRoute = LayoutTeamResourcesImport.update({
+  path: '/$team/resources',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutTeamProjectsRoute = LayoutTeamProjectsImport.update({
+  path: '/$team/projects',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutTeamItemsRoute = LayoutTeamItemsImport.update({
+  path: '/$team/items',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutTeamHelpRoute = LayoutTeamHelpImport.update({
+  path: '/$team/help',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutTeamBillingRoute = LayoutTeamBillingImport.update({
+  path: '/$team/billing',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -135,32 +141,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
-    '/_layout/billing': {
-      preLoaderRoute: typeof LayoutBillingImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/help': {
-      preLoaderRoute: typeof LayoutHelpImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/items': {
-      preLoaderRoute: typeof LayoutItemsImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/projects': {
-      preLoaderRoute: typeof LayoutProjectsImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/resources': {
-      preLoaderRoute: typeof LayoutResourcesImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/settings': {
-      preLoaderRoute: typeof LayoutSettingsImport
-      parentRoute: typeof LayoutImport
-    }
     '/_layout/': {
       preLoaderRoute: typeof LayoutIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/$team/billing': {
+      preLoaderRoute: typeof LayoutTeamBillingImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/$team/help': {
+      preLoaderRoute: typeof LayoutTeamHelpImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/$team/items': {
+      preLoaderRoute: typeof LayoutTeamItemsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/$team/projects': {
+      preLoaderRoute: typeof LayoutTeamProjectsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/$team/resources': {
+      preLoaderRoute: typeof LayoutTeamResourcesImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/$team/settings': {
+      preLoaderRoute: typeof LayoutTeamSettingsImport
       parentRoute: typeof LayoutImport
     }
     '/_layout/teams/all': {
@@ -169,6 +175,10 @@ declare module '@tanstack/react-router' {
     }
     '/_layout/teams/new': {
       preLoaderRoute: typeof LayoutTeamsNewImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/$team/': {
+      preLoaderRoute: typeof LayoutTeamIndexImport
       parentRoute: typeof LayoutImport
     }
     '/_layout/teams/$teamId/invitations': {
@@ -186,15 +196,16 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   LayoutRoute.addChildren([
-    LayoutBillingRoute,
-    LayoutHelpRoute,
-    LayoutItemsRoute,
-    LayoutProjectsRoute,
-    LayoutResourcesRoute,
-    LayoutSettingsRoute,
     LayoutIndexRoute,
+    LayoutTeamBillingRoute,
+    LayoutTeamHelpRoute,
+    LayoutTeamItemsRoute,
+    LayoutTeamProjectsRoute,
+    LayoutTeamResourcesRoute,
+    LayoutTeamSettingsRoute,
     LayoutTeamsAllRoute,
     LayoutTeamsNewRoute,
+    LayoutTeamIndexRoute,
     LayoutTeamsTeamIdInvitationsRoute,
     LayoutTeamsTeamIdIndexRoute,
   ]),

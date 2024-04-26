@@ -14,11 +14,11 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { ItemsService } from "../../client"
-import ActionsMenu from "../../components/Common/ActionsMenu"
-import useCustomToast from "../../hooks/useCustomToast"
+import { ItemsService } from "../../../client"
+import ActionsMenu from "../../../components/Common/ActionsMenu"
+import useCustomToast from "../../../hooks/useCustomToast"
 
-export const Route = createFileRoute("/_layout/items")({
+export const Route = createFileRoute("/_layout/$team/items")({
   component: Items,
 })
 

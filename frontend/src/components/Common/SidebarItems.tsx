@@ -1,5 +1,20 @@
-import { Box, Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react"
-import { Link } from "@tanstack/react-router"
+import {
+  Box,
+  Flex,
+  FlexProps,
+  Icon,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react"
+import {
+  Link,
+  LinkProps,
+  ToOptions,
+  AnyRoute,
+  RegisteredRouter,
+  UseLinkPropsOptions,
+  RoutePaths,
+} from "@tanstack/react-router"
 import {
   FaCog,
   FaCreditCard,
@@ -10,28 +25,94 @@ import {
   FaUsers,
 } from "react-icons/fa"
 
-const items = [
-  { icon: FaHome, title: "Dashboard", path: "/" },
-  { icon: FaCubes, title: "Projects", path: "/projects" },
-  { icon: FaTools, title: "Resources", path: "/items" },
-  { icon: FaUsers, title: "Team", path: "/teams/1" },
-  { icon: FaCog, title: "Settings", path: "/settings" },
-  { icon: FaCreditCard, title: "Billing", path: "/billing" },
-  { icon: FaQuestionCircle, title: "Help", path: "/help" },
+// https://github.com/TanStack/router/issues/1194#issuecomment-1956736102
+export function link<
+  TRouteTree extends AnyRoute = RegisteredRouter["routeTree"],
+  TFrom extends RoutePaths<TRouteTree> | string = string,
+  TTo extends string = "",
+  TMaskFrom extends RoutePaths<TRouteTree> | string = TFrom,
+  TMaskTo extends string = "",
+>(options: UseLinkPropsOptions<TRouteTree, TFrom, TTo, TMaskFrom, TMaskTo>) {
+  return options as UseLinkPropsOptions
+}
+
+type Item = {
+  icon: React.ElementType
+  title: string
+} & ToOptions
+
+const items: Array<Item> = [
+  { icon: FaHome, title: "Dashboard", to: "/" },
+  {
+    icon: FaCubes,
+    title: "Projects",
+    ...link({
+      to: "/$team/projects",
+      params: { team: "a-team" },
+    }),
+  },
+  {
+    icon: FaTools,
+    title: "Resources",
+    ...link({
+      to: "/$team/items",
+      params: { team: "a-team" },
+    }),
+  },
+  // TODO: this should probably be members or users
+  {
+    icon: FaUsers,
+    title: "Team",
+    ...link({
+      to: "/teams/$teamId",
+      params: { teamId: "1" },
+    }),
+  },
+  {
+    icon: FaCog,
+    title: "Settings",
+    ...link({
+      to: "/$team/settings",
+      params: { team: "a-team" },
+    }),
+  },
+  {
+    icon: FaCreditCard,
+    title: "Billing",
+    ...link({
+      to: "/$team/billing",
+      params: { team: "a-team" },
+    }),
+  },
+  {
+    icon: FaQuestionCircle,
+    title: "Help",
+    ...link({
+      to: "/$team/help",
+      params: { team: "a-team" },
+    }),
+  },
 ]
 
 interface SidebarItemsProps {
   onClose?: () => void
 }
 
+// Looks like `as` doesn't do full type inference, so we created a new component
+// with the correct types for the props we want to pass to the `Link` component.
+// see this issue: https://github.com/chakra-ui/chakra-ui/issues/1582
+const FlexLink = (props: LinkProps & Omit<FlexProps, "as">) => (
+  <Flex as={Link} {...props} />
+)
+
 const SidebarItems = ({ onClose }: SidebarItemsProps) => {
   const bgActive = useColorModeValue("#E2E8F0", "#4A5568")
 
-  const listItems = items.map(({ icon, title, path }) => (
-    <Flex
+  const listItems = items.map(({ icon, title, to, params }) => (
+    <FlexLink
       key={title}
-      to={path}
-      as={Link}
+      to={to}
+      params={params}
       gap={4}
       px={4}
       py={2}
@@ -46,7 +127,7 @@ const SidebarItems = ({ onClose }: SidebarItemsProps) => {
     >
       <Icon as={icon} alignSelf="center" fontSize="18px" />
       <Text>{title}</Text>
-    </Flex>
+    </FlexLink>
   ))
 
   const menu = listItems.slice(0, 4)
