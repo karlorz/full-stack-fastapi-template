@@ -33,6 +33,7 @@
 
 ### Refactors
 
+* ♻️ Regenerate frontend client, disable Items and remove superuser logic. PR [#49](https://github.com/fastapilabs/cloud/pull/49) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Update test to add verification database records. PR [#43](https://github.com/fastapilabs/cloud/pull/43) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Regenerate frontend client and rename "Organizations" to "Teams". PR [#36](https://github.com/fastapilabs/cloud/pull/36) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Rename org path params to teams. PR [#37](https://github.com/fastapilabs/cloud/pull/37) by [@estebanx64](https://github.com/estebanx64).
