@@ -51,85 +51,6 @@ export const $HTTPValidationError = {
 	},
 } as const;
 
-export const $ItemCreate = {
-	properties: {
-		title: {
-	type: 'string',
-	isRequired: true,
-},
-		description: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-}, {
-	type: 'null',
-}],
-},
-	},
-} as const;
-
-export const $ItemPublic = {
-	properties: {
-		title: {
-	type: 'string',
-	isRequired: true,
-},
-		description: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-}, {
-	type: 'null',
-}],
-},
-		id: {
-	type: 'number',
-	isRequired: true,
-},
-		owner_id: {
-	type: 'number',
-	isRequired: true,
-},
-	},
-} as const;
-
-export const $ItemUpdate = {
-	properties: {
-		title: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-}, {
-	type: 'null',
-}],
-},
-		description: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-}, {
-	type: 'null',
-}],
-},
-	},
-} as const;
-
-export const $ItemsPublic = {
-	properties: {
-		data: {
-	type: 'array',
-	contains: {
-		type: 'ItemPublic',
-	},
-	isRequired: true,
-},
-		count: {
-	type: 'number',
-	isRequired: true,
-},
-	},
-} as const;
-
 export const $Message = {
 	properties: {
 		message: {
@@ -318,10 +239,6 @@ export const $UserCreate = {
 	type: 'boolean',
 	default: true,
 },
-		is_superuser: {
-	type: 'boolean',
-	default: false,
-},
 		full_name: {
 	type: 'any-of',
 	contains: [{
@@ -359,10 +276,6 @@ export const $UserPublic = {
 		is_active: {
 	type: 'boolean',
 	default: true,
-},
-		is_superuser: {
-	type: 'boolean',
-	default: false,
 },
 		full_name: {
 	type: 'any-of',
@@ -417,43 +330,6 @@ export const $UserTeamLinkPublic = {
 	},
 } as const;
 
-export const $UserUpdate = {
-	properties: {
-		email: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-}, {
-	type: 'null',
-}],
-},
-		is_active: {
-	type: 'boolean',
-	default: true,
-},
-		is_superuser: {
-	type: 'boolean',
-	default: false,
-},
-		full_name: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-}, {
-	type: 'null',
-}],
-},
-		password: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-}, {
-	type: 'null',
-}],
-},
-	},
-} as const;
-
 export const $UserUpdateMe = {
 	properties: {
 		full_name: {
@@ -471,22 +347,6 @@ export const $UserUpdateMe = {
 }, {
 	type: 'null',
 }],
-},
-	},
-} as const;
-
-export const $UsersPublic = {
-	properties: {
-		data: {
-	type: 'array',
-	contains: {
-		type: 'UserPublic',
-	},
-	isRequired: true,
-},
-		count: {
-	type: 'number',
-	isRequired: true,
 },
 	},
 } as const;

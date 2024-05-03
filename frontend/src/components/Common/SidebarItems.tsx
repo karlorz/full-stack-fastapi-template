@@ -1,19 +1,19 @@
 import {
   Box,
   Flex,
-  FlexProps,
+  type FlexProps,
   Icon,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react"
 import {
+  type AnyRoute,
   Link,
-  LinkProps,
-  ToOptions,
-  AnyRoute,
-  RegisteredRouter,
-  UseLinkPropsOptions,
-  RoutePaths,
+  type LinkProps,
+  type RegisteredRouter,
+  type RoutePaths,
+  type ToOptions,
+  type UseLinkPropsOptions,
 } from "@tanstack/react-router"
 import {
   FaCog,
@@ -55,7 +55,7 @@ const items: Array<Item> = [
     icon: FaTools,
     title: "Resources",
     ...link({
-      to: "/$team/items",
+      to: "/$team/resources",
       params: { team: "a-team" },
     }),
   },

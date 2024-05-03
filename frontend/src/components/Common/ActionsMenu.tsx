@@ -9,7 +9,7 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { FaEdit, FaExchangeAlt, FaTrash } from "react-icons/fa"
 
-import type { ItemPublic, TeamPublic, UserPublic } from "../../client"
+import type { TeamPublic, UserPublic } from "../../client"
 import ChangeRole from "../Teams/ChangeRole"
 import EditTeam from "../Teams/EditTeam"
 import DeleteTeam from "./DeleteTeam"
@@ -19,7 +19,7 @@ interface ActionsMenuProps {
   userRole?: string
   team?: TeamPublic
   type: string
-  value: ItemPublic | UserPublic | TeamPublic
+  value: UserPublic | TeamPublic
   disabled?: boolean
 }
 

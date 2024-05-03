@@ -10,10 +10,10 @@ import {
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 
-import Appearance from "../../../components/UserSettings/Appearance"
-import ChangePassword from "../../../components/UserSettings/ChangePassword"
-import DeleteAccount from "../../../components/UserSettings/DeleteAccount"
-import UserInformation from "../../../components/UserSettings/UserInformation"
+import Appearance from "../../components/UserSettings/Appearance"
+import ChangePassword from "../../components/UserSettings/ChangePassword"
+import DeleteAccount from "../../components/UserSettings/DeleteAccount"
+import UserInformation from "../../components/UserSettings/UserInformation"
 
 const tabsConfig = [
   { title: "My profile", component: UserInformation },
@@ -22,12 +22,11 @@ const tabsConfig = [
   { title: "Danger zone", component: DeleteAccount },
 ]
 
-export const Route = createFileRoute("/_layout/$team/settings")({
+export const Route = createFileRoute("/_layout/settings")({
   component: UserSettings,
 })
 
 function UserSettings() {
-
   return (
     <Container maxW="full" p={12}>
       <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={12}>

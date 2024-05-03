@@ -17,6 +17,7 @@ import { Route as RecoverPasswordImport } from './routes/recover-password'
 import { Route as LoginImport } from './routes/login'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
+import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutTeamIndexImport } from './routes/_layout/$team/index'
 import { Route as LayoutTeamsNewImport } from './routes/_layout/teams/new'
 import { Route as LayoutTeamsAllImport } from './routes/_layout/teams/all'
@@ -58,6 +59,11 @@ const LayoutRoute = LayoutImport.update({
 
 const LayoutIndexRoute = LayoutIndexImport.update({
   path: '/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutSettingsRoute = LayoutSettingsImport.update({
+  path: '/settings',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -141,6 +147,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
+    '/_layout/settings': {
+      preLoaderRoute: typeof LayoutSettingsImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/': {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
@@ -196,6 +206,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   LayoutRoute.addChildren([
+    LayoutSettingsRoute,
     LayoutIndexRoute,
     LayoutTeamBillingRoute,
     LayoutTeamHelpRoute,
