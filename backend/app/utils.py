@@ -1,6 +1,7 @@
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
+from enum import Enum
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +16,11 @@ from app.core.config import settings
 class EmailData:
     html_content: str
     subject: str
+
+
+class TokenType(str, Enum):
+    user = "user"
+    reset = "reset"
 
 
 def get_datetime_utc() -> datetime:
@@ -105,7 +111,7 @@ def generate_password_reset_token(email: str) -> str:
     expires = now + delta
     exp = expires.timestamp()
     encoded_jwt = jwt.encode(
-        {"exp": exp, "nbf": now, "sub": email},
+        {"exp": exp, "nbf": now, "sub": f"{TokenType.reset.value}-{email}"},
         settings.SECRET_KEY,
         algorithm="HS256",
     )
@@ -115,6 +121,9 @@ def generate_password_reset_token(email: str) -> str:
 def verify_password_reset_token(token: str) -> str | None:
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        return str(decoded_token["sub"])
+        splitted_sub = decoded_token["sub"].split("-")
+        if len(splitted_sub) == 2 and splitted_sub[0] == TokenType.reset:
+            return str(splitted_sub[1])
+        return None
     except JWTError:
         return None
