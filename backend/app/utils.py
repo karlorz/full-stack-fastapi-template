@@ -77,6 +77,7 @@ def generate_reset_password_email(email_to: str, email: str, token: str) -> Emai
     html_content = render_email_template(
         template_name="reset_password.html",
         context={
+            "server_host": settings.server_host,
             "project_name": settings.PROJECT_NAME,
             "username": email,
             "email": email_to,
@@ -95,6 +96,7 @@ def generate_new_account_email(
     html_content = render_email_template(
         template_name="new_account.html",
         context={
+            "server_host": settings.server_host,
             "project_name": settings.PROJECT_NAME,
             "username": username,
             "password": password,
