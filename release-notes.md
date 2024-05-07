@@ -34,6 +34,7 @@
 
 ### Refactors
 
+* ♻️ Update email templates. PR [#51](https://github.com/fastapilabs/cloud/pull/51) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor auth token to new sub format user-{user-id}. PR [#48](https://github.com/fastapilabs/cloud/pull/48) by [@estebanx64](https://github.com/estebanx64).
 * ♻️ Regenerate frontend client, disable Items and remove superuser logic. PR [#49](https://github.com/fastapilabs/cloud/pull/49) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Update test to add verification database records. PR [#43](https://github.com/fastapilabs/cloud/pull/43) by [@estebanx64](https://github.com/estebanx64).
