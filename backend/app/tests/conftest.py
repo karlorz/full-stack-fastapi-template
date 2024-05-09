@@ -7,17 +7,19 @@ from sqlmodel import Session, delete
 from app.core.config import settings
 from app.core.db import engine, init_db
 from app.main import app
-from app.models import Team, User, UserTeamLink
+from app.models import Invitation, Team, User, UserTeamLink
 from app.tests.utils.user import authentication_token_from_email
 from app.tests.utils.utils import get_superuser_token_headers
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def db() -> Generator[Session, None, None]:
     with Session(engine) as session:
         init_db(session)
         yield session
         statement = delete(UserTeamLink)
+        session.exec(statement)  # type: ignore
+        statement = delete(Invitation)
         session.exec(statement)  # type: ignore
         statement = delete(Team)
         session.exec(statement)  # type: ignore

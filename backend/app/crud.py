@@ -1,9 +1,11 @@
 from typing import Any
 
-from sqlmodel import Session, select
+from sqlalchemy.sql import and_
+from sqlmodel import Session, col, or_, select
 
 from app.core.security import get_password_hash, verify_password
 from app.models import (
+    Invitation,
     Role,
     Team,
     User,
@@ -64,3 +66,44 @@ def add_user_to_team(
     session.commit()
     session.refresh(user_org_link)
     return user_org_link
+
+
+def get_user_team_link_by_user_id_and_team_id(
+    *, session: Session, user_id: int | None, team_id: int | None
+) -> UserTeamLink | None:
+    statement = select(UserTeamLink).where(
+        UserTeamLink.team_id == team_id,
+        UserTeamLink.user_id == user_id,
+    )
+    user_team_link = session.exec(statement).first()
+    return user_team_link
+
+
+def get_invitation_by_user_id_or_email_and_team_id(
+    *, session: Session, team_id: int, user_id: int | None, email: str | None
+) -> Invitation | None:
+    invitation = session.exec(
+        select(Invitation).where(
+            or_(
+                and_(
+                    col(Invitation.email) == email,
+                    col(Invitation.team_id) == team_id,
+                ),
+                and_(
+                    col(Invitation.invited_user_id) == user_id,
+                    col(Invitation.team_id) == team_id,
+                ),
+            )
+        )
+    ).first()
+    return invitation
+
+
+def get_user_by_id_or_email(
+    *, session: Session, user_id: int | None, email: str | None
+) -> User | None:
+    statement = select(User).where(
+        or_(col(User.id) == user_id, col(User.email) == email)
+    )
+    user = session.exec(statement).first()
+    return user

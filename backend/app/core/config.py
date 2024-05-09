@@ -83,6 +83,7 @@ class Settings(BaseSettings):
         return self
 
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+    INVITATION_TOKEN_EXPIRE_HOURS: int = 168  # 7 days
 
     @computed_field  # type: ignore[misc]
     @property

@@ -1,7 +1,9 @@
 from datetime import datetime
 from enum import Enum
 
+from pydantic import model_validator
 from sqlmodel import Field, Relationship, SQLModel
+from typing_extensions import Self
 
 from app.utils import get_datetime_utc
 
@@ -14,8 +16,6 @@ class Role(str, Enum):
 class InvitationStatus(str, Enum):
     pending = "pending"
     accepted = "accepted"
-    declined = "declined"
-    expired = "expired"
 
 
 class UserTeamLink(SQLModel, table=True):
@@ -157,7 +157,6 @@ class TeamWithUserPublic(TeamPublic):
 
 
 class TeamCreateMember(SQLModel):
-    user_id: int
     role: Role
 
 
@@ -180,6 +179,20 @@ class InvitationCreate(InvitationBase):
     team_id: int
     invited_user_id: int | None = None
 
+    @model_validator(mode="after")
+    def check_invited_user_id_or_email(self) -> Self:
+        if not self.invited_user_id and not self.email:
+            raise ValueError("invited_user_id or email must be provided")
+        return self
+
+
+class InvitationUpdateStatus(SQLModel):
+    status: InvitationStatus
+
+
+class InvitationToken(SQLModel):
+    token: str
+
 
 class InvitationPublic(InvitationBase):
     id: int
@@ -188,7 +201,14 @@ class InvitationPublic(InvitationBase):
     invited_user_id: int | None = None
     status: InvitationStatus
     created_at: datetime
-    expires_at: datetime
+    receiver: UserPublic | None
+    sender: UserPublic
+    team: TeamPublic
+
+
+class InvitationsPublic(SQLModel):
+    data: list[InvitationPublic]
+    count: int
 
 
 class Invitation(InvitationBase, table=True):
@@ -196,7 +216,7 @@ class Invitation(InvitationBase, table=True):
     team_id: int = Field(foreign_key="team.id")
     invited_by_id: int = Field(foreign_key="user.id")
     invited_user_id: int | None = Field(default=None, foreign_key="user.id")
-    status: InvitationStatus
+    status: InvitationStatus = InvitationStatus.pending
     created_at: datetime = Field(default_factory=get_datetime_utc)
     expires_at: datetime
 

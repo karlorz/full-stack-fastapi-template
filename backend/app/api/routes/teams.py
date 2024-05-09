@@ -5,19 +5,16 @@ from sqlalchemy.orm import selectinload
 from sqlmodel import col, func, select
 
 from app.api.deps import CurrentUser, SessionDep
-from app.crud import add_user_to_team
 from app.models import (
     Message,
     Role,
     Team,
     TeamCreate,
-    TeamCreateMember,
     TeamPublic,
     TeamsPublic,
     TeamUpdate,
     TeamUpdateMember,
     TeamWithUserPublic,
-    User,
     UserTeamLink,
     UserTeamLinkPublic,
 )
@@ -154,53 +151,6 @@ def delete_team(
     session.delete(team)
     session.commit()
     return Message(message="Team deleted")
-
-
-@router.post("/{team_id}/users/", response_model=UserTeamLinkPublic)
-def add_member_to_team(
-    session: SessionDep,
-    current_user: CurrentUser,
-    team_id: int,
-    member_in: TeamCreateMember,
-) -> Any:
-    """
-    Add a user to an team.
-    """
-    query = (
-        select(UserTeamLink)
-        .options(
-            selectinload(UserTeamLink.team).selectinload(  # type: ignore
-                Team.user_links  # type: ignore
-            )
-        )
-        .where(
-            UserTeamLink.team_id == team_id,
-            UserTeamLink.user == current_user,
-        )
-    )
-    user_org_link = session.exec(query).first()
-    if not user_org_link:
-        raise HTTPException(
-            status_code=404, detail="Team not found for the current user"
-        )
-
-    if user_org_link.role != Role.admin:
-        raise HTTPException(
-            status_code=400, detail="Not enough permissions to execute this action"
-        )
-    team = user_org_link.team
-
-    if member_in.user_id in {link.user_id for link in team.user_links}:
-        raise HTTPException(status_code=400, detail="User already in team")
-
-    user = session.get(User, member_in.user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    user_team = add_user_to_team(
-        session=session, team=team, user=user, role=member_in.role
-    )
-    return user_team
 
 
 @router.put("/{team_id}/users/{user_id}", response_model=UserTeamLinkPublic)
