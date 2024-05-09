@@ -12,6 +12,7 @@
 
 ### Features
 
+* ✨ Add invitations logic for backend and emails. PR [#39](https://github.com/fastapilabs/cloud/pull/39) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Delete a team. PR [#42](https://github.com/fastapilabs/cloud/pull/42) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Edit Team and other tweaks. PR [#40](https://github.com/fastapilabs/cloud/pull/40) by [@alejsdev](https://github.com/alejsdev).
 * 🗃️ Add invitations table definition. PR [#25](https://github.com/fastapilabs/cloud/pull/25) by [@estebanx64](https://github.com/estebanx64).
