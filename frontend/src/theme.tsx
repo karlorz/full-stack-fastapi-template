@@ -58,7 +58,7 @@ const theme = extendTheme({
     },
     Tabs: {
       variants: {
-        enclosed: {
+        line: {
           tab: {
             _selected: {
               color: "ui.main",

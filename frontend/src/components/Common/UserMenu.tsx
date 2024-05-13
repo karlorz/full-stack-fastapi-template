@@ -53,7 +53,7 @@ const UserMenu = () => {
             as={Button}
             fontWeight="light"
             variant="unstyled"
-            width="auto"
+            w="auto"
           >
             <Flex justify="space-between">
               <Box display="flex" alignItems="center">

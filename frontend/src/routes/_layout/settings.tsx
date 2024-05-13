@@ -32,7 +32,7 @@ function UserSettings() {
       <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={12}>
         User Settings
       </Heading>
-      <Tabs variant="enclosed">
+      <Tabs variant="line">
         <TabList>
           {tabsConfig.map((tab, index) => (
             <Tab key={index}>{tab.title}</Tab>

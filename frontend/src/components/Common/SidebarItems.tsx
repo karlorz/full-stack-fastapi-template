@@ -17,7 +17,6 @@ import {
 } from "@tanstack/react-router"
 import {
   FaCog,
-  FaCreditCard,
   FaCubes,
   FaHome,
   FaQuestionCircle,
@@ -73,14 +72,6 @@ const items: Array<Item> = [
     title: "Settings",
     ...link({
       to: "/$team/settings",
-      params: { team: "a-team" },
-    }),
-  },
-  {
-    icon: FaCreditCard,
-    title: "Billing",
-    ...link({
-      to: "/$team/billing",
       params: { team: "a-team" },
     }),
   },

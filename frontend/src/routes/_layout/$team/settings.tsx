@@ -6,34 +6,33 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
 } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 
-import Appearance from "../../../components/UserSettings/Appearance"
-import ChangePassword from "../../../components/UserSettings/ChangePassword"
-import DeleteAccount from "../../../components/UserSettings/DeleteAccount"
-import UserInformation from "../../../components/UserSettings/UserInformation"
+import Billing from "../../../components/TeamSettings/Billing"
+import DeleteTeam from "../../../components/TeamSettings/DeleteTeam"
+import TeamInfo from "../../../components/TeamSettings/TeamInfo"
 
 const tabsConfig = [
-  { title: "My profile", component: UserInformation },
-  { title: "Password", component: ChangePassword },
-  { title: "Appearance", component: Appearance },
-  { title: "Danger zone", component: DeleteAccount },
+  { title: "Team", component: TeamInfo },
+  { title: "Billing", component: Billing },
+  { title: "Danger zone", component: DeleteTeam },
 ]
 
 export const Route = createFileRoute("/_layout/$team/settings")({
-  component: UserSettings,
+  component: TeamSettings,
 })
 
-function UserSettings() {
-
+function TeamSettings() {
   return (
     <Container maxW="full" p={12}>
-      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={12}>
-        User Settings
+      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
+        Settings
       </Heading>
-      <Tabs variant="enclosed">
+      <Text>View and manage settings related to your team.</Text>
+      <Tabs variant="line" pt={10}>
         <TabList>
           {tabsConfig.map((tab, index) => (
             <Tab key={index}>{tab.title}</Tab>

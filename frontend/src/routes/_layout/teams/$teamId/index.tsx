@@ -1,7 +1,6 @@
 import {
   Badge,
   Box,
-  Button,
   Container,
   Flex,
   Heading,
@@ -23,7 +22,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
-import { FaCheckCircle, FaEdit } from "react-icons/fa"
+import { FaCheckCircle } from "react-icons/fa"
 import { FaCircleXmark } from "react-icons/fa6"
 
 import { TeamsService, type UserPublic } from "../../../../client"
@@ -153,10 +152,6 @@ function Team() {
               Members
             </Heading>
           </Flex>
-          <Button variant="primary" gap={2}>
-            <Icon as={FaEdit} />
-            Edit Team
-          </Button>
         </Flex>
         <TeamTable />
       </Container>

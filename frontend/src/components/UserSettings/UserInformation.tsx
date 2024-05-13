@@ -78,11 +78,11 @@ const UserInformation = () => {
 
   return (
     <>
-      <Container maxW="full" as="form" onSubmit={handleSubmit(onSubmit)}>
+      <Container maxW="full">
         <Heading size="sm" py={4}>
           User Information
         </Heading>
-        <Box>
+        <Box as="form" onSubmit={handleSubmit(onSubmit)}>
           <FormControl>
             <FormLabel color={color} htmlFor="name">
               Full name
