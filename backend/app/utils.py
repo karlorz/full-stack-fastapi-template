@@ -6,8 +6,9 @@ from pathlib import Path
 from typing import Any
 
 import emails  # type: ignore
+import jwt
 from jinja2 import Template
-from jose import JWTError, jwt
+from jwt.exceptions import InvalidTokenError
 
 from app.core.config import settings
 
@@ -127,5 +128,5 @@ def verify_password_reset_token(token: str) -> str | None:
         if len(splitted_sub) == 2 and splitted_sub[0] == TokenType.reset:
             return str(splitted_sub[1])
         return None
-    except JWTError:
+    except InvalidTokenError:
         return None

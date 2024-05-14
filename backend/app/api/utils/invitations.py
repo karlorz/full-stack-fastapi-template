@@ -1,6 +1,7 @@
 from datetime import timedelta
 
-from jose import JWTError, jwt
+import jwt
+from jwt.exceptions import InvalidTokenError
 
 from app.core.config import settings
 from app.utils import EmailData, get_datetime_utc, render_email_template, send_email
@@ -47,7 +48,7 @@ def verify_invitation_token(token: str) -> int | None:
         if split_token[0] != "invitation":
             return None
         return int(split_token[1])
-    except JWTError:
+    except InvalidTokenError:
         return None
 
 
