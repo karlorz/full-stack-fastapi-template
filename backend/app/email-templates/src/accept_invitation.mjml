@@ -14,9 +14,9 @@
         <mj-text align="center" padding="35px" font-size="20px" font-family="Arial, Helvetica, sans-serif" color="#333">{{ team_name }} - Invitation</mj-text>
         <mj-text font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><span>Hello {{ email_to }},</span></mj-text>
         <mj-text font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555">You've been invited to join {{ team_name }} by {{ email_from }}. To accept the invitation, please click the button below:</mj-text>
-        <mj-button align="center" font-size="18px" background-color="#009688" border-radius="8px" color="#fff" href="{{ accept_link }}" padding="15px 30px">View Invitation</mj-button>
+        <mj-button align="center" font-size="18px" background-color="#009688" border-radius="8px" color="#fff" href="{{ link }}" padding="15px 30px">View Invitation</mj-button>
         <mj-text font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555">If you prefer, you can copy and paste the following link into your browser:</mj-text>
-        <mj-text font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><a href="{{ accept_link }}">{{ accept_link }}</a></mj-text>
+        <mj-text font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><a href="{{ link }}">{{ link }}</a></mj-text>
         <mj-text font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555">Please note that this invitation will expire in seven days.</mj-text>
       </mj-column>
     </mj-section>

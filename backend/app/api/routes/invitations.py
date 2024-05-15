@@ -1,12 +1,15 @@
 from datetime import timedelta
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import HTMLResponse
 from sqlalchemy.sql import and_, or_
 from sqlmodel import col, func, select
 
-from app.api.deps import CurrentUser, SessionDep
+from app.api.deps import CurrentUser, SessionDep, get_first_superuser
 from app.api.utils.invitations import (
+    generate_invitation_token,
+    generate_invitation_token_email,
     send_invitation_email,
     verify_invitation_token,
 )
@@ -298,6 +301,33 @@ def verify_invitation(
         raise HTTPException(status_code=400, detail="Invitation expired")
 
     return invitation
+
+
+@router.post(
+    "/team-invitation-html-content/{invitation_id}",
+    dependencies=[Depends(get_first_superuser)],
+    response_class=HTMLResponse,
+)
+def invitation_html_content(invitation_id: int, session: SessionDep) -> Any:
+    """
+    HTML Content for Invitation email
+    """
+    invitation = session.get(Invitation, invitation_id)
+    if not invitation:
+        raise HTTPException(status_code=404, detail="Invitation not found")
+    token = generate_invitation_token(invitation_id=invitation_id)
+    email_to = invitation.email or invitation.receiver.email
+    email_from = invitation.sender.email
+    email_data = generate_invitation_token_email(
+        team_name=invitation.team.name,
+        email_to=email_to,
+        email_from=email_from,
+        token=token,
+    )
+
+    return HTMLResponse(
+        content=email_data.html_content, headers={"subject:": email_data.subject}
+    )
 
 
 @router.delete("/{inv_id}", response_model=Message)
