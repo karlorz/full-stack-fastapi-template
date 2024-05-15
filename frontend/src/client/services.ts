@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UserUpdateMe,TeamCreate,TeamCreateMember,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UserUpdateMe,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationToken } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -308,11 +308,6 @@ export type TDataDeleteTeam = {
                 teamId: number
                 
             }
-export type TDataAddMemberToTeam = {
-                requestBody: TeamCreateMember
-teamId: number
-                
-            }
 export type TDataUpdateMemberInTeam = {
                 requestBody: TeamUpdateMember
 teamId: number
@@ -441,31 +436,6 @@ teamId,
 	}
 
 	/**
-	 * Add Member To Team
-	 * Add a user to an team.
-	 * @returns UserTeamLinkPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static addMemberToTeam(data: TDataAddMemberToTeam): CancelablePromise<UserTeamLinkPublic> {
-		const {
-requestBody,
-teamId,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/teams/{team_id}/users/',
-			path: {
-				team_id: teamId
-			},
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
 	 * Update Member In Team
 	 * Update a member in an team.
 	 * @returns UserTeamLinkPublic Successful Response
@@ -507,6 +477,201 @@ userId,
 			url: '/api/v1/teams/{team_id}/users/{user_id}',
 			path: {
 				team_id: teamId, user_id: userId
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+}
+
+export type TDataReadInvitationsMe = {
+                limit?: number
+skip?: number
+                
+            }
+export type TDataReadInvitationsSent = {
+                limit?: number
+skip?: number
+                
+            }
+export type TDataReadInvitationsTeamByAdmin = {
+                limit?: number
+skip?: number
+teamId: number
+                
+            }
+export type TDataCreateInvitation = {
+                requestBody: InvitationCreate
+                
+            }
+export type TDataAcceptInvitation = {
+                requestBody: InvitationToken
+                
+            }
+export type TDataVerifyInvitation = {
+                requestBody: InvitationToken
+                
+            }
+export type TDataDeleteInvitation = {
+                invId: number
+                
+            }
+
+export class InvitationsService {
+
+	/**
+	 * Read Invitations Me
+	 * Retrieve a list of invitations accessible to the current user.
+	 * @returns InvitationsPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static readInvitationsMe(data: TDataReadInvitationsMe = {}): CancelablePromise<InvitationsPublic> {
+		const {
+limit = 100,
+skip = 0,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/invitations/me',
+			query: {
+				skip, limit
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Read Invitations Sent
+	 * Retrieve a list of invitations sent by the current user.
+	 * @returns InvitationsPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static readInvitationsSent(data: TDataReadInvitationsSent = {}): CancelablePromise<InvitationsPublic> {
+		const {
+limit = 100,
+skip = 0,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/invitations/sent',
+			query: {
+				skip, limit
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Read Invitations Team By Admin
+	 * Retrieve a list of invitations sent by the current user.
+	 * @returns InvitationsPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static readInvitationsTeamByAdmin(data: TDataReadInvitationsTeamByAdmin): CancelablePromise<InvitationsPublic> {
+		const {
+limit = 100,
+skip = 0,
+teamId,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/invitations/team/{team_id}',
+			path: {
+				team_id: teamId
+			},
+			query: {
+				skip, limit
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Create Invitation
+	 * Create new invitation.
+	 * @returns InvitationPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static createInvitation(data: TDataCreateInvitation): CancelablePromise<InvitationPublic> {
+		const {
+requestBody,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/invitations/',
+			body: requestBody,
+			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Accept Invitation
+	 * Accept an invitation.
+	 * @returns InvitationPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static acceptInvitation(data: TDataAcceptInvitation): CancelablePromise<InvitationPublic> {
+		const {
+requestBody,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/invitations/accept',
+			body: requestBody,
+			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Verify Invitation
+	 * Verify an invitation token.
+	 * @returns InvitationPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static verifyInvitation(data: TDataVerifyInvitation): CancelablePromise<InvitationPublic> {
+		const {
+requestBody,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/invitations/token/verify',
+			body: requestBody,
+			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Delete Invitation
+	 * Delete an invitation.
+	 * @returns Message Successful Response
+	 * @throws ApiError
+	 */
+	public static deleteInvitation(data: TDataDeleteInvitation): CancelablePromise<Message> {
+		const {
+invId,
+} = data;
+		return __request(OpenAPI, {
+			method: 'DELETE',
+			url: '/api/v1/invitations/{inv_id}',
+			path: {
+				inv_id: invId
 			},
 			errors: {
 				422: `Validation Error`,

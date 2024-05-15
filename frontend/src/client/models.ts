@@ -15,6 +15,48 @@ export type HTTPValidationError = {
 
 
 
+export type InvitationCreate = {
+	role: Role;
+	email?: string | null;
+	team_id: number;
+	invited_user_id?: number | null;
+};
+
+
+
+export type InvitationPublic = {
+	role: Role;
+	email?: string | null;
+	id: number;
+	team_id: number;
+	invited_by_id: number;
+	invited_user_id?: number | null;
+	status: InvitationStatus;
+	created_at: string;
+	receiver: UserPublic | null;
+	sender: UserPublic;
+	team: TeamPublic;
+};
+
+
+
+export type InvitationStatus = 'pending' | 'accepted';
+
+
+
+export type InvitationToken = {
+	token: string;
+};
+
+
+
+export type InvitationsPublic = {
+	data: Array<InvitationPublic>;
+	count: number;
+};
+
+
+
 export type Message = {
 	message: string;
 };
@@ -35,13 +77,6 @@ export type Role = 'member' | 'admin';
 export type TeamCreate = {
 	name: string;
 	description?: string | null;
-};
-
-
-
-export type TeamCreateMember = {
-	user_id: number;
-	role: Role;
 };
 
 

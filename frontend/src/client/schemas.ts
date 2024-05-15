@@ -51,6 +51,128 @@ export const $HTTPValidationError = {
 	},
 } as const;
 
+export const $InvitationCreate = {
+	properties: {
+		role: {
+	type: 'Role',
+	isRequired: true,
+},
+		email: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+}, {
+	type: 'null',
+}],
+},
+		team_id: {
+	type: 'number',
+	isRequired: true,
+},
+		invited_user_id: {
+	type: 'any-of',
+	contains: [{
+	type: 'number',
+}, {
+	type: 'null',
+}],
+},
+	},
+} as const;
+
+export const $InvitationPublic = {
+	properties: {
+		role: {
+	type: 'Role',
+	isRequired: true,
+},
+		email: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+}, {
+	type: 'null',
+}],
+},
+		id: {
+	type: 'number',
+	isRequired: true,
+},
+		team_id: {
+	type: 'number',
+	isRequired: true,
+},
+		invited_by_id: {
+	type: 'number',
+	isRequired: true,
+},
+		invited_user_id: {
+	type: 'any-of',
+	contains: [{
+	type: 'number',
+}, {
+	type: 'null',
+}],
+},
+		status: {
+	type: 'InvitationStatus',
+	isRequired: true,
+},
+		created_at: {
+	type: 'string',
+	isRequired: true,
+	format: 'date-time',
+},
+		receiver: {
+	type: 'any-of',
+	contains: [{
+	type: 'UserPublic',
+}, {
+	type: 'null',
+}],
+	isRequired: true,
+},
+		sender: {
+	type: 'UserPublic',
+	isRequired: true,
+},
+		team: {
+	type: 'TeamPublic',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $InvitationStatus = {
+	type: 'Enum',
+	enum: ['pending','accepted',],
+} as const;
+
+export const $InvitationToken = {
+	properties: {
+		token: {
+	type: 'string',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $InvitationsPublic = {
+	properties: {
+		data: {
+	type: 'array',
+	contains: {
+		type: 'InvitationPublic',
+	},
+	isRequired: true,
+},
+		count: {
+	type: 'number',
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $Message = {
 	properties: {
 		message: {
@@ -91,19 +213,6 @@ export const $TeamCreate = {
 }, {
 	type: 'null',
 }],
-},
-	},
-} as const;
-
-export const $TeamCreateMember = {
-	properties: {
-		user_id: {
-	type: 'number',
-	isRequired: true,
-},
-		role: {
-	type: 'Role',
-	isRequired: true,
 },
 	},
 } as const;
