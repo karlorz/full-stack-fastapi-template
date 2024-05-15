@@ -36,6 +36,7 @@
 
 ### Refactors
 
+* ♻️ Regenerate frontend client. PR [#58](https://github.com/fastapilabs/cloud/pull/58) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor migrate from python-jose to PyJWT. PR [#54](https://github.com/fastapilabs/cloud/pull/54) by [@estebanx64](https://github.com/estebanx64).
 * ♻️ Update email templates. PR [#51](https://github.com/fastapilabs/cloud/pull/51) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor auth token to new sub format user-{user-id}. PR [#48](https://github.com/fastapilabs/cloud/pull/48) by [@estebanx64](https://github.com/estebanx64).
