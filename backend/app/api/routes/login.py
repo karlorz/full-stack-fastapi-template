@@ -67,6 +67,8 @@ def recover_password(email: str, session: SessionDep) -> Message:
     email_data = generate_reset_password_email(
         email_to=user.email, email=email, token=password_reset_token
     )
+    if not settings.emails_enabled:
+        raise HTTPException(status_code=500, detail="No email provided")
     send_email(
         email_to=user.email,
         subject=email_data.subject,

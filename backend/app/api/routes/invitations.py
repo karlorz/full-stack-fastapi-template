@@ -191,12 +191,13 @@ def create_invitation(
         session.refresh(invitation)
 
         assert invitation.id  # for type checking
-        send_invitation_email(
-            invitation_id=invitation.id,
-            email_to=invitation.email,
-            email_from=current_user.email,
-            team_name=invitation.team.name,
-        )
+        if settings.emails_enabled:
+            send_invitation_email(
+                invitation_id=invitation.id,
+                email_to=invitation.email,
+                email_from=current_user.email,
+                team_name=invitation.team.name,
+            )
 
         return invitation
 
@@ -217,12 +218,13 @@ def create_invitation(
     session.commit()
     session.refresh(invitation)
 
-    send_invitation_email(
-        invitation_id=invitation.id,  # type: ignore
-        email_to=invitation.email,
-        email_from=current_user.email,
-        team_name=invitation.team.name,
-    )
+    if settings.emails_enabled:
+        send_invitation_email(
+            invitation_id=invitation.id,  # type: ignore
+            email_to=invitation.email,
+            email_from=current_user.email,
+            team_name=invitation.team.name,
+        )
 
     return invitation
 
