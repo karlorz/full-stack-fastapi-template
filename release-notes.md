@@ -38,6 +38,7 @@
 
 ### Refactors
 
+* 🎨 Tweaks style related for consistency . PR [#63](https://github.com/fastapilabs/cloud/pull/63) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Update conftest.py to remove DB data even after test errors. PR [#62](https://github.com/fastapilabs/cloud/pull/62) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor invitations creation to only accept an email and not an ID to simplify logic. PR [#61](https://github.com/fastapilabs/cloud/pull/61) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add API endpoint for invitation HTML content and update email template. PR [#59](https://github.com/fastapilabs/cloud/pull/59) by [@alejsdev](https://github.com/alejsdev).
