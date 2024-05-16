@@ -87,7 +87,7 @@ const FlexLink = (props: LinkProps & Omit<FlexProps, "as">) => (
 )
 
 const SidebarItems = ({ onClose }: SidebarItemsProps) => {
-  const bgActive = useColorModeValue("#E2E8F0", "#4A5568")
+  const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
 
   const listItems = items.map(({ icon, title, to, params }) => (
     <FlexLink
@@ -98,10 +98,13 @@ const SidebarItems = ({ onClose }: SidebarItemsProps) => {
       px={4}
       py={2}
       fontSize="md"
+      _hover={{
+        background: bgHover,
+        borderRadius: "12px",
+      }}
       activeProps={{
         style: {
-          background: bgActive,
-          borderRadius: "12px",
+          color: "#009688",
         },
       }}
       onClick={onClose}

@@ -73,10 +73,8 @@ function TeamTable() {
             {headers.map((header) => (
               <Th
                 key={header}
-                style={{
-                  textTransform: "capitalize",
-                  width: header === "Actions" ? "20%" : "40%",
-                }}
+                textTransform="capitalize"
+                width={header === "Actions" ? "20%" : "40%"}
               >
                 {header}
               </Th>

@@ -13,11 +13,9 @@ const DeleteAccount = () => {
 
   return (
     <>
-      <Container maxW="full">
-        <Heading size="sm" py={4}>
-          Delete Account
-        </Heading>
-        <Text>
+      <Container maxW="full" m={4}>
+        <Heading size="sm">Delete Account</Heading>
+        <Text mt={4}>
           Permanently delete your data and everything associated with your
           account.
         </Text>

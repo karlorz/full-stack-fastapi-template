@@ -6,10 +6,10 @@ import Team from "../Teams/Team"
 const TeamInfo = () => {
   return (
     <Container maxW="full" m={4}>
-      <Heading size="sm" pt={6}>
-        Team Information
-      </Heading>
-      <Text py={2}>See information regarding your team.</Text>
+      <Heading size="sm">Team Information</Heading>
+      <Text py={2} mb={4}>
+        See information regarding your team.
+      </Text>
       <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
         <Box my={4}>
           <Text fontWeight="bold" mb={4}>
@@ -26,7 +26,7 @@ const TeamInfo = () => {
           <Team />
         </Box>
       </Box>
-      <Flex gap="4">
+      <Flex gap="8">
         <Box width="70%">
           <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
             <Text fontWeight="bold" mb={4}>

@@ -46,11 +46,11 @@ function AllTeamsTableBody() {
 function AllTeamsTable() {
   return (
     <TableContainer py={6}>
-      <Table size={{ base: "sm", md: "md" }}>
+      <Table size={{ base: "sm", md: "md" }} variant="unstyled">
         <Thead>
           <Tr>
-            <Th>Name</Th>
-            <Th>Actions</Th>
+            <Th textTransform="capitalize">Name</Th>
+            <Th textTransform="capitalize">Actions</Th>
           </Tr>
         </Thead>
         <ErrorBoundary
@@ -65,7 +65,7 @@ function AllTeamsTable() {
           <Suspense
             fallback={
               <Tbody>
-                {new Array(5).fill(null).map((_, index) => (
+                {new Array(2).fill(null).map((_, index) => (
                   <Tr key={index}>
                     <Td colSpan={5}>
                       <Box width="100%">

@@ -78,11 +78,9 @@ const UserInformation = () => {
 
   return (
     <>
-      <Container maxW="full">
-        <Heading size="sm" py={4}>
-          User Information
-        </Heading>
-        <Box as="form" onSubmit={handleSubmit(onSubmit)}>
+      <Container maxW="full" m={4}>
+        <Heading size="sm">User Information</Heading>
+        <Box as="form" onSubmit={handleSubmit(onSubmit)} mt={4}>
           <FormControl>
             <FormLabel color={color} htmlFor="name">
               Full name

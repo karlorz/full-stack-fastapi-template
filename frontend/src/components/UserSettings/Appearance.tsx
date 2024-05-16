@@ -13,11 +13,9 @@ const Appearance = () => {
 
   return (
     <>
-      <Container maxW="full">
-        <Heading size="sm" py={4}>
-          Appearance
-        </Heading>
-        <RadioGroup onChange={toggleColorMode} value={colorMode}>
+      <Container maxW="full" m={4}>
+        <Heading size="sm">Appearance</Heading>
+        <RadioGroup onChange={toggleColorMode} value={colorMode} mt={4}>
           <Stack>
             {/* TODO: Add system default option */}
             <Radio value="light" colorScheme="teal">

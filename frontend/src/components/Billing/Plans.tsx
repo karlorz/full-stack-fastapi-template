@@ -55,6 +55,7 @@ const Plans = () => {
       </Box>
     ),
   )
+
   return (
     <>
       <Stack direction={{ base: "column", md: "row" }} gap={10}>

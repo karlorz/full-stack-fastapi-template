@@ -16,7 +16,7 @@ const theme = extendTheme({
     ui: {
       main: "#009688",
       success: "#48BB78",
-      danger: "#E53E3E",
+      danger: "#B82828",
       light: "#FAFAFA",
       dark: "#1A202C",
       darkSlate: "#252D3D",
@@ -51,7 +51,7 @@ const theme = extendTheme({
           backgroundColor: "ui.danger",
           color: "ui.light",
           _hover: {
-            backgroundColor: "#E32727",
+            backgroundColor: "#821B1B",
           },
         },
       },

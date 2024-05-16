@@ -6,6 +6,7 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
 } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
@@ -29,10 +30,11 @@ export const Route = createFileRoute("/_layout/settings")({
 function UserSettings() {
   return (
     <Container maxW="full" p={12}>
-      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={12}>
+      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
         User Settings
       </Heading>
-      <Tabs variant="line">
+      <Text>View and manage settings related to your account.</Text>
+      <Tabs variant="line" pt={10}>
         <TabList>
           {tabsConfig.map((tab, index) => (
             <Tab key={index}>{tab.title}</Tab>

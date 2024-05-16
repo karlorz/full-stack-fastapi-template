@@ -1,7 +1,6 @@
 import {
   Badge,
   Box,
-  Center,
   Container,
   Flex,
   FormControl,
@@ -36,17 +35,13 @@ function BillingTableBody() {
           <Badge colorScheme={status === "Paid" ? "green" : "red"}>
             {status}
           </Badge>,
-          <Center>
-            <FaFileDownload cursor="pointer" />
-          </Center>,
+          <FaFileDownload cursor="pointer" />,
         ]
 
         return (
           <Tr key={id}>
             {data.map((item, index) => (
-              <Td key={index} textAlign="center">
-                {item}
-              </Td>
+              <Td key={index}>{item}</Td>
             ))}
           </Tr>
         )
@@ -60,15 +55,11 @@ function BillingTable() {
 
   return (
     <TableContainer py={6}>
-      <Table size={{ base: "sm", md: "md" }}>
+      <Table size={{ base: "sm", md: "md" }} variant="unstyled">
         <Thead>
           <Tr>
             {headers.map((header) => (
-              <Th
-                key={header}
-                textAlign="center"
-                style={{ textTransform: "capitalize" }}
-              >
+              <Th key={header} style={{ textTransform: "capitalize" }}>
                 {header}
               </Th>
             ))}
@@ -109,17 +100,19 @@ function BillingTable() {
 const Billing = () => {
   return (
     <Container maxW="full" m={4}>
-      <Heading size="sm" pt={6}>
-        Billing Information
-      </Heading>
-      <Text py={2}>See information regarding your current plan.</Text>
-      <Box boxShadow="xs" px={8} py={4} borderRadius="lg">
+      <Heading size="sm">Billing Information</Heading>
+      <Text py={2} mb={4}>
+        See information regarding your current plan.
+      </Text>
+      <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
         <Box my={4}>
           <FormControl id="email">
             <FormLabel fontWeight="bold">Billing Email</FormLabel>
             <Text>team1@domain.com</Text>
           </FormControl>
         </Box>
+      </Box>
+      <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
         <Box my={4}>
           <Text fontWeight="bold">Current Plan</Text>
           <Flex pt={4}>
@@ -127,6 +120,8 @@ const Billing = () => {
             <PaymentMethod />
           </Flex>
         </Box>
+      </Box>
+      <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
         <Box my={4}>
           <Text fontWeight="bold" pt={4}>
             Invoice History
