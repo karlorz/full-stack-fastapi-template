@@ -21,33 +21,35 @@ def test_read_invitations_me(client: TestClient, db: Session) -> None:
     team2 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test1@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test2@example.com", password="test123")
+    admin_user = create_user(session=db, email="test1@fastapi.com", password="test123")
+    invited_user = create_user(
+        session=db, email="test2@example.com", password="test123"
+    )
 
-    add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
-    add_user_to_team(session=db, user=user1, team=team2, role=Role.admin)
+    add_user_to_team(session=db, user=admin_user, team=team1, role=Role.admin)
+    add_user_to_team(session=db, user=admin_user, team=team2, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_id=team1.id, email=user2.email, role=Role.member, invited_user_id=user2.id
+        team_id=team1.id, email=invited_user.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
         invitation_in=invitation_to_create,
-        invited_by=user1,
+        invited_by=admin_user,
         invitation_status=InvitationStatus.pending,
     )
     invitation_to_create = InvitationCreate(
-        team_id=team2.id, email=user2.email, role=Role.member, invited_user_id=user2.id
+        team_id=team2.id, email=invited_user.email, role=Role.member
     )
     invitation2 = create_invitation(
         session=db,
         invitation_in=invitation_to_create,
-        invited_by=user1,
+        invited_by=admin_user,
         invitation_status=InvitationStatus.pending,
     )
 
     user_auth_headers = user_authentication_headers(
-        client=client, email=user2.email, password="test123"
+        client=client, email=invited_user.email, password="test123"
     )
 
     # Make a request to the get_invitations_me route using the client fixture and superuser_token_headers
@@ -67,14 +69,12 @@ def test_read_invitations_me(client: TestClient, db: Session) -> None:
     assert invitations[1]["id"] == invitation2.id
     assert invitations[0]["team_id"] == team1.id
     assert invitations[1]["team_id"] == team2.id
-    assert invitations[0]["email"] == user2.email
-    assert invitations[1]["email"] == user2.email
+    assert invitations[0]["email"] == invited_user.email
+    assert invitations[1]["email"] == invited_user.email
     assert invitations[0]["role"] == "member"
     assert invitations[1]["role"] == "member"
-    assert invitations[0]["invited_user_id"] == user2.id
-    assert invitations[1]["invited_user_id"] == user2.id
-    assert invitations[0]["receiver"]["id"] == user2.id
-    assert invitations[1]["receiver"]["id"] == user2.id
+    assert invitations[0]["receiver"]["id"] == invited_user.id
+    assert invitations[1]["receiver"]["id"] == invited_user.id
 
 
 def test_read_invitations_me_empty(client: TestClient, db: Session) -> None:
@@ -88,7 +88,7 @@ def test_read_invitations_me_empty(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_id=team1.id, email=user2.email, role=Role.member, invited_user_id=user2.id
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -130,7 +130,7 @@ def test_read_invitations_sent(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team2, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_id=team1.id, email=user2.email, role=Role.member, invited_user_id=user2.id
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -139,7 +139,7 @@ def test_read_invitations_sent(client: TestClient, db: Session) -> None:
         invitation_status=InvitationStatus.pending,
     )
     invitation_to_create = InvitationCreate(
-        team_id=team2.id, email=user2.email, role=Role.member, invited_user_id=user2.id
+        team_id=team2.id, email=user2.email, role=Role.member
     )
     invitation2 = create_invitation(
         session=db,
@@ -170,11 +170,8 @@ def test_read_invitations_sent(client: TestClient, db: Session) -> None:
     assert invitations[0]["team_id"] == team1.id
     assert invitations[1]["team_id"] == team2.id
     assert invitations[0]["email"] == user2.email
-    assert invitations[1]["email"] == user2.email
     assert invitations[0]["role"] == "member"
     assert invitations[1]["role"] == "member"
-    assert invitations[0]["invited_user_id"] == user2.id
-    assert invitations[1]["invited_user_id"] == user2.id
     assert invitations[0]["sender"]["id"] == user1.id
     assert invitations[1]["sender"]["id"] == user1.id
 
@@ -190,7 +187,7 @@ def test_read_invitations_sent_empty(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_id=team1.id, email=user2.email, role=Role.member, invited_user_id=user2.id
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -229,7 +226,7 @@ def test_read_invitations_team_success(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_id=team.id, email=user2.email, role=Role.member, invited_user_id=user2.id
+        team_id=team.id, email=user2.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -239,7 +236,7 @@ def test_read_invitations_team_success(client: TestClient, db: Session) -> None:
     )
 
     invitation_to_create = InvitationCreate(
-        team_id=team.id, email=user3.email, role=Role.member, invited_user_id=user3.id
+        team_id=team.id, email=user3.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -279,7 +276,7 @@ def test_read_invitations_team_empty(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_id=team2.id, email=user3.email, role=Role.member, invited_user_id=user3.id
+        team_id=team2.id, email=user3.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -316,7 +313,7 @@ def test_read_invitations_team_not_enough_permissions(
     add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_id=team.id, email=user.email, role=Role.member, invited_user_id=user.id
+        team_id=team.id, email=user.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -415,7 +412,7 @@ def test_create_invitation_team_not_found_current_user(
 
         payload = {
             "team_id": team1.id + 1,  # type: ignore
-            "invited_user_id": user2.id,
+            "email": user2.email,
             "role": "member",
         }
 
@@ -483,7 +480,6 @@ def test_create_invitation_already_exists(client: TestClient, db: Session) -> No
             team_id=team1.id,
             email=user2.email,
             role=Role.member,
-            invited_user_id=user2.id,
         )
         create_invitation(
             session=db,
@@ -531,7 +527,6 @@ def test_create_invitation_user_already_in_team(
             team_id=team1.id,
             email=user2.email,
             role=Role.member,
-            invited_user_id=user2.id,
         )
         create_invitation(
             session=db,
@@ -595,44 +590,6 @@ def test_create_invitation_user_to_invite_not_found(
         assert data["sender"]["id"] == user1.id
 
 
-def test_create_invitation_user_not_found_nor_email_error(
-    client: TestClient, db: Session
-) -> None:
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
-    ):
-        team1 = create_random_team(db)
-        user1 = create_user(
-            session=db, email="test373435gf@fastapi.com", password="test123"
-        )
-        add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
-
-        user_auth_headers = user_authentication_headers(
-            client=client, email=user1.email, password="test123"
-        )
-
-        payload = {
-            "team_id": team1.id,
-            "role": "member",
-            "invited_user_id": "99999",
-        }
-
-        response = client.post(
-            f"{settings.API_V1_STR}/invitations/",
-            headers=user_auth_headers,
-            json=payload,
-        )
-
-        assert response.status_code == 400
-        data = response.json()
-        assert (
-            data["detail"]
-            == "The invitation must have an email to be sent to a user that does not exist in our platform"
-        )
-
-
 def test_create_invitation_user_already_in_team_without_invitation(
     client: TestClient, db: Session
 ) -> None:
@@ -668,43 +625,6 @@ def test_create_invitation_user_already_in_team_without_invitation(
         assert data["detail"] == "The user is already in the team"
 
 
-def test_create_invitation_invited_user_id_or_email_required(
-    client: TestClient, db: Session
-) -> None:
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
-    ):
-        team1 = create_random_team(db)
-        user1 = create_user(
-            session=db, email="test38345@fastapi.com", password="test123"
-        )
-        add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
-
-        user_auth_headers = user_authentication_headers(
-            client=client, email=user1.email, password="test123"
-        )
-
-        payload = {
-            "team_id": team1.id,
-            "role": "member",
-        }
-
-        response = client.post(
-            f"{settings.API_V1_STR}/invitations/",
-            headers=user_auth_headers,
-            json=payload,
-        )
-
-        assert response.status_code == 422
-        data = response.json()
-        assert (
-            data["detail"][0]["msg"]
-            == "Value error, invited_user_id or email must be provided"
-        )
-
-
 # ** POST /invitations/{inv_id}/accept **
 def test_accept_invitation_success(client: TestClient, db: Session) -> None:
     # Create test data in the database using db fixture
@@ -717,7 +637,7 @@ def test_accept_invitation_success(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_id=team1.id, email=user2.email, role=Role.member, invited_user_id=user2.id
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -749,14 +669,12 @@ def test_accept_invitation_success(client: TestClient, db: Session) -> None:
     assert data["team_id"] == team1.id
     assert data["email"] == user2.email
     assert data["role"] == "member"
-    assert data["invited_user_id"] == user2.id
     assert data["sender"]["id"] == user1.id
     # ** db assert
     assert data["status"] == invitation1.status
     assert data["team_id"] == invitation1.team_id
     assert data["email"] == invitation1.email
     assert data["role"] == invitation1.role
-    assert data["invited_user_id"] == invitation1.invited_user_id
     assert data["sender"]["id"] == invitation1.invited_by_id
 
 
@@ -771,7 +689,7 @@ def test_accept_invitation_invalid_token(client: TestClient, db: Session) -> Non
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_id=team1.id, email=user2.email, role=Role.member, invited_user_id=user2.id
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -807,7 +725,7 @@ def test_accept_invitation_not_found(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_id=team1.id, email=user2.email, role=Role.member, invited_user_id=user2.id
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -873,10 +791,8 @@ def test_accept_invitation_success_set_user_fk(client: TestClient, db: Session) 
     # Assert the response and the expected behavior
     assert response.status_code == 200
     data = response.json()
-    assert data["invited_user_id"] == user2.id
     assert data["sender"]["id"] == user1.id
     # ** db assert
-    assert data["invited_user_id"] == invitation1.invited_user_id
     assert data["sender"]["id"] == invitation1.invited_by_id
 
 

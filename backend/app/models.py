@@ -1,9 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
-from pydantic import model_validator
 from sqlmodel import Field, Relationship, SQLModel
-from typing_extensions import Self
 
 from app.utils import get_datetime_utc
 
@@ -172,18 +170,11 @@ class UserTeamLinkPublic(SQLModel):
 
 class InvitationBase(SQLModel):
     role: Role
-    email: str | None = None
+    email: str
 
 
 class InvitationCreate(InvitationBase):
     team_id: int
-    invited_user_id: int | None = None
-
-    @model_validator(mode="after")
-    def check_invited_user_id_or_email(self) -> Self:
-        if not self.invited_user_id and not self.email:
-            raise ValueError("invited_user_id or email must be provided")
-        return self
 
 
 class InvitationUpdateStatus(SQLModel):

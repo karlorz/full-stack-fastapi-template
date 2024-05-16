@@ -16,8 +16,6 @@ from app.api.utils.invitations import (
 from app.core.config import settings
 from app.crud import (
     add_user_to_team,
-    get_invitation_by_user_id_or_email_and_team_id,
-    get_user_by_id_or_email,
     get_user_team_link_by_user_id_and_team_id,
 )
 from app.models import (
@@ -29,6 +27,7 @@ from app.models import (
     InvitationToken,
     Message,
     Role,
+    User,
 )
 from app.utils import get_datetime_utc
 
@@ -146,12 +145,12 @@ def create_invitation(
             status_code=400, detail="Not enough permissions to execute this action"
         )
 
-    existing_invitation = get_invitation_by_user_id_or_email_and_team_id(
-        session=session,
-        user_id=invitation_in.invited_user_id,
-        team_id=invitation_in.team_id,
-        email=invitation_in.email,
-    )
+    existing_invitation = session.exec(
+        select(Invitation).where(
+            col(Invitation.email) == invitation_in.email,
+            col(Invitation.team_id) == invitation_in.team_id,
+        )
+    ).first()
 
     if (
         existing_invitation
@@ -163,11 +162,8 @@ def create_invitation(
             detail="Invitation already exists for this user",
         )
 
-    user_to_invite = get_user_by_id_or_email(
-        session=session,
-        user_id=invitation_in.invited_user_id,
-        email=invitation_in.email,
-    )
+    statement = select(User).where(col(User.email) == invitation_in.email)
+    user_to_invite = session.exec(statement).first()
 
     invitation = Invitation.model_validate(
         invitation_in,
@@ -185,7 +181,6 @@ def create_invitation(
                 detail="The invitation must have an email to be sent to a user that does not exist in our platform",
             )
 
-        invitation.invited_user_id = None
         session.add(invitation)
         session.commit()
         session.refresh(invitation)
