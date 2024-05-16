@@ -21,7 +21,6 @@ import {
   FaHome,
   FaQuestionCircle,
   FaTools,
-  FaUsers,
 } from "react-icons/fa"
 
 // https://github.com/TanStack/router/issues/1194#issuecomment-1956736102
@@ -56,15 +55,6 @@ const items: Array<Item> = [
     ...link({
       to: "/$team/resources",
       params: { team: "a-team" },
-    }),
-  },
-  // TODO: this should probably be members or users
-  {
-    icon: FaUsers,
-    title: "Team",
-    ...link({
-      to: "/teams/$teamId",
-      params: { teamId: "1" },
     }),
   },
   {
