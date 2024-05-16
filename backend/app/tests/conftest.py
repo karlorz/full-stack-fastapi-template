@@ -16,16 +16,18 @@ from app.tests.utils.utils import get_superuser_token_headers
 def db() -> Generator[Session, None, None]:
     with Session(engine) as session:
         init_db(session)
-        yield session
-        statement = delete(UserTeamLink)
-        session.exec(statement)  # type: ignore
-        statement = delete(Invitation)
-        session.exec(statement)  # type: ignore
-        statement = delete(Team)
-        session.exec(statement)  # type: ignore
-        statement = delete(User)
-        session.exec(statement)  # type: ignore
-        session.commit()
+        try:
+            yield session
+        finally:
+            statement = delete(UserTeamLink)
+            session.exec(statement)  # type: ignore
+            statement = delete(Invitation)
+            session.exec(statement)  # type: ignore
+            statement = delete(Team)
+            session.exec(statement)  # type: ignore
+            statement = delete(User)
+            session.exec(statement)  # type: ignore
+            session.commit()
 
 
 @pytest.fixture(scope="module")
