@@ -38,6 +38,7 @@
 
 ### Refactors
 
+* 🚚 Move assets to public folder. PR [#65](https://github.com/fastapilabs/cloud/pull/65) by [@alejsdev](https://github.com/alejsdev).
 * 🎨 Tweaks style related for consistency . PR [#63](https://github.com/fastapilabs/cloud/pull/63) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Update conftest.py to remove DB data even after test errors. PR [#62](https://github.com/fastapilabs/cloud/pull/62) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor invitations creation to only accept an email and not an ID to simplify logic. PR [#61](https://github.com/fastapilabs/cloud/pull/61) by [@alejsdev](https://github.com/alejsdev).
