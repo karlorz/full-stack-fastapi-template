@@ -12,6 +12,7 @@
 
 ### Features
 
+* ✨ Create new invitations . PR [#67](https://github.com/fastapilabs/cloud/pull/67) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Cancel invitations. PR [#68](https://github.com/fastapilabs/cloud/pull/68) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Allow users to see invitations sent. PR [#57](https://github.com/fastapilabs/cloud/pull/57) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add Team Settings. PR [#52](https://github.com/fastapilabs/cloud/pull/52) by [@alejsdev](https://github.com/alejsdev).
