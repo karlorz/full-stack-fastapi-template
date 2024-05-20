@@ -1,8 +1,6 @@
 import {
   Badge,
   Box,
-  Button,
-  Center,
   Container,
   Skeleton,
   Table,
@@ -11,14 +9,13 @@ import {
   Td,
   Th,
   Thead,
-  Tooltip,
   Tr,
 } from "@chakra-ui/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
-import { FaTimes } from "react-icons/fa"
 import { InvitationsService } from "../../client/services"
+import CancelInvitation from "./CancelInvitation"
 
 function InvitationsTableBody() {
   const teamId = 1
@@ -39,13 +36,7 @@ function InvitationsTableBody() {
             </Badge>
           </Td>
           <Td>
-            <Tooltip label="Cancel Invitation">
-              <Button variant="unstyled">
-                <Center>
-                  <FaTimes />
-                </Center>
-              </Button>
-            </Tooltip>
+            <CancelInvitation id={id} />
           </Td>
         </Tr>
       ))}
