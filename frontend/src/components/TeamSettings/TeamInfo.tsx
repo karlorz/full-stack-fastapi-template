@@ -1,6 +1,6 @@
 import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react"
 import Invitations from "../Invitations/Invitations"
-import SendInvitation from "../Invitations/SendInvitation"
+import NewInvitation from "../Invitations/NewInvitation"
 import Team from "../Teams/Team"
 
 const TeamInfo = () => {
@@ -43,7 +43,7 @@ const TeamInfo = () => {
             New Invitation
           </Text>
           <Flex>
-            <SendInvitation />
+            <NewInvitation />
           </Flex>
         </Box>
       </Flex>
