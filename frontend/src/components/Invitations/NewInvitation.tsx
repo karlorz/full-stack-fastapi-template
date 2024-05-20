@@ -9,8 +9,8 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-
 import { type SubmitHandler, useForm } from "react-hook-form"
+
 import {
   type ApiError,
   type InvitationCreate,
@@ -36,7 +36,7 @@ const NewInvitation = () => {
     mutationFn: (data: InvitationCreate) =>
       InvitationsService.createInvitation({ requestBody: data }),
     onSuccess: () => {
-      showToast("Success!", "Invitation created successfully.", "success")
+      showToast("Success!", "Invitation sent successfully.", "success")
       reset()
     },
     onError: (err: ApiError) => {
