@@ -40,6 +40,7 @@
 
 ### Refactors
 
+* ✏️ Update toast message for successful invitation sending. PR [#70](https://github.com/fastapilabs/cloud/pull/70) by [@alejsdev](https://github.com/alejsdev).
 * ✏️ Update favicon path. PR [#69](https://github.com/fastapilabs/cloud/pull/69) by [@alejsdev](https://github.com/alejsdev).
 * 🚚 Move assets to public folder. PR [#65](https://github.com/fastapilabs/cloud/pull/65) by [@alejsdev](https://github.com/alejsdev).
 * 🎨 Tweaks style related for consistency . PR [#63](https://github.com/fastapilabs/cloud/pull/63) by [@alejsdev](https://github.com/alejsdev).
