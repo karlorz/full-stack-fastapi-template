@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react"
 import { FaBars, FaSignOutAlt } from "react-icons/fa"
 
-import Logo from "../../assets/images/fastapi-logo.svg"
+import Logo from "/assets/images/fastapi-logo.svg"
 import useAuth from "../../hooks/useAuth"
 import SidebarItems from "./SidebarItems"
 

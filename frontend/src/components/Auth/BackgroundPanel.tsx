@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react"
 
-import Bg from "../../assets/images/background.svg"
+import Bg from "/assets/images/background.svg"
 
 const BackgroundPanel = () => {
   return (
