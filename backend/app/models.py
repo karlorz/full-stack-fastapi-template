@@ -69,10 +69,6 @@ class User(UserBase, table=True):
     hashed_password: str
 
     team_links: list[UserTeamLink] = Relationship(back_populates="user")
-    invitations: list["Invitation"] = Relationship(
-        back_populates="receiver",
-        sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_user_id]"},
-    )
     invitations_sent: list["Invitation"] = Relationship(
         back_populates="sender",
         sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_by_id]"},
@@ -189,10 +185,8 @@ class InvitationPublic(InvitationBase):
     id: int
     team_id: int
     invited_by_id: int
-    invited_user_id: int | None = None
     status: InvitationStatus
     created_at: datetime
-    receiver: UserPublic | None
     sender: UserPublic
     team: TeamPublic
 
@@ -206,15 +200,10 @@ class Invitation(InvitationBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     team_id: int = Field(foreign_key="team.id")
     invited_by_id: int = Field(foreign_key="user.id")
-    invited_user_id: int | None = Field(default=None, foreign_key="user.id")
     status: InvitationStatus = InvitationStatus.pending
     created_at: datetime = Field(default_factory=get_datetime_utc)
     expires_at: datetime
 
-    receiver: User = Relationship(
-        back_populates="invitations",
-        sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_user_id]"},
-    )
     sender: User = Relationship(
         back_populates="invitations_sent",
         sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_by_id]"},

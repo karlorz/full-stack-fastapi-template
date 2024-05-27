@@ -73,8 +73,6 @@ def test_read_invitations_me(client: TestClient, db: Session) -> None:
     assert invitations[1]["email"] == invited_user.email
     assert invitations[0]["role"] == "member"
     assert invitations[1]["role"] == "member"
-    assert invitations[0]["receiver"]["id"] == invited_user.id
-    assert invitations[1]["receiver"]["id"] == invited_user.id
 
 
 def test_read_invitations_me_empty(client: TestClient, db: Session) -> None:

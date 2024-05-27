@@ -3,7 +3,6 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
-from sqlalchemy.sql import and_, or_
 from sqlmodel import col, func, select
 
 from app.api.deps import CurrentUser, SessionDep, get_first_superuser
@@ -44,12 +43,12 @@ def read_invitations_me(
     count_statement = (
         select(func.count())
         .select_from(Invitation)
-        .where(col(Invitation.invited_user_id) == current_user.id)
+        .where(col(Invitation.email) == current_user.email)
     )
     count = session.exec(count_statement).one()
     statement = (
         select(Invitation)
-        .where(col(Invitation.invited_user_id) == current_user.id)
+        .where(col(Invitation.email) == current_user.email)
         .offset(skip)
         .limit(limit)
     )
@@ -175,12 +174,6 @@ def create_invitation(
     )
 
     if not user_to_invite:
-        if not invitation.email:
-            raise HTTPException(
-                status_code=400,
-                detail="The invitation must have an email to be sent to a user that does not exist in our platform",
-            )
-
         session.add(invitation)
         session.commit()
         session.refresh(invitation)
@@ -204,10 +197,6 @@ def create_invitation(
             status_code=400,
             detail="The user is already in the team",
         )
-
-    # make sure if the user was found fill the email or FK in the invitation row
-    invitation.invited_user_id = user_to_invite.id
-    invitation.email = user_to_invite.email
 
     session.add(invitation)
     session.commit()
@@ -238,13 +227,7 @@ def accept_invitation(
         raise HTTPException(status_code=400, detail="Invalid invitation token")
 
     invitation_query = select(Invitation).where(
-        and_(
-            col(Invitation.id) == invitation_id,
-            or_(
-                col(Invitation.email) == current_user.email,
-                col(Invitation.invited_user_id) == current_user.id,
-            ),
-        )
+        col(Invitation.id) == invitation_id, col(Invitation.email) == current_user.email
     )
     invitation = session.exec(invitation_query).first()
 
@@ -256,9 +239,6 @@ def accept_invitation(
         raise HTTPException(status_code=400, detail="Invitation was already accepted")
     if current_user.id in {link.user_id for link in invitation.team.user_links}:
         raise HTTPException(status_code=400, detail="User already in team")
-
-    if invitation.invited_user_id is None:
-        invitation.invited_user_id = current_user.id
 
     invitation.status = InvitationStatus.accepted
 
@@ -313,7 +293,7 @@ def invitation_html_content(invitation_id: int, session: SessionDep) -> Any:
     if not invitation:
         raise HTTPException(status_code=404, detail="Invitation not found")
     token = generate_invitation_token(invitation_id=invitation_id)
-    email_to = invitation.email or invitation.receiver.email
+    email_to = invitation.email
     email_from = invitation.sender.email
     email_data = generate_invitation_token_email(
         team_name=invitation.team.name,
