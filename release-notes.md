@@ -40,6 +40,7 @@
 
 ### Refactors
 
+* ♻️ Regenerate client with latest changes. PR [#76](https://github.com/fastapilabs/cloud/pull/76) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Refactor team slug services. PR [#74](https://github.com/fastapilabs/cloud/pull/74) by [@estebanx64](https://github.com/estebanx64).
 * 🔥 Remove unnecessary invited_user_id logic. PR [#72](https://github.com/fastapilabs/cloud/pull/72) by [@estebanx64](https://github.com/estebanx64).
 * ✏️ Update toast message for successful invitation sending. PR [#70](https://github.com/fastapilabs/cloud/pull/70) by [@alejsdev](https://github.com/alejsdev).
