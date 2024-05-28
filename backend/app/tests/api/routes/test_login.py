@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 from app.core.config import settings
 from app.core.security import verify_password
 from app.models import User
+from app.tests.utils.user import create_user
 from app.utils import generate_password_reset_token
 
 
@@ -102,3 +103,83 @@ def test_reset_password_invalid_token(
     assert "detail" in response
     assert r.status_code == 400
     assert response["detail"] == "Invalid token"
+
+
+def test_reset_password_email_not_found(client: TestClient) -> None:
+    token = generate_password_reset_token(email="noemail@test.com")
+    data = {"new_password": "changethis", "token": token}
+    r = client.post(
+        f"{settings.API_V1_STR}/reset-password/",
+        json=data,
+    )
+    response = r.json()
+
+    assert "detail" in response
+    assert r.status_code == 404
+    assert (
+        response["detail"] == "The user with this email does not exist in the system."
+    )
+
+
+def test_reset_password_inactive_user(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email="fastapiuser123@fastapi.com",
+        password="test123",
+        full_name="FastAPI User",
+        is_verified=True,
+    )
+    user.is_active = False
+    db.add(user)
+    db.commit()
+
+    token = generate_password_reset_token(email=user.email)
+    data = {"new_password": "changethis", "token": token}
+    r = client.post(
+        f"{settings.API_V1_STR}/reset-password/",
+        json=data,
+    )
+    response = r.json()
+
+    assert "detail" in response
+    assert r.status_code == 400
+    assert response["detail"] == "Inactive user"
+
+
+def test_login_user_inactive(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email="fastapiuser@fastapi.com",
+        password="test123",
+        full_name="FastAPI User",
+        is_verified=True,
+    )
+    user.is_active = False
+    db.add(user)
+    db.commit()
+
+    login_data = {
+        "username": "fastapiuser@fastapi.com",
+        "password": "test123",
+    }
+    r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
+    assert r.status_code == 400
+    assert r.json() == {"detail": "Inactive user"}
+
+
+def test_login_user_not_verified(client: TestClient, db: Session) -> None:
+    create_user(
+        session=db,
+        email="fastapiuser2@fastapi.com",
+        password="test123",
+        full_name="FastAPI User",
+        is_verified=False,
+    )
+
+    login_data = {
+        "username": "fastapiuser2@fastapi.com",
+        "password": "test123",
+    }
+    r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
+    assert r.status_code == 400
+    assert r.json() == {"detail": "Email not verified"}

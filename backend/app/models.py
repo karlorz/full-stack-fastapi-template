@@ -30,7 +30,7 @@ class UserTeamLink(SQLModel, table=True):
 class UserBase(SQLModel):
     email: str = Field(unique=True, index=True)
     is_active: bool = True
-    full_name: str | None = None
+    full_name: str
 
 
 # Properties to receive via API on creation
@@ -42,7 +42,7 @@ class UserCreate(UserBase):
 class UserRegister(SQLModel):
     email: str
     password: str
-    full_name: str | None = None
+    full_name: str
 
 
 # Properties to receive via API on update, all are optional
@@ -50,6 +50,7 @@ class UserRegister(SQLModel):
 class UserUpdate(UserBase):
     email: str | None = None  # type: ignore
     password: str | None = None
+    full_name: str | None = None  # type: ignore
 
 
 # TODO replace email str with EmailStr when sqlmodel supports it
@@ -67,6 +68,8 @@ class UpdatePassword(SQLModel):
 class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str
+    username: str = Field(unique=True, index=True)
+    is_verified: bool = False
 
     team_links: list[UserTeamLink] = Relationship(back_populates="user")
     invitations_sent: list["Invitation"] = Relationship(
@@ -114,6 +117,10 @@ class TokenPayload(SQLModel):
 class NewPassword(SQLModel):
     token: str
     new_password: str
+
+
+class EmailVerificationToken(SQLModel):
+    token: str
 
 
 class TeamBase(SQLModel):

@@ -2,6 +2,7 @@ from typing import Any
 
 from sqlmodel import Session, select
 
+from app.api.utils.users import verify_and_generate_slug_username
 from app.core.security import get_password_hash, verify_password
 from app.models import (
     Role,
@@ -13,9 +14,20 @@ from app.models import (
 )
 
 
-def create_user(*, session: Session, user_create: UserCreate) -> User:
+def create_user(
+    *, session: Session, user_create: UserCreate, is_verified: bool
+) -> User:
+    username_slug = verify_and_generate_slug_username(
+        user_create.email.split("@")[0], session
+    )
+
     db_obj = User.model_validate(
-        user_create, update={"hashed_password": get_password_hash(user_create.password)}
+        user_create,
+        update={
+            "hashed_password": get_password_hash(user_create.password),
+            "username": username_slug,
+            "is_verified": is_verified,
+        },
     )
     session.add(db_obj)
     session.commit()
@@ -23,9 +35,14 @@ def create_user(*, session: Session, user_create: UserCreate) -> User:
     return db_obj
 
 
-def update_user(*, session: Session, db_user: User, user_in: UserUpdate) -> Any:
+def update_user(
+    *,
+    session: Session,
+    db_user: User,
+    user_in: UserUpdate,
+) -> Any:
     user_data = user_in.model_dump(exclude_unset=True)
-    extra_data = {}
+    extra_data: dict[str, Any] = {}
     if "password" in user_data:
         password = user_data["password"]
         hashed_password = get_password_hash(password)

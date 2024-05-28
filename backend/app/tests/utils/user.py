@@ -19,17 +19,22 @@ def user_authentication_headers(
     return headers
 
 
-def create_user(*, session: Session, email: str, password: str) -> User:
-    user_in = UserCreate(email=email, password=password)
-    user = crud.create_user(session=session, user_create=user_in)
+def create_user(
+    *, session: Session, email: str, password: str, full_name: str, is_verified: bool
+) -> User:
+    user_in = UserCreate(email=email, password=password, full_name=full_name)
+    user = crud.create_user(
+        session=session, user_create=user_in, is_verified=is_verified
+    )
     return user
 
 
 def create_random_user(db: Session) -> User:
     email = random_email()
     password = random_lower_string()
-    user_in = UserCreate(email=email, password=password)
-    user = crud.create_user(session=db, user_create=user_in)
+    full_name = random_lower_string()
+    user_in = UserCreate(email=email, password=password, full_name=full_name)
+    user = crud.create_user(session=db, user_create=user_in, is_verified=True)
     return user
 
 
@@ -43,9 +48,10 @@ def authentication_token_from_email(
     """
     password = random_lower_string()
     user = crud.get_user_by_email(session=db, email=email)
+    full_name = random_lower_string()
     if not user:
-        user_in_create = UserCreate(email=email, password=password)
-        user = crud.create_user(session=db, user_create=user_in_create)
+        user_in_create = UserCreate(email=email, password=password, full_name=full_name)
+        crud.create_user(session=db, user_create=user_in_create, is_verified=True)
     else:
         user_in_update = UserUpdate(password=password)
         if not user.id:

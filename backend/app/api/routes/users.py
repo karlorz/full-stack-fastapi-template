@@ -1,50 +1,33 @@
+import logging
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import HTMLResponse
 
 from app import crud
-from app.api.deps import (
-    CurrentUser,
-    SessionDep,
-)
-from app.core.config import settings
+from app.api.deps import CurrentUser, SessionDep, get_first_superuser
+from app.api.utils.teams import verify_and_generate_slug_name
 from app.core.security import get_password_hash, verify_password
 from app.models import (
+    EmailVerificationToken,
     Message,
+    Role,
+    Team,
     UpdatePassword,
     UserCreate,
     UserPublic,
     UserRegister,
+    UserTeamLink,
     UserUpdateMe,
 )
-from app.utils import generate_new_account_email, send_email
+from app.utils import (
+    generate_verification_email,
+    generate_verification_email_token,
+    send_email,
+    verify_email_verification_token,
+)
 
 router = APIRouter()
-
-
-@router.post("/", response_model=UserPublic)
-def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
-    """
-    Create new user.
-    """
-    user = crud.get_user_by_email(session=session, email=user_in.email)
-    if user:
-        raise HTTPException(
-            status_code=400,
-            detail="The user with this email already exists in the system.",
-        )
-
-    user = crud.create_user(session=session, user_create=user_in)
-    if settings.emails_enabled and user_in.email:
-        email_data = generate_new_account_email(
-            email_to=user_in.email, username=user_in.email, password=user_in.password
-        )
-        send_email(
-            email_to=user_in.email,
-            subject=email_data.subject,
-            html_content=email_data.html_content,
-        )
-    return user
 
 
 @router.patch("/me", response_model=UserPublic)
@@ -112,11 +95,6 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     """
     Create new user without the need to be logged in.
     """
-    if not settings.USERS_OPEN_REGISTRATION:
-        raise HTTPException(
-            status_code=403,
-            detail="Open user registration is forbidden on this server",
-        )
     user = crud.get_user_by_email(session=session, email=user_in.email)
     if user:
         raise HTTPException(
@@ -124,5 +102,70 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
             detail="The user with this email already exists in the system",
         )
     user_create = UserCreate.model_validate(user_in)
-    user = crud.create_user(session=session, user_create=user_create)
+    user = crud.create_user(session=session, user_create=user_create, is_verified=False)
+
+    # TODO: uncomment when email service is ready
+    # if not settings.emails_enabled:
+    #     raise HTTPException(status_code=500, detail="No email configuration provided")
+
+    token = generate_verification_email_token(email=user_in.email)
+    email_data = generate_verification_email(email_to=user_in.email, token=token)
+    send_email(
+        email_to=user_in.email,
+        subject=email_data.subject,
+        html_content=email_data.html_content,
+    )
     return user
+
+
+@router.post("/verify-email")
+def verify_email_token(session: SessionDep, payload: EmailVerificationToken) -> Any:
+    """
+    Verify email token
+    """
+    email = verify_email_verification_token(token=payload.token)
+    if not email:
+        raise HTTPException(status_code=400, detail="Invalid token")
+    user = crud.get_user_by_email(session=session, email=email)
+    if not user:
+        logging.error(
+            "User with requested token was not found", extra={"token": payload.token}
+        )
+        raise HTTPException(status_code=400, detail="Invalid token")
+
+    if user.is_verified:
+        raise HTTPException(status_code=400, detail="Email already verified")
+
+    user.is_verified = True
+    team_slug = verify_and_generate_slug_name(session=session, name=user.username)
+    team = Team(name=user.full_name, slug=team_slug)
+    user_team_link = UserTeamLink(team=team, user=user, role=Role.admin)
+
+    session.add(user)
+    session.add(user_team_link)
+    session.commit()
+    return Message(message="Email successfully verified")
+
+
+@router.post(
+    "/verify-email-html-content/{email}",
+    dependencies=[Depends(get_first_superuser)],
+    response_class=HTMLResponse,
+)
+def verify_email_html_content(email: str, session: SessionDep) -> Any:
+    """
+    HTML Content for Email verification email
+    """
+    user = crud.get_user_by_email(session=session, email=email)
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="The user with this username does not exist in the system.",
+        )
+
+    token = generate_verification_email_token(email=email)
+    email_data = generate_verification_email(email_to=email, token=token)
+    return HTMLResponse(
+        content=email_data.html_content, headers={"subject:": email_data.subject}
+    )

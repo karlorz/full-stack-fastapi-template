@@ -1,7 +1,5 @@
 import logging
-import random
 import re
-import string
 import unicodedata
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -26,6 +24,7 @@ class EmailData:
 class TokenType(str, Enum):
     user = "user"
     reset = "reset"
+    email = "email"
 
 
 def get_datetime_utc() -> datetime:
@@ -45,12 +44,6 @@ def slugify(value: str) -> str:
     )
     value = re.sub(r"[^\w\s-]", "", value.lower())
     return re.sub(r"[-\s]+", "-", value).strip("-_")
-
-
-def id_generator(
-    size: int = 10, chars: str = string.ascii_uppercase + string.digits
-) -> str:
-    return "".join(random.choice(chars) for _ in range(size))
 
 
 def render_email_template(*, template_name: str, context: dict[str, Any]) -> str:
@@ -131,6 +124,46 @@ def generate_new_account_email(
         },
     )
     return EmailData(html_content=html_content, subject=subject)
+
+
+def generate_verification_email_token(email: str) -> str:
+    delta = timedelta(hours=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_HOURS)
+    now = get_datetime_utc()
+    expires = now + delta
+    exp = expires.timestamp()
+    encoded_jwt = jwt.encode(
+        {"exp": exp, "nbf": now, "sub": f"{TokenType.email.value}-{email}"},
+        settings.SECRET_KEY,
+        algorithm="HS256",
+    )
+    return encoded_jwt
+
+
+def generate_verification_email(email_to: str, token: str) -> EmailData:
+    project_name = settings.PROJECT_NAME
+    subject = f"{project_name} - Verify your email address"
+    link = f"{settings.server_host}/verify-email?token={token}"
+    html_content = render_email_template(
+        template_name="verify_email.html",
+        context={
+            "server_host": settings.server_host,
+            "project_name": settings.PROJECT_NAME,
+            "email": email_to,
+            "link": link,
+        },
+    )
+    return EmailData(html_content=html_content, subject=subject)
+
+
+def verify_email_verification_token(token: str) -> str | None:
+    try:
+        decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        splitted_sub = decoded_token["sub"].split("-")
+        if len(splitted_sub) == 2 and splitted_sub[0] == TokenType.email:
+            return str(splitted_sub[1])
+        return None
+    except InvalidTokenError:
+        return None
 
 
 def generate_password_reset_token(email: str) -> str:

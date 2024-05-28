@@ -21,9 +21,19 @@ def test_read_invitations_me(client: TestClient, db: Session) -> None:
     team2 = create_random_team(db)
 
     # Create a user and link it to the first team
-    admin_user = create_user(session=db, email="test1@fastapi.com", password="test123")
+    admin_user = create_user(
+        session=db,
+        email="test1234f@fastapi.com",
+        password="test123",
+        full_name="test1",
+        is_verified=True,
+    )
     invited_user = create_user(
-        session=db, email="test2@example.com", password="test123"
+        session=db,
+        email="test2fdfd@example.com",
+        password="test123",
+        full_name="test2",
+        is_verified=True,
     )
 
     add_user_to_team(session=db, user=admin_user, team=team1, role=Role.admin)
@@ -80,8 +90,20 @@ def test_read_invitations_me_empty(client: TestClient, db: Session) -> None:
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test111@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test222@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test111@fastapi.com",
+        password="test123",
+        full_name="test111",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test222@example.com",
+        password="test123",
+        full_name="test222",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -121,8 +143,20 @@ def test_read_invitations_sent(client: TestClient, db: Session) -> None:
     team2 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test3@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test4@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test3@fastapi.com",
+        password="test123",
+        full_name="test3",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test4@example.com",
+        password="test123",
+        full_name="test4",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
     add_user_to_team(session=db, user=user1, team=team2, role=Role.admin)
@@ -179,8 +213,20 @@ def test_read_invitations_sent_empty(client: TestClient, db: Session) -> None:
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test5@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test6@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test5@fastapi.com",
+        password="test123",
+        full_name="test5",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test6@example.com",
+        password="test123",
+        full_name="test6",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -216,9 +262,27 @@ def test_read_invitations_sent_empty(client: TestClient, db: Session) -> None:
 def test_read_invitations_team_success(client: TestClient, db: Session) -> None:
     team = create_random_team(db)
 
-    user1 = create_user(session=db, email="test2623@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test2722@example.com", password="test123")
-    user3 = create_user(session=db, email="test2833@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test2623@fastapi.com",
+        password="test123",
+        full_name="test2623",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test2722@example.com",
+        password="test123",
+        full_name="test2722",
+        is_verified=True,
+    )
+    user3 = create_user(
+        session=db,
+        email="test2833@example.com",
+        password="test123",
+        full_name="test2833",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team, role=Role.admin)
     add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
@@ -266,9 +330,27 @@ def test_read_invitations_team_empty(client: TestClient, db: Session) -> None:
     team = create_random_team(db)
     team2 = create_random_team(db)
 
-    user1 = create_user(session=db, email="test2611@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test2711@example.com", password="test123")
-    user3 = create_user(session=db, email="test2811@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test2611@fastapi.com",
+        password="test123",
+        full_name="test2611",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test2711@example.com",
+        password="test123",
+        full_name="test2711",
+        is_verified=True,
+    )
+    user3 = create_user(
+        session=db,
+        email="test2811@example.com",
+        password="test123",
+        full_name="test2811",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team, role=Role.admin)
     add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
@@ -304,8 +386,20 @@ def test_read_invitations_team_not_enough_permissions(
     client: TestClient, db: Session
 ) -> None:
     team = create_random_team(db)
-    user = create_user(session=db, email="test26345@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test27454@example.com", password="test123")
+    user = create_user(
+        session=db,
+        email="test26345@fastapi.com",
+        password="test123",
+        full_name="test26345",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test27454@example.com",
+        password="test123",
+        full_name="test27454",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user, team=team, role=Role.member)
     add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
@@ -338,7 +432,13 @@ def test_read_invitations_team_not_found_current_user(
     client: TestClient, db: Session
 ) -> None:
     team = create_random_team(db)
-    user = create_user(session=db, email="test26452@fastapi.com", password="test123")
+    user = create_user(
+        session=db,
+        email="test26452@fastapi.com",
+        password="test123",
+        full_name="test26452",
+        is_verified=True,
+    )
 
     user_auth_headers = user_authentication_headers(
         client=client, email=user.email, password="test123"
@@ -362,8 +462,20 @@ def test_create_invitation_success(client: TestClient, db: Session) -> None:
         patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
     ):
         team1 = create_random_team(db)
-        user1 = create_user(session=db, email="test27@fastapi.com", password="test123")
-        user2 = create_user(session=db, email="test28@example.com", password="test123")
+        user1 = create_user(
+            session=db,
+            email="test27@fastapi.com",
+            password="test123",
+            full_name="test27",
+            is_verified=True,
+        )
+        user2 = create_user(
+            session=db,
+            email="test28@example.com",
+            password="test123",
+            full_name="test28",
+            is_verified=True,
+        )
         add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
         user_auth_headers = user_authentication_headers(
@@ -400,8 +512,20 @@ def test_create_invitation_team_not_found_current_user(
         patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
     ):
         team1 = create_random_team(db)
-        user1 = create_user(session=db, email="test29@fastapi.com", password="test123")
-        user2 = create_user(session=db, email="test30@example.com", password="test123")
+        user1 = create_user(
+            session=db,
+            email="test29@fastapi.com",
+            password="test123",
+            full_name="test29",
+            is_verified=True,
+        )
+        user2 = create_user(
+            session=db,
+            email="test30@example.com",
+            password="test123",
+            full_name="test30",
+            is_verified=True,
+        )
         add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
         user_auth_headers = user_authentication_headers(
@@ -434,8 +558,20 @@ def test_create_invitation_not_enough_permissions(
         patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
     ):
         team1 = create_random_team(db)
-        user1 = create_user(session=db, email="test31@fastapi.com", password="test123")
-        user2 = create_user(session=db, email="test32@example.com", password="test123")
+        user1 = create_user(
+            session=db,
+            email="test31@fastapi.com",
+            password="test123",
+            full_name="test31",
+            is_verified=True,
+        )
+        user2 = create_user(
+            session=db,
+            email="test32@example.com",
+            password="test123",
+            full_name="test32",
+            is_verified=True,
+        )
         add_user_to_team(session=db, user=user1, team=team1, role=Role.member)
 
         user_auth_headers = user_authentication_headers(
@@ -466,8 +602,20 @@ def test_create_invitation_already_exists(client: TestClient, db: Session) -> No
         patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
     ):
         team1 = create_random_team(db)
-        user1 = create_user(session=db, email="test33@fastapi.com", password="test123")
-        user2 = create_user(session=db, email="test34@example.com", password="test123")
+        user1 = create_user(
+            session=db,
+            email="test33@fastapi.com",
+            password="test123",
+            full_name="test33",
+            is_verified=True,
+        )
+        user2 = create_user(
+            session=db,
+            email="test34@example.com",
+            password="test123",
+            full_name="test34",
+            is_verified=True,
+        )
         add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
         user_auth_headers = user_authentication_headers(
@@ -512,8 +660,20 @@ def test_create_invitation_user_already_in_team(
         patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
     ):
         team1 = create_random_team(db)
-        user1 = create_user(session=db, email="test35@fastapi.com", password="test123")
-        user2 = create_user(session=db, email="test36@example.com", password="test123")
+        user1 = create_user(
+            session=db,
+            email="test35@fastapi.com",
+            password="test123",
+            full_name="test35",
+            is_verified=True,
+        )
+        user2 = create_user(
+            session=db,
+            email="test36@example.com",
+            password="test123",
+            full_name="test36",
+            is_verified=True,
+        )
         add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
         add_user_to_team(session=db, user=user2, team=team1, role=Role.member)
 
@@ -560,7 +720,11 @@ def test_create_invitation_user_to_invite_not_found(
     ):
         team1 = create_random_team(db)
         user1 = create_user(
-            session=db, email="test3734@fastapi.com", password="test123"
+            session=db,
+            email="test3734@fastapi.com",
+            password="test123",
+            full_name="test3734",
+            is_verified=True,
         )
         add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -597,8 +761,20 @@ def test_create_invitation_user_already_in_team_without_invitation(
         patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
     ):
         team1 = create_random_team(db)
-        user1 = create_user(session=db, email="test335@fastapi.com", password="test123")
-        user2 = create_user(session=db, email="test336@example.com", password="test123")
+        user1 = create_user(
+            session=db,
+            email="test335@fastapi.com",
+            password="test123",
+            full_name="test335",
+            is_verified=True,
+        )
+        user2 = create_user(
+            session=db,
+            email="test336@example.com",
+            password="test123",
+            full_name="test336",
+            is_verified=True,
+        )
         add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
         add_user_to_team(session=db, user=user2, team=team1, role=Role.member)
 
@@ -629,8 +805,20 @@ def test_accept_invitation_success(client: TestClient, db: Session) -> None:
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test7@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test8@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test7@fastapi.com",
+        password="test123",
+        full_name="test7",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test8@example.com",
+        password="test123",
+        full_name="test8",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -681,8 +869,20 @@ def test_accept_invitation_invalid_token(client: TestClient, db: Session) -> Non
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test923@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test101@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test923@fastapi.com",
+        password="test123",
+        full_name="test923",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test101@example.com",
+        password="test123",
+        full_name="test101",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -717,8 +917,20 @@ def test_accept_invitation_not_found(client: TestClient, db: Session) -> None:
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test9@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test10@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test9@fastapi.com",
+        password="test123",
+        full_name="test9",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test10@example.com",
+        password="test123",
+        full_name="test10",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -756,8 +968,20 @@ def test_accept_invitation_success_set_user_fk(client: TestClient, db: Session) 
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test11@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test12@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test11@fastapi.com",
+        password="test123",
+        full_name="test11",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test12@example.com",
+        password="test123",
+        full_name="test12",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -799,8 +1023,20 @@ def test_accept_invitation_was_already_used(client: TestClient, db: Session) -> 
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test13@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test14@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test13@fastapi.com",
+        password="test123",
+        full_name="test13",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test14@example.com",
+        password="test123",
+        full_name="test14",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -840,8 +1076,20 @@ def test_accept_invitation_user_already_in_team(
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test15@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test16@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test15@fastapi.com",
+        password="test123",
+        full_name="test15",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test16@example.com",
+        password="test123",
+        full_name="test16",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
     add_user_to_team(session=db, user=user2, team=team1, role=Role.member)
@@ -879,9 +1127,19 @@ def test_accept_invitation_expired(client: TestClient, db: Session) -> None:
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test17etrt@fastapi.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test17etrt@fastapi.com",
+        password="test123",
+        full_name="test17",
+        is_verified=True,
+    )
     user2 = create_user(
-        session=db, email="test16weefsd@example.com", password="test123"
+        session=db,
+        email="test16weefsd@example.com",
+        password="test123",
+        full_name="test16",
+        is_verified=True,
     )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
@@ -919,7 +1177,13 @@ def test_invitation_token_verify_success(client: TestClient, db: Session) -> Non
     # Create test data in the database using db fixture
     team1 = create_random_team(db)
 
-    user1 = create_user(session=db, email="test174534@fastapi.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test174534@fastapi.com",
+        password="test123",
+        full_name="test17",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -962,7 +1226,13 @@ def test_invitation_token_verify_fail(client: TestClient) -> None:
 def test_invitation_token_verify_not_found(client: TestClient, db: Session) -> None:
     team1 = create_random_team(db)
 
-    user1 = create_user(session=db, email="test1534@fastapi.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test1534@fastapi.com",
+        password="test123",
+        full_name="test17",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -981,7 +1251,13 @@ def test_invitation_token_verify_not_found(client: TestClient, db: Session) -> N
 def test_invitation_token_verify_expired(client: TestClient, db: Session) -> None:
     team1 = create_random_team(db)
 
-    user1 = create_user(session=db, email="test1534qwe@fastapi.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test1534qwe@fastapi.com",
+        password="test123",
+        full_name="test17",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -1014,8 +1290,20 @@ def test_delete_invitation_success(client: TestClient, db: Session) -> None:
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test17@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test18@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test17@fastapi.com",
+        password="test123",
+        full_name="test17",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test18@example.com",
+        password="test123",
+        full_name="test18",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -1057,8 +1345,20 @@ def test_delete_invitation_not_found_by_another_user(
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test19@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test20@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test19@fastapi.com",
+        password="test123",
+        full_name="test19",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test20@example.com",
+        password="test123",
+        full_name="test20",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
@@ -1085,8 +1385,20 @@ def test_delete_invitation_already_used_cannot_be_deleted(
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test21@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test22@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test21@fastapi.com",
+        password="test123",
+        full_name="test21",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test22@example.com",
+        password="test123",
+        full_name="test22",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
     add_user_to_team(session=db, user=user2, team=team1, role=Role.member)
@@ -1124,8 +1436,20 @@ def test_delete_invitation_team_not_found_current_user(
     team2 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test23@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test24@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test23@fastapi.com",
+        password="test123",
+        full_name="test23",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test24@example.com",
+        password="test123",
+        full_name="test24",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
     add_user_to_team(session=db, user=user2, team=team2, role=Role.admin)
@@ -1162,9 +1486,27 @@ def test_delete_invitation_not_enough_permission(
     team1 = create_random_team(db)
 
     # Create a user and link it to the first team
-    user1 = create_user(session=db, email="test25@fastapi.com", password="test123")
-    user2 = create_user(session=db, email="test26@example.com", password="test123")
-    user3 = create_user(session=db, email="test27@example.com", password="test123")
+    user1 = create_user(
+        session=db,
+        email="test25@fastapi.com",
+        password="test123",
+        full_name="test25",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test26@example.com",
+        password="test123",
+        full_name="test26",
+        is_verified=True,
+    )
+    user3 = create_user(
+        session=db,
+        email="test27ghre@example.com",
+        password="test123",
+        full_name="test27 algh",
+        is_verified=True,
+    )
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
     add_user_to_team(session=db, user=user2, team=team1, role=Role.member)

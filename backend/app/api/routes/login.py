@@ -35,6 +35,9 @@ def login_access_token(
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
+    elif not user.is_verified:
+        raise HTTPException(status_code=400, detail="Email not verified")
+    # The user is authenticated, now generate access token
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return Token(
         access_token=security.create_access_token(

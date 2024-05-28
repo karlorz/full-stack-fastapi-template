@@ -83,6 +83,7 @@ class Settings(BaseSettings):
         return self
 
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+    EMAIL_VERIFICATION_TOKEN_EXPIRE_HOURS: int = 48
     INVITATION_TOKEN_EXPIRE_HOURS: int = 168  # 7 days
 
     @computed_field  # type: ignore[misc]
@@ -95,6 +96,7 @@ class Settings(BaseSettings):
     # TODO: update type to EmailStr when sqlmodel supports it
     FIRST_SUPERUSER: str
     FIRST_SUPERUSER_PASSWORD: str
+    FIRST_SUPERUSER_FULL_NAME: str
     USERS_OPEN_REGISTRATION: bool = False
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
