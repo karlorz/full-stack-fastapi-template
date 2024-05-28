@@ -72,6 +72,7 @@ const UserMenu = () => {
             </Flex>
           </MenuButton>
           <MenuList p={4}>
+            {/* Personal Team */}
             <MenuItem
               as={Link}
               to="/"
@@ -86,7 +87,8 @@ const UserMenu = () => {
                 <CurrentUser />
               </Suspense>
             </MenuItem>
-            {teams?.data.slice(0, 3).map((team) => (
+            {/* Teams */}
+            {teams?.data.slice(1, 3).map((team) => (
               <MenuItem
                 as={Link}
                 key={team.id}
