@@ -31,6 +31,7 @@
 
 ### Fixes
 
+* 🚨 Fix `<div>` cannot appear as a descendant of `<p>`. PR [#77](https://github.com/fastapilabs/cloud/pull/77) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix error 500 when creating invitation. PR [#60](https://github.com/fastapilabs/cloud/pull/60) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix logout bug and invalidate queries. PR [#50](https://github.com/fastapilabs/cloud/pull/50) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix "A component suspended while responding to synchronous input". PR [#41](https://github.com/fastapilabs/cloud/pull/41) by [@patrick91](https://github.com/patrick91).
