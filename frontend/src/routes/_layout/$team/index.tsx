@@ -19,13 +19,13 @@ function Dashboard() {
     <>
       <Container maxW="full" p={12}>
         <Box>
-          <Text fontSize="2xl">
+          <Box fontSize="2xl">
             Hi,{" "}
             <Suspense fallback={<SkeletonText noOfLines={1} width={20} />}>
               <CurrentUser />
             </Suspense>{" "}
             👋🏼
-          </Text>
+          </Box>
           <Text>Welcome back, nice to see you again!</Text>
         </Box>
       </Container>
