@@ -1,4 +1,8 @@
 import logging
+import random
+import re
+import string
+import unicodedata
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
@@ -26,6 +30,27 @@ class TokenType(str, Enum):
 
 def get_datetime_utc() -> datetime:
     return datetime.now(timezone.utc)
+
+
+def slugify(value: str) -> str:
+    """
+    Convert to ASCII. Convert spaces or repeated
+    dashes to single dashes. Remove characters that aren't alphanumerics,
+    underscores, or hyphens. Convert to lowercase. Also strip leading and
+    trailing whitespace, dashes, and underscores.
+    """
+    value = str(value)
+    value = (
+        unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
+    )
+    value = re.sub(r"[^\w\s-]", "", value.lower())
+    return re.sub(r"[-\s]+", "-", value).strip("-_")
+
+
+def id_generator(
+    size: int = 10, chars: str = string.ascii_uppercase + string.digits
+) -> str:
+    return "".join(random.choice(chars) for _ in range(size))
 
 
 def render_email_template(*, template_name: str, context: dict[str, Any]) -> str:

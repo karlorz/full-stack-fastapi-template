@@ -123,6 +123,7 @@ class TeamBase(SQLModel):
 
 class Team(TeamBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    slug: str = Field(unique=True, index=True)
 
     user_links: list[UserTeamLink] = Relationship(back_populates="team")
     invitations: list["Invitation"] = Relationship(back_populates="team")
@@ -139,6 +140,7 @@ class TeamUpdate(SQLModel):
 
 class TeamPublic(TeamBase):
     id: int
+    slug: str
 
 
 class TeamsPublic(SQLModel):

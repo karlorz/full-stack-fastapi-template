@@ -1,10 +1,11 @@
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import selectinload
 from sqlmodel import col, func, select
 
-from app.api.deps import CurrentUser, SessionDep
+from app.api.deps import CurrentUser, SessionDep, get_current_user
+from app.api.utils.teams import verify_and_generate_slug_name
 from app.models import (
     Message,
     Role,
@@ -46,16 +47,16 @@ def read_teams(
     return TeamsPublic(data=teams, count=count)
 
 
-@router.get("/{team_id}", response_model=TeamWithUserPublic)
-def read_team(session: SessionDep, current_user: CurrentUser, team_id: int) -> Any:
+@router.get("/{team_slug}", response_model=TeamWithUserPublic)
+def read_team(session: SessionDep, current_user: CurrentUser, team_slug: str) -> Any:
     """
-    Retrieve an team by its ID and returns it along with its associated users.
+    Retrieve a team by its name and returns it along with its associated users.
     """
     query = select(Team).options(
         selectinload(Team.user_links).selectinload(UserTeamLink.user)  # type: ignore
     )
     query = query.where(
-        Team.id == team_id,
+        Team.slug == team_slug,
         col(Team.user_links).any(col(UserTeamLink.user) == current_user),
     )
     team = session.exec(query).first()
@@ -74,7 +75,9 @@ def create_team(
     """
     Create a new team with the provided details.
     """
-    team = Team.model_validate(team_in)
+    team_slug = verify_and_generate_slug_name(team_in.name, session)
+
+    team = Team.model_validate(team_in, update={"slug": team_slug})
     user_team = UserTeamLink(user=current_user, team=team, role=Role.admin)
     session.add(user_team)
     session.commit()
@@ -82,23 +85,20 @@ def create_team(
     return team
 
 
-@router.put("/{team_id}", response_model=TeamPublic)
+@router.put("/{team_slug}", response_model=TeamPublic)
 def update_team(
     session: SessionDep,
     current_user: CurrentUser,
-    team_id: int,
+    team_slug: str,
     team_in: TeamUpdate,
 ) -> Any:
     """
-    Update an team by its ID.
+    Update an team by its name.
     """
     query = (
         select(UserTeamLink)
-        .options(selectinload(UserTeamLink.team))  # type: ignore
-        .where(
-            UserTeamLink.team_id == team_id,
-            UserTeamLink.user == current_user,
-        )
+        .join(Team, col(Team.id) == UserTeamLink.team_id)
+        .where(Team.slug == team_slug, UserTeamLink.user_id == current_user.id)
     )
     link = session.exec(query).first()
     if not link:
@@ -111,28 +111,25 @@ def update_team(
             status_code=400, detail="Not enough permissions to execute this action"
         )
     update_dict = team_in.model_dump(exclude_unset=True)
-    org = link.team
-    org.sqlmodel_update(update_dict)
-    session.add(org)
+    team = link.team
+    team.sqlmodel_update(update_dict)
+    session.add(team)
     session.commit()
-    session.refresh(org)
-    return org
+    session.refresh(team)
+    return team
 
 
-@router.delete("/{team_id}", response_model=Message)
+@router.delete("/{team_slug}", response_model=Message)
 def delete_team(
-    session: SessionDep, current_user: CurrentUser, team_id: int
+    session: SessionDep, current_user: CurrentUser, team_slug: str
 ) -> Message:
     """
-    Delete an team from the database.
+    Delete a team from the database by its name.
     """
     query = (
         select(UserTeamLink)
-        .options(selectinload(UserTeamLink.team))  # type: ignore
-        .where(
-            UserTeamLink.team_id == team_id,
-            UserTeamLink.user == current_user,
-        )
+        .join(Team, col(Team.id) == UserTeamLink.team_id)
+        .where(Team.slug == team_slug, UserTeamLink.user_id == current_user.id)
     )
     link = session.exec(query).first()
     if not link:
@@ -153,28 +150,21 @@ def delete_team(
     return Message(message="Team deleted")
 
 
-@router.put("/{team_id}/users/{user_id}", response_model=UserTeamLinkPublic)
+@router.put("/{team_slug}/users/{user_id}", response_model=UserTeamLinkPublic)
 def update_member_in_team(
     session: SessionDep,
     current_user: CurrentUser,
-    team_id: int,
+    team_slug: str,
     user_id: int,
     member_in: TeamUpdateMember,
 ) -> Any:
     """
-    Update a member in an team.
+    Update a member in a team.
     """
     query = (
         select(UserTeamLink)
-        .options(
-            selectinload(UserTeamLink.team).selectinload(  # type: ignore
-                Team.user_links  # type: ignore
-            )
-        )
-        .where(
-            UserTeamLink.team_id == team_id,
-            UserTeamLink.user == current_user,
-        )
+        .join(Team, col(Team.id) == UserTeamLink.team_id)
+        .where(Team.slug == team_slug, UserTeamLink.user_id == current_user.id)
     )
     link = session.exec(query).first()
     if not link:
@@ -203,15 +193,15 @@ def update_member_in_team(
     return member_link
 
 
-@router.delete("/{team_id}/users/{user_id}", response_model=Message)
+@router.delete("/{team_slug}/users/{user_id}", response_model=Message)
 def remove_member_from_team(
     session: SessionDep,
     current_user: CurrentUser,
-    team_id: int,
+    team_slug: str,
     user_id: int,
 ) -> Message:
     """
-    Remove a member from an team.
+    Remove a member from a team.
     """
     if current_user.id == user_id:
         raise HTTPException(
@@ -220,15 +210,8 @@ def remove_member_from_team(
 
     query = (
         select(UserTeamLink)
-        .options(
-            selectinload(UserTeamLink.team).selectinload(  # type: ignore
-                Team.user_links  # type: ignore
-            )
-        )
-        .where(
-            UserTeamLink.team_id == team_id,
-            UserTeamLink.user == current_user,
-        )
+        .join(Team, col(Team.id) == UserTeamLink.team_id)
+        .where(Team.slug == team_slug, UserTeamLink.user_id == current_user.id)
     )
     link = session.exec(query).first()
     if not link:
@@ -252,3 +235,18 @@ def remove_member_from_team(
     session.delete(member_link)
     session.commit()
     return Message(message="User removed from team")
+
+
+@router.get(
+    "/validate-team-name/{team_slug}",
+    response_model=Message,
+    dependencies=[Depends(get_current_user)],
+)
+def validate_team_name(session: SessionDep, team_slug: str) -> Any:
+    """
+    Validate if team name is unique
+    """
+    team = session.exec(select(Team).where(Team.slug == team_slug)).first()
+    if team:
+        raise HTTPException(status_code=400, detail="Team name already in use")
+    return Message(message="Team name is valid")
