@@ -73,7 +73,7 @@ const ActionsMenu = ({
         {type === "User" ? (
           <ChangeRole
             userRole={userRole}
-            teamId={team?.id}
+            teamSlug={team?.slug}
             user={value as UserPublic}
             isOpen={changeRoleModal.isOpen}
             onClose={changeRoleModal.onClose}
@@ -85,14 +85,16 @@ const ActionsMenu = ({
             onClose={editUserModal.onClose}
           />
         )}
-        <DeleteTeam
-          teamId={value?.id}
-          isOpen={deleteTeamModal.isOpen}
-          onClose={deleteTeamModal.onClose}
-        />
+        {type === "Team" && (
+          <DeleteTeam
+            teamSlug={(value as TeamPublic)?.slug}
+            isOpen={deleteTeamModal.isOpen}
+            onClose={deleteTeamModal.onClose}
+          />
+        )}
         <RemoveUser
           userId={value.id}
-          teamId={team?.id}
+          teamSlug={team?.slug}
           isOpen={removeUserModal.isOpen}
           onClose={removeUserModal.onClose}
         />

@@ -15,12 +15,12 @@ import { type TDataDeleteTeam, TeamsService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
 interface DeleteProps {
-  teamId?: number
+  teamSlug?: string
   isOpen: boolean
   onClose: () => void
 }
 
-const DeleteTeam = ({ teamId, isOpen, onClose }: DeleteProps) => {
+const DeleteTeam = ({ teamSlug, isOpen, onClose }: DeleteProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const cancelRef = React.useRef<HTMLButtonElement | null>(null)
@@ -50,7 +50,7 @@ const DeleteTeam = ({ teamId, isOpen, onClose }: DeleteProps) => {
   })
 
   const onSubmit = async () => {
-    mutation.mutate({ teamId: teamId! })
+    mutation.mutate({ teamSlug: teamSlug! })
   }
 
   return (

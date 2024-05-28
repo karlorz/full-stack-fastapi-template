@@ -296,27 +296,31 @@ export type TDataCreateTeam = {
                 
             }
 export type TDataReadTeam = {
-                teamId: number
+                teamSlug: string
                 
             }
 export type TDataUpdateTeam = {
                 requestBody: TeamUpdate
-teamId: number
+teamSlug: string
                 
             }
 export type TDataDeleteTeam = {
-                teamId: number
+                teamSlug: string
                 
             }
 export type TDataUpdateMemberInTeam = {
                 requestBody: TeamUpdateMember
-teamId: number
+teamSlug: string
 userId: number
                 
             }
 export type TDataRemoveMemberFromTeam = {
-                teamId: number
+                teamSlug: string
 userId: number
+                
+            }
+export type TDataValidateTeamName = {
+                teamSlug: string
                 
             }
 
@@ -368,19 +372,19 @@ requestBody,
 
 	/**
 	 * Read Team
-	 * Retrieve an team by its ID and returns it along with its associated users.
+	 * Retrieve a team by its name and returns it along with its associated users.
 	 * @returns TeamWithUserPublic Successful Response
 	 * @throws ApiError
 	 */
 	public static readTeam(data: TDataReadTeam): CancelablePromise<TeamWithUserPublic> {
 		const {
-teamId,
+teamSlug,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: '/api/v1/teams/{team_id}',
+			url: '/api/v1/teams/{team_slug}',
 			path: {
-				team_id: teamId
+				team_slug: teamSlug
 			},
 			errors: {
 				422: `Validation Error`,
@@ -390,20 +394,20 @@ teamId,
 
 	/**
 	 * Update Team
-	 * Update an team by its ID.
+	 * Update an team by its name.
 	 * @returns TeamPublic Successful Response
 	 * @throws ApiError
 	 */
 	public static updateTeam(data: TDataUpdateTeam): CancelablePromise<TeamPublic> {
 		const {
 requestBody,
-teamId,
+teamSlug,
 } = data;
 		return __request(OpenAPI, {
 			method: 'PUT',
-			url: '/api/v1/teams/{team_id}',
+			url: '/api/v1/teams/{team_slug}',
 			path: {
-				team_id: teamId
+				team_slug: teamSlug
 			},
 			body: requestBody,
 			mediaType: 'application/json',
@@ -415,19 +419,19 @@ teamId,
 
 	/**
 	 * Delete Team
-	 * Delete an team from the database.
+	 * Delete a team from the database by its name.
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
 	public static deleteTeam(data: TDataDeleteTeam): CancelablePromise<Message> {
 		const {
-teamId,
+teamSlug,
 } = data;
 		return __request(OpenAPI, {
 			method: 'DELETE',
-			url: '/api/v1/teams/{team_id}',
+			url: '/api/v1/teams/{team_slug}',
 			path: {
-				team_id: teamId
+				team_slug: teamSlug
 			},
 			errors: {
 				422: `Validation Error`,
@@ -437,21 +441,21 @@ teamId,
 
 	/**
 	 * Update Member In Team
-	 * Update a member in an team.
+	 * Update a member in a team.
 	 * @returns UserTeamLinkPublic Successful Response
 	 * @throws ApiError
 	 */
 	public static updateMemberInTeam(data: TDataUpdateMemberInTeam): CancelablePromise<UserTeamLinkPublic> {
 		const {
 requestBody,
-teamId,
+teamSlug,
 userId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'PUT',
-			url: '/api/v1/teams/{team_id}/users/{user_id}',
+			url: '/api/v1/teams/{team_slug}/users/{user_id}',
 			path: {
-				team_id: teamId, user_id: userId
+				team_slug: teamSlug, user_id: userId
 			},
 			body: requestBody,
 			mediaType: 'application/json',
@@ -463,20 +467,42 @@ userId,
 
 	/**
 	 * Remove Member From Team
-	 * Remove a member from an team.
+	 * Remove a member from a team.
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
 	public static removeMemberFromTeam(data: TDataRemoveMemberFromTeam): CancelablePromise<Message> {
 		const {
-teamId,
+teamSlug,
 userId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'DELETE',
-			url: '/api/v1/teams/{team_id}/users/{user_id}',
+			url: '/api/v1/teams/{team_slug}/users/{user_id}',
 			path: {
-				team_id: teamId, user_id: userId
+				team_slug: teamSlug, user_id: userId
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Validate Team Name
+	 * Validate if team name is unique
+	 * @returns Message Successful Response
+	 * @throws ApiError
+	 */
+	public static validateTeamName(data: TDataValidateTeamName): CancelablePromise<Message> {
+		const {
+teamSlug,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/teams/validate-team-name/{team_slug}',
+			path: {
+				team_slug: teamSlug
 			},
 			errors: {
 				422: `Validation Error`,
@@ -512,6 +538,10 @@ export type TDataAcceptInvitation = {
             }
 export type TDataVerifyInvitation = {
                 requestBody: InvitationToken
+                
+            }
+export type TDataInvitationHtmlContent = {
+                invitationId: number
                 
             }
 export type TDataDeleteInvitation = {
@@ -651,6 +681,28 @@ requestBody,
 			url: '/api/v1/invitations/token/verify',
 			body: requestBody,
 			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Invitation Html Content
+	 * HTML Content for Invitation email
+	 * @returns string Successful Response
+	 * @throws ApiError
+	 */
+	public static invitationHtmlContent(data: TDataInvitationHtmlContent): CancelablePromise<string> {
+		const {
+invitationId,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/invitations/team-invitation-html-content/{invitation_id}',
+			path: {
+				invitation_id: invitationId
+			},
 			errors: {
 				422: `Validation Error`,
 			},

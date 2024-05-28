@@ -17,23 +17,20 @@ export type HTTPValidationError = {
 
 export type InvitationCreate = {
 	role: Role;
-	email?: string | null;
+	email: string;
 	team_id: number;
-	invited_user_id?: number | null;
 };
 
 
 
 export type InvitationPublic = {
 	role: Role;
-	email?: string | null;
+	email: string;
 	id: number;
 	team_id: number;
 	invited_by_id: number;
-	invited_user_id?: number | null;
 	status: InvitationStatus;
 	created_at: string;
-	receiver: UserPublic | null;
 	sender: UserPublic;
 	team: TeamPublic;
 };
@@ -85,6 +82,7 @@ export type TeamPublic = {
 	name: string;
 	description?: string | null;
 	id: number;
+	slug: string;
 };
 
 
@@ -106,6 +104,7 @@ export type TeamWithUserPublic = {
 	name: string;
 	description?: string | null;
 	id: number;
+	slug: string;
 	user_links: Array<UserLinkPublic>;
 };
 

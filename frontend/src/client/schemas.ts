@@ -58,24 +58,12 @@ export const $InvitationCreate = {
 	isRequired: true,
 },
 		email: {
-	type: 'any-of',
-	contains: [{
 	type: 'string',
-}, {
-	type: 'null',
-}],
+	isRequired: true,
 },
 		team_id: {
 	type: 'number',
 	isRequired: true,
-},
-		invited_user_id: {
-	type: 'any-of',
-	contains: [{
-	type: 'number',
-}, {
-	type: 'null',
-}],
 },
 	},
 } as const;
@@ -87,12 +75,8 @@ export const $InvitationPublic = {
 	isRequired: true,
 },
 		email: {
-	type: 'any-of',
-	contains: [{
 	type: 'string',
-}, {
-	type: 'null',
-}],
+	isRequired: true,
 },
 		id: {
 	type: 'number',
@@ -106,14 +90,6 @@ export const $InvitationPublic = {
 	type: 'number',
 	isRequired: true,
 },
-		invited_user_id: {
-	type: 'any-of',
-	contains: [{
-	type: 'number',
-}, {
-	type: 'null',
-}],
-},
 		status: {
 	type: 'InvitationStatus',
 	isRequired: true,
@@ -122,15 +98,6 @@ export const $InvitationPublic = {
 	type: 'string',
 	isRequired: true,
 	format: 'date-time',
-},
-		receiver: {
-	type: 'any-of',
-	contains: [{
-	type: 'UserPublic',
-}, {
-	type: 'null',
-}],
-	isRequired: true,
 },
 		sender: {
 	type: 'UserPublic',
@@ -235,6 +202,10 @@ export const $TeamPublic = {
 	type: 'number',
 	isRequired: true,
 },
+		slug: {
+	type: 'string',
+	isRequired: true,
+},
 	},
 } as const;
 
@@ -284,6 +255,10 @@ export const $TeamWithUserPublic = {
 },
 		id: {
 	type: 'number',
+	isRequired: true,
+},
+		slug: {
+	type: 'string',
 	isRequired: true,
 },
 		user_links: {

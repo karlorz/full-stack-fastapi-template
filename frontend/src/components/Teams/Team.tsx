@@ -18,12 +18,12 @@ import { TeamsService, type UserPublic } from "../../client"
 import ActionsMenu from "../Common/ActionsMenu"
 
 function TeamTableBody() {
-  const teamId = 1
+  const teamSlug = "team-slug"
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const { data: team } = useSuspenseQuery({
-    queryKey: ["team", teamId],
-    queryFn: () => TeamsService.readTeam({ teamId: Number(teamId) }),
+    queryKey: ["team", teamSlug],
+    queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
   })
 
   const currentUserRole = team.user_links.find(

@@ -15,13 +15,13 @@ import { type TDataRemoveMemberFromTeam, TeamsService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
 interface RemoveProps {
-  teamId?: number
+  teamSlug?: string
   userId: number
   isOpen: boolean
   onClose: () => void
 }
 
-const RemoveUser = ({ teamId, userId, isOpen, onClose }: RemoveProps) => {
+const RemoveUser = ({ teamSlug, userId, isOpen, onClose }: RemoveProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const cancelRef = React.useRef<HTMLButtonElement | null>(null)
@@ -51,7 +51,7 @@ const RemoveUser = ({ teamId, userId, isOpen, onClose }: RemoveProps) => {
   })
 
   const onSubmit = async () => {
-    mutation.mutate({ teamId: teamId!, userId })
+    mutation.mutate({ teamSlug: teamSlug!, userId })
   }
 
   return (

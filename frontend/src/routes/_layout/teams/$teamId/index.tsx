@@ -33,12 +33,13 @@ export const Route = createFileRoute("/_layout/teams/$teamId/")({
 })
 
 function TeamTableBody() {
-  const { teamId } = Route.useParams()
+  // const { teamSlug } = Route.useParams()
+  const teamSlug = "team-slug"
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const { data: team } = useSuspenseQuery({
-    queryKey: ["team", teamId],
-    queryFn: () => TeamsService.readTeam({ teamId: Number(teamId) }),
+    queryKey: ["team", teamSlug],
+    queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
   })
 
   const currentUserRole = team.user_links.find(
@@ -134,10 +135,11 @@ function TeamTable() {
 }
 
 function Team() {
-  const { teamId } = Route.useParams()
+  // const { teamSlug } = Route.useParams()
+  const teamSlug = "team-slug"
   const { data: team } = useQuery({
-    queryKey: ["team", teamId],
-    queryFn: () => TeamsService.readTeam({ teamId: Number(teamId) }),
+    queryKey: ["team", teamSlug],
+    queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
   })
 
   return (
