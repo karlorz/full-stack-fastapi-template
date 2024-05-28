@@ -12,6 +12,7 @@
 
 ### Features
 
+* ✨ Add email verification flow feature. PR [#75](https://github.com/fastapilabs/cloud/pull/75) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Create new invitations . PR [#67](https://github.com/fastapilabs/cloud/pull/67) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Cancel invitations. PR [#68](https://github.com/fastapilabs/cloud/pull/68) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Allow users to see invitations sent. PR [#57](https://github.com/fastapilabs/cloud/pull/57) by [@alejsdev](https://github.com/alejsdev).
