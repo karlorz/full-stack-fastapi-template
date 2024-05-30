@@ -1,9 +1,20 @@
-import { Navigate, createFileRoute } from "@tanstack/react-router"
+import {
+  Navigate,
+  createFileRoute,
+  useRouterState,
+} from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_layout/")({
   component: Index,
 })
 
 function Index() {
-  return <Navigate to="/$team" params={{ team: "a-team" }} />
+  const routerState = useRouterState()
+  return (
+    <Navigate
+      to="/$team"
+      params={{ team: "a-team" }}
+      search={routerState.location.search}
+    />
+  )
 }

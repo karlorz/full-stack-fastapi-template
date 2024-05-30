@@ -27,19 +27,19 @@ function InvitationsTableBody() {
 
   return (
     <Tbody>
-      {invitations.data.map(({ id, status, email }) => (
-        <Tr key={id}>
-          <Td>{email}</Td>
-          <Td textTransform="capitalize">
-            <Badge colorScheme={status === "pending" ? "orange" : "red"}>
-              {status}
-            </Badge>
-          </Td>
-          <Td>
-            <CancelInvitation id={id} />
-          </Td>
-        </Tr>
-      ))}
+      {invitations.data
+        .filter(({ status }) => status === "pending")
+        .map(({ id, status, email }) => (
+          <Tr key={id}>
+            <Td>{email}</Td>
+            <Td textTransform="capitalize">
+              <Badge colorScheme="orange">{status}</Badge>
+            </Td>
+            <Td>
+              <CancelInvitation id={id} />
+            </Td>
+          </Tr>
+        ))}
     </Tbody>
   )
 }

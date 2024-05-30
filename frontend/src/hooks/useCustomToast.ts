@@ -5,7 +5,11 @@ const useCustomToast = () => {
   const toast = useToast()
 
   const showToast = useCallback(
-    (title: string, description: string, status: "success" | "error") => {
+    (
+      title: string,
+      description: string,
+      status: "success" | "error" | "warning",
+    ) => {
       toast({
         title,
         description,

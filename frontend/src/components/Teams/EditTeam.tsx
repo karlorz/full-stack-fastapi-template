@@ -46,7 +46,10 @@ const EditTeam = ({ team, isOpen, onClose }: EditTeamProps) => {
 
   const mutation = useMutation({
     mutationFn: (data: TeamUpdate) =>
-      TeamsService.updateTeam({ requestBody: data, teamSlug: team?.slug || "team-slug" }),
+      TeamsService.updateTeam({
+        requestBody: data,
+        teamSlug: team?.slug || "team-slug",
+      }),
     onSuccess: () => {
       showToast("Success!", "Item updated successfully.", "success")
       onClose()

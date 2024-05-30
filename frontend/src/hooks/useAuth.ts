@@ -8,8 +8,8 @@ import { AxiosError } from "axios"
 import { useState } from "react"
 
 import {
-  type Body_login_login_access_token as AccessToken,
   type ApiError,
+  type Body_login_login_access_token as LoginFormData,
   LoginService,
   type UserPublic,
   type UserRegister,
@@ -58,17 +58,21 @@ const useAuth = () => {
     },
   })
 
-  const login = async (data: AccessToken) => {
+  const login = async (data: {
+    redirect?: string
+    formData: LoginFormData
+  }) => {
     const response = await LoginService.loginAccessToken({
-      formData: data,
+      formData: data.formData,
     })
     localStorage.setItem("access_token", response.access_token)
+    return data.redirect
   }
 
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: () => {
-      navigate({ to: "/" })
+    onSuccess: (redirect) => {
+      navigate({ to: redirect || "/" })
     },
     onError: (err: ApiError) => {
       const errDetail = (err.body as any)?.detail
@@ -76,10 +80,11 @@ const useAuth = () => {
     },
   })
 
-  const logout = () => {
+  const logout = (redirect?: string) => {
     localStorage.removeItem("access_token")
     queryClient.invalidateQueries()
-    navigate({ to: "/login" })
+    const search = redirect ? { redirect } : undefined
+    navigate({ to: "/login", search })
   }
 
   return {

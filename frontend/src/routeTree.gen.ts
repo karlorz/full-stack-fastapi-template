@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TeamInvitationImport } from './routes/team-invitation'
 import { Route as SignupImport } from './routes/signup'
 import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as RecoverPasswordImport } from './routes/recover-password'
@@ -31,6 +32,11 @@ import { Route as LayoutTeamsTeamIdIndexImport } from './routes/_layout/teams/$t
 import { Route as LayoutTeamsTeamIdInvitationsImport } from './routes/_layout/teams/$teamId/invitations'
 
 // Create/Update Routes
+
+const TeamInvitationRoute = TeamInvitationImport.update({
+  path: '/team-invitation',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const SignupRoute = SignupImport.update({
   path: '/signup',
@@ -147,6 +153,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
+    '/team-invitation': {
+      preLoaderRoute: typeof TeamInvitationImport
+      parentRoute: typeof rootRoute
+    }
     '/_layout/settings': {
       preLoaderRoute: typeof LayoutSettingsImport
       parentRoute: typeof LayoutImport
@@ -224,6 +234,7 @@ export const routeTree = rootRoute.addChildren([
   RecoverPasswordRoute,
   ResetPasswordRoute,
   SignupRoute,
+  TeamInvitationRoute,
 ])
 
 /* prettier-ignore-end */

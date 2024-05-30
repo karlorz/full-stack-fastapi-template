@@ -22,7 +22,7 @@ const Sidebar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { logout } = useAuth()
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     logout()
   }
 

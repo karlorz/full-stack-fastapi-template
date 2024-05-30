@@ -26,6 +26,7 @@ import { FaEnvelope, FaKey } from "react-icons/fa"
 import type { Body_login_login_access_token as AccessToken } from "../client"
 import AuthOptions from "../components/Auth/AuthOptions"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
+import TeamInvitation from "../components/Invitations/TeamInvitation"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import { emailPattern } from "../utils"
 
@@ -41,6 +42,10 @@ export const Route = createFileRoute("/login")({
 })
 
 function Login() {
+  const searchParams = new URLSearchParams(window.location.search)
+  const redirectRaw = searchParams.get("redirect")
+  const redirectDecoded = redirectRaw ? decodeURIComponent(redirectRaw) : "/"
+  const redirectUrl = redirectDecoded.startsWith("/") ? redirectDecoded : "/"
   const [show, setShow] = useBoolean()
   const { loginMutation, error, resetError } = useAuth()
   const {
@@ -62,7 +67,7 @@ function Login() {
     resetError()
 
     try {
-      await loginMutation.mutateAsync(data)
+      await loginMutation.mutateAsync({ redirect: redirectUrl, formData: data })
     } catch {
       // error is handled by useAuth hook
     }
@@ -153,6 +158,7 @@ function Login() {
           />
         </Container>
       </Flex>
+      <TeamInvitation />
     </>
   )
 }
