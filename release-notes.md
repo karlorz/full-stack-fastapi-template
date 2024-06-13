@@ -44,6 +44,7 @@
 
 ### Refactors
 
+* 🔧 Ignore .env files in backend. PR [#80](https://github.com/fastapilabs/cloud/pull/80) by [@patrick91](https://github.com/patrick91).
 * 🔧 Reuse database url from config in alembic setup. PR [#81](https://github.com/fastapilabs/cloud/pull/81) by [@patrick91](https://github.com/patrick91).
 * ♻️ Update teams in UserMenu component. PR [#78](https://github.com/fastapilabs/cloud/pull/78) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Regenerate client with latest changes. PR [#76](https://github.com/fastapilabs/cloud/pull/76) by [@alejsdev](https://github.com/alejsdev).
