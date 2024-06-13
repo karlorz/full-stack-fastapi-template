@@ -12,6 +12,7 @@
 
 ### Features
 
+* ✨Prevent deletion of personal team. PR [#83](https://github.com/fastapilabs/cloud/pull/83) by [@patrick91](https://github.com/patrick91).
 * ✨ Add and expose personal team on user. PR [#79](https://github.com/fastapilabs/cloud/pull/79) by [@patrick91](https://github.com/patrick91).
 * ✨ Accept invitations. PR [#71](https://github.com/fastapilabs/cloud/pull/71) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add email verification flow feature. PR [#75](https://github.com/fastapilabs/cloud/pull/75) by [@estebanx64](https://github.com/estebanx64).
