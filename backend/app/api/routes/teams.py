@@ -141,7 +141,13 @@ def delete_team(
         raise HTTPException(
             status_code=400, detail="Not enough permissions to execute this action"
         )
+
     team = link.team
+
+    if team.id == current_user.personal_team_id:
+        raise HTTPException(
+            status_code=400, detail="You cannot delete your personal team"
+        )
 
     for link in team.user_links:  # remove all links to this team
         session.delete(link)

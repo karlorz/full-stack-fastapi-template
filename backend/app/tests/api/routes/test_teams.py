@@ -363,6 +363,38 @@ def test_delete_team_not_enough_permissions(client: TestClient, db: Session) -> 
     assert data["detail"] == "Not enough permissions to execute this action"
 
 
+def test_delete_personal_team_forbidden(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
+    user = create_user(
+        session=db,
+        email="default-org@fastapi.com",
+        password="test123",
+        full_name="default-org",
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+    user.personal_team_id = team.id
+    db.add(user)
+    db.commit()
+
+    user_auth_headers = user_authentication_headers(
+        client=client, email="default-org@fastapi.com", password="test123"
+    )
+
+    response = client.delete(
+        f"{settings.API_V1_STR}/teams/{team.slug}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 400
+    data = response.json()
+    assert data["detail"] == "You cannot delete your personal team"
+
+    team_query = select(Team).where(Team.id == team.id)
+    team_db = db.exec(team_query).first()
+    assert team_db is not None
+
+
 def test_update_member_in_team(client: TestClient, db: Session) -> None:
     team = create_random_team(db)
     user = create_user(
