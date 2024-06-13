@@ -136,10 +136,12 @@ def verify_email_token(session: SessionDep, payload: EmailVerificationToken) -> 
     if user.is_verified:
         raise HTTPException(status_code=400, detail="Email already verified")
 
-    user.is_verified = True
     team_slug = verify_and_generate_slug_name(session=session, name=user.username)
     team = Team(name=user.full_name, slug=team_slug)
     user_team_link = UserTeamLink(team=team, user=user, role=Role.admin)
+
+    user.is_verified = True
+    user.personal_team = team
 
     session.add(user)
     session.add(user_team_link)

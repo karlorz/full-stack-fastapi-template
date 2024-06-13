@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from typing import Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -71,6 +72,11 @@ class User(UserBase, table=True):
     username: str = Field(unique=True, index=True)
     is_verified: bool = False
 
+    personal_team_id: int | None = Field(
+        foreign_key="team.id", nullable=True, default=None
+    )
+    personal_team: Optional["Team"] = Relationship()
+
     team_links: list[UserTeamLink] = Relationship(back_populates="user")
     invitations_sent: list["Invitation"] = Relationship(
         back_populates="sender",
@@ -81,6 +87,7 @@ class User(UserBase, table=True):
 # Properties to return via API, id is always required
 class UserPublic(UserBase):
     id: int
+    personal_team_id: int | None = None
 
 
 class UsersPublic(SQLModel):

@@ -23,9 +23,9 @@ def db() -> Generator[Session, None, None]:
             session.exec(statement)  # type: ignore
             statement = delete(Invitation)
             session.exec(statement)  # type: ignore
-            statement = delete(Team)
-            session.exec(statement)  # type: ignore
             statement = delete(User)
+            session.exec(statement)  # type: ignore
+            statement = delete(Team)
             session.exec(statement)  # type: ignore
             session.commit()
 

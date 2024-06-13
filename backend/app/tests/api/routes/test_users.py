@@ -6,8 +6,9 @@ from sqlmodel import Session, select
 from app import crud
 from app.core.config import settings
 from app.core.security import verify_password
-from app.models import User, UserCreate
+from app.models import Role, User, UserCreate
 from app.tests.utils.utils import random_email, random_lower_string
+from app.utils import generate_verification_email_token
 
 
 def test_get_users_normal_user_me(
@@ -18,6 +19,7 @@ def test_get_users_normal_user_me(
     assert current_user
     assert current_user["is_active"] is True
     assert current_user["email"] == settings.EMAIL_TEST_USER
+    assert current_user["personal_team_id"] is None
 
 
 def test_update_user_me(
@@ -213,3 +215,34 @@ def test_delete_user_me(client: TestClient, db: Session) -> None:
     assert deleted_user["message"] == "User deleted successfully"
     result = db.exec(select(User).where(User.id == user_id)).first()
     assert result is None
+
+
+def test_verify_email(client: TestClient, db: Session) -> None:
+    email = random_email()
+    password = random_lower_string()
+    full_name = random_lower_string()
+    user_in = UserCreate(email=email, password=password, full_name=full_name)
+    user = crud.create_user(session=db, user_create=user_in, is_verified=False)
+
+    token = generate_verification_email_token(email=email)
+
+    data = {"token": token}
+
+    r = client.post(f"{settings.API_V1_STR}/users/verify-email", json=data)
+
+    assert r.status_code == 200
+    assert r.json() == {"message": "Email successfully verified"}
+
+    db.refresh(user)
+
+    assert user.is_verified is True
+
+    assert len(user.team_links) == 1
+
+    team_link = user.team_links[0]
+
+    assert team_link.role == Role.admin
+    assert team_link.team.name == user.full_name
+    assert team_link.team.slug == user.username
+
+    assert user.personal_team_id == team_link.team.id
