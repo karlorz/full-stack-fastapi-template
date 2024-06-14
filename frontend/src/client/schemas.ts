@@ -40,6 +40,15 @@ export const $Body_login_login_access_token = {
 	},
 } as const;
 
+export const $EmailVerificationToken = {
+	properties: {
+		token: {
+	type: 'string',
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $HTTPValidationError = {
 	properties: {
 		detail: {
@@ -313,31 +322,6 @@ export const $UpdatePassword = {
 	},
 } as const;
 
-export const $UserCreate = {
-	properties: {
-		email: {
-	type: 'string',
-	isRequired: true,
-},
-		is_active: {
-	type: 'boolean',
-	default: true,
-},
-		full_name: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-}, {
-	type: 'null',
-}],
-},
-		password: {
-	type: 'string',
-	isRequired: true,
-},
-	},
-} as const;
-
 export const $UserLinkPublic = {
 	properties: {
 		role: {
@@ -362,12 +346,8 @@ export const $UserPublic = {
 	default: true,
 },
 		full_name: {
-	type: 'any-of',
-	contains: [{
 	type: 'string',
-}, {
-	type: 'null',
-}],
+	isRequired: true,
 },
 		id: {
 	type: 'number',
@@ -387,12 +367,8 @@ export const $UserRegister = {
 	isRequired: true,
 },
 		full_name: {
-	type: 'any-of',
-	contains: [{
 	type: 'string',
-}, {
-	type: 'null',
-}],
+	isRequired: true,
 },
 	},
 } as const;

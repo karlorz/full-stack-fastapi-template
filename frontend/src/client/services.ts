@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UserUpdateMe,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationToken } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserRegister,UserUpdateMe,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationToken } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -124,10 +124,6 @@ email,
 
 }
 
-export type TDataCreateUser = {
-                requestBody: UserCreate
-                
-            }
 export type TDataUpdateUserMe = {
                 requestBody: UserUpdateMe
                 
@@ -140,29 +136,16 @@ export type TDataRegisterUser = {
                 requestBody: UserRegister
                 
             }
+export type TDataVerifyEmailToken = {
+                requestBody: EmailVerificationToken
+                
+            }
+export type TDataVerifyEmailHtmlContent = {
+                email: string
+                
+            }
 
 export class UsersService {
-
-	/**
-	 * Create User
-	 * Create new user.
-	 * @returns UserPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static createUser(data: TDataCreateUser): CancelablePromise<UserPublic> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/users/',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
 
 	/**
 	 * Read User Me
@@ -247,6 +230,49 @@ requestBody,
 			url: '/api/v1/users/signup',
 			body: requestBody,
 			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Verify Email Token
+	 * Verify email token
+	 * @returns unknown Successful Response
+	 * @throws ApiError
+	 */
+	public static verifyEmailToken(data: TDataVerifyEmailToken): CancelablePromise<unknown> {
+		const {
+requestBody,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/users/verify-email',
+			body: requestBody,
+			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Verify Email Html Content
+	 * HTML Content for Email verification email
+	 * @returns string Successful Response
+	 * @throws ApiError
+	 */
+	public static verifyEmailHtmlContent(data: TDataVerifyEmailHtmlContent): CancelablePromise<string> {
+		const {
+email,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/users/verify-email-html-content/{email}',
+			path: {
+				email
+			},
 			errors: {
 				422: `Validation Error`,
 			},

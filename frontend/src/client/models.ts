@@ -9,6 +9,12 @@ export type Body_login_login_access_token = {
 
 
 
+export type EmailVerificationToken = {
+	token: string;
+};
+
+
+
 export type HTTPValidationError = {
 	detail?: Array<ValidationError>;
 };
@@ -131,15 +137,6 @@ export type UpdatePassword = {
 
 
 
-export type UserCreate = {
-	email: string;
-	is_active?: boolean;
-	full_name?: string | null;
-	password: string;
-};
-
-
-
 export type UserLinkPublic = {
 	role: Role;
 	user: UserPublic;
@@ -150,7 +147,7 @@ export type UserLinkPublic = {
 export type UserPublic = {
 	email: string;
 	is_active?: boolean;
-	full_name?: string | null;
+	full_name: string;
 	id: number;
 };
 
@@ -159,7 +156,7 @@ export type UserPublic = {
 export type UserRegister = {
 	email: string;
 	password: string;
-	full_name?: string | null;
+	full_name: string;
 };
 
 
