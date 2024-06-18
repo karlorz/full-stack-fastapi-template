@@ -87,7 +87,14 @@ def read_user_me(current_user: CurrentUser) -> Any:
     """
     Get current user.
     """
-    return current_user
+    personal_team_slug = (
+        current_user.personal_team.slug if current_user.personal_team else None
+    )
+
+    return UserPublic(
+        **current_user.model_dump(),
+        personal_team_slug=personal_team_slug,
+    )
 
 
 @router.post("/signup", response_model=UserPublic)
