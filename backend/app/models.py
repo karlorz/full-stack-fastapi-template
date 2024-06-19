@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
+from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.utils import get_datetime_utc
@@ -20,56 +21,52 @@ class InvitationStatus(str, Enum):
 class UserTeamLink(SQLModel, table=True):
     user_id: int | None = Field(default=None, foreign_key="user.id", primary_key=True)
     team_id: int | None = Field(default=None, foreign_key="team.id", primary_key=True)
-    role: Role
+    role: Role = Field(max_length=255)
 
     user: "User" = Relationship(back_populates="team_links")
     team: "Team" = Relationship(back_populates="user_links")
 
 
 # Shared properties
-# TODO replace email str with EmailStr when sqlmodel supports it
 class UserBase(SQLModel):
-    email: str = Field(unique=True, index=True)
+    email: EmailStr = Field(unique=True, index=True, max_length=255)
     is_active: bool = True
-    full_name: str
+    full_name: str = Field(max_length=255)
 
 
 # Properties to receive via API on creation
 class UserCreate(UserBase):
-    password: str
+    password: str = Field(min_length=8, max_length=40)
 
 
-# TODO replace email str with EmailStr when sqlmodel supports it
 class UserRegister(SQLModel):
-    email: str
-    password: str
-    full_name: str
+    email: EmailStr = Field(max_length=255)
+    password: str = Field(min_length=8, max_length=40)
+    full_name: str = Field(max_length=255)
 
 
 # Properties to receive via API on update, all are optional
-# TODO replace email str with EmailStr when sqlmodel supports it
 class UserUpdate(UserBase):
-    email: str | None = None  # type: ignore
-    password: str | None = None
-    full_name: str | None = None  # type: ignore
+    email: EmailStr | None = Field(default=None, max_length=255)  # type: ignore
+    password: str | None = Field(default=None, min_length=8, max_length=40)
+    full_name: str | None = Field(default=None, max_length=255)  # type: ignore
 
 
-# TODO replace email str with EmailStr when sqlmodel supports it
 class UserUpdateMe(SQLModel):
-    full_name: str | None = None
-    email: str | None = None
+    full_name: str | None = Field(default=None, max_length=255)
+    email: EmailStr | None = Field(default=None, max_length=255)
 
 
 class UpdatePassword(SQLModel):
-    current_password: str
-    new_password: str
+    current_password: str = Field(min_length=8, max_length=40)
+    new_password: str = Field(min_length=8, max_length=40)
 
 
 # Database model, database table inferred from class name
 class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str
-    username: str = Field(unique=True, index=True)
+    username: str = Field(unique=True, index=True, max_length=255)
     is_verified: bool = False
 
     personal_team_id: int | None = Field(
@@ -123,7 +120,7 @@ class TokenPayload(SQLModel):
 
 class NewPassword(SQLModel):
     token: str
-    new_password: str
+    new_password: str = Field(min_length=8, max_length=40)
 
 
 class EmailVerificationToken(SQLModel):
@@ -131,13 +128,13 @@ class EmailVerificationToken(SQLModel):
 
 
 class TeamBase(SQLModel):
-    name: str
-    description: str | None = None
+    name: str = Field(max_length=255)
+    description: str | None = Field(default=None, max_length=255)
 
 
 class Team(TeamBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    slug: str = Field(unique=True, index=True)
+    slug: str = Field(unique=True, index=True, max_length=255)
 
     user_links: list[UserTeamLink] = Relationship(back_populates="team")
     invitations: list["Invitation"] = Relationship(back_populates="team")
@@ -148,13 +145,13 @@ class TeamCreate(TeamBase):
 
 
 class TeamUpdate(SQLModel):
-    name: str | None = None
-    description: str | None = None
+    name: str | None = Field(default=None, max_length=255)
+    description: str | None = Field(default=None, max_length=255)
 
 
 class TeamPublic(TeamBase):
     id: int
-    slug: str
+    slug: str = Field(default=None, max_length=255)
 
 
 class TeamsPublic(SQLModel):
@@ -181,8 +178,8 @@ class UserTeamLinkPublic(SQLModel):
 
 
 class InvitationBase(SQLModel):
-    role: Role
-    email: str
+    role: Role = Field(max_length=255)
+    email: EmailStr = Field(max_length=255)
 
 
 class InvitationCreate(InvitationBase):
@@ -216,7 +213,7 @@ class Invitation(InvitationBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     team_id: int = Field(foreign_key="team.id")
     invited_by_id: int = Field(foreign_key="user.id")
-    status: InvitationStatus = InvitationStatus.pending
+    status: InvitationStatus = Field(default=InvitationStatus.pending, max_length=255)
     created_at: datetime = Field(default_factory=get_datetime_utc)
     expires_at: datetime
 

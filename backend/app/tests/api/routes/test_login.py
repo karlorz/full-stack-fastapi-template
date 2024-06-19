@@ -125,7 +125,7 @@ def test_reset_password_inactive_user(client: TestClient, db: Session) -> None:
     user = create_user(
         session=db,
         email="fastapiuser123@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="FastAPI User",
         is_verified=True,
     )
@@ -150,7 +150,7 @@ def test_login_user_inactive(client: TestClient, db: Session) -> None:
     user = create_user(
         session=db,
         email="fastapiuser@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="FastAPI User",
         is_verified=True,
     )
@@ -160,7 +160,7 @@ def test_login_user_inactive(client: TestClient, db: Session) -> None:
 
     login_data = {
         "username": "fastapiuser@fastapi.com",
-        "password": "test123",
+        "password": "test12345",
     }
     r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
     assert r.status_code == 400
@@ -171,14 +171,14 @@ def test_login_user_not_verified(client: TestClient, db: Session) -> None:
     create_user(
         session=db,
         email="fastapiuser2@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="FastAPI User",
         is_verified=False,
     )
 
     login_data = {
         "username": "fastapiuser2@fastapi.com",
-        "password": "test123",
+        "password": "test12345",
     }
     r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
     assert r.status_code == 400

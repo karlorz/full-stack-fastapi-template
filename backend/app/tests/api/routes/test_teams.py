@@ -20,7 +20,7 @@ def test_read_teams(client: TestClient, db: Session) -> None:
     user1 = create_user(
         session=db,
         email="test@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="test",
         is_verified=True,
     )
@@ -29,14 +29,14 @@ def test_read_teams(client: TestClient, db: Session) -> None:
     user2 = create_user(
         session=db,
         email="user2@example.com",
-        password="secret2",
+        password="secret2345",
         full_name="test2",
         is_verified=True,
     )
     add_user_to_team(session=db, user=user2, team=org3, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email=user1.email, password="test123"
+        client=client, email=user1.email, password="test12345"
     )
 
     # Make a request to the get_teams route using the client fixture and superuser_token_headers
@@ -57,7 +57,7 @@ def test_read_teams(client: TestClient, db: Session) -> None:
 
     # Get the second org, with the second user, the data shouldn't be mixed
     user2_auth_headers = user_authentication_headers(
-        client=client, email=user2.email, password="secret2"
+        client=client, email=user2.email, password="secret2345"
     )
     response = client.get(
         f"{settings.API_V1_STR}/teams/",
@@ -79,14 +79,14 @@ def test_read_team(client: TestClient, db: Session) -> None:
     user = create_user(
         session=db,
         email="org2@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org2",
         is_verified=True,
     )
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org2@fastapi.com", password="test123"
+        client=client, email="org2@fastapi.com", password="test12345"
     )
 
     response = client.get(
@@ -197,14 +197,14 @@ def test_update_team(client: TestClient, db: Session) -> None:
     user = create_user(
         session=db,
         email="org3@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org3",
         is_verified=True,
     )
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org3@fastapi.com", password="test123"
+        client=client, email="org3@fastapi.com", password="test12345"
     )
 
     team_in = {
@@ -251,14 +251,14 @@ def test_update_team_not_enough_permissions(client: TestClient, db: Session) -> 
     user = create_user(
         session=db,
         email="org4@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org4",
         is_verified=True,
     )
     user_member = create_user(
         session=db,
         email="org5@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org5",
         is_verified=True,
     )
@@ -266,7 +266,7 @@ def test_update_team_not_enough_permissions(client: TestClient, db: Session) -> 
     add_user_to_team(session=db, user=user_member, team=team, role=Role.member)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org5@fastapi.com", password="test123"
+        client=client, email="org5@fastapi.com", password="test12345"
     )
 
     team_in = {
@@ -289,14 +289,14 @@ def test_delete_team(client: TestClient, db: Session) -> None:
     user = create_user(
         session=db,
         email="org6@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org6",
         is_verified=True,
     )
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org6@fastapi.com", password="test123"
+        client=client, email="org6@fastapi.com", password="test12345"
     )
 
     response = client.delete(
@@ -335,14 +335,14 @@ def test_delete_team_not_enough_permissions(client: TestClient, db: Session) -> 
     user = create_user(
         session=db,
         email="org7@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org7",
         is_verified=True,
     )
     user_member = create_user(
         session=db,
         email="org8@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org8",
         is_verified=True,
     )
@@ -350,7 +350,7 @@ def test_delete_team_not_enough_permissions(client: TestClient, db: Session) -> 
     add_user_to_team(session=db, user=user_member, team=team, role=Role.member)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org8@fastapi.com", password="test123"
+        client=client, email="org8@fastapi.com", password="test12345"
     )
 
     response = client.delete(
@@ -368,7 +368,7 @@ def test_delete_personal_team_forbidden(client: TestClient, db: Session) -> None
     user = create_user(
         session=db,
         email="default-org@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="default-org",
         is_verified=True,
     )
@@ -378,7 +378,7 @@ def test_delete_personal_team_forbidden(client: TestClient, db: Session) -> None
     db.commit()
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="default-org@fastapi.com", password="test123"
+        client=client, email="default-org@fastapi.com", password="test12345"
     )
 
     response = client.delete(
@@ -400,14 +400,14 @@ def test_update_member_in_team(client: TestClient, db: Session) -> None:
     user = create_user(
         session=db,
         email="org17@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org17",
         is_verified=True,
     )
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org17@fastapi.com", password="test123"
+        client=client, email="org17@fastapi.com", password="test12345"
     )
 
     response = client.put(
@@ -438,21 +438,21 @@ def test_update_member_in_team_not_enough_permissions(
     user = create_user(
         session=db,
         email="org18@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org18",
         is_verified=True,
     )
     user_member = create_user(
         session=db,
         email="org19@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org19",
         is_verified=True,
     )
     add_user_to_team(session=db, user=user_member, team=team, role=Role.member)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org19@fastapi.com", password="test123"
+        client=client, email="org19@fastapi.com", password="test12345"
     )
 
     response = client.put(
@@ -473,21 +473,21 @@ def test_update_member_in_team_user_not_in_team(
     user = create_user(
         session=db,
         email="org20@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org20",
         is_verified=True,
     )
     user_to_update = create_user(
         session=db,
         email="org21@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org21",
         is_verified=True,
     )
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org20@fastapi.com", password="test123"
+        client=client, email="org20@fastapi.com", password="test12345"
     )
 
     response = client.put(
@@ -505,12 +505,12 @@ def test_update_member_in_team_not_found(client: TestClient, db: Session) -> Non
     user = create_user(
         session=db,
         email="org22@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org22",
         is_verified=True,
     )
     user_auth_headers = user_authentication_headers(
-        client=client, email="org22@fastapi.com", password="test123"
+        client=client, email="org22@fastapi.com", password="test12345"
     )
 
     response = client.put(
@@ -529,14 +529,14 @@ def test_remove_member_from_team(client: TestClient, db: Session) -> None:
     user = create_user(
         session=db,
         email="org23@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org23",
         is_verified=True,
     )
     user_member = create_user(
         session=db,
         email="org24@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org24",
         is_verified=True,
     )
@@ -544,7 +544,7 @@ def test_remove_member_from_team(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user_member, team=team, role=Role.member)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org23@fastapi.com", password="test123"
+        client=client, email="org23@fastapi.com", password="test12345"
     )
 
     response = client.delete(
@@ -568,14 +568,14 @@ def test_remove_member_from_team_not_enough_permissions(
     user = create_user(
         session=db,
         email="org25@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org25",
         is_verified=True,
     )
     user_member = create_user(
         session=db,
         email="org26@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org26",
         is_verified=True,
     )
@@ -583,7 +583,7 @@ def test_remove_member_from_team_not_enough_permissions(
     add_user_to_team(session=db, user=user_member, team=team, role=Role.member)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org26@fastapi.com", password="test123"
+        client=client, email="org26@fastapi.com", password="test12345"
     )
 
     response = client.delete(
@@ -600,12 +600,12 @@ def test_remove_member_from_team_not_found(client: TestClient, db: Session) -> N
     create_user(
         session=db,
         email="org27@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org27",
         is_verified=True,
     )
     user_auth_headers = user_authentication_headers(
-        client=client, email="org27@fastapi.com", password="test123"
+        client=client, email="org27@fastapi.com", password="test12345"
     )
 
     response = client.delete(
@@ -625,14 +625,14 @@ def test_remove_member_from_team_user_not_found(
     user = create_user(
         session=db,
         email="org28@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org28",
         is_verified=True,
     )
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org28@fastapi.com", password="test123"
+        client=client, email="org28@fastapi.com", password="test12345"
     )
 
     response = client.delete(
@@ -650,14 +650,14 @@ def test_remove_from_team_not_allow_yourself(client: TestClient, db: Session) ->
     user = create_user(
         session=db,
         email="org29@fastapi.com",
-        password="test123",
+        password="test12345",
         full_name="org29",
         is_verified=True,
     )
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     user_auth_headers = user_authentication_headers(
-        client=client, email="org29@fastapi.com", password="test123"
+        client=client, email="org29@fastapi.com", password="test12345"
     )
 
     response = client.delete(
