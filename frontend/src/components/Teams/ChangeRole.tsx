@@ -12,7 +12,7 @@ import React from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
 import {
-  type Role,
+  type app__models__Role__1 as Role,
   type TeamUpdateMember,
   TeamsService,
   type UserPublic,

@@ -6,6 +6,7 @@ import Sidebar from "../components/Common/Sidebar"
 import UserMenu from "../components/Common/UserMenu"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
 import { isLoggedIn } from "../hooks/useAuth"
+import { Suspense } from "react"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,
@@ -23,7 +24,9 @@ function Layout() {
   return (
     <>
       <Flex maxW="large" h="auto" position="relative">
-        <Sidebar />
+        <Suspense>
+          <Sidebar />
+        </Suspense>
         <Flex flexDir="column" flex="1">
           {/* Navbar */}
           <Box

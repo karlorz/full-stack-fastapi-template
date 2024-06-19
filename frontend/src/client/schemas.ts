@@ -63,12 +63,17 @@ export const $HTTPValidationError = {
 export const $InvitationCreate = {
 	properties: {
 		role: {
-	type: 'Role',
+	type: 'all-of',
+	contains: [{
+	type: 'app__models__Role__1',
+}],
 	isRequired: true,
 },
 		email: {
 	type: 'string',
 	isRequired: true,
+	format: 'email',
+	maxLength: 255,
 },
 		team_id: {
 	type: 'number',
@@ -80,12 +85,17 @@ export const $InvitationCreate = {
 export const $InvitationPublic = {
 	properties: {
 		role: {
-	type: 'Role',
+	type: 'all-of',
+	contains: [{
+	type: 'app__models__Role__1',
+}],
 	isRequired: true,
 },
 		email: {
 	type: 'string',
 	isRequired: true,
+	format: 'email',
+	maxLength: 255,
 },
 		id: {
 	type: 'number',
@@ -167,13 +177,10 @@ export const $NewPassword = {
 		new_password: {
 	type: 'string',
 	isRequired: true,
+	maxLength: 40,
+	minLength: 8,
 },
 	},
-} as const;
-
-export const $Role = {
-	type: 'Enum',
-	enum: ['member','admin',],
 } as const;
 
 export const $TeamCreate = {
@@ -181,11 +188,13 @@ export const $TeamCreate = {
 		name: {
 	type: 'string',
 	isRequired: true,
+	maxLength: 255,
 },
 		description: {
 	type: 'any-of',
 	contains: [{
 	type: 'string',
+	maxLength: 255,
 }, {
 	type: 'null',
 }],
@@ -198,11 +207,13 @@ export const $TeamPublic = {
 		name: {
 	type: 'string',
 	isRequired: true,
+	maxLength: 255,
 },
 		description: {
 	type: 'any-of',
 	contains: [{
 	type: 'string',
+	maxLength: 255,
 }, {
 	type: 'null',
 }],
@@ -213,7 +224,7 @@ export const $TeamPublic = {
 },
 		slug: {
 	type: 'string',
-	isRequired: true,
+	maxLength: 255,
 },
 	},
 } as const;
@@ -224,6 +235,7 @@ export const $TeamUpdate = {
 	type: 'any-of',
 	contains: [{
 	type: 'string',
+	maxLength: 255,
 }, {
 	type: 'null',
 }],
@@ -232,6 +244,7 @@ export const $TeamUpdate = {
 	type: 'any-of',
 	contains: [{
 	type: 'string',
+	maxLength: 255,
 }, {
 	type: 'null',
 }],
@@ -242,7 +255,7 @@ export const $TeamUpdate = {
 export const $TeamUpdateMember = {
 	properties: {
 		role: {
-	type: 'Role',
+	type: 'app__models__Role__1',
 	isRequired: true,
 },
 	},
@@ -253,11 +266,13 @@ export const $TeamWithUserPublic = {
 		name: {
 	type: 'string',
 	isRequired: true,
+	maxLength: 255,
 },
 		description: {
 	type: 'any-of',
 	contains: [{
 	type: 'string',
+	maxLength: 255,
 }, {
 	type: 'null',
 }],
@@ -268,7 +283,7 @@ export const $TeamWithUserPublic = {
 },
 		slug: {
 	type: 'string',
-	isRequired: true,
+	maxLength: 255,
 },
 		user_links: {
 	type: 'array',
@@ -314,10 +329,14 @@ export const $UpdatePassword = {
 		current_password: {
 	type: 'string',
 	isRequired: true,
+	maxLength: 40,
+	minLength: 8,
 },
 		new_password: {
 	type: 'string',
 	isRequired: true,
+	maxLength: 40,
+	minLength: 8,
 },
 	},
 } as const;
@@ -325,11 +344,39 @@ export const $UpdatePassword = {
 export const $UserLinkPublic = {
 	properties: {
 		role: {
-	type: 'Role',
+	type: 'app__models__Role__1',
 	isRequired: true,
 },
 		user: {
 	type: 'UserPublic',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $UserMePublic = {
+	properties: {
+		email: {
+	type: 'string',
+	isRequired: true,
+	format: 'email',
+	maxLength: 255,
+},
+		is_active: {
+	type: 'boolean',
+	default: true,
+},
+		full_name: {
+	type: 'string',
+	isRequired: true,
+	maxLength: 255,
+},
+		id: {
+	type: 'number',
+	isRequired: true,
+},
+		personal_team_slug: {
+	type: 'string',
 	isRequired: true,
 },
 	},
@@ -340,6 +387,8 @@ export const $UserPublic = {
 		email: {
 	type: 'string',
 	isRequired: true,
+	format: 'email',
+	maxLength: 255,
 },
 		is_active: {
 	type: 'boolean',
@@ -348,6 +397,7 @@ export const $UserPublic = {
 		full_name: {
 	type: 'string',
 	isRequired: true,
+	maxLength: 255,
 },
 		id: {
 	type: 'number',
@@ -361,14 +411,19 @@ export const $UserRegister = {
 		email: {
 	type: 'string',
 	isRequired: true,
+	format: 'email',
+	maxLength: 255,
 },
 		password: {
 	type: 'string',
 	isRequired: true,
+	maxLength: 40,
+	minLength: 8,
 },
 		full_name: {
 	type: 'string',
 	isRequired: true,
+	maxLength: 255,
 },
 	},
 } as const;
@@ -384,7 +439,7 @@ export const $UserTeamLinkPublic = {
 	isRequired: true,
 },
 		role: {
-	type: 'Role',
+	type: 'app__models__Role__1',
 	isRequired: true,
 },
 	},
@@ -396,6 +451,7 @@ export const $UserUpdateMe = {
 	type: 'any-of',
 	contains: [{
 	type: 'string',
+	maxLength: 255,
 }, {
 	type: 'null',
 }],
@@ -404,6 +460,8 @@ export const $UserUpdateMe = {
 	type: 'any-of',
 	contains: [{
 	type: 'string',
+	format: 'email',
+	maxLength: 255,
 }, {
 	type: 'null',
 }],
@@ -434,4 +492,14 @@ export const $ValidationError = {
 	isRequired: true,
 },
 	},
+} as const;
+
+export const $app__models__Role__1 = {
+	type: 'Enum',
+	enum: ['member','admin',],
+} as const;
+
+export const $app__models__Role__2 = {
+	type: 'app__models__Role__1',
+	maxLength: 255,
 } as const;

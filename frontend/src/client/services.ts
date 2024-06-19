@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserRegister,UserUpdateMe,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationToken } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateMe,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationToken } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -150,10 +150,10 @@ export class UsersService {
 	/**
 	 * Read User Me
 	 * Get current user.
-	 * @returns UserPublic Successful Response
+	 * @returns UserMePublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readUserMe(): CancelablePromise<UserPublic> {
+	public static readUserMe(): CancelablePromise<UserMePublic> {
 				return __request(OpenAPI, {
 			method: 'GET',
 			url: '/api/v1/users/me',

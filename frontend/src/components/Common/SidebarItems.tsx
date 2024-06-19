@@ -22,6 +22,7 @@ import {
   FaQuestionCircle,
   FaTools,
 } from "react-icons/fa"
+import { useCurrentUser } from "../../hooks/useAuth"
 
 // https://github.com/TanStack/router/issues/1194#issuecomment-1956736102
 export function link<
@@ -39,41 +40,43 @@ type Item = {
   title: string
 } & ToOptions
 
-const items: Array<Item> = [
-  { icon: FaHome, title: "Dashboard", to: "/" },
-  {
-    icon: FaCubes,
-    title: "Projects",
-    ...link({
-      to: "/$team/projects",
-      params: { team: "a-team" },
-    }),
-  },
-  {
-    icon: FaTools,
-    title: "Resources",
-    ...link({
-      to: "/$team/resources",
-      params: { team: "a-team" },
-    }),
-  },
-  {
-    icon: FaCog,
-    title: "Settings",
-    ...link({
-      to: "/$team/settings",
-      params: { team: "a-team" },
-    }),
-  },
-  {
-    icon: FaQuestionCircle,
-    title: "Help",
-    ...link({
-      to: "/$team/help",
-      params: { team: "a-team" },
-    }),
-  },
-]
+const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
+  return [
+    { icon: FaHome, title: "Dashboard", to: "/" },
+    {
+      icon: FaCubes,
+      title: "Projects",
+      ...link({
+        to: "/$team/projects",
+        params: { team },
+      }),
+    },
+    {
+      icon: FaTools,
+      title: "Resources",
+      ...link({
+        to: "/$team/resources",
+        params: { team },
+      }),
+    },
+    {
+      icon: FaCog,
+      title: "Settings",
+      ...link({
+        to: "/$team/settings",
+        params: { team },
+      }),
+    },
+    {
+      icon: FaQuestionCircle,
+      title: "Help",
+      ...link({
+        to: "/$team/help",
+        params: { team },
+      }),
+    },
+  ]
+}
 
 interface SidebarItemsProps {
   onClose?: () => void
@@ -87,7 +90,10 @@ const FlexLink = (props: LinkProps & Omit<FlexProps, "as">) => (
 )
 
 const SidebarItems = ({ onClose }: SidebarItemsProps) => {
+  const user = useCurrentUser()
   const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
+
+  const items = getSidebarItems({ team: user!.personal_team_slug })
 
   const listItems = items.map(({ icon, title, to, params }) => (
     <FlexLink

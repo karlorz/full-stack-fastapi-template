@@ -22,7 +22,7 @@ export type HTTPValidationError = {
 
 
 export type InvitationCreate = {
-	role: Role;
+	role: app__models__Role__1;
 	email: string;
 	team_id: number;
 };
@@ -30,7 +30,7 @@ export type InvitationCreate = {
 
 
 export type InvitationPublic = {
-	role: Role;
+	role: app__models__Role__1;
 	email: string;
 	id: number;
 	team_id: number;
@@ -73,10 +73,6 @@ export type NewPassword = {
 
 
 
-export type Role = 'member' | 'admin';
-
-
-
 export type TeamCreate = {
 	name: string;
 	description?: string | null;
@@ -88,7 +84,7 @@ export type TeamPublic = {
 	name: string;
 	description?: string | null;
 	id: number;
-	slug: string;
+	slug?: string;
 };
 
 
@@ -101,7 +97,7 @@ export type TeamUpdate = {
 
 
 export type TeamUpdateMember = {
-	role: Role;
+	role: app__models__Role__1;
 };
 
 
@@ -110,7 +106,7 @@ export type TeamWithUserPublic = {
 	name: string;
 	description?: string | null;
 	id: number;
-	slug: string;
+	slug?: string;
 	user_links: Array<UserLinkPublic>;
 };
 
@@ -138,8 +134,18 @@ export type UpdatePassword = {
 
 
 export type UserLinkPublic = {
-	role: Role;
+	role: app__models__Role__1;
 	user: UserPublic;
+};
+
+
+
+export type UserMePublic = {
+	email: string;
+	is_active?: boolean;
+	full_name: string;
+	id: number;
+	personal_team_slug: string;
 };
 
 
@@ -164,7 +170,7 @@ export type UserRegister = {
 export type UserTeamLinkPublic = {
 	user: UserPublic;
 	team: TeamPublic;
-	role: Role;
+	role: app__models__Role__1;
 };
 
 
@@ -182,3 +188,10 @@ export type ValidationError = {
 	type: string;
 };
 
+
+
+export type app__models__Role__1 = 'member' | 'admin';
+
+
+
+export type app__models__Role__2 = app__models__Role__1;

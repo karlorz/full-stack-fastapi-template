@@ -11,7 +11,7 @@ import {
   type ApiError,
   type Body_login_login_access_token as LoginFormData,
   LoginService,
-  type UserPublic,
+  type UserMePublic,
   type UserRegister,
   UsersService,
 } from "../client"
@@ -22,7 +22,7 @@ const isLoggedIn = () => {
 }
 
 const useCurrentUser = () => {
-  const { data } = useSuspenseQuery<UserPublic | null, Error>({
+  const { data } = useSuspenseQuery<UserMePublic | null, Error>({
     queryKey: ["currentUser"],
     queryFn: () => (isLoggedIn() ? UsersService.readUserMe() : null),
   })
