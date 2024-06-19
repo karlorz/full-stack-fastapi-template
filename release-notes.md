@@ -47,6 +47,7 @@
 
 ### Refactors
 
+* ✏️ Edit maxWidth. PR [#92](https://github.com/fastapilabs/cloud/pull/92) by [@alejsdev](https://github.com/alejsdev).
 * ⚒️ Frontend tweaks. PR [#91](https://github.com/fastapilabs/cloud/pull/91) by [@alejsdev](https://github.com/alejsdev).
 * 🗃 Edit set varchar to 255 in User, UserTeamLink, Team and invitation models. PR [#87](https://github.com/fastapilabs/cloud/pull/87) by [@estebanx64](https://github.com/estebanx64).
 * ♻️ Regenerate client with latest changes . PR [#82](https://github.com/fastapilabs/cloud/pull/82) by [@alejsdev](https://github.com/alejsdev).
