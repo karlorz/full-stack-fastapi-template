@@ -12,6 +12,7 @@
 
 ### Features
 
+* ✨ Use personal team slug instead of hardcoded one. PR [#86](https://github.com/fastapilabs/cloud/pull/86) by [@patrick91](https://github.com/patrick91).
 * ✨ Add initial setup for Playwright. PR [#88](https://github.com/fastapilabs/cloud/pull/88) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Expose personal team slug instead of id. PR [#85](https://github.com/fastapilabs/cloud/pull/85) by [@patrick91](https://github.com/patrick91).
 * ✨Prevent deletion of personal team. PR [#83](https://github.com/fastapilabs/cloud/pull/83) by [@patrick91](https://github.com/patrick91).
