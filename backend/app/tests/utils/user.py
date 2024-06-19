@@ -27,6 +27,13 @@ def create_user(
     user = crud.create_user(
         session=session, user_create=user_in, is_verified=is_verified
     )
+
+    team = create_random_team(session)
+
+    user.personal_team = team
+    session.add(user)
+    session.commit()
+
     return user
 
 

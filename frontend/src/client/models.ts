@@ -1,3 +1,11 @@
+export type AccessTokenWithUserMe = {
+	access_token: string;
+	token_type?: string;
+	user: UserMePublic;
+};
+
+
+
 export type Body_login_login_access_token = {
 	grant_type?: string | null;
 	username: string;
@@ -115,13 +123,6 @@ export type TeamWithUserPublic = {
 export type TeamsPublic = {
 	data: Array<TeamPublic>;
 	count: number;
-};
-
-
-
-export type Token = {
-	access_token: string;
-	token_type?: string;
 };
 
 

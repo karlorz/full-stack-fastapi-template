@@ -7,6 +7,7 @@ from app import crud
 from app.core.config import settings
 from app.core.security import verify_password
 from app.models import Role, User, UserCreate
+from app.tests.utils.team import create_random_team
 from app.tests.utils.utils import random_email, random_lower_string
 from app.utils import generate_verification_email_token
 
@@ -193,9 +194,13 @@ def test_delete_user_me(client: TestClient, db: Session) -> None:
     username = random_email()
     password = random_lower_string()
     full_name = random_lower_string()
+    team = create_random_team(db)
     user_in = UserCreate(email=username, password=password, full_name=full_name)
     user = crud.create_user(session=db, user_create=user_in, is_verified=True)
     user_id = user.id
+    user.personal_team = team
+    db.add(user)
+    db.commit()
 
     login_data = {
         "username": username,

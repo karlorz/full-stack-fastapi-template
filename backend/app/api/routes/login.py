@@ -10,7 +10,7 @@ from app.api.deps import CurrentUser, SessionDep, get_first_superuser
 from app.core import security
 from app.core.config import settings
 from app.core.security import get_password_hash
-from app.models import Message, NewPassword, Token, UserPublic
+from app.models import Message, NewPassword, Token, UserMePublic, UserPublic
 from app.utils import (
     generate_password_reset_token,
     generate_reset_password_email,
@@ -21,12 +21,16 @@ from app.utils import (
 router = APIRouter()
 
 
+class AccessTokenWithUserMe(Token):
+    user: UserMePublic
+
+
 @router.post("/login/access-token")
 def login_access_token(
     session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
-) -> Token:
+) -> AccessTokenWithUserMe:
     """
-    OAuth2 compatible token login, get an access token for future requests
+    OAuth2 compatible token login, get the access token and the user data
     """
     user = crud.authenticate(
         session=session, email=form_data.username, password=form_data.password
@@ -37,12 +41,22 @@ def login_access_token(
         raise HTTPException(status_code=400, detail="Inactive user")
     elif not user.is_verified:
         raise HTTPException(status_code=400, detail="Email not verified")
+
     # The user is authenticated, now generate access token
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    return Token(
+
+    assert user.personal_team
+
+    user_data = UserMePublic(
+        **user.model_dump(),
+        personal_team_slug=user.personal_team.slug,
+    )
+
+    return AccessTokenWithUserMe(
         access_token=security.create_access_token(
             user.id, expires_delta=access_token_expires
-        )
+        ),
+        user=user_data,
     )
 
 

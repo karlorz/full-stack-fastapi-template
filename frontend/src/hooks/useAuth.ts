@@ -65,6 +65,7 @@ const useAuth = () => {
     const response = await LoginService.loginAccessToken({
       formData: data.formData,
     })
+    queryClient.setQueryData(["currentUser"], response.user)
     localStorage.setItem("access_token", response.access_token)
     return data.redirect
   }

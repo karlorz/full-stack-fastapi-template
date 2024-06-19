@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateMe,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationToken } from './models';
+import type { AccessTokenWithUserMe,Body_login_login_access_token,Message,NewPassword,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateMe,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationToken } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -25,11 +25,11 @@ export class LoginService {
 
 	/**
 	 * Login Access Token
-	 * OAuth2 compatible token login, get an access token for future requests
-	 * @returns Token Successful Response
+	 * OAuth2 compatible token login, get the access token and the user data
+	 * @returns AccessTokenWithUserMe Successful Response
 	 * @throws ApiError
 	 */
-	public static loginAccessToken(data: TDataLoginAccessToken): CancelablePromise<Token> {
+	public static loginAccessToken(data: TDataLoginAccessToken): CancelablePromise<AccessTokenWithUserMe> {
 		const {
 formData,
 } = data;

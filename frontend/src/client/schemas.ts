@@ -1,3 +1,20 @@
+export const $AccessTokenWithUserMe = {
+	properties: {
+		access_token: {
+	type: 'string',
+	isRequired: true,
+},
+		token_type: {
+	type: 'string',
+	default: 'bearer',
+},
+		user: {
+	type: 'UserMePublic',
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $Body_login_login_access_token = {
 	properties: {
 		grant_type: {
@@ -307,19 +324,6 @@ export const $TeamsPublic = {
 		count: {
 	type: 'number',
 	isRequired: true,
-},
-	},
-} as const;
-
-export const $Token = {
-	properties: {
-		access_token: {
-	type: 'string',
-	isRequired: true,
-},
-		token_type: {
-	type: 'string',
-	default: 'bearer',
 },
 	},
 } as const;
