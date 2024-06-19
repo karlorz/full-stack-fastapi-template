@@ -3,7 +3,8 @@ from sqlmodel import Session
 
 from app import crud
 from app.core.config import settings
-from app.models import User, UserCreate, UserUpdate
+from app.models import Role, User, UserCreate, UserUpdate
+from app.tests.utils.team import create_random_team
 from app.tests.utils.utils import random_email, random_lower_string
 
 
@@ -51,7 +52,16 @@ def authentication_token_from_email(
     full_name = random_lower_string()
     if not user:
         user_in_create = UserCreate(email=email, password=password, full_name=full_name)
-        crud.create_user(session=db, user_create=user_in_create, is_verified=True)
+        user = crud.create_user(
+            session=db, user_create=user_in_create, is_verified=True
+        )
+
+        team = create_random_team(db)
+        crud.add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+        user.personal_team = team
+        db.add(user)
+        db.commit()
     else:
         user_in_update = UserUpdate(password=password)
         if not user.id:

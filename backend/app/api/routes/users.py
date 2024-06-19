@@ -15,6 +15,7 @@ from app.models import (
     Team,
     UpdatePassword,
     UserCreate,
+    UserMePublic,
     UserPublic,
     UserRegister,
     UserTeamLink,
@@ -82,18 +83,17 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
     return Message(message="User deleted successfully")
 
 
-@router.get("/me", response_model=UserPublic)
+@router.get("/me", response_model=UserMePublic)
 def read_user_me(current_user: CurrentUser) -> Any:
     """
     Get current user.
     """
-    personal_team_slug = (
-        current_user.personal_team.slug if current_user.personal_team else None
-    )
 
-    return UserPublic(
+    assert current_user.personal_team
+
+    return UserMePublic(
         **current_user.model_dump(),
-        personal_team_slug=personal_team_slug,
+        personal_team_slug=current_user.personal_team.slug,
     )
 
 

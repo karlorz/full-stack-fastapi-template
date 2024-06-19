@@ -81,10 +81,14 @@ class User(UserBase, table=True):
     )
 
 
-# Properties to return via API, id is always required
+# Used for the current user
+class UserMePublic(UserBase):
+    id: int
+    personal_team_slug: str
+
+
 class UserPublic(UserBase):
     id: int
-    personal_team_slug: str | None = None
 
 
 class UsersPublic(SQLModel):
