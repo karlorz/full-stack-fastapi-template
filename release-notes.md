@@ -49,6 +49,7 @@
 
 ### Refactors
 
+* ✨ Return and use user info on login. PR [#93](https://github.com/fastapilabs/cloud/pull/93) by [@patrick91](https://github.com/patrick91).
 * ✨ Introduce a version of UserPublic for /me. PR [#89](https://github.com/fastapilabs/cloud/pull/89) by [@patrick91](https://github.com/patrick91).
 * ✏️ Edit maxWidth. PR [#92](https://github.com/fastapilabs/cloud/pull/92) by [@alejsdev](https://github.com/alejsdev).
 * ⚒️ Frontend tweaks. PR [#91](https://github.com/fastapilabs/cloud/pull/91) by [@alejsdev](https://github.com/alejsdev).
