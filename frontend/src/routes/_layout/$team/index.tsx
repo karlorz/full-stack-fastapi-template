@@ -19,7 +19,7 @@ function Dashboard() {
     <>
       <Container maxW="full" p={12}>
         <Box>
-          <Box fontSize="2xl" isTruncated maxWidth="200px">
+          <Box fontSize="2xl" isTruncated maxWidth="250px">
             Hi,{" "}
             <Suspense fallback={<SkeletonText noOfLines={1} width={20} />}>
               <CurrentUser />
