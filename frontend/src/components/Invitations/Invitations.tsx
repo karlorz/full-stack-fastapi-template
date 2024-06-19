@@ -18,6 +18,7 @@ import { InvitationsService } from "../../client/services"
 import CancelInvitation from "./CancelInvitation"
 
 function InvitationsTableBody() {
+  // TODO: Update this to use the actual team_id
   const teamId = 1
   const { data: invitations } = useSuspenseQuery({
     queryKey: ["invitations"],
@@ -31,7 +32,9 @@ function InvitationsTableBody() {
         .filter(({ status }) => status === "pending")
         .map(({ id, status, email }) => (
           <Tr key={id}>
-            <Td>{email}</Td>
+            <Td isTruncated maxWidth="200px">
+              {email}
+            </Td>
             <Td textTransform="capitalize">
               <Badge colorScheme="orange">{status}</Badge>
             </Td>

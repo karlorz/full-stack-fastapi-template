@@ -33,7 +33,9 @@ function AllTeamsTableBody() {
     <Tbody>
       {teams?.data.map((team) => (
         <Tr key={team.id}>
-          <Td>{team.name}</Td>
+          <Td isTruncated maxWidth="200px">
+            {team.name}
+          </Td>
           <Td>
             <ActionsMenu type="Team" value={team} />
           </Td>

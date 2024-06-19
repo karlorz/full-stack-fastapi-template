@@ -64,7 +64,9 @@ const UserMenu = () => {
                   <Suspense
                     fallback={<SkeletonText noOfLines={1} width={100} />}
                   >
-                    <CurrentUser />
+                    <Box isTruncated maxWidth="150px">
+                      <CurrentUser />
+                    </Box>
                   </Suspense>
                 </Text>
               </Box>
@@ -84,7 +86,9 @@ const UserMenu = () => {
               <Suspense
                 fallback={<SkeletonText noOfLines={1} width={100} as="span" />}
               >
-                <CurrentUser />
+                <Box isTruncated maxWidth="150px">
+                  <CurrentUser />
+                </Box>
               </Suspense>
             </MenuItem>
             {/* Teams */}
@@ -97,7 +101,9 @@ const UserMenu = () => {
                 _hover={{ bg: bgHover, borderRadius: "12px" }}
               >
                 <Icon as={FaUsers} />
-                {team.name}
+                <Box isTruncated maxWidth="150px">
+                  {team.name}
+                </Box>
               </MenuItem>
             ))}
             <MenuItem

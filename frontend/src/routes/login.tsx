@@ -6,6 +6,7 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
+  FormLabel,
   Icon,
   Input,
   InputGroup,
@@ -96,6 +97,9 @@ function Login() {
             </Text>
           </Box>
           <FormControl id="username" isInvalid={!!errors.username || !!error}>
+            <FormLabel htmlFor="username" srOnly>
+              Email
+            </FormLabel>
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <Icon as={FaEnvelope} color="ui.dim" />
@@ -115,6 +119,9 @@ function Login() {
             )}
           </FormControl>
           <FormControl id="password" isInvalid={!!error}>
+            <FormLabel htmlFor="password" srOnly>
+              Password
+            </FormLabel>
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <Icon as={FaKey} color="ui.dim" />

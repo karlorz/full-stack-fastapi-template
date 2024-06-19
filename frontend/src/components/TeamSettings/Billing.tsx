@@ -18,8 +18,8 @@ import {
 } from "@chakra-ui/react"
 import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
-
 import { FaFileDownload } from "react-icons/fa"
+
 import CurrentPlan from "../Billing/CurrentPlan"
 import PaymentMethod from "../Billing/PaymentMethod"
 import { billings } from "./Billings"

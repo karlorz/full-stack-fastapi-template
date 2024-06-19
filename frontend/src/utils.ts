@@ -14,6 +14,10 @@ export const passwordRules = (isRequired = true) => {
       value: 8,
       message: "Password must be at least 8 characters",
     },
+    maxLength: {
+      value: 255,
+      message: "Password cannot be more than 255 characters",
+    },
   }
 
   if (isRequired) {

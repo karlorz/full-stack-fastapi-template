@@ -15,6 +15,7 @@ const TeamInfo = () => {
           <Text fontWeight="bold" mb={4}>
             Team Name
           </Text>
+          {/* TODO: Replace with actual team name */}
           <Text>Team H.R</Text>
         </Box>
       </Box>

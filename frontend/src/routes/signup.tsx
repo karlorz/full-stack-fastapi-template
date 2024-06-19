@@ -5,6 +5,7 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
+  FormLabel,
   Icon,
   Input,
   InputGroup,
@@ -80,6 +81,9 @@ function SignUp() {
             </Text>
           </Box>
           <FormControl id="full_name" isInvalid={!!errors.email}>
+            <FormLabel htmlFor="full_name" srOnly>
+              Full Name
+            </FormLabel>
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <Icon as={FaUser} color="ui.dim" />
@@ -90,7 +94,7 @@ function SignUp() {
                   required: "Name is required",
                   pattern: namePattern,
                 })}
-                placeholder="Name"
+                placeholder="Full Name"
                 type="text"
               />
             </InputGroup>
@@ -99,6 +103,9 @@ function SignUp() {
             )}
           </FormControl>
           <FormControl id="email" isInvalid={!!errors.email}>
+            <FormLabel htmlFor="username" srOnly>
+              Email
+            </FormLabel>
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <Icon as={FaEnvelope} color="ui.dim" />
@@ -118,6 +125,9 @@ function SignUp() {
             )}
           </FormControl>
           <FormControl id="password" isInvalid={!!errors.password}>
+            <FormLabel htmlFor="password" srOnly>
+              Password
+            </FormLabel>
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <Icon as={FaKey} color="ui.dim" />
@@ -137,6 +147,10 @@ function SignUp() {
             id="confirm_password"
             isInvalid={!!errors.confirm_password}
           >
+            <FormLabel htmlFor="confirm_password" srOnly>
+              Confirm Password
+            </FormLabel>
+
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <Icon as={FaKey} color="ui.dim" />

@@ -98,6 +98,8 @@ const UserInformation = () => {
                 size="md"
                 py={2}
                 color={!currentUser?.full_name ? "ui.dim" : "inherit"}
+                isTruncated
+                maxWidth="200px"
               >
                 {currentUser?.full_name || "N/A"}
               </Text>

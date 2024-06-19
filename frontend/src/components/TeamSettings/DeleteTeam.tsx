@@ -15,7 +15,7 @@ const DeleteTeam = () => {
     <>
       <Container maxW="full" m={4}>
         <Heading size="sm">Delete Team</Heading>
-        <Text py={2}>
+        <Text py={2} mb={2}>
           Permanently delete your data and everything associated with your team.
         </Text>
         <Button variant="danger" onClick={confirmationModal.onOpen}>

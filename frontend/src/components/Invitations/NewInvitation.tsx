@@ -66,7 +66,7 @@ const NewInvitation = () => {
       justifyContent="center"
     >
       <Box as="form" onSubmit={handleSubmit(onSubmit)}>
-        <Text>Invite someone to join your team.</Text>
+        <Text mb={4}>Invite someone to join your team.</Text>
         <FormControl isRequired isInvalid={!!errors.email}>
           <FormLabel htmlFor="email" hidden>
             Email address
@@ -80,13 +80,12 @@ const NewInvitation = () => {
             placeholder="Email address"
             type="text"
             w="auto"
-            my={4}
           />
           {errors.email && (
             <FormErrorMessage>{errors.email.message}</FormErrorMessage>
           )}
         </FormControl>
-        <Button variant="primary" type="submit" isLoading={isSubmitting}>
+        <Button variant="primary" type="submit" isLoading={isSubmitting} mt={4}>
           Send invitation
         </Button>
       </Box>

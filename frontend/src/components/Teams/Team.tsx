@@ -14,11 +14,13 @@ import {
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
+
 import { TeamsService, type UserPublic } from "../../client"
 import ActionsMenu from "../Common/ActionsMenu"
 
 function TeamTableBody() {
-  const teamSlug = "team-slug"
+  // TODO: Update this to use the actual team slug
+  const teamSlug = "team-1"
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const { data: team } = useSuspenseQuery({
@@ -34,7 +36,7 @@ function TeamTableBody() {
     <Tbody>
       {team.user_links.map(({ role, user }) => (
         <Tr key={user.id}>
-          <Td>
+          <Td isTruncated maxWidth="200px">
             {user.email}
             {currentUser?.id === user.id && (
               <Badge ml="1" colorScheme="gray">
