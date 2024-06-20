@@ -13,6 +13,7 @@
 
 ### Features
 
+* ✨ Add initial tests. PR [#94](https://github.com/fastapilabs/cloud/pull/94) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Email verification . PR [#84](https://github.com/fastapilabs/cloud/pull/84) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add auth to Playwright and update setup. PR [#90](https://github.com/fastapilabs/cloud/pull/90) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Use personal team slug instead of hardcoded one. PR [#86](https://github.com/fastapilabs/cloud/pull/86) by [@patrick91](https://github.com/patrick91).
