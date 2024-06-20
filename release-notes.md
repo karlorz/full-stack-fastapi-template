@@ -2,6 +2,7 @@
 
 ## Latest Changes
 
+* 🎨 Lint. PR [#100](https://github.com/fastapilabs/cloud/pull/100) by [@alejsdev](https://github.com/alejsdev).
 * 🔧 Ignore `src/routeTree.gen.ts` in biome. PR [#35](https://github.com/fastapilabs/cloud/pull/35) by [@patrick91](https://github.com/patrick91).
 * 🚸 Improve login form. PR [#26](https://github.com/fastapilabs/cloud/pull/26) by [@patrick91](https://github.com/patrick91).
 * ♻️ Upgrade. PR [#14](https://github.com/fastapilabs/cloud/pull/14) by [@alejsdev](https://github.com/alejsdev).
