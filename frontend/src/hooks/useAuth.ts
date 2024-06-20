@@ -32,6 +32,7 @@ const useCurrentUser = () => {
 
 const useAuth = () => {
   const [error, setError] = useState<string | null>(null)
+  const [emailSent, setEmailSent] = useState(false)
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const navigate = useNavigate()
@@ -41,8 +42,7 @@ const useAuth = () => {
       UsersService.registerUser({ requestBody: data }),
 
     onSuccess: () => {
-      showToast("Success!", "User registered successfully.", "success")
-      navigate({ to: "/" })
+      setEmailSent(true)
     },
     onError: (err: ApiError) => {
       let errDetail = (err.body as any)?.detail
@@ -89,6 +89,7 @@ const useAuth = () => {
   }
 
   return {
+    emailSent,
     signUpMutation,
     loginMutation,
     logout,

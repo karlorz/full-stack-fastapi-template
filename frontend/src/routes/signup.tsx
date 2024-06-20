@@ -17,9 +17,11 @@ import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { FaEnvelope, FaKey, FaUser } from "react-icons/fa"
 
+import { useState } from "react"
 import type { UserRegister } from "../client"
 import AuthOptions from "../components/Auth/AuthOptions"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
+import EmailSent from "../components/Common/EmailSent"
 import useAuth from "../hooks/useAuth"
 import {
   confirmPasswordRules,
@@ -37,7 +39,8 @@ interface UserRegisterForm extends UserRegister {
 }
 
 function SignUp() {
-  const { signUpMutation } = useAuth()
+  const [userEmail, setUserEmail] = useState("")
+  const { emailSent, signUpMutation } = useAuth()
   const {
     register,
     handleSubmit,
@@ -56,12 +59,16 @@ function SignUp() {
 
   const onSubmit: SubmitHandler<UserRegisterForm> = (data) => {
     signUpMutation.mutate(data)
+    setUserEmail(data.email)
   }
 
   return (
     <>
       <Flex flexDir={{ base: "column", md: "row" }} justify="center" h="100vh">
         <BackgroundPanel />
+        {emailSent ? (
+          <EmailSent email={userEmail} />
+        ) : (
         <Container
           as="form"
           onSubmit={handleSubmit(onSubmit)}
@@ -189,6 +196,7 @@ function SignUp() {
             path={"/login"}
           />
         </Container>
+        )}
       </Flex>
     </>
   )

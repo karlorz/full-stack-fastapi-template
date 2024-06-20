@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as VerifyEmailImport } from './routes/verify-email'
 import { Route as TeamInvitationImport } from './routes/team-invitation'
 import { Route as SignupImport } from './routes/signup'
 import { Route as ResetPasswordImport } from './routes/reset-password'
@@ -32,6 +33,11 @@ import { Route as LayoutTeamsTeamIdIndexImport } from './routes/_layout/teams/$t
 import { Route as LayoutTeamsTeamIdInvitationsImport } from './routes/_layout/teams/$teamId/invitations'
 
 // Create/Update Routes
+
+const VerifyEmailRoute = VerifyEmailImport.update({
+  path: '/verify-email',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const TeamInvitationRoute = TeamInvitationImport.update({
   path: '/team-invitation',
@@ -157,6 +163,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamInvitationImport
       parentRoute: typeof rootRoute
     }
+    '/verify-email': {
+      preLoaderRoute: typeof VerifyEmailImport
+      parentRoute: typeof rootRoute
+    }
     '/_layout/settings': {
       preLoaderRoute: typeof LayoutSettingsImport
       parentRoute: typeof LayoutImport
@@ -235,6 +245,7 @@ export const routeTree = rootRoute.addChildren([
   ResetPasswordRoute,
   SignupRoute,
   TeamInvitationRoute,
+  VerifyEmailRoute,
 ])
 
 /* prettier-ignore-end */
