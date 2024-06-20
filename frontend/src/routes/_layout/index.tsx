@@ -3,8 +3,9 @@ import {
   createFileRoute,
   useRouterState,
 } from "@tanstack/react-router"
-import { useCurrentUser } from "../../hooks/useAuth"
 import { Suspense } from "react"
+
+import { useCurrentUser } from "../../hooks/useAuth"
 
 export const Route = createFileRoute("/_layout/")({
   component: () => (

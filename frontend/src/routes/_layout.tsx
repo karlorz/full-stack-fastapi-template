@@ -1,12 +1,12 @@
 import { Box, Divider, Flex } from "@chakra-ui/react"
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
+import { Suspense } from "react"
 
 import Searchbar from "../components/Common/Searchbar"
 import Sidebar from "../components/Common/Sidebar"
 import UserMenu from "../components/Common/UserMenu"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
 import { isLoggedIn } from "../hooks/useAuth"
-import { Suspense } from "react"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,
