@@ -41,6 +41,7 @@
 
 ### Fixes
 
+* 🩹 Fix font path. PR [#96](https://github.com/fastapilabs/cloud/pull/96) by [@patrick91](https://github.com/patrick91).
 * 🚨 Fix `<div>` cannot appear as a descendant of `<p>`. PR [#77](https://github.com/fastapilabs/cloud/pull/77) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix error 500 when creating invitation. PR [#60](https://github.com/fastapilabs/cloud/pull/60) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix logout bug and invalidate queries. PR [#50](https://github.com/fastapilabs/cloud/pull/50) by [@alejsdev](https://github.com/alejsdev).
