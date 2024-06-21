@@ -17,10 +17,10 @@ import { ErrorBoundary } from "react-error-boundary"
 
 import { TeamsService, type UserPublic } from "../../client"
 import ActionsMenu from "../Common/ActionsMenu"
+import { Route } from "../../routes/_layout/$team"
 
 function TeamTableBody() {
-  // TODO: Update this to use the actual team slug
-  const teamSlug = "team-1"
+  const { team: teamSlug } = Route.useParams()
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const { data: team } = useSuspenseQuery({

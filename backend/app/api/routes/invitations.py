@@ -13,10 +13,7 @@ from app.api.utils.invitations import (
     verify_invitation_token,
 )
 from app.core.config import settings
-from app.crud import (
-    add_user_to_team,
-    get_user_team_link_by_user_id_and_team_id,
-)
+from app.crud import add_user_to_team, get_user_team_link_by_user_id_and_team_slug
 from app.models import (
     Invitation,
     InvitationCreate,
@@ -26,6 +23,7 @@ from app.models import (
     InvitationToken,
     Message,
     Role,
+    Team,
     User,
 )
 from app.utils import get_datetime_utc
@@ -81,19 +79,19 @@ def read_invitations_sent(
     return InvitationsPublic(data=invitations, count=count)
 
 
-@router.get("/team/{team_id}", response_model=InvitationsPublic)
+@router.get("/team/{team_slug}", response_model=InvitationsPublic)
 def read_invitations_team_by_admin(
     session: SessionDep,
     current_user: CurrentUser,
-    team_id: int,
+    team_slug: str,
     skip: int = 0,
     limit: int = 100,
 ) -> Any:
     """
     Retrieve a list of invitations sent by the current user.
     """
-    user_team_link = get_user_team_link_by_user_id_and_team_id(
-        session=session, user_id=current_user.id, team_id=team_id
+    user_team_link = get_user_team_link_by_user_id_and_team_slug(
+        session=session, user_id=current_user.id, team_slug=team_slug
     )
     if not user_team_link:
         raise HTTPException(
@@ -108,15 +106,16 @@ def read_invitations_team_by_admin(
     count_statement = (
         select(func.count())
         .select_from(Invitation)
-        .where(col(Invitation.team_id) == team_id)
+        .where(Invitation.team_id == Team.id, col(Team.slug) == team_slug)
     )
     count = session.exec(count_statement).one()
     statement = (
         select(Invitation)
-        .where(col(Invitation.team_id) == team_id)
+        .where(Invitation.team_id == Team.id, col(Team.slug) == team_slug)
         .offset(skip)
         .limit(limit)
     )
+
     invitations = session.exec(statement).all()
 
     return InvitationsPublic(data=invitations, count=count)
@@ -131,8 +130,8 @@ def create_invitation(
     """
     Create new invitation.
     """
-    user_team_link = get_user_team_link_by_user_id_and_team_id(
-        session=session, user_id=current_user.id, team_id=invitation_in.team_id
+    user_team_link = get_user_team_link_by_user_id_and_team_slug(
+        session=session, user_id=current_user.id, team_slug=invitation_in.team_slug
     )
     if not user_team_link:
         raise HTTPException(
@@ -144,10 +143,12 @@ def create_invitation(
             status_code=400, detail="Not enough permissions to execute this action"
         )
 
+    team_id = user_team_link.team.id
+
     existing_invitation = session.exec(
         select(Invitation).where(
             col(Invitation.email) == invitation_in.email,
-            col(Invitation.team_id) == invitation_in.team_id,
+            col(Invitation.team_id) == team_id,
         )
     ).first()
 
@@ -167,6 +168,7 @@ def create_invitation(
     invitation = Invitation.model_validate(
         invitation_in,
         update={
+            "team_id": team_id,
             "invited_by_id": current_user.id,
             "expires_at": get_datetime_utc()
             + timedelta(hours=settings.INVITATION_TOKEN_EXPIRE_HOURS),
@@ -189,8 +191,8 @@ def create_invitation(
 
         return invitation
 
-    user_to_invite_team_link = get_user_team_link_by_user_id_and_team_id(
-        session=session, user_id=user_to_invite.id, team_id=invitation_in.team_id
+    user_to_invite_team_link = get_user_team_link_by_user_id_and_team_slug(
+        session=session, user_id=user_to_invite.id, team_slug=invitation_in.team_slug
     )
     if user_to_invite_team_link:
         raise HTTPException(
@@ -329,8 +331,8 @@ def delete_invitation(
         )
 
     assert current_user.id  # For type checking
-    user_team_link = get_user_team_link_by_user_id_and_team_id(
-        session=session, user_id=current_user.id, team_id=invitation.team_id
+    user_team_link = get_user_team_link_by_user_id_and_team_slug(
+        session=session, user_id=current_user.id, team_slug=invitation.team.slug
     )
 
     if not user_team_link:

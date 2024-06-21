@@ -551,7 +551,7 @@ skip?: number
 export type TDataReadInvitationsTeamByAdmin = {
                 limit?: number
 skip?: number
-teamId: number
+teamSlug: string
                 
             }
 export type TDataCreateInvitation = {
@@ -633,13 +633,13 @@ skip = 0,
 		const {
 limit = 100,
 skip = 0,
-teamId,
+teamSlug,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: '/api/v1/invitations/team/{team_id}',
+			url: '/api/v1/invitations/team/{team_slug}',
 			path: {
-				team_id: teamId
+				team_slug: teamSlug
 			},
 			query: {
 				skip, limit

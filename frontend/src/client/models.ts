@@ -32,7 +32,7 @@ export type HTTPValidationError = {
 export type InvitationCreate = {
 	role: app__models__Role__1;
 	email: string;
-	team_id: number;
+	team_slug: string;
 };
 
 

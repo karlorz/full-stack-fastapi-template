@@ -92,8 +92,8 @@ export const $InvitationCreate = {
 	format: 'email',
 	maxLength: 255,
 },
-		team_id: {
-	type: 'number',
+		team_slug: {
+	type: 'string',
 	isRequired: true,
 },
 	},

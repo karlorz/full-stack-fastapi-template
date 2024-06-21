@@ -16,14 +16,15 @@ import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 import { InvitationsService } from "../../client/services"
 import CancelInvitation from "./CancelInvitation"
+import { Route } from "../../routes/_layout/$team"
 
 function InvitationsTableBody() {
-  // TODO: Update this to use the actual team_id
-  const teamId = 1
+  const { team } = Route.useParams()
+
   const { data: invitations } = useSuspenseQuery({
     queryKey: ["invitations"],
     queryFn: () =>
-      InvitationsService.readInvitationsTeamByAdmin({ teamId: teamId }),
+      InvitationsService.readInvitationsTeamByAdmin({ teamSlug: team }),
   })
 
   return (

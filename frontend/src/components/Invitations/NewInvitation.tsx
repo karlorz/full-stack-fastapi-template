@@ -18,8 +18,10 @@ import {
 } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { emailPattern } from "../../utils"
+import { Route } from "../../routes/_layout/$team"
 
 const NewInvitation = () => {
+  const { team: teamSlug } = Route.useParams()
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const {
@@ -52,8 +54,7 @@ const NewInvitation = () => {
     const updatedData: InvitationCreate = {
       ...data,
       role: "member",
-      // TODO: Update this to use the actual team_id
-      team_id: 1,
+      team_slug: teamSlug,
     }
     mutation.mutate(updatedData)
   }

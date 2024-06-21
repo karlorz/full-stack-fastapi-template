@@ -187,7 +187,7 @@ class InvitationBase(SQLModel):
 
 
 class InvitationCreate(InvitationBase):
-    team_id: int
+    team_slug: str
 
 
 class InvitationUpdateStatus(SQLModel):

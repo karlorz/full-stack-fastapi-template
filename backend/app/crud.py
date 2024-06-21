@@ -83,12 +83,13 @@ def add_user_to_team(
     return user_org_link
 
 
-def get_user_team_link_by_user_id_and_team_id(
-    *, session: Session, user_id: int | None, team_id: int | None
+def get_user_team_link_by_user_id_and_team_slug(
+    *, session: Session, user_id: int | None, team_slug: str | None
 ) -> UserTeamLink | None:
     statement = select(UserTeamLink).where(
-        UserTeamLink.team_id == team_id,
         UserTeamLink.user_id == user_id,
+        Team.id == UserTeamLink.team_id,
+        Team.slug == team_slug,
     )
-    user_team_link = session.exec(statement).first()
-    return user_team_link
+
+    return session.exec(statement).first()
