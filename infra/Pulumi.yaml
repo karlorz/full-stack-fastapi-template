@@ -1,0 +1,10 @@
+name: k8s-cluster
+runtime:
+  name: python
+  options:
+    virtualenv: .venv
+description: Pulumi to deploy the Kubernetes cluster on AWS
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: ""

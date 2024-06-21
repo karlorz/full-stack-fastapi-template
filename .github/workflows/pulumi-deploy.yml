@@ -1,0 +1,42 @@
+name: Pulumi
+on:
+  push:
+    branches:
+      - master
+  release:
+    types:
+      - created
+
+jobs:
+  deploy:
+    name: Pulumi Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Configure AWS Credentials for Staging
+        if: github.event_name == 'push'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_STAGING }}
+          aws-region: ${{ secrets.AWS_REGION_STAGING }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGING }}
+      - name: Configure AWS Credentials for Production
+        if: github.event_name == 'release'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PRODUCTION }}
+          aws-region: ${{ secrets.AWS_REGION_PRODUCTION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PRODUCTION }}
+      - run: pip install -r requirements.txt
+        working-directory: infra
+      - uses: pulumi/actions@v3
+        with:
+          command: up
+          # stack-name: org-name/stack-name # When using an individual account, only use stack-name.
+          stack-name: staging
+          work-dir: infra
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
