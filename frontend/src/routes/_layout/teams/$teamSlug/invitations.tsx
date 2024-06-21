@@ -17,7 +17,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router"
 import { FaEnvelope } from "react-icons/fa"
 
-export const Route = createFileRoute("/_layout/teams/$teamId/invitations")({
+export const Route = createFileRoute("/_layout/teams/$teamSlug/invitations")({
   component: Invitations,
 })
 

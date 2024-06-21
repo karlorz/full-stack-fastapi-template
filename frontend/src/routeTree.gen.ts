@@ -29,8 +29,8 @@ import { Route as LayoutTeamProjectsImport } from './routes/_layout/$team/projec
 import { Route as LayoutTeamItemsImport } from './routes/_layout/$team/items'
 import { Route as LayoutTeamHelpImport } from './routes/_layout/$team/help'
 import { Route as LayoutTeamBillingImport } from './routes/_layout/$team/billing'
-import { Route as LayoutTeamsTeamIdIndexImport } from './routes/_layout/teams/$teamId/index'
-import { Route as LayoutTeamsTeamIdInvitationsImport } from './routes/_layout/teams/$teamId/invitations'
+import { Route as LayoutTeamsTeamSlugIndexImport } from './routes/_layout/teams/$teamSlug/index'
+import { Route as LayoutTeamsTeamSlugInvitationsImport } from './routes/_layout/teams/$teamSlug/invitations'
 
 // Create/Update Routes
 
@@ -124,14 +124,14 @@ const LayoutTeamBillingRoute = LayoutTeamBillingImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutTeamsTeamIdIndexRoute = LayoutTeamsTeamIdIndexImport.update({
-  path: '/teams/$teamId/',
+const LayoutTeamsTeamSlugIndexRoute = LayoutTeamsTeamSlugIndexImport.update({
+  path: '/teams/$teamSlug/',
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutTeamsTeamIdInvitationsRoute =
-  LayoutTeamsTeamIdInvitationsImport.update({
-    path: '/teams/$teamId/invitations',
+const LayoutTeamsTeamSlugInvitationsRoute =
+  LayoutTeamsTeamSlugInvitationsImport.update({
+    path: '/teams/$teamSlug/invitations',
     getParentRoute: () => LayoutRoute,
   } as any)
 
@@ -211,12 +211,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutTeamIndexImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/teams/$teamId/invitations': {
-      preLoaderRoute: typeof LayoutTeamsTeamIdInvitationsImport
+    '/_layout/teams/$teamSlug/invitations': {
+      preLoaderRoute: typeof LayoutTeamsTeamSlugInvitationsImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/teams/$teamId/': {
-      preLoaderRoute: typeof LayoutTeamsTeamIdIndexImport
+    '/_layout/teams/$teamSlug/': {
+      preLoaderRoute: typeof LayoutTeamsTeamSlugIndexImport
       parentRoute: typeof LayoutImport
     }
   }
@@ -237,8 +237,8 @@ export const routeTree = rootRoute.addChildren([
     LayoutTeamsAllRoute,
     LayoutTeamsNewRoute,
     LayoutTeamIndexRoute,
-    LayoutTeamsTeamIdInvitationsRoute,
-    LayoutTeamsTeamIdIndexRoute,
+    LayoutTeamsTeamSlugInvitationsRoute,
+    LayoutTeamsTeamSlugIndexRoute,
   ]),
   LoginRoute,
   RecoverPasswordRoute,

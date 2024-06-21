@@ -1,9 +1,20 @@
 import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react"
+import { useSuspenseQuery } from "@tanstack/react-query"
+
+import { Route } from "../../routes/_layout/$team"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
 import Team from "../Teams/Team"
+import { TeamsService } from "../../client"
+
 
 const TeamInfo = () => {
+  const { team: teamSlug } = Route.useParams()
+  const { data: team } = useSuspenseQuery({
+    queryKey: ["team", teamSlug],
+    queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
+  })
+
   return (
     <Container maxW="full" m={4}>
       <Heading size="sm">Team Information</Heading>
@@ -15,8 +26,7 @@ const TeamInfo = () => {
           <Text fontWeight="bold" mb={4}>
             Team Name
           </Text>
-          {/* TODO: Replace with actual team name */}
-          <Text>Team H.R</Text>
+          <Text>{team.name}</Text>
         </Box>
       </Box>
       <Box>

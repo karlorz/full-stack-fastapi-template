@@ -15,9 +15,8 @@ import {
   Tr,
 } from "@chakra-ui/react"
 import {
-  useQuery,
   useQueryClient,
-  useSuspenseQuery,
+  useSuspenseQuery
 } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
@@ -28,15 +27,14 @@ import { FaCircleXmark } from "react-icons/fa6"
 import { TeamsService, type UserPublic } from "../../../../client"
 import ActionsMenu from "../../../../components/Common/ActionsMenu"
 
-export const Route = createFileRoute("/_layout/teams/$teamId/")({
+export const Route = createFileRoute("/_layout/teams/$teamSlug/")({
   component: Team,
 })
 
 function TeamTableBody() {
-  // const { teamSlug } = Route.useParams()
-  const teamSlug = "team-slug"
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
+  const { teamSlug: teamSlug } = Route.useParams()
   const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamSlug],
     queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
@@ -135,9 +133,8 @@ function TeamTable() {
 }
 
 function Team() {
-  // const { teamSlug } = Route.useParams()
-  const teamSlug = "team-slug"
-  const { data: team } = useQuery({
+  const { teamSlug: teamSlug } = Route.useParams()
+  const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamSlug],
     queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
   })
