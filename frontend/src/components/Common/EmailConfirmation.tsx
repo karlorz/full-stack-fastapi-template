@@ -17,10 +17,18 @@ const EmailConfirmation = () => {
   })
 
   useEffect(() => {
-    if (token) {
-      mutation.mutate(token)
-    }
+    // using a timeout here to prevent the mutation from firing multiple
+    // times on StrictMode in dev
+    const timeout = setTimeout(() => {
+      if (token) {
+        mutation.mutate(token)
+      }
+    }, 100)
+
+    return () => clearTimeout(timeout)
   }, [token])
+
+  const loading = mutation.isPending || mutation.isIdle
 
   return (
     <>
@@ -32,6 +40,14 @@ const EmailConfirmation = () => {
         centerContent
         gap={4}
       >
+        {loading && (
+          <Box>
+            <Text fontWeight="bolder" fontSize="2xl">
+              Verifying Email
+            </Text>
+            <Text>Verifying your email, please wait...</Text>
+          </Box>
+        )}
         {mutation.isSuccess && (
           <Box>
             <Text fontWeight="bolder" fontSize="2xl">
