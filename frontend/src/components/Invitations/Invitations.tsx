@@ -1,7 +1,9 @@
 import {
   Badge,
   Box,
+  Button,
   Container,
+  Flex,
   Skeleton,
   Table,
   TableContainer,
@@ -11,101 +13,142 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react"
-import { useSuspenseQuery } from "@tanstack/react-query"
-import { Suspense } from "react"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { ErrorBoundary } from "react-error-boundary"
 import { InvitationsService } from "../../client/services"
 import CancelInvitation from "./CancelInvitation"
 import { Route } from "../../routes/_layout/$team"
+import { useEffect, useState } from "react"
 
-function InvitationsTableBody() {
-  const { team } = Route.useParams()
+const PER_PAGE = 5
 
-  const { data: invitations } = useSuspenseQuery({
-    queryKey: ["invitations"],
-    queryFn: () =>
-      InvitationsService.readInvitationsTeamByAdmin({ teamSlug: team }),
-  })
-
-  return (
-    <Tbody>
-      {invitations.data
-        .filter(({ status }) => status === "pending")
-        .map(({ id, status, email }) => (
-          <Tr key={id}>
-            <Td isTruncated maxWidth="200px">
-              {email}
-            </Td>
-            <Td textTransform="capitalize">
-              <Badge colorScheme="orange">{status}</Badge>
-            </Td>
-            <Td>
-              <CancelInvitation id={id} />
-            </Td>
-          </Tr>
-        ))}
-    </Tbody>
-  )
-}
+const getInvitationsQueryOptions = ({
+  team,
+  page,
+}: { team: string; page: number }) => ({
+  queryKey: ["invitations", { page }],
+  queryFn: () =>
+    InvitationsService.readInvitationsTeamByAdmin({
+      teamSlug: team,
+      skip: (page - 1) * PER_PAGE,
+      limit: PER_PAGE,
+    }),
+})
 
 function InvitationsTable() {
+  const { team } = Route.useParams()
+  const queryClient = useQueryClient()
+  const [page, setPage] = useState(1)
+
+  useEffect(() => {
+    queryClient.prefetchQuery(
+      getInvitationsQueryOptions({ team, page: page + 1 }),
+    )
+  }, [page, queryClient])
+
+  const {
+    data: invitations,
+    isPending,
+    isPlaceholderData,
+  } = useQuery({
+    ...getInvitationsQueryOptions({ team, page }),
+    placeholderData: (previous) => previous,
+  })
+
+  const hasNextPage =
+    !isPlaceholderData && invitations?.data.length === PER_PAGE
+  const hasPreviousPage = page > 1
+
   const headers = ["Email", "Status", "Actions"]
 
   return (
-    <TableContainer>
-      <Table size={{ base: "sm", md: "md" }} variant="unstyled">
-        <Thead>
-          <Tr>
-            {headers.map((header) => (
-              <Th
-                key={header}
-                textTransform="capitalize"
-                width={header === "Actions" ? "20%" : "40%"}
-              >
-                {header}
-              </Th>
-            ))}
-          </Tr>
-        </Thead>
-        <ErrorBoundary
-          fallbackRender={({ error }) => (
-            <Tbody>
-              <Tr>
-                <Td colSpan={4}>Something went wrong: {error.message}</Td>
-              </Tr>
-            </Tbody>
-          )}
-        >
-          <Suspense
-            fallback={
+    <>
+      <TableContainer>
+        <Table size={{ base: "sm", md: "md" }} variant="unstyled">
+          <Thead>
+            <Tr>
+              {headers.map((header) => (
+                <Th
+                  key={header}
+                  textTransform="capitalize"
+                  width={header === "Actions" ? "20%" : "40%"}
+                >
+                  {header}
+                </Th>
+              ))}
+            </Tr>
+          </Thead>
+          <ErrorBoundary
+            fallbackRender={({ error }) => (
               <Tbody>
-                {new Array(3).fill(null).map((_, index) => (
-                  <Tr key={index}>
-                    <Td colSpan={5}>
-                      <Box width="100%">
-                        <Skeleton height="20px" />
-                      </Box>
-                    </Td>
-                  </Tr>
-                ))}
+                <Tr>
+                  <Td colSpan={4}>Something went wrong: {error.message}</Td>
+                </Tr>
               </Tbody>
-            }
+            )}
           >
-            <InvitationsTableBody />
-          </Suspense>
-        </ErrorBoundary>
-      </Table>
-    </TableContainer>
+            <Tbody>
+              {isPending ? (
+                <Tbody>
+                  {new Array(3).fill(null).map((_, index) => (
+                    <Tr key={index}>
+                      <Td colSpan={5}>
+                        <Box width="100%">
+                          <Skeleton height="20px" />
+                        </Box>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              ) : (
+                invitations?.data
+                  // TODO: this filter should be on the backend
+                  .filter(({ status }) => status === "pending")
+                  .map(({ id, status, email }) => (
+                    <Tr key={id} opacity={isPlaceholderData ? 0.5 : 1}>
+                      <Td isTruncated maxWidth="200px">
+                        {email}
+                      </Td>
+                      <Td textTransform="capitalize">
+                        <Badge colorScheme="orange">{status}</Badge>
+                      </Td>
+                      <Td>
+                        <CancelInvitation id={id} />
+                      </Td>
+                    </Tr>
+                  ))
+              )}
+            </Tbody>
+          </ErrorBoundary>
+        </Table>
+      </TableContainer>
+      <Flex
+        gap={4}
+        alignItems="center"
+        mt={4}
+        direction="row"
+        justifyContent="flex-end"
+      >
+        <Button
+          onClick={() => setPage((p) => p - 1)}
+          isDisabled={!hasPreviousPage}
+        >
+          Previous
+        </Button>
+        <span>Page {page}</span>
+        <Button isDisabled={!hasNextPage} onClick={() => setPage((p) => p + 1)}>
+          Next
+        </Button>
+      </Flex>
+    </>
   )
 }
 
 function Invitations() {
   return (
-    <>
-      <Container maxW="full">
-        <InvitationsTable />
-      </Container>
-    </>
+    <Container maxW="full">
+      <InvitationsTable />
+    </Container>
   )
 }
 

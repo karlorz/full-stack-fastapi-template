@@ -117,11 +117,9 @@ function TeamTable() {
 
 function Team() {
   return (
-    <>
-      <Container maxW="full">
-        <TeamTable />
-      </Container>
-    </>
+    <Container maxW="full">
+      <TeamTable />
+    </Container>
   )
 }
 
