@@ -2,6 +2,7 @@
 
 ## Latest Changes
 
+* 🤡 Use timeout to prevent firing the mutation twice. PR [#102](https://github.com/fastapilabs/cloud/pull/102) by [@patrick91](https://github.com/patrick91).
 * 🎨 Lint. PR [#100](https://github.com/fastapilabs/cloud/pull/100) by [@alejsdev](https://github.com/alejsdev).
 * 🔧 Ignore `src/routeTree.gen.ts` in biome. PR [#35](https://github.com/fastapilabs/cloud/pull/35) by [@patrick91](https://github.com/patrick91).
 * 🚸 Improve login form. PR [#26](https://github.com/fastapilabs/cloud/pull/26) by [@patrick91](https://github.com/patrick91).
