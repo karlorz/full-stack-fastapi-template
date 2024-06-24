@@ -59,6 +59,7 @@
 
 ### Refactors
 
+* ♻️ Update `playwright.yml` for CI. PR [#101](https://github.com/fastapilabs/cloud/pull/101) by [@alejsdev](https://github.com/alejsdev).
 * 🎨 Lint . PR [#106](https://github.com/fastapilabs/cloud/pull/106) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update team-slug in Team. PR [#103](https://github.com/fastapilabs/cloud/pull/103) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Use team slug instead of team id. PR [#95](https://github.com/fastapilabs/cloud/pull/95) by [@patrick91](https://github.com/patrick91).
