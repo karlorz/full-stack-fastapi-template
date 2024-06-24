@@ -14,6 +14,7 @@
 
 ### Features
 
+* 🔧 Update Pulumi config to add IAM role with access entries. PR [#108](https://github.com/fastapilabs/cloud/pull/108) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Add pagination to team invitations. PR [#97](https://github.com/fastapilabs/cloud/pull/97) by [@patrick91](https://github.com/patrick91).
 * ✨ Add first Pulumi configs and files to deploy Kubernetes to AWS. PR [#104](https://github.com/fastapilabs/cloud/pull/104) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Add initial tests. PR [#94](https://github.com/fastapilabs/cloud/pull/94) by [@alejsdev](https://github.com/alejsdev).
