@@ -56,6 +56,7 @@
 
 ### Refactors
 
+* 🎨 Lint . PR [#106](https://github.com/fastapilabs/cloud/pull/106) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update team-slug in Team. PR [#103](https://github.com/fastapilabs/cloud/pull/103) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Use team slug instead of team id. PR [#95](https://github.com/fastapilabs/cloud/pull/95) by [@patrick91](https://github.com/patrick91).
 * ✨ Return and use user info on login. PR [#93](https://github.com/fastapilabs/cloud/pull/93) by [@patrick91](https://github.com/patrick91).
