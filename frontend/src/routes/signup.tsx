@@ -14,9 +14,9 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
+import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { FaEnvelope, FaKey, FaUser } from "react-icons/fa"
-import { useState } from "react"
 
 import type { UserRegister } from "../client"
 import AuthOptions from "../components/Auth/AuthOptions"

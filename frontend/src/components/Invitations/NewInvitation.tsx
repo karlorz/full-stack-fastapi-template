@@ -9,12 +9,12 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useForm, type SubmitHandler } from "react-hook-form"
+import { type SubmitHandler, useForm } from "react-hook-form"
 
 import {
-  InvitationsService,
   type ApiError,
   type InvitationCreate,
+  InvitationsService,
 } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { Route } from "../../routes/_layout/$team"

@@ -90,7 +90,7 @@ function InvitationsTable() {
           >
             <Tbody>
               {isPending ? (
-                <Tbody>
+                <>
                   {new Array(3).fill(null).map((_, index) => (
                     <Tr key={index}>
                       <Td colSpan={5}>
@@ -100,7 +100,7 @@ function InvitationsTable() {
                       </Td>
                     </Tr>
                   ))}
-                </Tbody>
+                </>
               ) : (
                 invitations?.data
                   // TODO: this filter should be on the backend
