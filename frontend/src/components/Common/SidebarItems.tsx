@@ -22,7 +22,10 @@ import {
   FaQuestionCircle,
   FaTools,
 } from "react-icons/fa"
+
 import { useCurrentUser } from "../../hooks/useAuth"
+
+import { Route } from "../../routes/_layout/$team"
 
 // https://github.com/TanStack/router/issues/1194#issuecomment-1956736102
 export function link<
@@ -42,7 +45,14 @@ type Item = {
 
 const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
   return [
-    { icon: FaHome, title: "Dashboard", to: "/" },
+    {
+      icon: FaHome,
+      title: "Dashboard",
+      ...link({
+        to: "/$team/",
+        params: { team },
+      }),
+    },
     {
       icon: FaCubes,
       title: "Projects",
@@ -90,10 +100,11 @@ const FlexLink = (props: LinkProps & Omit<FlexProps, "as">) => (
 )
 
 const SidebarItems = ({ onClose }: SidebarItemsProps) => {
+  const { team } = Route.useParams()
   const user = useCurrentUser()
   const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
 
-  const items = getSidebarItems({ team: user!.personal_team_slug })
+  const items = getSidebarItems({ team: team || user!.personal_team_slug })
 
   const listItems = items.map(({ icon, title, to, params }) => (
     <FlexLink

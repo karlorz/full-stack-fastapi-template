@@ -12,10 +12,10 @@ import {
   Tr,
 } from "@chakra-ui/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
-
+import { Link, createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
+
 import { TeamsService } from "../../../client"
 import ActionsMenu from "../../../components/Common/ActionsMenu"
 
@@ -33,7 +33,13 @@ function AllTeamsTableBody() {
     <Tbody>
       {teams?.data.map((team) => (
         <Tr key={team.id}>
-          <Td isTruncated maxWidth="200px">
+          <Td
+            as={Link}
+            isTruncated
+            maxWidth="200px"
+            to={`/${team.slug}/`}
+            _hover={{ textDecoration: "underline", color: "ui.main" }}
+          >
             {team.name}
           </Td>
           <Td>

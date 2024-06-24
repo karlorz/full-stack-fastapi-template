@@ -21,7 +21,7 @@ function Index() {
 
   return (
     <Navigate
-      to="/$team"
+      to="/$team/"
       params={{ team: currentUser!.personal_team_slug }}
       search={routerState.location.search}
     />

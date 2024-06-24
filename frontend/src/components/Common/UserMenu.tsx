@@ -27,6 +27,7 @@ import {
 
 import { TeamsService } from "../../client"
 import useAuth, { useCurrentUser } from "../../hooks/useAuth"
+import { Route } from "../../routes/_layout/$team"
 
 const CurrentUser = () => {
   const currentUser = useCurrentUser()
@@ -35,12 +36,15 @@ const CurrentUser = () => {
 }
 
 const UserMenu = () => {
+  const { team } = Route.useParams()
   const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
+  const { logout } = useAuth()
   const { data: teams } = useQuery({
     queryKey: ["teams"],
     queryFn: () => TeamsService.readTeams({}),
   })
-  const { logout } = useAuth()
+
+  const currentTeam = teams?.data.find((t) => t.slug === team)
 
   const handleLogout = async () => {
     logout()
@@ -65,7 +69,7 @@ const UserMenu = () => {
                     fallback={<SkeletonText noOfLines={1} width={100} />}
                   >
                     <Box isTruncated maxWidth="150px">
-                      <CurrentUser />
+                      {currentTeam?.name || <CurrentUser />}
                     </Box>
                   </Suspense>
                 </Text>
@@ -74,33 +78,17 @@ const UserMenu = () => {
             </Flex>
           </MenuButton>
           <MenuList p={4}>
-            {/* Personal Team */}
-            <MenuItem
-              as={Link}
-              to="/"
-              gap={2}
-              py={2}
-              _hover={{ bg: bgHover, borderRadius: "12px" }}
-            >
-              <Icon as={FaUser} />
-              <Suspense
-                fallback={<SkeletonText noOfLines={1} width={100} as="span" />}
-              >
-                <Box isTruncated maxWidth="150px">
-                  <CurrentUser />
-                </Box>
-              </Suspense>
-            </MenuItem>
             {/* Teams */}
-            {teams?.data.slice(1, 3).map((team) => (
+            {teams?.data.map((team, index) => (
               <MenuItem
                 as={Link}
                 key={team.id}
                 gap={2}
                 py={2}
                 _hover={{ bg: bgHover, borderRadius: "12px" }}
+                to={`/${team.slug}/`}
               >
-                <Icon as={FaUsers} />
+                <Icon as={index === 0 ? FaUser : FaUsers} />
                 <Box isTruncated maxWidth="150px">
                   {team.name}
                 </Box>
