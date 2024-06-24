@@ -16,8 +16,8 @@ import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
 import { TeamsService, type UserPublic } from "../../client"
-import ActionsMenu from "../Common/ActionsMenu"
 import { Route } from "../../routes/_layout/$team"
+import ActionsMenu from "../Common/ActionsMenu"
 
 function TeamTableBody() {
   const { team: teamSlug } = Route.useParams()

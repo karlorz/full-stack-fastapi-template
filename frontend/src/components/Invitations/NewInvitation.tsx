@@ -9,16 +9,16 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { useForm, type SubmitHandler } from "react-hook-form"
 
 import {
+  InvitationsService,
   type ApiError,
   type InvitationCreate,
-  InvitationsService,
 } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
-import { emailPattern } from "../../utils"
 import { Route } from "../../routes/_layout/$team"
+import { emailPattern } from "../../utils"
 
 const NewInvitation = () => {
   const { team: teamSlug } = Route.useParams()

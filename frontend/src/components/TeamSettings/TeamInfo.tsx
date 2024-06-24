@@ -1,12 +1,11 @@
 import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 
+import { TeamsService } from "../../client"
 import { Route } from "../../routes/_layout/$team"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
 import Team from "../Teams/Team"
-import { TeamsService } from "../../client"
-
 
 const TeamInfo = () => {
   const { team: teamSlug } = Route.useParams()

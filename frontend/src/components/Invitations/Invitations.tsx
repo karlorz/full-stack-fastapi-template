@@ -14,11 +14,12 @@ import {
   Tr,
 } from "@chakra-ui/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { ErrorBoundary } from "react-error-boundary"
-import { InvitationsService } from "../../client/services"
-import CancelInvitation from "./CancelInvitation"
-import { Route } from "../../routes/_layout/$team"
 import { useEffect, useState } from "react"
+import { ErrorBoundary } from "react-error-boundary"
+
+import { InvitationsService } from "../../client/services"
+import { Route } from "../../routes/_layout/$team"
+import CancelInvitation from "./CancelInvitation"
 
 const PER_PAGE = 5
 

@@ -14,10 +14,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react"
-import {
-  useQueryClient,
-  useSuspenseQuery
-} from "@tanstack/react-query"
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
@@ -34,7 +31,7 @@ export const Route = createFileRoute("/_layout/teams/$teamSlug/")({
 function TeamTableBody() {
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
-  const { teamSlug: teamSlug } = Route.useParams()
+  const { teamSlug } = Route.useParams()
   const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamSlug],
     queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
@@ -133,7 +130,7 @@ function TeamTable() {
 }
 
 function Team() {
-  const { teamSlug: teamSlug } = Route.useParams()
+  const { teamSlug } = Route.useParams()
   const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamSlug],
     queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
