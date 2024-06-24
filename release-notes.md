@@ -45,6 +45,7 @@
 
 ### Fixes
 
+* 🚨 Fix `tbody> cannot appear as a child of <tbody>`. PR [#107](https://github.com/fastapilabs/cloud/pull/107) by [@alejsdev](https://github.com/alejsdev).
 * 🩹 Fix font path. PR [#96](https://github.com/fastapilabs/cloud/pull/96) by [@patrick91](https://github.com/patrick91).
 * 🚨 Fix `<div>` cannot appear as a descendant of `<p>`. PR [#77](https://github.com/fastapilabs/cloud/pull/77) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix error 500 when creating invitation. PR [#60](https://github.com/fastapilabs/cloud/pull/60) by [@alejsdev](https://github.com/alejsdev).
