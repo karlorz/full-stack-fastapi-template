@@ -11,26 +11,24 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react"
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
-import { TeamsService, type UserPublic } from "../../client"
+import { TeamsService } from "../../client"
+import { useCurrentUser } from "../../hooks/useAuth"
 import { Route } from "../../routes/_layout/$team"
+import { getCurrentUserRole } from "../../utils"
 import ActionsMenu from "../Common/ActionsMenu"
 
 function TeamTableBody() {
   const { team: teamSlug } = Route.useParams()
-  const queryClient = useQueryClient()
-  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
+  const currentUser = useCurrentUser()
   const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamSlug],
     queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
   })
-
-  const currentUserRole = team.user_links.find(
-    ({ user }) => user.id === currentUser?.id,
-  )?.role
+  const currentUserRole = getCurrentUserRole(team, currentUser)
 
   return (
     <Tbody>

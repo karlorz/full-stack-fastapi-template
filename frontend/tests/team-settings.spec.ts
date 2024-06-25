@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test"
 
-const tabs = ["Team", "Billing", "Danger zone"]
+const tabs = ["Team", "Billing"]
 
 test("Team settings correctly displays all tabs", async ({ page }) => {
   await page.goto("/admin/settings")
@@ -35,12 +35,4 @@ test("Billing tab is visible", async ({ page }) => {
   await page.goto("/admin/settings")
   await page.getByRole("tab", { name: "Billing" }).click()
   await page.getByLabel("Billing", { exact: true }).click()
-})
-
-// Danger Zone
-
-test("Danger zone tab is visible", async ({ page }) => {
-  await page.goto("/admin/settings")
-  await page.getByRole("tab", { name: "Danger zone" }).click()
-  await expect(page.getByLabel("Danger zone")).toBeVisible()
 })

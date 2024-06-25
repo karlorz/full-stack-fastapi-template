@@ -1,3 +1,5 @@
+import type { TeamWithUserPublic, UserPublic } from "./client"
+
 export const emailPattern = {
   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
   message: "Invalid email address",
@@ -43,4 +45,11 @@ export const confirmPasswordRules = (
   }
 
   return rules
+}
+
+export function getCurrentUserRole(
+  team: TeamWithUserPublic,
+  currentUser: UserPublic | null,
+) {
+  return team.user_links.find(({ user }) => user.id === currentUser?.id)?.role
 }

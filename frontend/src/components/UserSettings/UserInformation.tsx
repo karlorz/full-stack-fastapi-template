@@ -61,9 +61,7 @@ const UserInformation = () => {
       showToast("Something went wrong.", `${errDetail}`, "error")
     },
     onSettled: () => {
-      // TODO: can we do just one call now?
-      queryClient.invalidateQueries({ queryKey: ["users"] })
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] })
+      queryClient.invalidateQueries()
     },
   })
 

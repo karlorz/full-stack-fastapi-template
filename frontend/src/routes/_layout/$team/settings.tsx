@@ -12,13 +12,11 @@ import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 
 import Billing from "../../../components/TeamSettings/Billing"
-import DeleteTeam from "../../../components/TeamSettings/DeleteTeam"
 import TeamInfo from "../../../components/TeamSettings/TeamInfo"
 
 const tabsConfig = [
   { title: "Team", component: TeamInfo },
   { title: "Billing", component: Billing },
-  { title: "Danger zone", component: DeleteTeam },
 ]
 
 export const Route = createFileRoute("/_layout/$team/settings")({

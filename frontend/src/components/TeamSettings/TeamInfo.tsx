@@ -2,17 +2,23 @@ import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 
 import { TeamsService } from "../../client"
+import { useCurrentUser } from "../../hooks/useAuth"
 import { Route } from "../../routes/_layout/$team"
+import { getCurrentUserRole } from "../../utils"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
 import Team from "../Teams/Team"
+import TeamName from "../Teams/TeamName"
+import DeleteTeam from "./DeleteTeam"
 
 const TeamInfo = () => {
   const { team: teamSlug } = Route.useParams()
+  const currentUser = useCurrentUser()
   const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamSlug],
     queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
   })
+  const currentUserRole = getCurrentUserRole(team, currentUser)
 
   return (
     <Container maxW="full" m={4}>
@@ -25,7 +31,10 @@ const TeamInfo = () => {
           <Text fontWeight="bold" mb={4}>
             Team Name
           </Text>
-          <Text>{team.name}</Text>
+
+          <Flex>
+            <TeamName />
+          </Flex>
         </Box>
       </Box>
       <Box>
@@ -36,27 +45,40 @@ const TeamInfo = () => {
           <Team />
         </Box>
       </Box>
-      <Flex gap="8">
-        <Box width="70%">
+      {currentUserRole === "admin" && (
+        <>
+          <Flex gap="8">
+            <Box width="70%">
+              <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
+                <Text fontWeight="bold" mb={4}>
+                  Team Invitations
+                </Text>
+                <Flex>
+                  <Invitations />
+                </Flex>
+              </Box>
+            </Box>
+
+            <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
+              <Text fontWeight="bold" mb={4}>
+                New Invitation
+              </Text>
+              <Flex>
+                <NewInvitation />
+              </Flex>
+            </Box>
+          </Flex>
+
           <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
             <Text fontWeight="bold" mb={4}>
-              Team Invitations
+              Danger Zone
             </Text>
             <Flex>
-              <Invitations />
+              <DeleteTeam />
             </Flex>
           </Box>
-        </Box>
-
-        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-          <Text fontWeight="bold" mb={4}>
-            New Invitation
-          </Text>
-          <Flex>
-            <NewInvitation />
-          </Flex>
-        </Box>
-      </Flex>
+        </>
+      )}
     </Container>
   )
 }

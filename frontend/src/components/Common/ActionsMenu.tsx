@@ -11,8 +11,6 @@ import { FaEdit, FaExchangeAlt, FaTrash } from "react-icons/fa"
 
 import type { TeamPublic, UserPublic } from "../../client"
 import ChangeRole from "../Teams/ChangeRole"
-import EditTeam from "../Teams/EditTeam"
-import DeleteTeam from "./DeleteTeam"
 import RemoveUser from "./RemoveUser"
 
 interface ActionsMenuProps {
@@ -70,28 +68,13 @@ const ActionsMenu = ({
             {type === "User" ? "Remove" : "Delete"} {type}
           </MenuItem>
         </MenuList>
-        {type === "User" ? (
-          <ChangeRole
-            userRole={userRole}
-            teamSlug={team?.slug}
-            user={value as UserPublic}
-            isOpen={changeRoleModal.isOpen}
-            onClose={changeRoleModal.onClose}
-          />
-        ) : (
-          <EditTeam
-            team={value as TeamPublic}
-            isOpen={editUserModal.isOpen}
-            onClose={editUserModal.onClose}
-          />
-        )}
-        {type === "Team" && (
-          <DeleteTeam
-            teamSlug={(value as TeamPublic)?.slug}
-            isOpen={deleteTeamModal.isOpen}
-            onClose={deleteTeamModal.onClose}
-          />
-        )}
+        <ChangeRole
+          userRole={userRole}
+          teamSlug={team?.slug}
+          user={value as UserPublic}
+          isOpen={changeRoleModal.isOpen}
+          onClose={changeRoleModal.onClose}
+        />
         <RemoveUser
           userId={value.id}
           teamSlug={team?.slug}

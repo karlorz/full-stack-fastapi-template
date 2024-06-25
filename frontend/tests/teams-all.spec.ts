@@ -7,5 +7,5 @@ test("All teams is visible", async ({ page }) => {
 
 test("All teams table is visible", async ({ page }) => {
   await page.goto("/teams/all")
-  await expect(page.getByRole("table")).toBeVisible()
+  await expect(page.getByRole("list")).toBeVisible()
 })

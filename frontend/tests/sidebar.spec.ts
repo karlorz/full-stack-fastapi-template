@@ -5,10 +5,14 @@ const links = ["Dashboard", "Projects", "Resources", "Settings", "Help"]
 const navigateAndCheck = async (
   page: Page,
   link: string,
-  headingName: string,
+  text: string,
 ) => {
   await page.getByRole("link", { name: link }).click()
-  await expect(page.getByRole("heading", { name: headingName })).toBeVisible()
+  if (link == "Dashboard") {
+    await expect(page.getByText(text)).toBeVisible()
+  } else {
+    await expect(page.getByRole("heading", { name: text })).toBeVisible()
+  }
 }
 
 test("Sidebar contains all necessary links", async ({ page }) => {
@@ -20,10 +24,20 @@ test("Sidebar contains all necessary links", async ({ page }) => {
 
 test("Sidebar links navigate to correct pages", async ({ page }) => {
   await page.goto("/")
+  await navigateAndCheck(page, "Dashboard", "Welcome back, nice to see you")
   await navigateAndCheck(page, "Projects", "Projects")
   await navigateAndCheck(page, "Resources", "Resources")
   await navigateAndCheck(page, "Settings", "Settings")
   await navigateAndCheck(page, "Help", "Help")
 })
 
-// TODO: Add a test that checks if the active link is highlighted
+test("Active link is highlighted", async ({ page }) => {
+  await page.goto("/")
+  for (const link of links) {
+    await page.getByRole("link", { name: link }).click()
+    await expect(page.getByRole("link", { name: link })).toHaveAttribute(
+      "data-status",
+      "active",
+    )
+  }
+})
