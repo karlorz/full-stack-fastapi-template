@@ -59,6 +59,7 @@
 
 ### Refactors
 
+* ♻️ Allow only admin roles to edit and delete teams, manage invitations and edit team name. PR [#113](https://github.com/fastapilabs/cloud/pull/113) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update `playwright.yml` for CI. PR [#101](https://github.com/fastapilabs/cloud/pull/101) by [@alejsdev](https://github.com/alejsdev).
 * 🎨 Lint . PR [#106](https://github.com/fastapilabs/cloud/pull/106) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update team-slug in Team. PR [#103](https://github.com/fastapilabs/cloud/pull/103) by [@alejsdev](https://github.com/alejsdev).
