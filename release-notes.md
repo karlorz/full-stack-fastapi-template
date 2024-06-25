@@ -14,6 +14,7 @@
 
 ### Features
 
+* ✅ Add test for signing up and setup for dev `mailcatcher`. PR [#115](https://github.com/fastapilabs/cloud/pull/115) by [@patrick91](https://github.com/patrick91).
 * ✨ Allow users to select team in user menu and all teams view. PR [#105](https://github.com/fastapilabs/cloud/pull/105) by [@alejsdev](https://github.com/alejsdev).
 * 🔧 Update Pulumi config to add IAM role with access entries. PR [#108](https://github.com/fastapilabs/cloud/pull/108) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Add pagination to team invitations. PR [#97](https://github.com/fastapilabs/cloud/pull/97) by [@patrick91](https://github.com/patrick91).
