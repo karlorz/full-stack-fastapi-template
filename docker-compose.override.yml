@@ -39,7 +39,7 @@ services:
     networks:
       - traefik-public
       - default
-      
+
   db:
     restart: "no"
     ports:
@@ -62,6 +62,11 @@ services:
         INSTALL_DEV: ${INSTALL_DEV-true}
     # command: sleep infinity  # Infinite loop to keep container alive doing nothing
     command: /start-reload.sh
+    environment:
+      SMTP_HOST: "mailcatcher"
+      SMTP_PORT: "1025"
+      SMTP_TLS: "false"
+      EMAILS_FROM_EMAIL: "noreply@example.com"
 
   frontend:
     restart: "no"
@@ -70,6 +75,12 @@ services:
       args:
         - VITE_API_URL=http://${DOMAIN?Variable not set}
         - NODE_ENV=development
+
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
+      - "1025:1025"
 
 networks:
   traefik-public:

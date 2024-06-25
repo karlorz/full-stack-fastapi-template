@@ -49,7 +49,7 @@ const EmailConfirmation = () => {
           </Box>
         )}
         {mutation.isSuccess && (
-          <Box>
+          <Box data-testid="result">
             <Text fontWeight="bolder" fontSize="2xl">
               Successful Email Verification
             </Text>
