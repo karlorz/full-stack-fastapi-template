@@ -158,7 +158,7 @@ def generate_verification_email(email_to: str, token: str) -> EmailData:
 def verify_email_verification_token(token: str) -> str | None:
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        splitted_sub = decoded_token["sub"].split("-")
+        splitted_sub = decoded_token["sub"].split("-", maxsplit=1)
         if len(splitted_sub) == 2 and splitted_sub[0] == TokenType.email:
             return str(splitted_sub[1])
         return None
