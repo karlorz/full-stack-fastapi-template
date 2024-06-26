@@ -7,6 +7,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Icon,
   Input,
   InputGroup,
@@ -89,9 +90,7 @@ function Login() {
           gap={4}
         >
           <Box>
-            <Text fontWeight="bolder" fontSize="2xl">
-              Welcome!
-            </Text>
+            <Heading size="md">Welcome!</Heading>
             <Text fontSize="md" color="gray.500">
               Sign in to your account
             </Text>
