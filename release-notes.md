@@ -14,6 +14,7 @@
 
 ### Features
 
+* ✅ Add login tests. PR [#121](https://github.com/fastapilabs/cloud/pull/121) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Update sign up tests. PR [#116](https://github.com/fastapilabs/cloud/pull/116) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Allow to filter invitations by status. PR [#98](https://github.com/fastapilabs/cloud/pull/98) by [@patrick91](https://github.com/patrick91).
 * ✅ Add test for signing up and setup for dev `mailcatcher`. PR [#115](https://github.com/fastapilabs/cloud/pull/115) by [@patrick91](https://github.com/patrick91).
