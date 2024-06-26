@@ -145,6 +145,7 @@
 
 ### Internal
 
+* ⬆ Bump actions/setup-python from 2 to 5. PR [#112](https://github.com/fastapilabs/cloud/pull/112) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump actions/checkout from 2 to 4. PR [#111](https://github.com/fastapilabs/cloud/pull/111) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump aws-actions/configure-aws-credentials from 1 to 4. PR [#110](https://github.com/fastapilabs/cloud/pull/110) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump pulumi/actions from 3 to 5. PR [#109](https://github.com/fastapilabs/cloud/pull/109) by [@dependabot[bot]](https://github.com/apps/dependabot).
