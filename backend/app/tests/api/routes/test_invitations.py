@@ -326,6 +326,73 @@ def test_read_invitations_team_success(client: TestClient, db: Session) -> None:
     assert invitations[1]["id"]
 
 
+def test_read_invitations_team_filter(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
+
+    user1 = create_user(
+        session=db,
+        email="test2623filter@fastapi.com",
+        password="test12345",
+        full_name="test2623",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test2722filter@example.com",
+        password="test12345",
+        full_name="test2722",
+        is_verified=True,
+    )
+    user3 = create_user(
+        session=db,
+        email="test2833filter@example.com",
+        password="test12345",
+        full_name="test2833",
+        is_verified=True,
+    )
+
+    add_user_to_team(session=db, user=user1, team=team, role=Role.admin)
+    add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
+
+    invitation_to_create = InvitationCreate(
+        team_slug=team.slug, email=user2.email, role=Role.member
+    )
+    create_invitation(
+        session=db,
+        invitation_in=invitation_to_create,
+        invited_by=user1,
+        invitation_status=InvitationStatus.accepted,
+    )
+
+    invitation_to_create = InvitationCreate(
+        team_slug=team.slug, email=user3.email, role=Role.member
+    )
+    pending_invitation = create_invitation(
+        session=db,
+        invitation_in=invitation_to_create,
+        invited_by=user1,
+        invitation_status=InvitationStatus.pending,
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1.email, password="test12345"
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/invitations/team/{team.slug}",
+        params={"status": "pending"},
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    invitations = data["data"]
+    count = data["count"]
+    assert len(invitations) == 1
+    assert count == 1
+    assert invitations[0]["id"] == pending_invitation.id
+
+
 def test_read_invitations_team_empty(client: TestClient, db: Session) -> None:
     team = create_random_team(db)
     team2 = create_random_team(db)

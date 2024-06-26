@@ -1,9 +1,10 @@
 from datetime import timedelta
-from typing import Any
+from typing import Any, TypeVar
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from sqlmodel import col, func, select
+from sqlmodel.sql.expression import SelectOfScalar
 
 from app.api.deps import CurrentUser, SessionDep, get_first_superuser
 from app.api.utils.invitations import (
@@ -29,6 +30,8 @@ from app.models import (
 from app.utils import get_datetime_utc
 
 router = APIRouter()
+
+T = TypeVar("T")
 
 
 @router.get("/me", response_model=InvitationsPublic)
@@ -86,6 +89,7 @@ def read_invitations_team_by_admin(
     team_slug: str,
     skip: int = 0,
     limit: int = 100,
+    status: InvitationStatus | None = None,
 ) -> Any:
     """
     Retrieve a list of invitations sent by the current user.
@@ -103,18 +107,20 @@ def read_invitations_team_by_admin(
             status_code=400, detail="Not enough permissions to execute this action"
         )
 
-    count_statement = (
-        select(func.count())
-        .select_from(Invitation)
-        .where(Invitation.team_id == Team.id, col(Team.slug) == team_slug)
-    )
+    def _apply_filters(statement: SelectOfScalar[T]) -> SelectOfScalar[T]:
+        statement = statement.where(
+            Invitation.team_id == Team.id, Team.slug == team_slug
+        )
+
+        if status:
+            statement = statement.where(Invitation.status == status)
+
+        return statement
+
+    count_statement = _apply_filters(select(func.count()).select_from(Invitation))
     count = session.exec(count_statement).one()
-    statement = (
-        select(Invitation)
-        .where(Invitation.team_id == Team.id, col(Team.slug) == team_slug)
-        .offset(skip)
-        .limit(limit)
-    )
+
+    statement = _apply_filters(select(Invitation)).offset(skip).limit(limit)
 
     invitations = session.exec(statement).all()
 
