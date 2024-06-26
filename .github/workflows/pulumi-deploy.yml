@@ -32,7 +32,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PRODUCTION }}
       - run: pip install -r requirements.txt
         working-directory: infra
-      - uses: pulumi/actions@v3
+      - uses: pulumi/actions@v5
         with:
           command: up
           # stack-name: org-name/stack-name # When using an individual account, only use stack-name.
