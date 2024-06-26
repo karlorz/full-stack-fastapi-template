@@ -145,6 +145,7 @@
 
 ### Internal
 
+* 💚 Tweak Dependabot with Pulumi. PR [#118](https://github.com/fastapilabs/cloud/pull/118) by [@tiangolo](https://github.com/tiangolo).
 * 💚 Do not run Pulumi preview on Dependabot as it doesn't have secrets. PR [#117](https://github.com/fastapilabs/cloud/pull/117) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update Smokeshow download artifact action. PR [#53](https://github.com/fastapilabs/cloud/pull/53) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Enable tmate for remote debugging. PR [#10](https://github.com/fastapilabs/cloud/pull/10) by [@tiangolo](https://github.com/tiangolo).
