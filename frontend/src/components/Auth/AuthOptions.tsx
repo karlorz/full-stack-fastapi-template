@@ -35,7 +35,7 @@ const AuthOptions = ({ description, path }: OptionsProps) => {
       <Box>
         {`${description} `}
         <Link as={RouterLink} to={path} color="ui.main" fontWeight="bolder">
-          {path === "/login" ? "Login" : "Sign Up"}
+          {path === "/login" ? "Log In" : "Sign Up"}
         </Link>
       </Box>
     </>

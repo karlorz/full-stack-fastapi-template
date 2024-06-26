@@ -5,7 +5,7 @@ import { useEffect } from "react"
 
 import { UsersService } from "../../client"
 
-const EmailConfirmation = () => {
+const EmailVerification = () => {
   const token = new URLSearchParams(window.location.search).get("token")
 
   const verifyEmail = async (token: string) => {
@@ -63,7 +63,7 @@ const EmailConfirmation = () => {
         )}
 
         {mutation.isError && (
-          <Box>
+          <Box data-testid="error">
             <Text fontWeight="bolder" fontSize="2xl">
               Email Verification Failed
             </Text>
@@ -80,4 +80,4 @@ const EmailConfirmation = () => {
   )
 }
 
-export default EmailConfirmation
+export default EmailVerification

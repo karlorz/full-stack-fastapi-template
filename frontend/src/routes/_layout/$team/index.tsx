@@ -15,7 +15,6 @@ const CurrentUser = () => {
 }
 
 function Dashboard() {
-
   return (
     <>
       <Container maxW="full" p={12}>

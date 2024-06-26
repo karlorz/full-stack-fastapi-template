@@ -2,13 +2,9 @@ import { type Page, expect, test } from "@playwright/test"
 
 const links = ["Dashboard", "Projects", "Resources", "Settings", "Help"]
 
-const navigateAndCheck = async (
-  page: Page,
-  link: string,
-  text: string,
-) => {
+const navigateAndCheck = async (page: Page, link: string, text: string) => {
   await page.getByRole("link", { name: link }).click()
-  if (link == "Dashboard") {
+  if (link === "Dashboard") {
     await expect(page.getByText(text)).toBeVisible()
   } else {
     await expect(page.getByRole("heading", { name: text })).toBeVisible()

@@ -6,6 +6,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Icon,
   Input,
   InputGroup,
@@ -87,14 +88,12 @@ function SignUp() {
             gap={4}
           >
             <Box>
-              <Text fontWeight="bolder" fontSize="2xl">
-                Sign Up
-              </Text>
-              <Text fontSize="md" color="gray.500">
+              <Heading size="md">Sign Up</Heading>
+              <Text fontSize="" color="gray.500">
                 Create your account
               </Text>
             </Box>
-            <FormControl id="full_name" isInvalid={!!errors.email}>
+            <FormControl id="full_name" isInvalid={!!errors.full_name}>
               <FormLabel htmlFor="full_name" srOnly>
                 Full Name
               </FormLabel>
@@ -105,7 +104,7 @@ function SignUp() {
                 <Input
                   id="full_name"
                   {...register("full_name", {
-                    required: "Name is required",
+                    required: "Full Name is required",
                     pattern: namePattern,
                   })}
                   placeholder="Full Name"

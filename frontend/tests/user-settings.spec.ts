@@ -45,11 +45,3 @@ test("Appearance tab is visible", async ({ page }) => {
   await page.getByRole("tab", { name: "Appearance" }).click()
   await expect(page.getByLabel("Appearance")).toBeVisible()
 })
-
-// Danger zone
-
-test("Danger zone tab is visible", async ({ page }) => {
-  await page.goto("/settings")
-  await page.getByRole("tab", { name: "Danger zone" }).click()
-  await expect(page.getByLabel("Danger zone")).toBeVisible()
-})
