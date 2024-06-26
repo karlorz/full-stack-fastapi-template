@@ -145,6 +145,7 @@
 
 ### Internal
 
+* ⬆ Bump aws-actions/configure-aws-credentials from 1 to 4. PR [#110](https://github.com/fastapilabs/cloud/pull/110) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump pulumi/actions from 3 to 5. PR [#109](https://github.com/fastapilabs/cloud/pull/109) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 💚 Tweak Dependabot with Pulumi. PR [#118](https://github.com/fastapilabs/cloud/pull/118) by [@tiangolo](https://github.com/tiangolo).
 * 💚 Do not run Pulumi preview on Dependabot as it doesn't have secrets. PR [#117](https://github.com/fastapilabs/cloud/pull/117) by [@tiangolo](https://github.com/tiangolo).
