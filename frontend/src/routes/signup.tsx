@@ -13,7 +13,7 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react"
-import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
+import { Link as RouterLink, createFileRoute, redirect } from "@tanstack/react-router"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { FaEnvelope, FaKey, FaUser } from "react-icons/fa"
@@ -22,7 +22,7 @@ import type { UserRegister } from "../client"
 import AuthOptions from "../components/Auth/AuthOptions"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import EmailSent from "../components/Common/EmailSent"
-import useAuth from "../hooks/useAuth"
+import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import {
   confirmPasswordRules,
   emailPattern,
@@ -32,6 +32,13 @@ import {
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
+  beforeLoad: async () => {
+    if (isLoggedIn()) {
+      throw redirect({
+        to: "/",
+      })
+    }
+  }
 })
 
 interface UserRegisterForm extends UserRegister {
