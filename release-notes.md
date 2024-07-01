@@ -14,6 +14,7 @@
 
 ### Features
 
+* ✅ Reset password tests. PR [#123](https://github.com/fastapilabs/cloud/pull/123) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Add login tests. PR [#121](https://github.com/fastapilabs/cloud/pull/121) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Update sign up tests. PR [#116](https://github.com/fastapilabs/cloud/pull/116) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Allow to filter invitations by status. PR [#98](https://github.com/fastapilabs/cloud/pull/98) by [@patrick91](https://github.com/patrick91).
