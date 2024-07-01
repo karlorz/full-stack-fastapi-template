@@ -114,8 +114,8 @@ test("Successful log out", async ({ page }) => {
     "Hi, fastapi admin 👋🏼",
   )
 
-  await page.getByRole('button', { name: 'fastapi admin' }).click();
-  await page.getByRole('menuitem', { name: 'Log out' }).click();
+  await page.getByRole("button", { name: "fastapi admin" }).click()
+  await page.getByRole("menuitem", { name: "Log out" }).click()
   await page.waitForURL("/login")
 })
 
@@ -131,8 +131,8 @@ test("Logged-out user cannot access protected routes", async ({ page }) => {
     "Hi, fastapi admin 👋🏼",
   )
 
-  await page.getByRole('button', { name: 'fastapi admin' }).click();
-  await page.getByRole('menuitem', { name: 'Log out' }).click();
+  await page.getByRole("button", { name: "fastapi admin" }).click()
+  await page.getByRole("menuitem", { name: "Log out" }).click()
   await page.waitForURL("/login")
 
   await page.goto("/settings")

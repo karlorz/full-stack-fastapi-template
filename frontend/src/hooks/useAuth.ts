@@ -90,6 +90,7 @@ const useAuth = () => {
 
   return {
     emailSent,
+    setEmailSent,
     signUpMutation,
     loginMutation,
     logout,

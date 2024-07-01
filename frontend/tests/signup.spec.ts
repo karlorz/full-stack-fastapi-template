@@ -67,7 +67,7 @@ test("Terms and Privacy Policy links are visible", async ({ page }) => {
 })
 
 // This also includes the successful email verification flow
-test("Sign up with valid name, email, and password ", async ({
+test("Sign up with valid name, email, and password", async ({
   page,
   request,
 }) => {

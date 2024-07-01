@@ -14,7 +14,11 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react"
-import { Link as RouterLink, createFileRoute, redirect } from "@tanstack/react-router"
+import {
+  Link as RouterLink,
+  createFileRoute,
+  redirect,
+} from "@tanstack/react-router"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { FaEnvelope, FaKey, FaUser } from "react-icons/fa"
@@ -39,7 +43,7 @@ export const Route = createFileRoute("/signup")({
         to: "/",
       })
     }
-  }
+  },
 })
 
 interface UserRegisterForm extends UserRegister {
