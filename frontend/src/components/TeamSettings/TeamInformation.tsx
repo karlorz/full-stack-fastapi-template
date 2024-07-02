@@ -1,17 +1,24 @@
 import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react"
-import { useSuspenseQuery } from "@tanstack/react-query"
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query"
 
-import { TeamsService } from "../../client"
+import { type ApiError, type TeamUpdate, TeamsService } from "../../client"
 import { useCurrentUser } from "../../hooks/useAuth"
+import useCustomToast from "../../hooks/useCustomToast"
 import { Route } from "../../routes/_layout/$team"
 import { getCurrentUserRole } from "../../utils"
+import EditableField from "../Common/EditableField"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
 import Team from "../Teams/Team"
-import TeamName from "../Teams/TeamName"
 import DeleteTeam from "./DeleteTeam"
 
-const TeamInfo = () => {
+const TeamInformation = () => {
+  const queryClient = useQueryClient()
+  const showToast = useCustomToast()
   const { team: teamSlug } = Route.useParams()
   const currentUser = useCurrentUser()
   const { data: team } = useSuspenseQuery({
@@ -19,6 +26,21 @@ const TeamInfo = () => {
     queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
   })
   const currentUserRole = getCurrentUserRole(team, currentUser)
+
+  const mutation = useMutation({
+    mutationFn: (data: TeamUpdate) =>
+      TeamsService.updateTeam({ requestBody: data, teamSlug: teamSlug }),
+    onSuccess: () => {
+      showToast("Success!", "Team updated.", "success")
+    },
+    onError: (err: ApiError) => {
+      const errDetail = (err.body as any)?.detail
+      showToast("Something went wrong.", `${errDetail}`, "error")
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries()
+    },
+  })
 
   return (
     <Container maxW="full" m={4}>
@@ -33,7 +55,12 @@ const TeamInfo = () => {
           </Text>
 
           <Flex>
-            <TeamName />
+            <EditableField
+              type="name"
+              value={team.name}
+              onSubmit={(newName) => mutation.mutate({ name: newName })}
+              canEdit={currentUserRole === "admin"}
+            />
           </Flex>
         </Box>
       </Box>
@@ -83,4 +110,4 @@ const TeamInfo = () => {
   )
 }
 
-export default TeamInfo
+export default TeamInformation

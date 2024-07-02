@@ -12,10 +12,10 @@ import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 
 import Billing from "../../../components/TeamSettings/Billing"
-import TeamInfo from "../../../components/TeamSettings/TeamInfo"
+import TeamInformation from "../../../components/TeamSettings/TeamInformation"
 
 const tabsConfig = [
-  { title: "Team", component: TeamInfo },
+  { title: "Team", component: TeamInformation },
   { title: "Billing", component: Billing },
 ]
 

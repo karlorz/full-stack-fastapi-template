@@ -1,27 +1,17 @@
-import {
-  Box,
-  Button,
-  Container,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  Input,
-  useColorModeValue,
-} from "@chakra-ui/react"
+import { Box, Button, Container, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
 import { type ApiError, type UpdatePassword, UsersService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { confirmPasswordRules, passwordRules } from "../../utils"
+import PasswordField from "../Common/PasswordField"
 
 interface UpdatePasswordForm extends UpdatePassword {
   confirm_password: string
 }
 
 const ChangePassword = () => {
-  const color = useColorModeValue("inherit", "ui.light")
   const showToast = useCustomToast()
   const {
     register,
@@ -53,54 +43,31 @@ const ChangePassword = () => {
 
   return (
     <>
-      <Container maxW="full" m={4}>
-        <Heading size="sm">Change Password</Heading>
-        <Box as="form" onSubmit={handleSubmit(onSubmit)} mt={4}>
-          <FormControl isRequired isInvalid={!!errors.current_password}>
-            <FormLabel color={color} htmlFor="current_password">
-              Current Password
-            </FormLabel>
-            <Input
-              id="current_password"
-              {...register("current_password")}
-              placeholder="Password"
-              type="password"
-              w="auto"
-            />
-            {errors.current_password && (
-              <FormErrorMessage>
-                {errors.current_password.message}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl mt={4} isRequired isInvalid={!!errors.new_password}>
-            <FormLabel htmlFor="password">Set Password</FormLabel>
-            <Input
-              id="password"
-              {...register("new_password", passwordRules())}
-              placeholder="Password"
-              type="password"
-              w="auto"
-            />
-            {errors.new_password && (
-              <FormErrorMessage>{errors.new_password.message}</FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl mt={4} isRequired isInvalid={!!errors.confirm_password}>
-            <FormLabel htmlFor="confirm_password">Confirm Password</FormLabel>
-            <Input
-              id="confirm_password"
-              {...register("confirm_password", confirmPasswordRules(getValues))}
-              placeholder="Password"
-              type="password"
-              w="auto"
-            />
-            {errors.confirm_password && (
-              <FormErrorMessage>
-                {errors.confirm_password.message}
-              </FormErrorMessage>
-            )}
-          </FormControl>
+      <Container maxW="full" p={0}>
+        <Text py={2} mb={4}>
+          Change your password.
+        </Text>
+        <Box as="form" onSubmit={handleSubmit(onSubmit)} mt={4} maxW="350px">
+          <PasswordField
+            password="current_password"
+            errors={errors}
+            register={register}
+            placeholder="Current password"
+          />
+          <PasswordField
+            password="new_password"
+            errors={errors}
+            register={register}
+            options={passwordRules}
+            placeholder="New Password"
+          />
+          <PasswordField
+            password="confirm_password"
+            errors={errors}
+            register={register}
+            options={confirmPasswordRules(getValues)}
+            placeholder="Confirm Password"
+          />
           <Button
             variant="primary"
             mt={4}

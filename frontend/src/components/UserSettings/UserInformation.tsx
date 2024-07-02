@@ -1,60 +1,26 @@
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  Input,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { Box, Button, Container, Flex, Heading, Text } from "@chakra-ui/react"
+import { FaGithub } from "react-icons/fa"
 
-import {
-  type ApiError,
-  type UserPublic,
-  type UserUpdateMe,
-  UsersService,
-} from "../../client"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { type ApiError, type UserUpdateMe, UsersService } from "../../client"
 import { useCurrentUser } from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
-import { emailPattern, namePattern } from "../../utils"
+import EditableField from "../Common/EditableField"
+import ChangePassword from "./ChangePassword"
+import DeleteAccount from "./DeleteAccount"
 
 const UserInformation = () => {
   const queryClient = useQueryClient()
-  const color = useColorModeValue("inherit", "ui.light")
   const showToast = useCustomToast()
-  const [editMode, setEditMode] = useState(false)
   const currentUser = useCurrentUser()
-  const {
-    register,
-    handleSubmit,
-    reset,
-    getValues,
-    formState: { isSubmitting, errors, isDirty },
-  } = useForm<UserPublic>({
-    mode: "onBlur",
-    criteriaMode: "all",
-    defaultValues: {
-      full_name: currentUser?.full_name,
-      email: currentUser?.email,
-    },
-  })
-
-  const toggleEditMode = () => {
-    setEditMode(!editMode)
-  }
 
   const mutation = useMutation({
     mutationFn: (data: UserUpdateMe) =>
-      UsersService.updateUserMe({ requestBody: data }),
+      UsersService.updateUserMe({
+        requestBody: data,
+      }),
     onSuccess: () => {
-      showToast("Success!", "User updated successfully.", "success")
+      showToast("Success!", "User updated successfully", "success")
     },
     onError: (err: ApiError) => {
       const errDetail = (err.body as any)?.detail
@@ -65,83 +31,69 @@ const UserInformation = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<UserUpdateMe> = async (data) => {
-    mutation.mutate(data)
-  }
-
-  const onCancel = () => {
-    reset()
-    toggleEditMode()
-  }
-
   return (
     <>
       <Container maxW="full" m={4}>
         <Heading size="sm">User Information</Heading>
-        <Box as="form" onSubmit={handleSubmit(onSubmit)} mt={4}>
-          <FormControl>
-            <FormLabel color={color} htmlFor="name">
-              Full name
-            </FormLabel>
-            {editMode ? (
-              <Input
-                id="name"
-                {...register("full_name", { pattern: namePattern })}
-                type="text"
-                size="md"
-                w="auto"
-              />
-            ) : (
-              <Text
-                size="md"
-                py={2}
-                color={!currentUser?.full_name ? "ui.dim" : "inherit"}
-                isTruncated
-                maxWidth="200px"
-              >
-                {currentUser?.full_name || "N/A"}
-              </Text>
-            )}
-          </FormControl>
-          <FormControl mt={4} isInvalid={!!errors.email}>
-            <FormLabel color={color} htmlFor="email">
+        <Text py={2} mb={4}>
+          See and manage your user information.
+        </Text>
+        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
+          <Box my={4}>
+            <Text fontWeight="bold" mb={4}>
+              Full Name
+            </Text>
+            <EditableField
+              type="full_name"
+              value={currentUser?.full_name ?? ""}
+              onSubmit={(newFullName) =>
+                mutation.mutate({ full_name: newFullName })
+              }
+              canEdit={true}
+            />
+          </Box>
+        </Box>
+        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
+          <Box my={4}>
+            <Text fontWeight="bold" mb={4}>
               Email
-            </FormLabel>
-            {editMode ? (
-              <Input
-                id="email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: emailPattern,
-                })}
-                type="email"
-                size="md"
-                w="auto"
-              />
-            ) : (
-              <Text size="md" py={2}>
-                {currentUser?.email}
-              </Text>
-            )}
-            {errors.email && (
-              <FormErrorMessage>{errors.email.message}</FormErrorMessage>
-            )}
-          </FormControl>
-          <Flex mt={4} gap={3}>
+            </Text>
+            <EditableField
+              type="email"
+              value={currentUser?.email ?? ""}
+              onSubmit={(newEmail) => mutation.mutate({ email: newEmail })}
+              canEdit={true}
+            />
+          </Box>
+        </Box>
+        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
+          <Box my={4}>
+            <Text fontWeight="bold" mb={4}>
+              Password
+            </Text>
+            <ChangePassword />
+          </Box>
+        </Box>
+        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
+          <Box my={4}>
+            <Text fontWeight="bold" mb={4}>
+              Connect with Github
+            </Text>
             <Button
-              variant="primary"
-              onClick={toggleEditMode}
-              type={editMode ? "button" : "submit"}
-              isLoading={editMode ? isSubmitting : false}
-              isDisabled={editMode ? !isDirty || !getValues("email") : false}
+              variant="outline"
+              colorScheme="gray"
+              leftIcon={<FaGithub />}
             >
-              {editMode ? "Save" : "Edit"}
+              Connect
             </Button>
-            {editMode && (
-              <Button onClick={onCancel} isDisabled={isSubmitting}>
-                Cancel
-              </Button>
-            )}
+          </Box>
+        </Box>
+        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
+          <Text fontWeight="bold" mb={4}>
+            Danger Zone
+          </Text>
+          <Flex>
+            <DeleteAccount />
           </Flex>
         </Box>
       </Container>

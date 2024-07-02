@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker"
 import { expect, test } from "@playwright/test"
 
-const tabs = ["My profile", "Password", "Appearance", "Danger zone"]
+const tabs = ["My profile", "Appearance"]
 
 test("User settings correctly displays all tabs", async ({ page }) => {
   await page.goto("/settings")
@@ -28,14 +28,6 @@ test("My profile tab is visible", async ({ page }) => {
   await page.goto("/settings")
   await page.getByRole("tab", { name: "My profile" }).click()
   await expect(page.getByLabel("My profile")).toBeVisible()
-})
-
-// Password
-
-test("Password tab is visible", async ({ page }) => {
-  await page.goto("/settings")
-  await page.getByRole("tab", { name: "Password" }).click()
-  await expect(page.getByLabel("Password", { exact: true })).toBeVisible()
 })
 
 // Appearance

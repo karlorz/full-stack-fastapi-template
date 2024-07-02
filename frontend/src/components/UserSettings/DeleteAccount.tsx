@@ -1,10 +1,4 @@
-import {
-  Button,
-  Container,
-  Heading,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react"
+import { Button, Container, Text, useDisclosure } from "@chakra-ui/react"
 
 import DeleteConfirmation from "./DeleteConfirmation"
 
@@ -13,8 +7,7 @@ const DeleteAccount = () => {
 
   return (
     <>
-      <Container maxW="full" m={4}>
-        <Heading size="sm">Delete Account</Heading>
+      <Container maxW="full">
         <Text py={2} mb={2}>
           Permanently delete your data and everything associated with your
           account.
