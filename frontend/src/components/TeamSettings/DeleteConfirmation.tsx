@@ -7,7 +7,14 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import React from "react"
+import { useForm } from "react-hook-form"
+
+import { useNavigate } from "@tanstack/react-router"
+import { TeamsService } from "../../client"
+import useCustomToast from "../../hooks/useCustomToast"
+import { Route } from "../../routes/_layout/$team"
 
 interface DeleteProps {
   isOpen: boolean
@@ -16,6 +23,36 @@ interface DeleteProps {
 
 const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
   const cancelRef = React.useRef<HTMLButtonElement | null>(null)
+  const { team } = Route.useParams()
+  const queryClient = useQueryClient()
+  const { handleSubmit } = useForm()
+  const showToast = useCustomToast()
+  const navigate = useNavigate()
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      await TeamsService.deleteTeam({ teamSlug: team })
+    },
+    onSuccess: () => {
+      showToast("Success", "The team was deleted successfully", "success")
+      onClose()
+      navigate({ to: "/teams/all" })
+    },
+    onError: () => {
+      showToast(
+        "An error occurred.",
+        "An error occurred while deleting the team",
+        "error",
+      )
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries()
+    },
+  })
+
+  const onSubmit = async () => {
+    mutation.mutate()
+  }
 
   return (
     <>
@@ -27,7 +64,7 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
         isCentered
       >
         <AlertDialogOverlay>
-          <AlertDialogContent as="form">
+          <AlertDialogContent as="form" onSubmit={handleSubmit(onSubmit)}>
             <AlertDialogHeader>Confirmation Required</AlertDialogHeader>
 
             <AlertDialogBody>
