@@ -66,6 +66,7 @@
 
 ### Refactors
 
+* ♻️ Delete Account / Team. PR [#125](https://github.com/fastapilabs/cloud/pull/125) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ User settings refactor . PR [#124](https://github.com/fastapilabs/cloud/pull/124) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Allow only admin roles to edit and delete teams, manage invitations and edit team name. PR [#113](https://github.com/fastapilabs/cloud/pull/113) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update `playwright.yml` for CI. PR [#101](https://github.com/fastapilabs/cloud/pull/101) by [@alejsdev](https://github.com/alejsdev).
