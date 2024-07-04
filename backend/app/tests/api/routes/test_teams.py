@@ -192,6 +192,28 @@ def test_create_team_name_exists_new_created(client: TestClient, db: Session) ->
     )  # just to verify the dot slash and characters were added
 
 
+def test_create_team_with_empty_name(client: TestClient) -> None:
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=settings.FIRST_SUPERUSER,
+        password=settings.FIRST_SUPERUSER_PASSWORD,
+    )
+
+    team_in = {"name": "", "description": "test description"}
+    response = client.post(
+        f"{settings.API_V1_STR}/teams/",
+        headers=user_auth_headers,
+        json=team_in,
+    )
+
+    assert response.status_code == 422
+
+    data = response.json()
+
+    assert data["detail"][0]["loc"] == ["body", "name"]
+    assert data["detail"][0]["msg"] == "String should have at least 3 characters"
+
+
 def test_update_team(client: TestClient, db: Session) -> None:
     team = create_random_team(db)
     user = create_user(

@@ -31,7 +31,7 @@ class UserTeamLink(SQLModel, table=True):
 class UserBase(SQLModel):
     email: EmailStr = Field(unique=True, index=True, max_length=255)
     is_active: bool = True
-    full_name: str = Field(max_length=255)
+    full_name: str = Field(max_length=255, min_length=3)
 
 
 # Properties to receive via API on creation
@@ -42,18 +42,18 @@ class UserCreate(UserBase):
 class UserRegister(SQLModel):
     email: EmailStr = Field(max_length=255)
     password: str = Field(min_length=8, max_length=40)
-    full_name: str = Field(max_length=255)
+    full_name: str = Field(max_length=255, min_length=3)
 
 
 # Properties to receive via API on update, all are optional
 class UserUpdate(UserBase):
     email: EmailStr | None = Field(default=None, max_length=255)  # type: ignore
     password: str | None = Field(default=None, min_length=8, max_length=40)
-    full_name: str | None = Field(default=None, max_length=255)  # type: ignore
+    full_name: str | None = Field(default=None, max_length=255, min_length=3)  # type: ignore
 
 
 class UserUpdateMe(SQLModel):
-    full_name: str | None = Field(default=None, max_length=255)
+    full_name: str | None = Field(default=None, max_length=255, min_length=3)
     email: EmailStr | None = Field(default=None, max_length=255)
 
 
@@ -132,7 +132,7 @@ class EmailVerificationToken(SQLModel):
 
 
 class TeamBase(SQLModel):
-    name: str = Field(max_length=255)
+    name: str = Field(max_length=255, min_length=3)
     description: str | None = Field(default=None, max_length=255)
 
 

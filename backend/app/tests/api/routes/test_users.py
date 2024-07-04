@@ -190,6 +190,20 @@ def test_register_user_already_exists_error(client: TestClient) -> None:
         )
 
 
+def test_register_user_empty_full_name(client: TestClient) -> None:
+    email = random_email()
+    data = {"email": email, "password": "totally-legit", "full_name": ""}
+    r = client.post(
+        f"{settings.API_V1_STR}/users/signup",
+        json=data,
+    )
+    assert r.status_code == 422
+
+    data = r.json()
+
+    assert data["detail"][0]["msg"] == "String should have at least 3 characters"  # type: ignore
+
+
 def test_delete_user_me(client: TestClient, db: Session) -> None:
     username = random_email()
     password = random_lower_string()
