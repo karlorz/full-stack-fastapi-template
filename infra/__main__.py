@@ -1,7 +1,10 @@
+from pathlib import Path
 import pulumi
 import pulumi_awsx as awsx
 import pulumi_eks as eks
 import pulumi_aws as aws
+import pulumi_kubernetes as k8s
+
 
 # Get some values from the Pulumi configuration (or use defaults)
 config = pulumi.Config()
@@ -11,6 +14,7 @@ desired_cluster_size = config.get_int("desiredClusterSize", 3)
 eks_node_instance_type = config.get("eksNodeInstanceType", "t3.medium")
 vpc_network_cidr = config.get("vpcNetworkCidr", "10.0.0.0/16")
 
+aws_loadbalancer_name = "aws-load-balancer-controller"
 
 # Role generated automatically by AWS from permission set from AWS IAM Identity Center
 roles = aws.iam.get_roles(name_regex="FastAPILabsPowerUserK8s")
@@ -23,6 +27,18 @@ eks_vpc = awsx.ec2.Vpc(
     subnet_strategy=awsx.ec2.vpc.SubnetAllocationStrategy.AUTO,
     enable_dns_hostnames=True,
     cidr_block=vpc_network_cidr,
+    # Add tags
+    # Ref: https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html
+    subnet_specs=[
+        awsx.ec2.vpc.SubnetSpecArgs(
+            type=awsx.ec2.vpc.SubnetType.PRIVATE,
+            tags={"kubernetes.io/role/internal-elb": "1"},
+        ),
+        awsx.ec2.vpc.SubnetSpecArgs(
+            type=awsx.ec2.vpc.SubnetType.PUBLIC,
+            tags={"kubernetes.io/role/elb": "1"},
+        ),
+    ],
 )
 
 # Create the EKS cluster
@@ -61,10 +77,86 @@ eks_cluster = eks.Cluster(
             },
         )
     },
+    # OIDC provider for IAM
+    create_oidc_provider=True,
+)
+
+# AWS Load Balancer Controller
+# Ref: https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.8/deploy/installation/
+aws_lb_controller_policy_content = (
+    Path(__file__)
+    .parent.joinpath(f"{aws_loadbalancer_name}-config/iam-policy.json")
+    .read_text()
+)
+
+# IAM Role for ServiceAccount
+# Ref: https://www.learnaws.org/2021/06/22/aws-eks-alb-controller-pulumi/
+# Ref: https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html
+
+
+service_account_name = f"system:serviceaccount:kube-system:{aws_loadbalancer_name}"
+oidc_url = eks_cluster.core.apply(lambda x: x.oidc_provider and x.oidc_provider.url)
+oidc_arn = eks_cluster.core.apply(lambda x: x.oidc_provider and x.oidc_provider.arn)
+
+
+aws_lb_controller_role = aws.iam.Role(
+    f"{aws_loadbalancer_name}-role",
+    assume_role_policy=pulumi.Output.json_dumps(
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Federated": oidc_arn,
+                    },
+                    "Action": "sts:AssumeRoleWithWebIdentity",
+                    "Condition": {
+                        "StringEquals": {
+                            pulumi.Output.format(
+                                "{oidc_url}:aud", oidc_url=oidc_url
+                            ): "sts.amazonaws.com",
+                            pulumi.Output.format(
+                                "{oidc_url}:sub", oidc_url=oidc_url
+                            ): service_account_name,
+                        },
+                    },
+                }
+            ],
+        }
+    ),
+)
+
+aws_lb_controller_policy = aws.iam.Policy(
+    f"{aws_loadbalancer_name}-policy",
+    policy=aws_lb_controller_policy_content,
+)
+
+# Attach IAM Policy to IAM Role
+aws.iam.PolicyAttachment(
+    f"{aws_loadbalancer_name}-attachment",
+    policy_arn=aws_lb_controller_policy.arn,
+    roles=[aws_lb_controller_role.name],
+)
+
+provider = k8s.Provider("provider", kubeconfig=eks_cluster.kubeconfig)
+
+service_account = k8s.core.v1.ServiceAccount(
+    f"{aws_loadbalancer_name}-sa",
+    metadata={
+        "name": aws_loadbalancer_name,
+        "namespace": "kube-system",
+        "labels": {
+            "app.kubernetes.io/component": "controller",
+            "app.kubernetes.io/name": aws_loadbalancer_name,
+        },
+        "annotations": {"eks.amazonaws.com/role-arn": aws_lb_controller_role.arn},
+    },
 )
 
 
 # Export values to use elsewhere
 pulumi.export("kubeconfig", eks_cluster.kubeconfig)
 pulumi.export("vpc_id", eks_vpc.vpc_id)
-pulumi.export("role_arn", k8s_role_arn)
+pulumi.export("k8s_role_arn", k8s_role_arn)
+pulumi.export("aws_lb_controller_policy", aws_lb_controller_policy.arn)
