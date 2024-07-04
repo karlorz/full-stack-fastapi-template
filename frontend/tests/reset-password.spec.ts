@@ -27,7 +27,10 @@ test("Continue button is visible", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Continue" })).toBeVisible()
 })
 
-test("User can reset password successfully using the link", async ({ page, request }) => {
+test("User can reset password successfully using the link", async ({
+  page,
+  request,
+}) => {
   const full_name = "Test User"
   const email = randomEmail()
   const password = "password"

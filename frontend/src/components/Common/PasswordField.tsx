@@ -28,7 +28,7 @@ const PasswordField = ({
   const [show, setShow] = useBoolean()
 
   return (
-    <FormControl id={password} isInvalid={!!errors.current_password} my={4}>
+    <FormControl id={password} isInvalid={!!errors[password]} my={4}>
       <FormLabel htmlFor={password} srOnly>
         Password
       </FormLabel>
@@ -53,8 +53,8 @@ const PasswordField = ({
           </Icon>
         </InputRightElement>
       </InputGroup>
-      {errors.password && (
-        <FormErrorMessage>{errors.password.message}</FormErrorMessage>
+      {errors[password] && (
+        <FormErrorMessage>{errors[password].message}</FormErrorMessage>
       )}
     </FormControl>
   )

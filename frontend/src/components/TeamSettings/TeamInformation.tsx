@@ -31,7 +31,7 @@ const TeamInformation = () => {
     mutationFn: (data: TeamUpdate) =>
       TeamsService.updateTeam({ requestBody: data, teamSlug: teamSlug }),
     onSuccess: () => {
-      showToast("Success!", "Team updated.", "success")
+      showToast("Success!", "Team updated successfully", "success")
     },
     onError: (err: ApiError) => {
       const errDetail = (err.body as any)?.detail
