@@ -79,7 +79,7 @@ const UserMenu = () => {
           </MenuButton>
           <MenuList p={4}>
             {/* Teams */}
-            {teams?.data.map((team, index) => (
+            {teams?.data.slice(0, 3).map((team, index) => (
               <MenuItem
                 as={Link}
                 key={team.id}
