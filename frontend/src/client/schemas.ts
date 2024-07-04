@@ -206,6 +206,7 @@ export const $TeamCreate = {
 	type: 'string',
 	isRequired: true,
 	maxLength: 255,
+	minLength: 3,
 },
 		description: {
 	type: 'any-of',
@@ -225,6 +226,7 @@ export const $TeamPublic = {
 	type: 'string',
 	isRequired: true,
 	maxLength: 255,
+	minLength: 3,
 },
 		description: {
 	type: 'any-of',
@@ -284,6 +286,7 @@ export const $TeamWithUserPublic = {
 	type: 'string',
 	isRequired: true,
 	maxLength: 255,
+	minLength: 3,
 },
 		description: {
 	type: 'any-of',
@@ -374,6 +377,7 @@ export const $UserMePublic = {
 	type: 'string',
 	isRequired: true,
 	maxLength: 255,
+	minLength: 3,
 },
 		id: {
 	type: 'number',
@@ -402,6 +406,7 @@ export const $UserPublic = {
 	type: 'string',
 	isRequired: true,
 	maxLength: 255,
+	minLength: 3,
 },
 		id: {
 	type: 'number',
@@ -428,6 +433,7 @@ export const $UserRegister = {
 	type: 'string',
 	isRequired: true,
 	maxLength: 255,
+	minLength: 3,
 },
 	},
 } as const;
@@ -456,6 +462,7 @@ export const $UserUpdateMe = {
 	contains: [{
 	type: 'string',
 	maxLength: 255,
+	minLength: 3,
 }, {
 	type: 'null',
 }],

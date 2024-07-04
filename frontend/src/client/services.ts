@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { AccessTokenWithUserMe,Body_login_login_access_token,Message,NewPassword,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateMe,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationToken } from './models';
+import type { AccessTokenWithUserMe,Body_login_login_access_token,Message,NewPassword,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateMe,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -551,6 +551,7 @@ skip?: number
 export type TDataReadInvitationsTeamByAdmin = {
                 limit?: number
 skip?: number
+status?: InvitationStatus | null
 teamSlug: string
                 
             }
@@ -633,6 +634,7 @@ skip = 0,
 		const {
 limit = 100,
 skip = 0,
+status,
 teamSlug,
 } = data;
 		return __request(OpenAPI, {
@@ -642,7 +644,7 @@ teamSlug,
 				team_slug: teamSlug
 			},
 			query: {
-				skip, limit
+				skip, limit, status
 			},
 			errors: {
 				422: `Validation Error`,

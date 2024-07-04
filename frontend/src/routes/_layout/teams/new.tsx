@@ -75,6 +75,7 @@ function NewTeam() {
               <Input
                 placeholder="Name"
                 width="auto"
+                minLength={3}
                 {...register("name", { required: "Name is required" })}
               />
               {errors.name && (
