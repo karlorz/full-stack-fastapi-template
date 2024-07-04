@@ -46,3 +46,12 @@ export async function logInUser(page: Page, email: string, password: string) {
   await page.getByRole("button", { name: "Log In" }).click()
   await page.waitForURL("/")
 }
+
+export async function createTeam(page: Page, name: string) {
+  await page.goto("/teams/new")
+
+  await page.getByPlaceholder("Name").fill(name)
+  await page.getByRole("button", { name: "Create Team" }).click()
+  await page.waitForURL("/teams/all")
+  await page.locator("li").filter({ hasText: name }).click()
+}
