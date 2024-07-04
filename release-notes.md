@@ -55,6 +55,7 @@
 
 ### Fixes
 
+* 🐛 Limit the number of displayed teams in User Menu. PR [#133](https://github.com/fastapilabs/cloud/pull/133) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Add min length validation. PR [#130](https://github.com/fastapilabs/cloud/pull/130) by [@patrick91](https://github.com/patrick91).
 * 🐛 Redirect logged-in users from signup to home page. PR [#122](https://github.com/fastapilabs/cloud/pull/122) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Add maxsplit to allow emails with `-` in them. PR [#114](https://github.com/fastapilabs/cloud/pull/114) by [@patrick91](https://github.com/patrick91).
