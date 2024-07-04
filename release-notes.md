@@ -54,6 +54,7 @@
 
 ### Fixes
 
+* 🐛 Add min length validation. PR [#130](https://github.com/fastapilabs/cloud/pull/130) by [@patrick91](https://github.com/patrick91).
 * 🐛 Redirect logged-in users from signup to home page. PR [#122](https://github.com/fastapilabs/cloud/pull/122) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Add maxsplit to allow emails with `-` in them. PR [#114](https://github.com/fastapilabs/cloud/pull/114) by [@patrick91](https://github.com/patrick91).
 * 🚨 Fix `tbody> cannot appear as a child of <tbody>`. PR [#107](https://github.com/fastapilabs/cloud/pull/107) by [@alejsdev](https://github.com/alejsdev).
