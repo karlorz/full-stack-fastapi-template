@@ -15,6 +15,7 @@
 
 ### Features
 
+* 👷 Update CI with Pulumi, Helm, Kubernetes, enable AWS Load Balancer, ingress-nginx, HTTPS. PR [#129](https://github.com/fastapilabs/cloud/pull/129) by [@tiangolo](https://github.com/tiangolo).
 * ✅ Update user settings tests. PR [#99](https://github.com/fastapilabs/cloud/pull/99) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Add team tests. PR [#126](https://github.com/fastapilabs/cloud/pull/126) by [@alejsdev](https://github.com/alejsdev).
 * 👷 Update Pulumi, add AWS resources for AWS Load Balancer Controller. PR [#128](https://github.com/fastapilabs/cloud/pull/128) by [@tiangolo](https://github.com/tiangolo).
