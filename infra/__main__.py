@@ -14,7 +14,9 @@ desired_cluster_size = config.get_int("desiredClusterSize", 3)
 eks_node_instance_type = config.get("eksNodeInstanceType", "t3.medium")
 vpc_network_cidr = config.get("vpcNetworkCidr", "10.0.0.0/16")
 
-aws_loadbalancer_name = "aws-load-balancer-controller"
+aws_load_balancer_name = "aws-load-balancer-controller"
+
+### AWS Resources ###
 
 # Role generated automatically by AWS from permission set from AWS IAM Identity Center
 roles = aws.iam.get_roles(name_regex="FastAPILabsPowerUserK8s")
@@ -85,7 +87,7 @@ eks_cluster = eks.Cluster(
 # Ref: https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.8/deploy/installation/
 aws_lb_controller_policy_content = (
     Path(__file__)
-    .parent.joinpath(f"{aws_loadbalancer_name}-config/iam-policy.json")
+    .parent.joinpath(f"{aws_load_balancer_name}-config/iam-policy.json")
     .read_text()
 )
 
@@ -94,13 +96,13 @@ aws_lb_controller_policy_content = (
 # Ref: https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html
 
 
-service_account_name = f"system:serviceaccount:kube-system:{aws_loadbalancer_name}"
+service_account_name = f"system:serviceaccount:kube-system:{aws_load_balancer_name}"
 oidc_url = eks_cluster.core.apply(lambda x: x.oidc_provider and x.oidc_provider.url)
 oidc_arn = eks_cluster.core.apply(lambda x: x.oidc_provider and x.oidc_provider.arn)
 
 
 aws_lb_controller_role = aws.iam.Role(
-    f"{aws_loadbalancer_name}-role",
+    f"{aws_load_balancer_name}-role",
     assume_role_policy=pulumi.Output.json_dumps(
         {
             "Version": "2012-10-17",
@@ -128,35 +130,66 @@ aws_lb_controller_role = aws.iam.Role(
 )
 
 aws_lb_controller_policy = aws.iam.Policy(
-    f"{aws_loadbalancer_name}-policy",
+    f"{aws_load_balancer_name}-policy",
     policy=aws_lb_controller_policy_content,
 )
 
 # Attach IAM Policy to IAM Role
 aws.iam.PolicyAttachment(
-    f"{aws_loadbalancer_name}-attachment",
+    f"{aws_load_balancer_name}-attachment",
     policy_arn=aws_lb_controller_policy.arn,
     roles=[aws_lb_controller_role.name],
 )
 
+### Kubernetes Resources ###
+
 provider = k8s.Provider("provider", kubeconfig=eks_cluster.kubeconfig)
 
-service_account = k8s.core.v1.ServiceAccount(
-    f"{aws_loadbalancer_name}-sa",
+aws_load_balancer_service_account = k8s.core.v1.ServiceAccount(
+    f"{aws_load_balancer_name}-sa",
     metadata={
-        "name": aws_loadbalancer_name,
+        "name": aws_load_balancer_name,
         "namespace": "kube-system",
         "labels": {
             "app.kubernetes.io/component": "controller",
-            "app.kubernetes.io/name": aws_loadbalancer_name,
+            "app.kubernetes.io/name": aws_load_balancer_name,
         },
         "annotations": {"eks.amazonaws.com/role-arn": aws_lb_controller_role.arn},
     },
+    opts=pulumi.ResourceOptions(provider=provider),
 )
+
+cluster_name = eks_cluster.core.apply(lambda x: x.cluster.name)
+
+# TODO: Fix this
+
+# error: 1 error occurred:
+#         * Helm release "kube-system/aws-load-balancer-controller-bf4de232" was created, but failed to initialize completely. Use Helm CLI to investigate: failed to become available within allocated timeout. Error: Helm Release kube-system/aws-load-balancer-controller-bf4de232: client rate limiter Wait returned an error: context deadline exceeded
+
+# aws_load_balancer_controller = k8s.helm.v3.Release(
+#     aws_load_balancer_name,
+#     k8s.helm.v3.ReleaseArgs(
+#         chart="aws-load-balancer-controller",
+#         version="1.8.1",
+#         repository_opts=k8s.helm.v3.RepositoryOptsArgs(
+#             repo="https://aws.github.io/eks-charts"
+#         ),
+#         namespace="kube-system",
+#         values={
+#             "clusterName": cluster_name,
+#             "serviceAccount": {
+#                 "create": False,
+#                 "name": aws_load_balancer_service_account.metadata["name"],
+#             },
+#         },
+#     ),
+#     opts=pulumi.ResourceOptions(provider=provider),
+# )
 
 
 # Export values to use elsewhere
 pulumi.export("kubeconfig", eks_cluster.kubeconfig)
+pulumi.export("cluster_name", cluster_name)
 pulumi.export("vpc_id", eks_vpc.vpc_id)
 pulumi.export("k8s_role_arn", k8s_role_arn)
 pulumi.export("aws_lb_controller_policy", aws_lb_controller_policy.arn)

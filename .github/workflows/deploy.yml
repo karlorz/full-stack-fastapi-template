@@ -6,6 +6,12 @@ on:
   release:
     types:
       - created
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: 'false'
 
 jobs:
   deploy:
@@ -33,10 +39,22 @@ jobs:
       - run: pip install -r requirements.txt
         working-directory: infra
       - uses: pulumi/actions@v5
+        id: pulumi
         with:
           command: up
           # stack-name: org-name/stack-name # When using an individual account, only use stack-name.
-          stack-name: staging
+          # staging on push, production on release
+          stack-name: ${{ github.event_name == 'release' && 'production' || 'staging' }}
           work-dir: infra
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
+        with:
+          limit-access-to-actor: true
+        env:
+          CLUSTER_NAME: ${{ steps.pulumi.outputs.cluster_name }}
+          KUBECONFIG_CONTENT: ${{ steps.pulumi.outputs.kubeconfig }}
+          CLOUDFLARE_API_TOKEN_DNS: ${{ secrets.CLOUDFLARE_API_TOKEN_DNS }}
+          DEPLOYMENT_ENV: ${{ github.event_name == 'release' && 'production' || 'staging' }}
