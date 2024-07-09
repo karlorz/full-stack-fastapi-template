@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test"
+import { randomTeamName } from "./utils/random"
 import { createTeam } from "./utils/userUtils"
 
 test("All teams is visible", async ({ page }) => {
@@ -12,7 +13,7 @@ test("All teams table is visible", async ({ page }) => {
 })
 
 test("User can see all teams they belong to", async ({ page }) => {
-  const teamsName = ["Team 1", "Team 2", "Team 3", "Team 4"]
+  const teamsName = new Array(4).fill(null).map(() => randomTeamName())
 
   for (const teamName of teamsName) {
     await createTeam(page, teamName)

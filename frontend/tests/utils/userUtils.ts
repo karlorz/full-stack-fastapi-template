@@ -1,4 +1,4 @@
-import { type Page, expect } from "@playwright/test"
+import { type APIRequestContext, type Page, expect } from "@playwright/test"
 import { findLastEmail } from "./mailcatcher"
 
 export async function signUpNewUser(
@@ -54,4 +54,40 @@ export async function createTeam(page: Page, name: string) {
   await page.getByRole("button", { name: "Create Team" }).click()
   await page.waitForURL("/teams/all")
   await page.locator("li").filter({ hasText: name }).click()
+}
+
+export async function logOutUser(page: Page, name: string) {
+  await page.getByRole("button", { name: name }).click()
+  await page.getByRole("menuitem", { name: "Log out" }).click()
+  await page.goto("/login")
+}
+
+export async function sendInvitation(
+  page: Page,
+  teamSlug: string,
+  email: string,
+) {
+  await page.goto(`/${teamSlug}/settings`)
+  await expect(page.getByTestId("new-invitation")).toBeVisible()
+  await page.getByPlaceholder("Email address").fill(email)
+  await page.getByRole("button", { name: "Send invitation" }).click()
+}
+
+export async function viewInvitation(
+  page: Page,
+  email: string,
+  request: APIRequestContext,
+) {
+  const emailData = await findLastEmail({
+    request,
+    filter: (e) => e.recipients.includes(`<${email}>`),
+    timeout: 5000,
+  })
+
+  await page.goto(`http://localhost:1080/messages/${emailData.id}.html`)
+
+  const selector = 'a[href*="/team-invitation?token="]'
+  let url = await page.getAttribute(selector, "href")
+  url = url!.replace("http://localhost/", "http://localhost:5173/")
+  await page.goto(url)
 }

@@ -38,7 +38,11 @@ const CancelInvitation = ({ id }: { id: number }) => {
   return (
     <>
       <Tooltip label="Cancel Invitation">
-        <Button variant="unstyled" onClick={() => handleCancel()}>
+        <Button
+          variant="unstyled"
+          onClick={() => handleCancel()}
+          data-testid="cancel-invitation"
+        >
           <Center>
             <FaTimes />
           </Center>

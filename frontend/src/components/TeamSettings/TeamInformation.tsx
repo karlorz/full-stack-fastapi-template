@@ -65,7 +65,14 @@ const TeamInformation = () => {
         </Box>
       </Box>
       <Box>
-        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
+        <Box
+          boxShadow="xs"
+          px={8}
+          py={4}
+          borderRadius="lg"
+          mb={8}
+          data-testid="team-members"
+        >
           <Text fontWeight="bold" mb={4}>
             Team Members
           </Text>

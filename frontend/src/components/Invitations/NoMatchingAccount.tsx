@@ -56,7 +56,7 @@ const NoMatchingAccount = ({
           onClick={() => navigate({ to: "/" })}
           aria-label="Close invitation modal"
         />
-        <ModalBody>
+        <ModalBody data-testid="no-matching-account">
           <Text>You are not the invited user for this invitation.</Text>
           <Box my={6} boxShadow="xs" px={8} py={4} borderRadius="lg">
             <Text>

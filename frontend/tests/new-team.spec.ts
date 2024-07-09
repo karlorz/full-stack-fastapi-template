@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test"
+import { randomTeamName } from "./utils/random"
 
 const sections = ["Details", "Plan", "Payment"]
 
@@ -16,7 +17,7 @@ test("New team is visible", async ({ page }) => {
 test("User can create a new team with a valid name successfully", async ({
   page,
 }) => {
-  const teamName = "Test Team"
+  const teamName = randomTeamName()
   await page.goto("/teams/new")
 
   await page.getByPlaceholder("Name").fill(teamName)

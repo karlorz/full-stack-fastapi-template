@@ -75,7 +75,7 @@ const AcceptInvitation = ({
           onClick={() => navigate({ to: "/" })}
           aria-label="Close invitation modal"
         />
-        <ModalBody>
+        <ModalBody data-testid="accept-invitation">
           <Text>
             Hi <strong>{invitation?.email},</strong>
           </Text>

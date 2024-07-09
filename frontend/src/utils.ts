@@ -10,6 +10,18 @@ export const namePattern = {
   message: "Invalid name",
 }
 
+export const nameRules = () => {
+  const rules: any = {
+    maxLength: {
+      value: 255,
+      message: "Full Name cannot be more than 255 characters",
+    },
+    required: "Full Name is required",
+  }
+
+  return rules
+}
+
 export const passwordRules = (isRequired = true) => {
   const rules: any = {
     minLength: {

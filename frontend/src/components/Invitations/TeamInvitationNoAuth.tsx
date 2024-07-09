@@ -42,7 +42,7 @@ const TeamInvitationNoAuth = ({
           onClick={() => navigate({ to: "/" })}
           aria-label="Close invitation modal"
         />
-        <ModalBody>
+        <ModalBody data-testid="noauth-invitation">
           <Text>
             Hi <strong>{invitation?.email},</strong>
           </Text>

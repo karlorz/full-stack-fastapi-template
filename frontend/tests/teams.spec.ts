@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test"
+import { randomTeamName, slugify } from "./utils/random"
 import { createTeam } from "./utils/userUtils"
 
 test("Each user has its own personal team which is the default team", async ({
@@ -16,20 +17,24 @@ test("Each user has its own personal team which is the default team", async ({
 test("User can successfully change the current team from the user menu", async ({
   page,
 }) => {
-  const teamName = "Team A"
+  const teamName = randomTeamName()
+  const teamSlug = slugify(teamName)
   await createTeam(page, teamName)
 
-  await page.goto("/")
-  await page.getByRole("button", { name: "fastapi admin" }).click()
-  await page.getByRole("menuitem", { name: teamName }).click()
+  await page.goto(`/${teamSlug}`)
   await expect(page.getByRole("button", { name: teamName })).toBeVisible()
+  await page.getByRole("button", { name: teamName }).click()
+  await page.getByRole("menuitem", { name: "fastapi admin" }).click()
+  await expect(
+    page.getByRole("button", { name: "fastapi admin" }),
+  ).toBeVisible()
 })
 
 test("User can successfully change the current team from the user's list of teams", async ({
   page,
 }) => {
-  const teamName = "Team B"
-  const teamSlug = "team-b"
+  const teamName = randomTeamName()
+  const teamSlug = slugify(teamName)
   await createTeam(page, teamName)
 
   await page.goto("/teams/all")
@@ -39,8 +44,8 @@ test("User can successfully change the current team from the user's list of team
 })
 
 test("Selected team is reflected in team settings", async ({ page }) => {
-  const teamName = "Team C"
-  const teamSlug = "team-c"
+  const teamName = randomTeamName()
+  const teamSlug = slugify(teamName)
   await createTeam(page, teamName)
 
   await page.goto(`/${teamSlug}/settings`)
@@ -49,9 +54,9 @@ test("Selected team is reflected in team settings", async ({ page }) => {
 
 test.describe("User with admin role can update team information", () => {
   test("User can update team name", async ({ page }) => {
-    const teamName = "Team D"
-    const newTeamName = "Team D Updated"
-    const teamSlug = "team-d"
+    const teamName = randomTeamName()
+    const teamSlug = slugify(teamName)
+    const newTeamName = randomTeamName()
     await createTeam(page, teamName)
 
     await page.goto(`/${teamSlug}/settings`)
@@ -67,8 +72,8 @@ test.describe("User with admin role can update team information", () => {
   test("Validation messages are displayed for missing team name", async ({
     page,
   }) => {
-    const teamName = "Team E"
-    const teamSlug = "team-e"
+    const teamName = randomTeamName()
+    const teamSlug = slugify(teamName)
     await createTeam(page, teamName)
 
     await page.goto(`/${teamSlug}/settings`)
@@ -80,8 +85,8 @@ test.describe("User with admin role can update team information", () => {
   })
 
   test("User can delete a team", async ({ page }) => {
-    const teamName = "Team F"
-    const teamSlug = "team-f"
+    const teamName = randomTeamName()
+    const teamSlug = slugify(teamName)
     await createTeam(page, teamName)
 
     await page.goto(`/${teamSlug}/settings`)

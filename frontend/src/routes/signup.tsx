@@ -31,7 +31,7 @@ import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import {
   confirmPasswordRules,
   emailPattern,
-  namePattern,
+  nameRules,
   passwordRules,
 } from "../utils"
 
@@ -108,10 +108,7 @@ function SignUp() {
                 <Input
                   id="full_name"
                   minLength={3}
-                  {...register("full_name", {
-                    required: "Full Name is required",
-                    pattern: namePattern,
-                  })}
+                  {...register("full_name", nameRules())}
                   placeholder="Full Name"
                   type="text"
                 />

@@ -66,7 +66,11 @@ const NewInvitation = () => {
       alignItems="center"
       justifyContent="center"
     >
-      <Box as="form" onSubmit={handleSubmit(onSubmit)}>
+      <Box
+        as="form"
+        onSubmit={handleSubmit(onSubmit)}
+        data-testid="new-invitation"
+      >
         <Text mb={4}>Invite someone to join your team.</Text>
         <FormControl isRequired isInvalid={!!errors.email}>
           <FormLabel htmlFor="email" hidden>

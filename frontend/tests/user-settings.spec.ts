@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker"
 import { expect, test } from "@playwright/test"
 import { NewPassword } from "../src/client/models"
 import { randomEmail } from "./utils/random"
-import { logInUser, signUpNewUser } from "./utils/userUtils"
+import { logInUser, logOutUser, signUpNewUser } from "./utils/userUtils"
 
 const tabs = ["My profile", "Appearance"]
 
@@ -154,9 +154,7 @@ test.describe("Change password successfully", () => {
     await page.getByRole("button", { name: "Save" }).click()
     await expect(page.getByText("Password updated successfully")).toBeVisible()
 
-    await page.getByRole("button", { name: fullName }).click()
-    await page.getByRole("menuitem", { name: "Log out" }).click()
-    await page.goto("/login")
+    await logOutUser(page, fullName)
 
     // Check if the user can log in with the new password
     await logInUser(page, email, NewPassword)
@@ -250,17 +248,13 @@ test("User can switch from dark mode to light mode", async ({ page }) => {
   expect(isLightMode).toBe(true)
 })
 
-test("Selected mode is preserved across sessions", async ({
-  page,
-  context,
-}) => {
+test("Selected mode is preserved across sessions", async ({ page }) => {
   await page.goto("/settings")
   await page.goto("/settings")
   await page.getByRole("tab", { name: "Appearance" }).click()
   await page.getByLabel("Appearance").locator("span").nth(3).click()
 
-  await page.getByRole("button", { name: "fastapi admin" }).click()
-  await page.getByRole("menuitem", { name: "Log out" }).click()
+  await logOutUser(page, "fastapi admin")
 
   await logInUser(page, "admin@example.com", "changethis")
   const isDarkMode = await page.evaluate(() =>

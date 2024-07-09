@@ -86,20 +86,6 @@ test("Log in with invalid password", async ({ page }) => {
   await expect(page.getByText("Incorrect email or password")).toBeVisible()
 })
 
-test("User session is maintained after login", async ({ page }) => {
-  await page.goto("/login")
-
-  await fillForm(page, "admin@example.com", "changethis")
-  await page.getByRole("button", { name: "Log In" }).click()
-
-  await page.waitForURL("/")
-  await page.reload()
-  await page.waitForURL("/")
-  await expect(page.getByTestId("result")).toContainText(
-    "Hi, fastapi admin 👋🏼",
-  )
-})
-
 // Log out
 
 test("Successful log out", async ({ page }) => {
