@@ -74,6 +74,7 @@
 
 ### Refactors
 
+* 🔧 Add playwright-report to biome.json. PR [#136](https://github.com/fastapilabs/cloud/pull/136) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Delete Account / Team. PR [#125](https://github.com/fastapilabs/cloud/pull/125) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ User settings refactor . PR [#124](https://github.com/fastapilabs/cloud/pull/124) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Allow only admin roles to edit and delete teams, manage invitations and edit team name. PR [#113](https://github.com/fastapilabs/cloud/pull/113) by [@alejsdev](https://github.com/alejsdev).
