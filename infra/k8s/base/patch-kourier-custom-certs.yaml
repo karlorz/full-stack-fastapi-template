@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: net-kourier-controller
+spec:
+  template:
+    spec:
+      containers:
+      - name: controller
+        env:
+        # Sync with cert-manager certs
+        - name: CERTS_SECRET_NAMESPACE
+          value: cert-manager
+        - name: CERTS_SECRET_NAME
+          value: fastapicloud-serving-tls

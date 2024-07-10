@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- https://github.com/knative/serving/releases/download/knative-v1.14.1/serving-core.yaml
+- https://github.com/knative-extensions/net-kourier/releases/download/knative-v1.14.0/kourier.yaml
+patches:
+- path: patch-use-kourier.yaml
+  target:
+    kind: ConfigMap
+    name: config-network
+    namespace: knative-serving
+- path: patch-domain-template.yaml
+  target:
+    kind: ConfigMap
+    name: config-network
+    namespace: knative-serving
+- path: patch-kourier-service-load-balancer.yaml
+  target:
+    kind: Service
+    name: kourier
+    namespace: kourier-system
+- path: patch-kourier-custom-certs.yaml
+  target:
+    kind: Deployment
+    name: net-kourier-controller
+    namespace: knative-serving
