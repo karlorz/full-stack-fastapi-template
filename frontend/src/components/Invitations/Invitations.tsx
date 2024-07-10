@@ -45,7 +45,7 @@ function InvitationsTable() {
     queryClient.prefetchQuery(
       getInvitationsQueryOptions({ team, page: page + 1 }),
     )
-  }, [page, queryClient])
+  }, [page, queryClient, getInvitationsQueryOptions, team])
 
   const {
     data: invitations,
