@@ -76,6 +76,7 @@
 
 ### Refactors
 
+* 💚 Only run the backend service in tests. PR [#140](https://github.com/fastapilabs/cloud/pull/140) by [@patrick91](https://github.com/patrick91).
 * 🔧 Add playwright-report to biome.json. PR [#136](https://github.com/fastapilabs/cloud/pull/136) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Delete Account / Team. PR [#125](https://github.com/fastapilabs/cloud/pull/125) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ User settings refactor . PR [#124](https://github.com/fastapilabs/cloud/pull/124) by [@alejsdev](https://github.com/alejsdev).
