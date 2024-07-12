@@ -35,7 +35,7 @@ jobs:
           limit-access-to-actor: true
       - run: docker compose build
       - run: docker compose down -v --remove-orphans
-      - run: docker compose up -d
+      - run: docker compose up -d backend
       - name: Lint
         run: docker compose exec -T backend bash /app/scripts/lint.sh
       - name: Run tests
