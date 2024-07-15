@@ -18,8 +18,8 @@ KNATIVE_VERSION="1.14.1"
 echo "Add Cloudflare token secret"
 envsubst < k8s/cert-manager/cloudflare-token.yaml | kubectl apply -f -
 
-echo "Add Cert Manager issuer prod"
-kubectl apply -f k8s/cert-manager/issuer-prod.yaml
+echo "Add Cert Manager issuer production"
+kubectl apply -f k8s/cert-manager/issuer-production.yaml
 
 echo "Add Cert Manager issuer staging"
 kubectl apply -f k8s/cert-manager/issuer-staging.yaml
@@ -35,7 +35,7 @@ KNATIVE_TAG="knative-v${KNATIVE_VERSION}"
 kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_TAG}/serving-crds.yaml
 
 echo "Install Knative Serving and Kourier"
-kubectl apply -k "k8s/overlays/${DEPLOY_ENVIRONMENT}"
+kubectl apply -k "k8s/knative/overlays/${DEPLOY_ENVIRONMENT}"
 
 echo "Add DNS record for Knative:"
 
