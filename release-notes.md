@@ -165,6 +165,7 @@
 
 ### Internal
 
+* 👷 Update structure of infra and add README explaining the components and deploy process. PR [#148](https://github.com/fastapilabs/cloud/pull/148) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Update Traefik label configs for consistency with full-stack-fastapi-template. PR [#120](https://github.com/fastapilabs/cloud/pull/120) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Bump actions/setup-python from 2 to 5. PR [#112](https://github.com/fastapilabs/cloud/pull/112) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump actions/checkout from 2 to 4. PR [#111](https://github.com/fastapilabs/cloud/pull/111) by [@dependabot[bot]](https://github.com/apps/dependabot).
