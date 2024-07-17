@@ -16,6 +16,7 @@
 
 ### Features
 
+* ✨Add empty state and initial instructions to projects. PR [#150](https://github.com/fastapilabs/cloud/pull/150) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add confirmation with input to delete team/user. PR [#146](https://github.com/fastapilabs/cloud/pull/146) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add Knative setup (including Kourier, TLS certificates, default custom domain, semi-automatic install with Kustomize). PR [#139](https://github.com/fastapilabs/cloud/pull/139) by [@tiangolo](https://github.com/tiangolo).
 * ✅ Add invitations tests. PR [#127](https://github.com/fastapilabs/cloud/pull/127) by [@alejsdev](https://github.com/alejsdev).
