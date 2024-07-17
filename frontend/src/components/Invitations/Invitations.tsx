@@ -30,6 +30,7 @@ const getInvitationsQueryOptions = ({
   queryKey: ["invitations", { page }],
   queryFn: () =>
     InvitationsService.readInvitationsTeamByAdmin({
+      status: "pending",
       teamSlug: team,
       skip: (page - 1) * PER_PAGE,
       limit: PER_PAGE,
@@ -101,23 +102,24 @@ function InvitationsTable() {
                     </Tr>
                   ))}
                 </>
+              ) : (invitations?.data.length ?? 0) > 0 ? (
+                invitations?.data.map(({ id, status, email }) => (
+                  <Tr key={id} opacity={isPlaceholderData ? 0.5 : 1}>
+                    <Td isTruncated maxWidth="200px">
+                      {email}
+                    </Td>
+                    <Td textTransform="capitalize">
+                      <Badge colorScheme="orange">{status}</Badge>
+                    </Td>
+                    <Td>
+                      <CancelInvitation id={id} />
+                    </Td>
+                  </Tr>
+                ))
               ) : (
-                invitations?.data
-                  // TODO: this filter should be on the backend
-                  .filter(({ status }) => status === "pending")
-                  .map(({ id, status, email }) => (
-                    <Tr key={id} opacity={isPlaceholderData ? 0.5 : 1}>
-                      <Td isTruncated maxWidth="200px">
-                        {email}
-                      </Td>
-                      <Td textTransform="capitalize">
-                        <Badge colorScheme="orange">{status}</Badge>
-                      </Td>
-                      <Td>
-                        <CancelInvitation id={id} />
-                      </Td>
-                    </Tr>
-                  ))
+                <Tr>
+                  <Td>No pending invitations</Td>
+                </Tr>
               )}
             </Tbody>
           </ErrorBoundary>
