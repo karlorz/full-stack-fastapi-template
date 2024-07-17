@@ -77,6 +77,7 @@
 
 ### Refactors
 
+* ♻️ Update filter in InvitationsTable and handle empty state. PR [#151](https://github.com/fastapilabs/cloud/pull/151) by [@alejsdev](https://github.com/alejsdev).
 * 💚 Only run the backend service in tests. PR [#140](https://github.com/fastapilabs/cloud/pull/140) by [@patrick91](https://github.com/patrick91).
 * 🔧 Add playwright-report to biome.json. PR [#136](https://github.com/fastapilabs/cloud/pull/136) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Delete Account / Team. PR [#125](https://github.com/fastapilabs/cloud/pull/125) by [@alejsdev](https://github.com/alejsdev).
