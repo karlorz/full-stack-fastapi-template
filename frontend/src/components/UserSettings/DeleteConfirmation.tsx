@@ -5,12 +5,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogOverlay,
+  Box,
   Button,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Text,
+  VStack,
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import React from "react"
+import { useRef } from "react"
 import { useForm } from "react-hook-form"
 
+import { WarningTwoIcon } from "@chakra-ui/icons"
 import { UsersService } from "../../client"
 import useAuth from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
@@ -20,10 +28,18 @@ interface DeleteProps {
   onClose: () => void
 }
 
+interface DeleteInput {
+  confirmation: string
+}
+
 const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
-  const cancelRef = React.useRef<HTMLButtonElement | null>(null)
+  const cancelRef = useRef<HTMLButtonElement | null>(null)
   const queryClient = useQueryClient()
-  const { handleSubmit } = useForm()
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = useForm<DeleteInput>()
   const showToast = useCustomToast()
   const { logout } = useAuth()
 
@@ -63,17 +79,66 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
       >
         <AlertDialogOverlay>
           <AlertDialogContent as="form" onSubmit={handleSubmit(onSubmit)}>
-            <AlertDialogHeader>Confirmation Required</AlertDialogHeader>
+            <AlertDialogHeader>Delete Account</AlertDialogHeader>
 
             <AlertDialogBody>
-              All your account data will be{" "}
-              <strong>permanently deleted.</strong> If you are sure, please
-              click <strong>"Confirm"</strong> to proceed. This action cannot be
-              undone.
+              <VStack spacing={4}>
+                <Box
+                  bg="orange.100"
+                  color="ui.danger"
+                  w="100%"
+                  p={4}
+                  borderRadius="md"
+                  display="flex"
+                  alignItems="center"
+                  gap={2}
+                >
+                  <WarningTwoIcon w={4} h={4} color="ui.danger" />
+                  <Text>
+                    <strong>Warning:</strong> This action cannot be undone.
+                  </Text>
+                </Box>
+                {/* TODO: Update this text when the other features are completed*/}
+                <Text w="100%">
+                  All your account data will be{" "}
+                  <strong>permanently deleted.</strong>
+                </Text>
+                <Text>
+                  Type <strong>delete my account</strong> below to confirm and
+                  click the confirm button.
+                </Text>
+                <FormControl
+                  id="confirmation"
+                  isInvalid={!!errors.confirmation}
+                >
+                  <FormLabel htmlFor="confirmation" srOnly>
+                    Confirmation
+                  </FormLabel>
+                  <Input
+                    id="confirmation"
+                    {...register("confirmation", {
+                      required: "Field is required",
+                      validate: (value) =>
+                        value === "delete my account"
+                          ? true
+                          : "Confirmation does not match",
+                    })}
+                  />
+                  {errors.confirmation && (
+                    <FormErrorMessage>
+                      {errors.confirmation.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              </VStack>
             </AlertDialogBody>
 
             <AlertDialogFooter gap={3}>
-              <Button ref={cancelRef} onClick={onClose}>
+              <Button
+                ref={cancelRef}
+                onClick={onClose}
+                isDisabled={isSubmitting}
+              >
                 Cancel
               </Button>
               <Button variant="danger" type="submit">
