@@ -455,27 +455,24 @@ export const $UserTeamLinkPublic = {
 	},
 } as const;
 
+export const $UserUpdateEmailMe = {
+	properties: {
+		email: {
+	type: 'string',
+	isRequired: true,
+	format: 'email',
+	maxLength: 255,
+},
+	},
+} as const;
+
 export const $UserUpdateMe = {
 	properties: {
 		full_name: {
-	type: 'any-of',
-	contains: [{
 	type: 'string',
+	isRequired: true,
 	maxLength: 255,
-	minLength: 3,
-}, {
-	type: 'null',
-}],
-},
-		email: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-	format: 'email',
-	maxLength: 255,
-}, {
-	type: 'null',
-}],
+	minLength: 1,
 },
 	},
 } as const;

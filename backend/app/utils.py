@@ -25,6 +25,7 @@ class TokenType(str, Enum):
     user = "user"
     reset = "reset"
     email = "email"
+    update = "update"
 
 
 def get_datetime_utc() -> datetime:
@@ -139,6 +140,24 @@ def generate_verification_email_token(email: str) -> str:
     return encoded_jwt
 
 
+def generate_verification_update_email_token(email: str, old_email: str) -> str:
+    delta = timedelta(hours=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_HOURS)
+    now = get_datetime_utc()
+    expires = now + delta
+    exp = expires.timestamp()
+    encoded_jwt = jwt.encode(
+        {
+            "exp": exp,
+            "nbf": now,
+            "sub": f"{TokenType.update.value}-{email}",
+            "old_email": old_email,
+        },
+        settings.SECRET_KEY,
+        algorithm="HS256",
+    )
+    return encoded_jwt
+
+
 def generate_verification_email(email_to: str, token: str) -> EmailData:
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Verify your email address"
@@ -166,6 +185,18 @@ def verify_email_verification_token(token: str) -> str | None:
         return None
 
 
+def verify_update_email_verification_token(token: str) -> dict[str, Any] | None:
+    try:
+        decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        splitted_sub = decoded_token["sub"].split("-", maxsplit=1)
+        old_email = decoded_token.get("old_email")
+        if len(splitted_sub) == 2 and splitted_sub[0] == TokenType.update:
+            return {"email": splitted_sub[1], "old_email": old_email}
+        return None
+    except InvalidTokenError:
+        return None
+
+
 def generate_password_reset_token(email: str) -> str:
     delta = timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
     now = get_datetime_utc()
@@ -188,3 +219,37 @@ def verify_password_reset_token(token: str) -> str | None:
         return None
     except InvalidTokenError:
         return None
+
+
+def generate_verification_update_email(
+    full_name: str, email_to: str, token: str
+) -> EmailData:
+    project_name = settings.PROJECT_NAME
+    subject = f"{project_name} - Verify your email address"
+    link = f"{settings.server_host}/verify-update-email?token={token}"
+    html_content = render_email_template(
+        template_name="email_update_confirmation.html",
+        context={
+            "server_host": settings.server_host,
+            "project_name": settings.PROJECT_NAME,
+            "username": full_name,
+            "email": email_to,
+            "valid_hours": settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS,
+            "link": link,
+        },
+    )
+    return EmailData(html_content=html_content, subject=subject)
+
+
+def generate_account_deletion_email(email_to: str) -> EmailData:
+    project_name = settings.PROJECT_NAME
+    subject = f"{project_name} - Account deletion"
+    html_content = render_email_template(
+        template_name="account_deletion.html",
+        context={
+            "server_host": settings.server_host,
+            "project_name": settings.PROJECT_NAME,
+            "email": email_to,
+        },
+    )
+    return EmailData(html_content=html_content, subject=subject)

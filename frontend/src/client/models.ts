@@ -176,9 +176,14 @@ export type UserTeamLinkPublic = {
 
 
 
+export type UserUpdateEmailMe = {
+	email: string;
+};
+
+
+
 export type UserUpdateMe = {
-	full_name?: string | null;
-	email?: string | null;
+	full_name: string;
 };
 
 

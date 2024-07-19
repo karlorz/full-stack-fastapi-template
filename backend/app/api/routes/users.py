@@ -3,6 +3,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
+from sqlmodel import select
 
 from app import crud
 from app.api.deps import CurrentUser, SessionDep, get_first_superuser
@@ -14,18 +15,24 @@ from app.models import (
     Role,
     Team,
     UpdatePassword,
+    User,
     UserCreate,
     UserMePublic,
     UserPublic,
     UserRegister,
     UserTeamLink,
+    UserUpdateEmailMe,
     UserUpdateMe,
 )
 from app.utils import (
+    generate_account_deletion_email,
     generate_verification_email,
     generate_verification_email_token,
+    generate_verification_update_email,
+    generate_verification_update_email_token,
     send_email,
     verify_email_verification_token,
+    verify_update_email_verification_token,
 )
 
 router = APIRouter()
@@ -38,19 +45,61 @@ def update_user_me(
     """
     Update own user.
     """
-
-    if user_in.email:
-        existing_user = crud.get_user_by_email(session=session, email=user_in.email)
-        if existing_user and existing_user.id != current_user.id:
-            raise HTTPException(
-                status_code=409, detail="User with this email already exists"
-            )
     user_data = user_in.model_dump(exclude_unset=True)
     current_user.sqlmodel_update(user_data)
     session.add(current_user)
     session.commit()
     session.refresh(current_user)
     return current_user
+
+
+@router.post("/me/email")
+def request_email_update(
+    *, session: SessionDep, user_in: UserUpdateEmailMe, current_user: CurrentUser
+) -> Message:
+    """
+    Request to update own user email.
+    """
+    existing_user = crud.get_user_by_email(session=session, email=user_in.email)
+    if existing_user and existing_user.id != current_user.id:
+        raise HTTPException(
+            status_code=409, detail="User with this email already exists"
+        )
+    token = generate_verification_update_email_token(
+        email=user_in.email, old_email=current_user.email
+    )
+    email_data = generate_verification_update_email(
+        full_name=current_user.full_name, email_to=user_in.email, token=token
+    )
+    send_email(
+        email_to=user_in.email,
+        subject=email_data.subject,
+        html_content=email_data.html_content,
+    )
+
+    return Message(message="Email update request has been sent")
+
+
+@router.post("/me/verify-update-email")
+def verify_update_email_token(
+    session: SessionDep, payload: EmailVerificationToken
+) -> Message:
+    """
+    Verify email update token.
+    """
+    token_data = verify_update_email_verification_token(token=payload.token)
+    if not token_data:
+        raise HTTPException(status_code=400, detail="Invalid token")
+    user = session.exec(
+        select(User).filter(User.email == token_data["old_email"])
+    ).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.email = token_data["email"]
+    session.commit()
+    return Message(
+        message="New email has been successfully verified and the account has been updated"
+    )
 
 
 @router.patch("/me/password", response_model=Message)
@@ -80,6 +129,12 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     session.delete(current_user)
     session.commit()
+    email_data = generate_account_deletion_email(email_to=current_user.email)
+    send_email(
+        email_to=current_user.email,
+        subject=email_data.subject,
+        html_content=email_data.html_content,
+    )
     return Message(message="User deleted successfully")
 
 

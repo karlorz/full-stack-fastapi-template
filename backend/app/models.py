@@ -52,9 +52,12 @@ class UserUpdate(UserBase):
     full_name: str | None = Field(default=None, max_length=255, min_length=3)  # type: ignore
 
 
+class UserUpdateEmailMe(SQLModel):
+    email: EmailStr = Field(max_length=255)
+
+
 class UserUpdateMe(SQLModel):
-    full_name: str | None = Field(default=None, max_length=255, min_length=3)
-    email: EmailStr | None = Field(default=None, max_length=255)
+    full_name: str = Field(max_length=255, min_length=1)
 
 
 class UpdatePassword(SQLModel):

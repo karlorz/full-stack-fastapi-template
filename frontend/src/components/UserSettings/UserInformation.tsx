@@ -1,11 +1,21 @@
-import { Box, Button, Container, Flex, Heading, Text } from "@chakra-ui/react"
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  Heading,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react"
 import { FaGithub } from "react-icons/fa"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { type ApiError, type UserUpdateMe, UsersService } from "../../client"
+import { useState } from "react"
+import { type ApiError, UsersService } from "../../client"
 import { useCurrentUser } from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
 import EditableField from "../Common/EditableField"
+import UpdateEmailVerification from "../Common/UpdateEmailVerification"
 import ChangePassword from "./ChangePassword"
 import DeleteAccount from "./DeleteAccount"
 
@@ -13,14 +23,34 @@ const UserInformation = () => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const currentUser = useCurrentUser()
+  const [showUpdateEmailModal, setShowUpdateEmailModal] = useState(false)
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const mutation = useMutation({
-    mutationFn: (data: UserUpdateMe) =>
-      UsersService.updateUserMe({
-        requestBody: data,
+  const emailMutation = useMutation({
+    mutationFn: (email: string) =>
+      UsersService.requestEmailUpdate({
+        requestBody: { email },
       }),
     onSuccess: () => {
-      showToast("Success!", "User updated successfully", "success")
+      setShowUpdateEmailModal(true)
+      onOpen()
+    },
+    onError: (err: ApiError) => {
+      const errDetail = (err.body as any)?.detail
+      showToast("Something went wrong.", `${errDetail}`, "error")
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries()
+    },
+  })
+
+  const fullNameMutation = useMutation({
+    mutationFn: (full_name: string) =>
+      UsersService.updateUserMe({
+        requestBody: { full_name },
+      }),
+    onSuccess: () => {
+      showToast("Success!", "Full name updated successfully", "success")
     },
     onError: (err: ApiError) => {
       const errDetail = (err.body as any)?.detail
@@ -46,9 +76,7 @@ const UserInformation = () => {
             <EditableField
               type="full_name"
               value={currentUser?.full_name ?? ""}
-              onSubmit={(newFullName) =>
-                mutation.mutate({ full_name: newFullName })
-              }
+              onSubmit={(newFullName) => fullNameMutation.mutate(newFullName)}
               canEdit={true}
             />
           </Box>
@@ -61,7 +89,7 @@ const UserInformation = () => {
             <EditableField
               type="email"
               value={currentUser?.email ?? ""}
-              onSubmit={(newEmail) => mutation.mutate({ email: newEmail })}
+              onSubmit={(newEmail) => emailMutation.mutate(newEmail)}
               canEdit={true}
             />
           </Box>
@@ -97,6 +125,9 @@ const UserInformation = () => {
           </Flex>
         </Box>
       </Container>
+      {showUpdateEmailModal && (
+        <UpdateEmailVerification isOpen={isOpen} onClose={onClose} />
+      )}
     </>
   )
 }

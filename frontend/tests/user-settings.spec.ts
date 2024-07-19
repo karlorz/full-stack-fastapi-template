@@ -1,6 +1,5 @@
-import { faker } from "@faker-js/faker"
 import { expect, test } from "@playwright/test"
-import { NewPassword } from "../src/client/models"
+import { findLastEmail } from "./utils/mailcatcher"
 import { randomEmail } from "./utils/random"
 import { logInUser, logOutUser, signUpNewUser } from "./utils/userUtils"
 
@@ -43,7 +42,7 @@ test.describe("Edit user full name and email successfully", () => {
     await page.getByRole("button", { name: "Edit" }).nth(0).click()
     await page.locator("#full_name").fill(updatedName)
     await page.getByRole("button", { name: "Save" }).first().click()
-    await expect(page.getByText("User updated successfully")).toBeVisible()
+    await expect(page.getByText("Full name updated successfully")).toBeVisible()
 
     // Check if the new name is displayed on the page
     await expect(
@@ -51,7 +50,10 @@ test.describe("Edit user full name and email successfully", () => {
     ).toBeVisible()
   })
 
-  test("Edit user email with a valid email", async ({ page, request }) => {
+  test("Edit user email with a valid email after verification", async ({
+    page,
+    request,
+  }) => {
     const fullName = "Test User"
     const email = randomEmail()
     const updatedEmail = randomEmail()
@@ -63,18 +65,38 @@ test.describe("Edit user full name and email successfully", () => {
     // Log in the user
     await logInUser(page, email, password)
 
+    // Request email update
     await page.goto("/settings")
     await page.getByRole("button", { name: fullName }).click()
     await page.getByRole("menuitem", { name: "Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(1).click()
     await page.locator("#email").fill(updatedEmail)
     await page.getByRole("button", { name: "Save" }).first().click()
-    await expect(page.getByText("User updated successfully")).toBeVisible()
+    await expect(page.getByTestId("verification-email-modal")).toBeVisible()
 
-    // Check if the new email is displayed on the page
-    await expect(
-      page.getByLabel("My profile").getByText(updatedEmail, { exact: true }),
-    ).toBeVisible()
+    // Verify email
+    const emailData = await findLastEmail({
+      request,
+      filter: (e) => e.recipients.includes(`<${updatedEmail}>`),
+      timeout: 5000,
+    })
+
+    await page.goto(`http://localhost:1080/messages/${emailData.id}.html`)
+
+    const selector = 'a[href*="/verify-update-email?token="]'
+
+    let url = await page.getAttribute(selector, "href")
+
+    // TODO: update var instead of doing a replace
+    url = url!.replace("http://localhost/", "http://localhost:5173/")
+
+    // Check if the user is redirected to the email verification success page
+    await page.goto(url)
+
+    await expect(page.getByTestId("result")).toContainText(
+      "Your email address has been updated successfully.",
+      { timeout: 5000 },
+    )
   })
 })
 

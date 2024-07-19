@@ -177,7 +177,7 @@ test.describe("Different scenarios for viewing invitations", () => {
     await viewInvitation(page, user2Email, request)
 
     // check for the noauth-invitation modal
-    expect(page.getByTestId("noauth-invitation")).toBeVisible()
+    await expect(page.getByTestId("noauth-invitation")).toBeVisible()
   })
 
   test("Invited user is not the same logged in", async ({ page, request }) => {
@@ -206,6 +206,6 @@ test.describe("Different scenarios for viewing invitations", () => {
     await viewInvitation(page, user2Email, request)
 
     // check for no matching account
-    expect(page.getByTestId("no-matching-account")).toBeVisible()
+    await expect(page.getByTestId("no-matching-account")).toBeVisible()
   })
 })

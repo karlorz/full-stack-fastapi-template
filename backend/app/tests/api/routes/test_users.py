@@ -8,8 +8,12 @@ from app.core.config import settings
 from app.core.security import verify_password
 from app.models import Role, User, UserCreate
 from app.tests.utils.team import create_random_team
+from app.tests.utils.user import create_user, user_authentication_headers
 from app.tests.utils.utils import random_email, random_lower_string
-from app.utils import generate_verification_email_token
+from app.utils import (
+    generate_verification_email_token,
+    generate_verification_update_email_token,
+)
 
 
 def test_get_users_normal_user_me(
@@ -23,12 +27,11 @@ def test_get_users_normal_user_me(
     assert current_user["personal_team_slug"] is not None
 
 
-def test_update_user_me(
+def test_update_user_me_full_name(
     client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
     full_name = "Updated Name"
-    email = random_email()
-    data = {"full_name": full_name, "email": email}
+    data = {"full_name": full_name}
     r = client.patch(
         f"{settings.API_V1_STR}/users/me",
         headers=normal_user_token_headers,
@@ -36,13 +39,11 @@ def test_update_user_me(
     )
     assert r.status_code == 200
     updated_user = r.json()
-    assert updated_user["email"] == email
     assert updated_user["full_name"] == full_name
 
-    user_query = select(User).where(User.email == email)
+    user_query = select(User).where(User.id == updated_user["id"])
     user_db = db.exec(user_query).first()
     assert user_db
-    assert user_db.email == email
     assert user_db.full_name == full_name
 
 
@@ -110,13 +111,64 @@ def test_update_user_me_email_exists(
     user = crud.create_user(session=db, user_create=user_in, is_verified=False)
 
     data = {"email": user.email}
-    r = client.patch(
-        f"{settings.API_V1_STR}/users/me",
+    r = client.post(
+        f"{settings.API_V1_STR}/users/me/email",
         headers=normal_user_token_headers,
         json=data,
     )
     assert r.status_code == 409
     assert r.json()["detail"] == "User with this email already exists"
+
+
+def test_request_email_update(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    new_email = random_email()
+
+    data = {"email": new_email}
+    r = client.post(
+        f"{settings.API_V1_STR}/users/me/email",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert r.status_code == 200
+    assert r.json()["message"] == "Email update request has been sent"
+
+
+def test_update_user_email_me(client: TestClient, db: Session) -> None:
+    new_email = random_email()
+    email = random_email()
+    password = random_lower_string()
+    full_name = random_lower_string()
+
+    create_user(
+        session=db,
+        email=email,
+        password=password,
+        full_name=full_name,
+        is_verified=True,
+    )
+    user_headers = user_authentication_headers(
+        client=client, email=email, password=password
+    )
+
+    token = generate_verification_update_email_token(email=new_email, old_email=email)
+
+    data = {"token": token}
+    r = client.post(
+        f"{settings.API_V1_STR}/users/me/verify-update-email",
+        headers=user_headers,
+        json=data,
+    )
+    assert r.status_code == 200
+    assert (
+        r.json()["message"]
+        == "New email has been successfully verified and the account has been updated"
+    )
+
+    user_query = select(User).where(User.email == new_email)
+    user_db = db.exec(user_query).first()
+    assert user_db
 
 
 def test_update_password_me_same_password_error(
