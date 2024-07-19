@@ -33,7 +33,8 @@ test("User can reset password successfully using the link", async ({
 }) => {
   const full_name = "Test User"
   const email = randomEmail()
-  const password = "password"
+  const password = "changethis"
+  const new_password = "changethat"
 
   // Sign up a new user
   await signUpNewUser(page, full_name, email, password, request)
@@ -61,12 +62,13 @@ test("User can reset password successfully using the link", async ({
   // Set the new password and confirm it
   await page.goto(url)
 
-  await page.getByLabel("Set Password").fill("changethat")
-  await page.getByLabel("Confirm Password").fill("changethat")
+  await page.getByLabel("Set Password").fill(new_password)
+  await page.getByLabel("Confirm Password").fill(new_password)
   await page.getByRole("button", { name: "Reset Password" }).click()
+  await expect(page.getByText("Password updated successfully")).toBeVisible()
 
   // Check if the user is able to login with the new password
-  await logInUser(page, email, password)
+  await logInUser(page, email, new_password)
 })
 
 test("Expired or invalid reset link", async ({ page }) => {
