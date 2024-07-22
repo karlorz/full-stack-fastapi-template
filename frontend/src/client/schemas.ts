@@ -80,10 +80,8 @@ export const $HTTPValidationError = {
 export const $InvitationCreate = {
 	properties: {
 		role: {
-	type: 'all-of',
-	contains: [{
-	type: 'app__models__Role__1',
-}],
+	type: 'Enum',
+	enum: ['member','admin',],
 	isRequired: true,
 },
 		email: {
@@ -102,10 +100,8 @@ export const $InvitationCreate = {
 export const $InvitationPublic = {
 	properties: {
 		role: {
-	type: 'all-of',
-	contains: [{
-	type: 'app__models__Role__1',
-}],
+	type: 'Enum',
+	enum: ['member','admin',],
 	isRequired: true,
 },
 		email: {
@@ -115,16 +111,19 @@ export const $InvitationPublic = {
 	maxLength: 255,
 },
 		id: {
-	type: 'number',
+	type: 'string',
 	isRequired: true,
+	format: 'uuid',
 },
 		team_id: {
-	type: 'number',
+	type: 'string',
 	isRequired: true,
+	format: 'uuid',
 },
 		invited_by_id: {
-	type: 'number',
+	type: 'string',
 	isRequired: true,
+	format: 'uuid',
 },
 		status: {
 	type: 'InvitationStatus',
@@ -238,8 +237,9 @@ export const $TeamPublic = {
 }],
 },
 		id: {
-	type: 'number',
+	type: 'string',
 	isRequired: true,
+	format: 'uuid',
 },
 		slug: {
 	type: 'string',
@@ -298,8 +298,9 @@ export const $TeamWithUserPublic = {
 }],
 },
 		id: {
-	type: 'number',
+	type: 'string',
 	isRequired: true,
+	format: 'uuid',
 },
 		slug: {
 	type: 'string',
@@ -380,8 +381,9 @@ export const $UserMePublic = {
 	minLength: 3,
 },
 		id: {
-	type: 'number',
+	type: 'string',
 	isRequired: true,
+	format: 'uuid',
 },
 		personal_team_slug: {
 	type: 'string',
@@ -409,8 +411,9 @@ export const $UserPublic = {
 	minLength: 3,
 },
 		id: {
-	type: 'number',
+	type: 'string',
 	isRequired: true,
+	format: 'uuid',
 },
 	},
 } as const;
@@ -508,6 +511,6 @@ export const $app__models__Role__1 = {
 } as const;
 
 export const $app__models__Role__2 = {
-	type: 'app__models__Role__1',
-	maxLength: 255,
+	type: 'Enum',
+	enum: ['member','admin',],
 } as const;

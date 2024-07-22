@@ -16,7 +16,7 @@ import useCustomToast from "../../hooks/useCustomToast"
 
 interface RemoveProps {
   teamSlug?: string
-  userId: number
+  userId: string
   isOpen: boolean
   onClose: () => void
 }

@@ -1,3 +1,4 @@
+import uuid
 from datetime import timedelta
 
 import jwt
@@ -26,7 +27,7 @@ def generate_invitation_token_email(
     return EmailData(html_content=html_content, subject=subject)
 
 
-def generate_invitation_token(invitation_id: int) -> str:
+def generate_invitation_token(invitation_id: uuid.UUID) -> str:
     now = get_datetime_utc()
     expires = now + timedelta(hours=settings.INVITATION_TOKEN_EXPIRE_HOURS)
     encoded_jwt = jwt.encode(
@@ -41,19 +42,19 @@ def generate_invitation_token(invitation_id: int) -> str:
     return encoded_jwt
 
 
-def verify_invitation_token(token: str) -> int | None:
+def verify_invitation_token(token: str) -> str | None:
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        split_token = decoded_token["sub"].split("-")
+        split_token = decoded_token["sub"].split("-", maxsplit=1)
         if split_token[0] != "invitation":
             return None
-        return int(split_token[1])
+        return str(split_token[1])
     except InvalidTokenError:
         return None
 
 
 def send_invitation_email(
-    *, invitation_id: int, email_to: str, email_from: str, team_name: str
+    *, invitation_id: uuid.UUID, email_to: str, email_from: str, team_name: str
 ) -> None:
     token = generate_invitation_token(invitation_id=invitation_id)
     email_data = generate_invitation_token_email(

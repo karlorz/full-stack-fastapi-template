@@ -1,3 +1,4 @@
+import uuid
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -161,7 +162,7 @@ def update_member_in_team(
     session: SessionDep,
     current_user: CurrentUser,
     team_slug: str,
-    user_id: int,
+    user_id: uuid.UUID,
     member_in: TeamUpdateMember,
 ) -> Any:
     """
@@ -204,7 +205,7 @@ def remove_member_from_team(
     session: SessionDep,
     current_user: CurrentUser,
     team_slug: str,
-    user_id: int,
+    user_id: uuid.UUID,
 ) -> Message:
     """
     Remove a member from a team.

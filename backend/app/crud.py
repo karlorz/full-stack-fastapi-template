@@ -1,3 +1,4 @@
+import uuid
 from typing import Any
 
 from sqlmodel import Session, select
@@ -84,7 +85,7 @@ def add_user_to_team(
 
 
 def get_user_team_link_by_user_id_and_team_slug(
-    *, session: Session, user_id: int | None, team_slug: str | None
+    *, session: Session, user_id: uuid.UUID | None, team_slug: str | None
 ) -> UserTeamLink | None:
     statement = select(UserTeamLink).where(
         UserTeamLink.user_id == user_id,

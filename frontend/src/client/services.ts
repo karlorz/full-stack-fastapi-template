@@ -226,10 +226,10 @@ requestBody,
 	/**
 	 * Verify Update Email Token
 	 * Verify email update token.
-	 * @returns unknown Successful Response
+	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static verifyUpdateEmailToken(data: TDataVerifyUpdateEmailToken): CancelablePromise<unknown> {
+	public static verifyUpdateEmailToken(data: TDataVerifyUpdateEmailToken): CancelablePromise<Message> {
 		const {
 requestBody,
 } = data;
@@ -387,12 +387,12 @@ export type TDataDeleteTeam = {
 export type TDataUpdateMemberInTeam = {
                 requestBody: TeamUpdateMember
 teamSlug: string
-userId: number
+userId: string
                 
             }
 export type TDataRemoveMemberFromTeam = {
                 teamSlug: string
-userId: number
+userId: string
                 
             }
 export type TDataValidateTeamName = {
@@ -618,11 +618,11 @@ export type TDataVerifyInvitation = {
                 
             }
 export type TDataInvitationHtmlContent = {
-                invitationId: number
+                invitationId: string
                 
             }
 export type TDataDeleteInvitation = {
-                invId: number
+                invId: string
                 
             }
 

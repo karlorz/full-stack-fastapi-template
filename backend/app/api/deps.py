@@ -39,7 +39,7 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-    splitted_sub = token_data.sub.split("-") if token_data.sub else []
+    splitted_sub = token_data.sub.split("-", maxsplit=1) if token_data.sub else []
     if len(splitted_sub) == 0 or splitted_sub[0] != TokenType.user:
         raise HTTPException(
             status_code=404, detail="The token is not a valid user token"

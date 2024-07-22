@@ -1,3 +1,4 @@
+import uuid
 from datetime import timedelta
 from typing import Any, TypeVar
 
@@ -212,7 +213,7 @@ def create_invitation(
 
     if settings.emails_enabled:
         send_invitation_email(
-            invitation_id=invitation.id,  # type: ignore
+            invitation_id=invitation.id,
             email_to=invitation.email,
             email_from=current_user.email,
             team_name=invitation.team.name,
@@ -293,7 +294,7 @@ def verify_invitation(
     dependencies=[Depends(get_first_superuser)],
     response_class=HTMLResponse,
 )
-def invitation_html_content(invitation_id: int, session: SessionDep) -> Any:
+def invitation_html_content(invitation_id: uuid.UUID, session: SessionDep) -> Any:
     """
     HTML Content for Invitation email
     """
@@ -319,7 +320,7 @@ def invitation_html_content(invitation_id: int, session: SessionDep) -> Any:
 def delete_invitation(
     session: SessionDep,
     current_user: CurrentUser,
-    inv_id: int,
+    inv_id: uuid.UUID,
 ) -> Any:
     """
     Delete an invitation.

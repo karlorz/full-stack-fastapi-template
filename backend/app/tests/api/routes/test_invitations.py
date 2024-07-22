@@ -1,3 +1,4 @@
+import uuid
 from datetime import timedelta
 from unittest.mock import patch
 
@@ -70,15 +71,24 @@ def test_read_invitations_me(client: TestClient, db: Session) -> None:
 
     # Assert the response and the expected behavior
     assert response.status_code == 200
+
+    # Invitations should be sorted by id to match the order in the response
+    invitation_list = [invitation1, invitation2]
+    invitation_list.sort(key=lambda invitation: invitation.team_id, reverse=False)
+    # Teams should be sorted by id to match the order in the response
+    team_list = [team1, team2]
+    team_list.sort(key=lambda team: team.id, reverse=False)
+
     data = response.json()
     invitations = data["data"]
+    invitations.sort(key=lambda invitation: invitation["team_id"], reverse=False)
     count = data["count"]
     assert len(invitations) == 2
     assert count == 2
-    assert invitations[0]["id"] == invitation1.id
-    assert invitations[1]["id"] == invitation2.id
-    assert invitations[0]["team_id"] == team1.id
-    assert invitations[1]["team_id"] == team2.id
+    assert invitations[0]["id"] == str(invitation_list[0].id)
+    assert invitations[1]["id"] == str(invitation_list[1].id)
+    assert invitations[0]["team_id"] == str(team_list[0].id)
+    assert invitations[1]["team_id"] == str(team_list[1].id)
     assert invitations[0]["email"] == invited_user.email
     assert invitations[1]["email"] == invited_user.email
     assert invitations[0]["role"] == "member"
@@ -192,20 +202,30 @@ def test_read_invitations_sent(client: TestClient, db: Session) -> None:
 
     # Assert the response and the expected behavior
     assert response.status_code == 200
+
+    # Invitations should be sorted by id to match the order in the response
+    invitation_list = [invitation1, invitation2]
+    invitation_list.sort(key=lambda invitation: invitation.team_id, reverse=False)
+    # Teams should be sorted by id to match the order in the response
+    team_list = [team1, team2]
+    team_list.sort(key=lambda team: team.id, reverse=False)
+
     data = response.json()
     invitations = data["data"]
+    invitations.sort(key=lambda invitation: invitation["team_id"], reverse=False)
     count = data["count"]
     assert len(invitations) == 2
     assert count == 2
-    assert invitations[0]["id"] == invitation1.id
-    assert invitations[1]["id"] == invitation2.id
-    assert invitations[0]["team_id"] == team1.id
-    assert invitations[1]["team_id"] == team2.id
+    assert invitations[0]["id"] == str(invitation_list[0].id)
+    assert invitations[1]["id"] == str(invitation_list[1].id)
+    assert invitations[0]["team_id"] == str(team_list[0].id)
+    assert invitations[1]["team_id"] == str(team_list[1].id)
     assert invitations[0]["email"] == user2.email
+    assert invitations[1]["email"] == user2.email
     assert invitations[0]["role"] == "member"
     assert invitations[1]["role"] == "member"
-    assert invitations[0]["sender"]["id"] == user1.id
-    assert invitations[1]["sender"]["id"] == user1.id
+    assert invitations[0]["sender"]["id"] == str(user1.id)
+    assert invitations[1]["sender"]["id"] == str(user1.id)
 
 
 def test_read_invitations_sent_empty(client: TestClient, db: Session) -> None:
@@ -390,7 +410,7 @@ def test_read_invitations_team_filter(client: TestClient, db: Session) -> None:
     count = data["count"]
     assert len(invitations) == 1
     assert count == 1
-    assert invitations[0]["id"] == pending_invitation.id
+    assert invitations[0]["id"] == str(pending_invitation.id)
 
 
 def test_read_invitations_team_empty(client: TestClient, db: Session) -> None:
@@ -564,10 +584,10 @@ def test_create_invitation_success(client: TestClient, db: Session) -> None:
         # Assert the response and the expected behavior
         assert response.status_code == 200
         data = response.json()
-        assert data["team_id"] == team1.id
+        assert data["team_id"] == str(team1.id)
         assert data["email"] == user2.email
         assert data["role"] == "member"
-        assert data["sender"]["id"] == user1.id
+        assert data["sender"]["id"] == str(user1.id)
 
 
 def test_create_invitation_team_not_found_current_user(
@@ -813,10 +833,10 @@ def test_create_invitation_user_to_invite_not_found(
 
         assert response.status_code == 200
         data = response.json()
-        assert data["team_id"] == team1.id
+        assert data["team_id"] == str(team1.id)
         assert data["email"] == "not-found@fastapi.com"
         assert data["role"] == "member"
-        assert data["sender"]["id"] == user1.id
+        assert data["sender"]["id"] == str(user1.id)
 
 
 def test_create_invitation_user_already_in_team_without_invitation(
@@ -903,7 +923,7 @@ def test_accept_invitation_success(client: TestClient, db: Session) -> None:
         client=client, email=user2.email, password="test12345"
     )
 
-    invitation_token = generate_invitation_token(invitation_id=invitation1.id)  # type: ignore
+    invitation_token = generate_invitation_token(invitation_id=invitation1.id)
 
     # Make a request to the get_invitations_me route using the client fixture and superuser_token_headers
     response = client.post(
@@ -917,18 +937,18 @@ def test_accept_invitation_success(client: TestClient, db: Session) -> None:
     # Assert the response and the expected behavior
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == invitation1.id
+    assert data["id"] == str(invitation1.id)
     assert data["status"] == InvitationStatus.accepted
-    assert data["team_id"] == team1.id
+    assert data["team_id"] == str(team1.id)
     assert data["email"] == user2.email
     assert data["role"] == "member"
-    assert data["sender"]["id"] == user1.id
+    assert data["sender"]["id"] == str(user1.id)
     # ** db assert
     assert data["status"] == invitation1.status
-    assert data["team_id"] == invitation1.team_id
+    assert data["team_id"] == str(invitation1.team_id)
     assert data["email"] == invitation1.email
     assert data["role"] == invitation1.role
-    assert data["sender"]["id"] == invitation1.invited_by_id
+    assert data["sender"]["id"] == str(invitation1.invited_by_id)
 
 
 def test_accept_invitation_invalid_token(client: TestClient, db: Session) -> None:
@@ -1015,7 +1035,7 @@ def test_accept_invitation_not_found(client: TestClient, db: Session) -> None:
         client=client, email=user1.email, password="test12345"
     )
 
-    invitation_token = generate_invitation_token(invitation_id=invitation1.id)  # type: ignore
+    invitation_token = generate_invitation_token(invitation_id=invitation1.id)
 
     # Make a request to the get_invitations_me route using the client fixture and superuser_token_headers
     response = client.post(
@@ -1066,7 +1086,7 @@ def test_accept_invitation_success_set_user_fk(client: TestClient, db: Session) 
         client=client, email=user2.email, password="test12345"
     )
 
-    invitation_token = generate_invitation_token(invitation_id=invitation1.id)  # type: ignore
+    invitation_token = generate_invitation_token(invitation_id=invitation1.id)
 
     # Make a request to the get_invitations_me route using the client fixture and superuser_token_headers
     response = client.post(
@@ -1080,9 +1100,9 @@ def test_accept_invitation_success_set_user_fk(client: TestClient, db: Session) 
     # Assert the response and the expected behavior
     assert response.status_code == 200
     data = response.json()
-    assert data["sender"]["id"] == user1.id
+    assert data["sender"]["id"] == str(user1.id)
     # ** db assert
-    assert data["sender"]["id"] == invitation1.invited_by_id
+    assert data["sender"]["id"] == str(invitation1.invited_by_id)
 
 
 def test_accept_invitation_was_already_used(client: TestClient, db: Session) -> None:
@@ -1121,7 +1141,7 @@ def test_accept_invitation_was_already_used(client: TestClient, db: Session) -> 
         client=client, email=user2.email, password="test12345"
     )
 
-    invitation_token = generate_invitation_token(invitation_id=invitation1.id)  # type: ignore
+    invitation_token = generate_invitation_token(invitation_id=invitation1.id)
 
     # Make a request to the get_invitations_me route using the client fixture and superuser_token_headers
     response = client.post(
@@ -1175,7 +1195,7 @@ def test_accept_invitation_user_already_in_team(
         client=client, email=user2.email, password="test12345"
     )
 
-    invitation_token = generate_invitation_token(invitation_id=invitation1.id)  # type: ignore
+    invitation_token = generate_invitation_token(invitation_id=invitation1.id)
 
     response = client.post(
         f"{settings.API_V1_STR}/invitations/accept",
@@ -1226,7 +1246,7 @@ def test_accept_invitation_expired(client: TestClient, db: Session) -> None:
         client=client, email=user2.email, password="test12345"
     )
 
-    invitation_token = generate_invitation_token(invitation_id=invitation1.id)  # type: ignore
+    invitation_token = generate_invitation_token(invitation_id=invitation1.id)
 
     response = client.post(
         f"{settings.API_V1_STR}/invitations/accept",
@@ -1264,7 +1284,7 @@ def test_invitation_token_verify_success(client: TestClient, db: Session) -> Non
         invitation_status=InvitationStatus.pending,
     )
 
-    invitation_token = generate_invitation_token(invitation_id=invitation1.id)  # type: ignore
+    invitation_token = generate_invitation_token(invitation_id=invitation1.id)
 
     response = client.post(
         f"{settings.API_V1_STR}/invitations/token/verify",
@@ -1275,8 +1295,8 @@ def test_invitation_token_verify_success(client: TestClient, db: Session) -> Non
     data = response.json()
     assert data["email"] == "user@testing.com"
     assert data["role"] == "member"
-    assert data["team_id"] == team1.id
-    assert data["invited_by_id"] == user1.id
+    assert data["team_id"] == str(team1.id)
+    assert data["invited_by_id"] == str(user1.id)
 
 
 def test_invitation_token_verify_fail(client: TestClient) -> None:
@@ -1303,7 +1323,7 @@ def test_invitation_token_verify_not_found(client: TestClient, db: Session) -> N
 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
-    invitation_token = generate_invitation_token(invitation_id=9999999)
+    invitation_token = generate_invitation_token(invitation_id=uuid.uuid4())
 
     response = client.post(
         f"{settings.API_V1_STR}/invitations/token/verify",
@@ -1339,7 +1359,7 @@ def test_invitation_token_verify_expired(client: TestClient, db: Session) -> Non
         expires_at=get_datetime_utc() - timedelta(hours=1),
     )
 
-    invitation_token = generate_invitation_token(invitation_id=invitation1.id)  # type: ignore
+    invitation_token = generate_invitation_token(invitation_id=invitation1.id)
 
     response = client.post(
         f"{settings.API_V1_STR}/invitations/token/verify",
@@ -1435,7 +1455,7 @@ def test_delete_invitation_not_found_by_another_user(
 
     # Make a request to the get_invitations_me route using the client fixture and superuser_token_headers
     response = client.delete(
-        f"{settings.API_V1_STR}/invitations/99999",
+        f"{settings.API_V1_STR}/invitations/{uuid.uuid4()}",
         headers=user_auth_headers,
     )
 

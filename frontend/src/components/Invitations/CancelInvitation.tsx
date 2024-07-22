@@ -8,7 +8,7 @@ import {
 } from "../../client/services"
 import useCustomToast from "../../hooks/useCustomToast"
 
-const CancelInvitation = ({ id }: { id: number }) => {
+const CancelInvitation = ({ id }: { id: string }) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
 

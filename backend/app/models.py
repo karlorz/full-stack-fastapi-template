@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from enum import Enum
 from typing import Optional
@@ -19,9 +20,9 @@ class InvitationStatus(str, Enum):
 
 
 class UserTeamLink(SQLModel, table=True):
-    user_id: int | None = Field(default=None, foreign_key="user.id", primary_key=True)
-    team_id: int | None = Field(default=None, foreign_key="team.id", primary_key=True)
-    role: Role = Field(max_length=255)
+    user_id: uuid.UUID = Field(foreign_key="user.id", primary_key=True)
+    team_id: uuid.UUID = Field(foreign_key="team.id", primary_key=True)
+    role: Role = Field()
 
     user: "User" = Relationship(back_populates="team_links")
     team: "Team" = Relationship(back_populates="user_links")
@@ -67,12 +68,12 @@ class UpdatePassword(SQLModel):
 
 # Database model, database table inferred from class name
 class User(UserBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str
     username: str = Field(unique=True, index=True, max_length=255)
     is_verified: bool = False
 
-    personal_team_id: int | None = Field(
+    personal_team_id: uuid.UUID | None = Field(
         foreign_key="team.id", nullable=True, default=None
     )
     personal_team: Optional["Team"] = Relationship()
@@ -86,12 +87,12 @@ class User(UserBase, table=True):
 
 # Used for the current user
 class UserMePublic(UserBase):
-    id: int
+    id: uuid.UUID
     personal_team_slug: str
 
 
 class UserPublic(UserBase):
-    id: int
+    id: uuid.UUID
 
 
 class UsersPublic(SQLModel):
@@ -140,7 +141,7 @@ class TeamBase(SQLModel):
 
 
 class Team(TeamBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     slug: str = Field(unique=True, index=True, max_length=255)
 
     user_links: list[UserTeamLink] = Relationship(back_populates="team")
@@ -157,7 +158,7 @@ class TeamUpdate(SQLModel):
 
 
 class TeamPublic(TeamBase):
-    id: int
+    id: uuid.UUID
     slug: str = Field(default=None, max_length=255)
 
 
@@ -202,9 +203,9 @@ class InvitationToken(SQLModel):
 
 
 class InvitationPublic(InvitationBase):
-    id: int
-    team_id: int
-    invited_by_id: int
+    id: uuid.UUID
+    team_id: uuid.UUID
+    invited_by_id: uuid.UUID
     status: InvitationStatus
     created_at: datetime
     sender: UserPublic
@@ -217,10 +218,10 @@ class InvitationsPublic(SQLModel):
 
 
 class Invitation(InvitationBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    team_id: int = Field(foreign_key="team.id")
-    invited_by_id: int = Field(foreign_key="user.id")
-    status: InvitationStatus = Field(default=InvitationStatus.pending, max_length=255)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    team_id: uuid.UUID = Field(foreign_key="team.id")
+    invited_by_id: uuid.UUID = Field(foreign_key="user.id")
+    status: InvitationStatus = Field(default=InvitationStatus.pending)
     created_at: datetime = Field(default_factory=get_datetime_utc)
     expires_at: datetime
 

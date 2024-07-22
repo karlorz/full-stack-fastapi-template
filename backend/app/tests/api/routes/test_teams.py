@@ -1,3 +1,4 @@
+import uuid
 from typing import Any
 
 from fastapi.testclient import TestClient
@@ -47,13 +48,19 @@ def test_read_teams(client: TestClient, db: Session) -> None:
 
     # Assert the response and the expected behavior
     assert response.status_code == 200
+
+    # Organizations should be sorted by id to match the order in the database
+    organizations = [org1, org2]
+    organizations.sort(key=lambda org: org.id, reverse=False)
+
     data = response.json()
     teams = data["data"]
+    teams.sort(key=lambda team: team["id"], reverse=False)
     count = data["count"]
     assert len(teams) == 2
     assert count == 2
-    assert teams[0]["id"] == org1.id
-    assert teams[1]["id"] == org2.id
+    assert teams[0]["id"] == str(organizations[0].id)
+    assert teams[1]["id"] == str(organizations[1].id)
 
     # Get the second org, with the second user, the data shouldn't be mixed
     user2_auth_headers = user_authentication_headers(
@@ -71,7 +78,7 @@ def test_read_teams(client: TestClient, db: Session) -> None:
     count = data["count"]
     assert len(teams) == 1
     assert count == 1
-    assert teams[0]["id"] == org3.id
+    assert teams[0]["id"] == str(org3.id)
 
 
 def test_read_team(client: TestClient, db: Session) -> None:
@@ -241,7 +248,7 @@ def test_update_team(client: TestClient, db: Session) -> None:
     assert response.status_code == 200
     data = response.json()
     db.refresh(team)
-    assert data["id"] == team.id
+    assert data["id"] == str(team.id)
     assert data["description"] == team_in["description"]
     assert team.description == team_in["description"]
 
@@ -441,16 +448,16 @@ def test_update_member_in_team(client: TestClient, db: Session) -> None:
     assert response.status_code == 200
     data = response.json()
     assert data["role"] == "member"
-    assert data["team"]["id"] == team.id
-    assert data["user"]["id"] == user.id
+    assert data["team"]["id"] == str(team.id)
+    assert data["user"]["id"] == str(user.id)
 
     user_team_query = select(UserTeamLink).where(UserTeamLink.user == user)
     user_team_db = db.exec(user_team_query).first()
     db.refresh(user_team_db)
     assert user_team_db
     assert user_team_db.role == data["role"]
-    assert user_team_db.team_id == data["team"]["id"]
-    assert user_team_db.user_id == data["user"]["id"]
+    assert str(user_team_db.team_id) == data["team"]["id"]
+    assert str(user_team_db.user_id) == data["user"]["id"]
 
 
 def test_update_member_in_team_not_enough_permissions(
@@ -631,7 +638,7 @@ def test_remove_member_from_team_not_found(client: TestClient, db: Session) -> N
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/teams/myteam/users/9999",
+        f"{settings.API_V1_STR}/teams/myteam/users/{uuid.uuid4()}",
         headers=user_auth_headers,
     )
 
@@ -658,7 +665,7 @@ def test_remove_member_from_team_user_not_found(
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/teams/{team.slug}/users/9999",
+        f"{settings.API_V1_STR}/teams/{team.slug}/users/{uuid.uuid4()}",
         headers=user_auth_headers,
     )
 

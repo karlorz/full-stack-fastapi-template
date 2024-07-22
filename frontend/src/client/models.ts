@@ -30,24 +30,26 @@ export type HTTPValidationError = {
 
 
 export type InvitationCreate = {
-	role: app__models__Role__1;
+	role: 'member' | 'admin';
 	email: string;
 	team_slug: string;
 };
 
 
 
+
 export type InvitationPublic = {
-	role: app__models__Role__1;
+	role: 'member' | 'admin';
 	email: string;
-	id: number;
-	team_id: number;
-	invited_by_id: number;
+	id: string;
+	team_id: string;
+	invited_by_id: string;
 	status: InvitationStatus;
 	created_at: string;
 	sender: UserPublic;
 	team: TeamPublic;
 };
+
 
 
 
@@ -91,7 +93,7 @@ export type TeamCreate = {
 export type TeamPublic = {
 	name: string;
 	description?: string | null;
-	id: number;
+	id: string;
 	slug?: string;
 };
 
@@ -113,7 +115,7 @@ export type TeamUpdateMember = {
 export type TeamWithUserPublic = {
 	name: string;
 	description?: string | null;
-	id: number;
+	id: string;
 	slug?: string;
 	user_links: Array<UserLinkPublic>;
 };
@@ -145,7 +147,7 @@ export type UserMePublic = {
 	email: string;
 	is_active?: boolean;
 	full_name: string;
-	id: number;
+	id: string;
 	personal_team_slug: string;
 };
 
@@ -155,7 +157,7 @@ export type UserPublic = {
 	email: string;
 	is_active?: boolean;
 	full_name: string;
-	id: number;
+	id: string;
 };
 
 
@@ -200,4 +202,5 @@ export type app__models__Role__1 = 'member' | 'admin';
 
 
 
-export type app__models__Role__2 = app__models__Role__1;
+export type app__models__Role__2 = 'member' | 'admin';
+
