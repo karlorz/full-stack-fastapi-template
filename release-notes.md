@@ -171,6 +171,7 @@
 
 ### Internal
 
+* 🔥 Remove issue templates. PR [#149](https://github.com/fastapilabs/cloud/pull/149) by [@alejsdev](https://github.com/alejsdev).
 * 👷 Update structure of infra and add README explaining the components and deploy process. PR [#148](https://github.com/fastapilabs/cloud/pull/148) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Update Traefik label configs for consistency with full-stack-fastapi-template. PR [#120](https://github.com/fastapilabs/cloud/pull/120) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Bump actions/setup-python from 2 to 5. PR [#112](https://github.com/fastapilabs/cloud/pull/112) by [@dependabot[bot]](https://github.com/apps/dependabot).
