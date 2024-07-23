@@ -11,11 +11,24 @@ on:
   workflow_dispatch:
     inputs:
       debug_enabled:
-        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        description: "Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)"
         required: false
-        default: 'false'
+        default: "false"
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - run: docker compose build backend
+      - run: docker compose down -v --remove-orphans
+      - run: docker compose run -T backend bash /app/scripts/lint.sh
 
   test:
     runs-on: ubuntu-latest
@@ -26,18 +39,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
       # Allow debugging with tmate
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
         with:
           limit-access-to-actor: true
-      - run: docker compose build
+      - run: docker compose build backend
       - run: docker compose down -v --remove-orphans
       - run: docker compose up -d backend
-      - name: Lint
-        run: docker compose exec -T backend bash /app/scripts/lint.sh
       - name: Run tests
         run: docker compose exec -T backend bash /app/tests-start.sh "Coverage for ${{ github.sha }}"
       - run: docker compose down -v --remove-orphans
@@ -48,10 +59,11 @@ jobs:
           path: backend/htmlcov
 
   # https://github.com/marketplace/actions/alls-green#why
-  alls-green:  # This job does nothing and is only used for the branch protection
+  alls-green: # This job does nothing and is only used for the branch protection
     if: always()
     needs:
       - test
+      - lint
     runs-on: ubuntu-latest
     steps:
       - name: Decide whether the needed jobs succeeded or failed
