@@ -172,6 +172,7 @@
 
 ### Internal
 
+* 👷 Only run tests in CI, not the full backend service. PR [#162](https://github.com/fastapilabs/cloud/pull/162) by [@patrick91](https://github.com/patrick91).
 * 👷 Separate lint step from tests. PR [#160](https://github.com/fastapilabs/cloud/pull/160) by [@patrick91](https://github.com/patrick91).
 * 🔥 Remove issue templates. PR [#149](https://github.com/fastapilabs/cloud/pull/149) by [@alejsdev](https://github.com/alejsdev).
 * 👷 Update structure of infra and add README explaining the components and deploy process. PR [#148](https://github.com/fastapilabs/cloud/pull/148) by [@tiangolo](https://github.com/tiangolo).
