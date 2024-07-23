@@ -1,7 +1,8 @@
 from collections.abc import Generator
-from typing import Annotated
+from typing import Annotated, Any
 
 import jwt
+import redis
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
@@ -26,6 +27,22 @@ def get_db() -> Generator[Session, None, None]:
 
 SessionDep = Annotated[Session, Depends(get_db)]
 TokenDep = Annotated[str, Depends(reusable_oauth2)]
+
+
+def get_redis() -> Generator["redis.Redis[Any]", None, None]:
+    pool = redis.ConnectionPool(
+        host=settings.REDIS_SERVER,
+        port=settings.REDIS_PORT,
+        db=settings.REDIS_DB,
+        password=settings.REDIS_PASSWORD,
+    )
+
+    redis_instance = redis.Redis(connection_pool=pool)
+
+    yield redis_instance
+
+
+RedisDep = Annotated["redis.Redis[Any]", Depends(get_redis)]
 
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:
