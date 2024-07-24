@@ -20,8 +20,12 @@ class InvitationStatus(str, Enum):
 
 
 class UserTeamLink(SQLModel, table=True):
-    user_id: uuid.UUID = Field(foreign_key="user.id", primary_key=True)
-    team_id: uuid.UUID = Field(foreign_key="team.id", primary_key=True)
+    user_id: uuid.UUID = Field(
+        foreign_key="user.id", primary_key=True, ondelete="CASCADE"
+    )
+    team_id: uuid.UUID = Field(
+        foreign_key="team.id", primary_key=True, ondelete="CASCADE"
+    )
     role: Role = Field()
 
     user: "User" = Relationship(back_populates="team_links")
@@ -75,10 +79,13 @@ class User(UserBase, table=True):
 
     owned_teams: list["Team"] = Relationship(back_populates="owner")
 
-    team_links: list[UserTeamLink] = Relationship(back_populates="user")
+    team_links: list[UserTeamLink] = Relationship(
+        back_populates="user", cascade_delete=True
+    )
     invitations_sent: list["Invitation"] = Relationship(
         back_populates="sender",
         sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_by_id]"},
+        cascade_delete=True,
     )
 
     @computed_field
@@ -150,8 +157,12 @@ class Team(TeamBase, table=True):
     owner: User = Relationship(back_populates="owned_teams")
     is_personal_team: bool = False
 
-    user_links: list[UserTeamLink] = Relationship(back_populates="team")
-    invitations: list["Invitation"] = Relationship(back_populates="team")
+    user_links: list[UserTeamLink] = Relationship(
+        back_populates="team", cascade_delete=True
+    )
+    invitations: list["Invitation"] = Relationship(
+        back_populates="team", cascade_delete=True
+    )
 
 
 class TeamCreate(TeamBase):
@@ -225,8 +236,8 @@ class InvitationsPublic(SQLModel):
 
 class Invitation(InvitationBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    team_id: uuid.UUID = Field(foreign_key="team.id")
-    invited_by_id: uuid.UUID = Field(foreign_key="user.id")
+    team_id: uuid.UUID = Field(foreign_key="team.id", ondelete="CASCADE")
+    invited_by_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
     status: InvitationStatus = Field(default=InvitationStatus.pending)
     created_at: datetime = Field(default_factory=get_datetime_utc)
     expires_at: datetime
@@ -235,4 +246,5 @@ class Invitation(InvitationBase, table=True):
         back_populates="invitations_sent",
         sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_by_id]"},
     )
+
     team: Team = Relationship(back_populates="invitations")
