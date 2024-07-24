@@ -21,6 +21,7 @@ import {
   FaHome,
   FaQuestionCircle,
   FaTools,
+  FaObjectGroup,
 } from "react-icons/fa"
 
 import { useCurrentUser } from "../../hooks/useAuth"
@@ -67,6 +68,13 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
       ...link({
         to: "/$team/resources",
         params: { team },
+      }),
+    },
+    {
+      icon: FaObjectGroup,
+      title: "Teams",
+      ...link({
+        to: "/teams/all",
       }),
     },
     {

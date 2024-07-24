@@ -256,15 +256,14 @@ def test_register_user_empty_full_name(client: TestClient) -> None:
     assert data["detail"][0]["msg"] == "String should have at least 3 characters"  # type: ignore
 
 
-def test_delete_user_me(client: TestClient, db: Session) -> None:
+def test_delete_user_me_only_personal_team(client: TestClient, db: Session) -> None:
     username = random_email()
     password = random_lower_string()
     full_name = random_lower_string()
-    team = create_random_team(db)
     user_in = UserCreate(email=username, password=password, full_name=full_name)
     user = crud.create_user(session=db, user_create=user_in, is_verified=True)
+    create_random_team(db, owner_id=user.id, is_personal_team=True)
     user_id = user.id
-    user.personal_team = team
     db.add(user)
     db.commit()
 
@@ -286,6 +285,40 @@ def test_delete_user_me(client: TestClient, db: Session) -> None:
     assert deleted_user["message"] == "User deleted successfully"
     result = db.exec(select(User).where(User.id == user_id)).first()
     assert result is None
+
+
+def test_delete_user_me_owns_more_teams(client: TestClient, db: Session) -> None:
+    username = random_email()
+    password = random_lower_string()
+    full_name = random_lower_string()
+    user_in = UserCreate(email=username, password=password, full_name=full_name)
+    user = crud.create_user(session=db, user_create=user_in, is_verified=True)
+    create_random_team(db, owner_id=user.id, is_personal_team=True)
+    db.add(user)
+    db.commit()
+
+    # adding another team owned by the user
+    create_random_team(db, owner_id=user.id)
+
+    login_data = {
+        "username": username,
+        "password": password,
+    }
+    r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
+    tokens = r.json()
+    a_token = tokens["access_token"]
+    headers = {"Authorization": f"Bearer {a_token}"}
+
+    r = client.delete(
+        f"{settings.API_V1_STR}/users/me",
+        headers=headers,
+    )
+    assert r.status_code == 400
+    deleted_user = r.json()
+    assert (
+        deleted_user["detail"]
+        == "You cannot delete your account while you have more than one team"
+    )
 
 
 def test_verify_email(client: TestClient, db: Session) -> None:
@@ -316,4 +349,5 @@ def test_verify_email(client: TestClient, db: Session) -> None:
     assert team_link.team.name == user.full_name
     assert team_link.team.slug == user.username
 
-    assert user.personal_team_id == team_link.team.id
+    assert user.personal_team
+    assert user.personal_team.id == team_link.team.id

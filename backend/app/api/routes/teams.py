@@ -78,7 +78,9 @@ def create_team(
     """
     team_slug = verify_and_generate_slug_name(team_in.name, session)
 
-    team = Team.model_validate(team_in, update={"slug": team_slug})
+    team = Team.model_validate(
+        team_in, update={"slug": team_slug, "owner_id": current_user.id}
+    )
     user_team = UserTeamLink(user=current_user, team=team, role=Role.admin)
     session.add(user_team)
     session.commit()
@@ -145,7 +147,9 @@ def delete_team(
 
     team = link.team
 
-    if team.id == current_user.personal_team_id:
+    assert current_user.personal_team
+
+    if team.id == current_user.personal_team.id:
         raise HTTPException(
             status_code=400, detail="You cannot delete your personal team"
         )

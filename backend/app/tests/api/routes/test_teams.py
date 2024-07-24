@@ -8,7 +8,11 @@ from app.core.config import settings
 from app.crud import add_user_to_team
 from app.models import Role, Team, UserTeamLink
 from app.tests.utils.team import create_random_team
-from app.tests.utils.user import create_user, user_authentication_headers
+from app.tests.utils.user import (
+    create_random_user,
+    create_user,
+    user_authentication_headers,
+)
 
 
 def test_read_teams(client: TestClient, db: Session) -> None:
@@ -164,13 +168,20 @@ def test_create_team(client: TestClient, db: Session) -> None:
 
 
 def test_create_team_name_exists_new_created(client: TestClient, db: Session) -> None:
+    user = create_random_user(db)
+
     user_auth_headers = user_authentication_headers(
         client=client,
         email=settings.FIRST_SUPERUSER,
         password=settings.FIRST_SUPERUSER_PASSWORD,
     )
 
-    team = Team(name="test copy", description="test description", slug="test-copy")
+    team = Team(
+        name="test copy",
+        description="test description",
+        slug="test-copy",
+        owner_id=user.id,
+    )
     db.add(team)
     db.commit()
 
@@ -393,7 +404,6 @@ def test_delete_team_not_enough_permissions(client: TestClient, db: Session) -> 
 
 
 def test_delete_personal_team_forbidden(client: TestClient, db: Session) -> None:
-    team = create_random_team(db)
     user = create_user(
         session=db,
         email="default-org@fastapi.com",
@@ -401,14 +411,17 @@ def test_delete_personal_team_forbidden(client: TestClient, db: Session) -> None
         full_name="default-org",
         is_verified=True,
     )
-    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
-    user.personal_team_id = team.id
     db.add(user)
     db.commit()
 
     user_auth_headers = user_authentication_headers(
         client=client, email="default-org@fastapi.com", password="test12345"
     )
+
+    assert user.personal_team is not None
+
+    team = user.personal_team
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     response = client.delete(
         f"{settings.API_V1_STR}/teams/{team.slug}",

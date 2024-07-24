@@ -32,8 +32,9 @@ def init_db(session: Session) -> None:
             full_name=settings.FIRST_SUPERUSER_FULL_NAME,
         )
         user = crud.create_user(session=session, user_create=user_in, is_verified=True)
-        team = Team(name=user.full_name, slug=user.username)
+        team = Team(
+            name=user.full_name, slug=user.username, owner=user, is_personal_team=True
+        )
         user_team_link = UserTeamLink(user=user, team=team, role=Role.admin)
-        user.personal_team = team
         session.add(user_team_link)
         session.commit()

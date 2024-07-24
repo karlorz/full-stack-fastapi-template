@@ -127,6 +127,13 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     Delete own user.
     """
+    if len(current_user.owned_teams) > 1:
+        raise HTTPException(
+            status_code=400,
+            detail="You cannot delete your account while you have more than one team",
+        )
+
+    session.delete(current_user.personal_team)
     session.delete(current_user)
     session.commit()
     email_data = generate_account_deletion_email(email_to=current_user.email)
@@ -199,11 +206,10 @@ def verify_email_token(session: SessionDep, payload: EmailVerificationToken) -> 
         raise HTTPException(status_code=400, detail="Email already verified")
 
     team_slug = verify_and_generate_slug_name(session=session, name=user.username)
-    team = Team(name=user.full_name, slug=team_slug)
+    team = Team(name=user.full_name, slug=team_slug, owner=user, is_personal_team=True)
     user_team_link = UserTeamLink(team=team, user=user, role=Role.admin)
 
     user.is_verified = True
-    user.personal_team = team
 
     session.add(user)
     session.add(user_team_link)

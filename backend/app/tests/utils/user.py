@@ -28,9 +28,8 @@ def create_user(
         session=session, user_create=user_in, is_verified=is_verified
     )
 
-    team = create_random_team(session)
+    create_random_team(session, owner_id=user.id, is_personal_team=True)
 
-    user.personal_team = team
     session.add(user)
     session.commit()
 
@@ -63,10 +62,9 @@ def authentication_token_from_email(
             session=db, user_create=user_in_create, is_verified=True
         )
 
-        team = create_random_team(db)
+        team = create_random_team(db, owner_id=user.id, is_personal_team=True)
         crud.add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
-        user.personal_team = team
         db.add(user)
         db.commit()
     else:

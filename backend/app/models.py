@@ -1,9 +1,9 @@
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
-from pydantic import EmailStr
+from pydantic import EmailStr, computed_field
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.utils import get_datetime_utc
@@ -73,16 +73,18 @@ class User(UserBase, table=True):
     username: str = Field(unique=True, index=True, max_length=255)
     is_verified: bool = False
 
-    personal_team_id: uuid.UUID | None = Field(
-        foreign_key="team.id", nullable=True, default=None
-    )
-    personal_team: Optional["Team"] = Relationship()
+    owned_teams: list["Team"] = Relationship(back_populates="owner")
 
     team_links: list[UserTeamLink] = Relationship(back_populates="user")
     invitations_sent: list["Invitation"] = Relationship(
         back_populates="sender",
         sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_by_id]"},
     )
+
+    @computed_field
+    @hybrid_property
+    def personal_team(self) -> "Team | None":
+        return next((team for team in self.owned_teams if team.is_personal_team), None)
 
 
 # Used for the current user
@@ -143,6 +145,10 @@ class TeamBase(SQLModel):
 class Team(TeamBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     slug: str = Field(unique=True, index=True, max_length=255)
+
+    owner_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
+    owner: User = Relationship(back_populates="owned_teams")
+    is_personal_team: bool = False
 
     user_links: list[UserTeamLink] = Relationship(back_populates="team")
     invitations: list["Invitation"] = Relationship(back_populates="team")
