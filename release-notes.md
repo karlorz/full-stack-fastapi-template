@@ -64,6 +64,7 @@
 
 ### Fixes
 
+* 🚨 Add biome-ignore. PR [#166](https://github.com/fastapilabs/cloud/pull/166) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Limit the number of displayed teams in User Menu. PR [#133](https://github.com/fastapilabs/cloud/pull/133) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Add min length validation. PR [#130](https://github.com/fastapilabs/cloud/pull/130) by [@patrick91](https://github.com/patrick91).
 * 🐛 Redirect logged-in users from signup to home page. PR [#122](https://github.com/fastapilabs/cloud/pull/122) by [@alejsdev](https://github.com/alejsdev).
