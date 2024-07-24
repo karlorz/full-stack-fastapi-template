@@ -82,6 +82,7 @@
 
 ### Refactors
 
+* ♻️ Refactor models to use cascade delete relationships. PR [#167](https://github.com/fastapilabs/cloud/pull/167) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Edit refactor models, routes and utils to use UUID instead of id integers. PR [#153](https://github.com/fastapilabs/cloud/pull/153) by [@estebanx64](https://github.com/estebanx64).
 * ♻️ Reset password tests tweaks. PR [#154](https://github.com/fastapilabs/cloud/pull/154) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update filter in InvitationsTable and handle empty state. PR [#151](https://github.com/fastapilabs/cloud/pull/151) by [@alejsdev](https://github.com/alejsdev).
