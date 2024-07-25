@@ -1,5 +1,6 @@
 import secrets
 import uuid
+from datetime import datetime
 
 from sqlmodel import Session
 
@@ -8,7 +9,10 @@ from app.tests.utils.utils import random_lower_string
 
 
 def create_random_team(
-    db: Session, owner_id: uuid.UUID | None = None, is_personal_team: bool = False
+    db: Session,
+    owner_id: uuid.UUID | None = None,
+    is_personal_team: bool = False,
+    created_at: datetime | None = None,
 ) -> Team:
     from app.tests.utils.user import create_random_user
 
@@ -22,6 +26,7 @@ def create_random_team(
         slug=slug,
         owner_id=owner_id,
         is_personal_team=is_personal_team,
+        created_at=created_at,
     )
     db.add(team_in)
     db.commit()

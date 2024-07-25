@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timedelta
 from typing import Any
 
 from fastapi.testclient import TestClient
@@ -121,6 +122,54 @@ def test_read_owned_team(client: TestClient, db: Session) -> None:
     assert count == 2
     assert teams[0]["id"] == str(user1.personal_team.id)
     assert teams[1]["id"] == str(org1.id)
+
+
+def test_read_teams_order(client: TestClient, db: Session) -> None:
+    now = datetime.now()
+
+    org1 = create_random_team(db, created_at=now - timedelta(days=2))
+    org2 = create_random_team(db, created_at=now - timedelta(days=1))
+    org3 = create_random_team(db, created_at=now)
+
+    user1 = create_user(
+        session=db,
+        email="test-order@fastapi.com",
+        password="test12345",
+        full_name="test",
+        is_verified=True,
+    )
+
+    add_user_to_team(session=db, user=user1, team=org1, role=Role.admin)
+    add_user_to_team(session=db, user=user1, team=org2, role=Role.admin)
+    add_user_to_team(session=db, user=user1, team=org3, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1.email, password="test12345"
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/teams/?order_by=created_at&order=asc",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    teams = response.json()["data"]
+
+    ids = [team["id"] for team in teams]
+
+    assert ids == [str(org1.id), str(org2.id), str(org3.id)]
+
+    response = client.get(
+        f"{settings.API_V1_STR}/teams/?order_by=created_at&order=desc",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    teams = response.json()["data"]
+
+    ids = [team["id"] for team in teams]
+
+    assert ids == [str(org3.id), str(org2.id), str(org1.id)]
 
 
 def test_read_team(client: TestClient, db: Session) -> None:

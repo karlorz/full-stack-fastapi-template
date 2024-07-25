@@ -156,6 +156,7 @@ class Team(TeamBase, table=True):
     owner_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
     owner: User = Relationship(back_populates="owned_teams")
     is_personal_team: bool = False
+    created_at: datetime = Field(default_factory=get_datetime_utc)
 
     user_links: list[UserTeamLink] = Relationship(
         back_populates="team", cascade_delete=True

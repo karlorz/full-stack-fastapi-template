@@ -1,5 +1,5 @@
 import uuid
-from typing import Any
+from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import selectinload
@@ -30,6 +30,8 @@ def read_teams(
     current_user: CurrentUser,
     skip: int = 0,
     limit: int = 100,
+    order_by: Literal["created_at"] | None = None,
+    order: Literal["asc", "desc"] = "asc",
     owner: bool = False,
 ) -> Any:
     """
@@ -47,6 +49,13 @@ def read_teams(
         )
         statement = statement.where(
             col(Team.user_links).any(col(UserTeamLink.user) == current_user)
+        )
+
+    order_key = col(Team.created_at) if order_by == "created_at" else None
+
+    if order_key:
+        statement = statement.order_by(
+            order_key.asc() if order == "asc" else order_key.desc()
         )
 
     count = session.exec(count_statement).one()
