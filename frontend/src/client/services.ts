@@ -364,6 +364,9 @@ emailTo,
 
 export type TDataReadTeams = {
                 limit?: number
+order?: 'asc' | 'desc'
+orderBy?: "created_at" | null
+owner?: boolean
 skip?: number
                 
             }
@@ -411,13 +414,16 @@ export class TeamsService {
 	public static readTeams(data: TDataReadTeams = {}): CancelablePromise<TeamsPublic> {
 		const {
 limit = 100,
+order = 'asc',
+orderBy,
+owner = false,
 skip = 0,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
 			url: '/api/v1/teams/',
 			query: {
-				skip, limit
+				skip, limit, order_by: orderBy, order, owner
 			},
 			errors: {
 				422: `Validation Error`,

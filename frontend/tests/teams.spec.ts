@@ -37,8 +37,8 @@ test("User can successfully change the current team from the user's list of team
   const teamSlug = slugify(teamName)
   await createTeam(page, teamName)
 
-  await page.goto("/teams/all")
-  await page.locator("li").filter({ hasText: teamName }).first().click()
+  await page.goto("/teams/all?orderBy=created_at&order=desc")
+  await page.locator("a").filter({ hasText: teamName }).first().click()
   await page.goto(`/${teamSlug}`)
   await expect(page.getByRole("button", { name: teamName })).toBeVisible()
 })
