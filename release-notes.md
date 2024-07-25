@@ -17,6 +17,7 @@
 
 ### Features
 
+* ✨ Add filter for owned teams. PR [#141](https://github.com/fastapilabs/cloud/pull/141) by [@patrick91](https://github.com/patrick91).
 * ✨ Add owner id to team. PR [#135](https://github.com/fastapilabs/cloud/pull/135) by [@patrick91](https://github.com/patrick91).
 * ✨ Account deletion notification email and update email confirmation. PR [#138](https://github.com/fastapilabs/cloud/pull/138) by [@alejsdev](https://github.com/alejsdev).
 * ✨Add empty state and initial instructions to projects. PR [#150](https://github.com/fastapilabs/cloud/pull/150) by [@alejsdev](https://github.com/alejsdev).
