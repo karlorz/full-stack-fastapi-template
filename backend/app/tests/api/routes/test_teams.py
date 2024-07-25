@@ -85,6 +85,44 @@ def test_read_teams(client: TestClient, db: Session) -> None:
     assert teams[0]["id"] == str(org3.id)
 
 
+def test_read_owned_team(client: TestClient, db: Session) -> None:
+    user1 = create_user(
+        session=db,
+        email="test2@fastapi.com",
+        password="test12345",
+        full_name="test",
+        is_verified=True,
+    )
+
+    assert user1.personal_team
+
+    org1 = create_random_team(db, owner_id=user1.id)
+    org2 = create_random_team(db)
+
+    add_user_to_team(session=db, user=user1, team=org2, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1.email, password="test12345"
+    )
+
+    # Make a request to the get_teams route using the client fixture and superuser_token_headers
+    response = client.get(
+        f"{settings.API_V1_STR}/teams/?owner=true",
+        headers=user_auth_headers,
+    )
+
+    # Assert the response and the expected behavior
+    assert response.status_code == 200
+    data = response.json()
+    teams = data["data"]
+    count = data["count"]
+    # create_user creates a team for the user
+    assert len(teams) == 2
+    assert count == 2
+    assert teams[0]["id"] == str(user1.personal_team.id)
+    assert teams[1]["id"] == str(org1.id)
+
+
 def test_read_team(client: TestClient, db: Session) -> None:
     team = create_random_team(db)
     user = create_user(

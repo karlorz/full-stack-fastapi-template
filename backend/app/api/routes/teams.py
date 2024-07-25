@@ -26,23 +26,30 @@ router = APIRouter()
 
 @router.get("/", response_model=TeamsPublic)
 def read_teams(
-    session: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100
+    session: SessionDep,
+    current_user: CurrentUser,
+    skip: int = 0,
+    limit: int = 100,
+    owner: bool = False,
 ) -> Any:
     """
     Retrieve a list of teams accessible to the current user.
     """
-    count_statement = (
-        select(func.count())
-        .select_from(Team)
-        .where(col(Team.user_links).any(col(UserTeamLink.user) == current_user))
-    )
+    count_statement = select(func.count()).select_from(Team)
+    statement = select(Team).offset(skip).limit(limit)
+
+    if owner:
+        count_statement = count_statement.where(Team.owner_id == current_user.id)
+        statement = statement.where(Team.owner_id == current_user.id)
+    else:
+        count_statement = count_statement.where(
+            col(Team.user_links).any(col(UserTeamLink.user) == current_user)
+        )
+        statement = statement.where(
+            col(Team.user_links).any(col(UserTeamLink.user) == current_user)
+        )
+
     count = session.exec(count_statement).one()
-    statement = (
-        select(Team)
-        .where(col(Team.user_links).any(col(UserTeamLink.user) == current_user))
-        .offset(skip)
-        .limit(limit)
-    )
     teams = session.exec(statement).all()
 
     return TeamsPublic(data=teams, count=count)
