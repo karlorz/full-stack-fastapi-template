@@ -17,6 +17,7 @@
 
 ### Features
 
+* ✨ Use a table to list all the teams and paginate. PR [#143](https://github.com/fastapilabs/cloud/pull/143) by [@patrick91](https://github.com/patrick91).
 * ✨ Add `created_at` to team. PR [#147](https://github.com/fastapilabs/cloud/pull/147) by [@patrick91](https://github.com/patrick91).
 * ✨ Add filter for owned teams. PR [#141](https://github.com/fastapilabs/cloud/pull/141) by [@patrick91](https://github.com/patrick91).
 * ✨ Add owner id to team. PR [#135](https://github.com/fastapilabs/cloud/pull/135) by [@patrick91](https://github.com/patrick91).
