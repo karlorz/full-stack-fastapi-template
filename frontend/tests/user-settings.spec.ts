@@ -38,7 +38,7 @@ test.describe("Edit user full name and email successfully", () => {
 
     await page.goto("/settings")
     await page.getByRole("button", { name: fullName }).click()
-    await page.getByRole("menuitem", { name: "Settings" }).click()
+    await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(0).click()
     await page.locator("#full_name").fill(updatedName)
     await page.getByRole("button", { name: "Save" }).first().click()
@@ -68,7 +68,7 @@ test.describe("Edit user full name and email successfully", () => {
     // Request email update
     await page.goto("/settings")
     await page.getByRole("button", { name: fullName }).click()
-    await page.getByRole("menuitem", { name: "Settings" }).click()
+    await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(1).click()
     await page.locator("#email").fill(updatedEmail)
     await page.getByRole("button", { name: "Save" }).first().click()
@@ -105,7 +105,7 @@ test.describe("Edit user full name and email with invalid data", () => {
     const invalidName = ""
     await page.goto("/settings")
     await page.getByRole("button", { name: "fastapi admin" }).click()
-    await page.getByRole("menuitem", { name: "Settings" }).click()
+    await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(0).click()
     await page.locator("#full_name").fill(invalidName)
     await page.locator("body").click()
@@ -116,7 +116,7 @@ test.describe("Edit user full name and email with invalid data", () => {
     const invalidEmail = ""
     await page.goto("/settings")
     await page.getByRole("button", { name: "fastapi admin" }).click()
-    await page.getByRole("menuitem", { name: "Settings" }).click()
+    await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(1).click()
     await page.locator("#email").fill(invalidEmail)
     await page.locator("body").click()
@@ -127,7 +127,7 @@ test.describe("Edit user full name and email with invalid data", () => {
     const updatedName = "Test User"
     await page.goto("/settings")
     await page.getByRole("button", { name: "fastapi admin" }).click()
-    await page.getByRole("menuitem", { name: "Settings" }).click()
+    await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(0).click()
     await page.locator("#full_name").fill(updatedName)
     await page.getByRole("button", { name: "Cancel" }).first().click()
@@ -140,7 +140,7 @@ test.describe("Edit user full name and email with invalid data", () => {
     const updatedEmail = randomEmail()
     await page.goto("/settings")
     await page.getByRole("button", { name: "fastapi admin" }).click()
-    await page.getByRole("menuitem", { name: "Settings" }).click()
+    await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(1).click()
     await page.locator("#email").fill(updatedEmail)
     await page.getByRole("button", { name: "Cancel" }).first().click()
@@ -169,7 +169,7 @@ test.describe("Change password successfully", () => {
 
     await page.goto("/settings")
     await page.getByRole("button", { name: fullName }).click()
-    await page.getByRole("menuitem", { name: "Settings" }).click()
+    await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByPlaceholder("Current password").fill(password)
     await page.getByPlaceholder("New Password").fill(NewPassword)
     await page.getByPlaceholder("Confirm Password").fill(NewPassword)

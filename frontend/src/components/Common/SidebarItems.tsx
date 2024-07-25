@@ -21,11 +21,10 @@ import {
   FaHome,
   FaQuestionCircle,
   FaTools,
-  FaObjectGroup,
 } from "react-icons/fa"
+import { CgOrganisation } from "react-icons/cg"
 
 import { useCurrentUser } from "../../hooks/useAuth"
-
 import { Route } from "../../routes/_layout/$team"
 
 // https://github.com/TanStack/router/issues/1194#issuecomment-1956736102
@@ -71,18 +70,18 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
       }),
     },
     {
-      icon: FaObjectGroup,
-      title: "Teams",
-      ...link({
-        to: "/teams/all",
-      }),
-    },
-    {
       icon: FaCog,
-      title: "Settings",
+      title: "Team Settings",
       ...link({
         to: "/$team/settings",
         params: { team },
+      }),
+    },
+    {
+      icon: CgOrganisation,
+      title: "Teams",
+      ...link({
+        to: "/teams/all",
       }),
     },
     {

@@ -122,7 +122,7 @@ const UserMenu = () => {
               _hover={{ bg: bgHover, borderRadius: "12px" }}
             >
               <Icon as={FaCog} />
-              Settings
+              User Settings
             </MenuItem>
             <Divider />
             <MenuItem

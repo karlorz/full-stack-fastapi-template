@@ -27,7 +27,7 @@ function TeamSettings() {
   return (
     <Container maxW="full" p={12}>
       <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
-        Settings
+        Team Settings
       </Heading>
       <Text>View and manage settings related to your team.</Text>
       <Tabs variant="line" pt={10}>
