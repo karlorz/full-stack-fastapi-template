@@ -86,6 +86,7 @@
 
 ### Refactors
 
+* ♻️ Close redis when request is done. PR [#165](https://github.com/fastapilabs/cloud/pull/165) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor Sidebar. PR [#169](https://github.com/fastapilabs/cloud/pull/169) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor models to use cascade delete relationships. PR [#167](https://github.com/fastapilabs/cloud/pull/167) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Edit refactor models, routes and utils to use UUID instead of id integers. PR [#153](https://github.com/fastapilabs/cloud/pull/153) by [@estebanx64](https://github.com/estebanx64).
