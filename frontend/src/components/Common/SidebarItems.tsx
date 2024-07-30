@@ -19,6 +19,7 @@ import {
   FaCog,
   FaCubes,
   FaHome,
+  FaObjectGroup,
   FaQuestionCircle,
   FaTools,
 } from "react-icons/fa"

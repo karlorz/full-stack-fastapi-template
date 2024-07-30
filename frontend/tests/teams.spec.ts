@@ -91,6 +91,14 @@ test.describe("User with admin role can update team information", () => {
 
     await page.goto(`/${teamSlug}/settings`)
 
-    // TODO: To complete when merge the delete feature
+    await page.getByRole("button", { name: "Delete Team" }).click()
+    await expect(page.getByTestId("delete-confirmation-team")).toBeVisible()
+    await page.getByLabel("Confirmation").fill(`delete team ${teamSlug}`)
+    await page.getByRole("button", { name: "Confirm" }).click()
+    await expect(page.getByText("The team was deleted")).toBeVisible()
+
+    // Check if the team is not visible in the list of teams
+    await page.goto("/teams/all")
+    await expect(page.getByRole("link", { name: teamName })).not.toBeVisible()
   })
 })
