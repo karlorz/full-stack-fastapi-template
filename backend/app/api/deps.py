@@ -39,7 +39,10 @@ def get_redis() -> Generator["redis.Redis[Any]", None, None]:
 
     redis_instance = redis.Redis(connection_pool=pool)
 
-    yield redis_instance
+    try:
+        yield redis_instance
+    finally:
+        redis_instance.close()
 
 
 RedisDep = Annotated["redis.Redis[Any]", Depends(get_redis)]
