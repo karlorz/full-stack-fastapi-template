@@ -29,8 +29,13 @@ class Settings(BaseSettings):
     )
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
+
+    # AUTH
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+    DEVICE_AUTH_TTL_MINUTES: int = 5
+    DEVICE_AUTH_POLL_INTERVAL_SECONDS: int = 5
+
     DOMAIN: str = "localhost"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 

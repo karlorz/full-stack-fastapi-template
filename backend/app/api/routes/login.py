@@ -1,19 +1,22 @@
 from datetime import timedelta
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import BaseModel
 
 from app import crud
-from app.api.deps import CurrentUser, SessionDep, get_first_superuser
+from app.api.deps import CurrentUser, RedisDep, SessionDep, get_first_superuser
 from app.core import security
 from app.core.config import settings
 from app.core.security import get_password_hash
 from app.models import Message, NewPassword, Token, UserMePublic, UserPublic
 from app.utils import (
+    create_and_store_device_code,
     generate_password_reset_token,
     generate_reset_password_email,
+    generate_user_code,
     send_email,
     verify_password_reset_token,
 )
@@ -57,6 +60,40 @@ def login_access_token(
             user.id, expires_delta=access_token_expires
         ),
         user=user_data,
+    )
+
+
+class DeviceAuthorizationResponse(BaseModel):
+    device_code: str
+    user_code: str
+    verification_uri: str
+    verification_uri_complete: str
+    expires_in: int
+    interval: int
+
+
+@router.post("/login/device/authorization")
+async def device_authorization(
+    client_id: Annotated[str, Form()],
+    redis: RedisDep,
+) -> DeviceAuthorizationResponse:
+    """
+    Device Authorization Grant
+    """
+    user_code = generate_user_code()
+
+    device_code = create_and_store_device_code(user_code, client_id, redis)
+
+    verification_uri = f"{settings.server_host}/device"
+    verification_uri_complete = f"{verification_uri}?code={user_code}"
+
+    return DeviceAuthorizationResponse(
+        device_code=str(device_code),
+        user_code=str(user_code),
+        verification_uri=verification_uri,
+        verification_uri_complete=verification_uri_complete,
+        expires_in=settings.DEVICE_AUTH_TTL_MINUTES * 60,
+        interval=settings.DEVICE_AUTH_POLL_INTERVAL_SECONDS,
     )
 
 

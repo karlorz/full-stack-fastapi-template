@@ -1,6 +1,7 @@
 import logging
 import re
 import unicodedata
+import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
@@ -11,6 +12,8 @@ import emails  # type: ignore
 import jwt
 from jinja2 import Template
 from jwt.exceptions import InvalidTokenError
+from pydantic import BaseModel
+from redis import Redis
 
 from app.core.config import settings
 
@@ -253,3 +256,67 @@ def generate_account_deletion_email(email_to: str) -> EmailData:
         },
     )
     return EmailData(html_content=html_content, subject=subject)
+
+
+def generate_user_code() -> str:
+    """Generates a unique user code for device auth."""
+
+    # RFC 8628 suggest to return an easy to type code, but since
+    # we'll automatically open the browser when authenticating
+    # from the CLI, it should be fine to return a uuid, this
+    # means we don't have to worry about potential user code
+    # collisions.
+    return str(uuid.uuid4())
+
+
+class DeviceAuthorizationData(BaseModel):
+    device_code: str
+    client_id: str
+    expires_at: datetime
+
+
+def create_and_store_device_code(
+    user_code: str, client_id: str, redis: "Redis[Any]"
+) -> str:
+    """Create a new device code and store it in Redis.
+
+    The device code is generated and stored in Redis with the following structure:
+    - key: auth:device:<device_code>
+    - value: {
+        "device_code": <device_code>,
+        "client_id": <client_id>,
+        "expires_at": <expires_at>
+    }
+
+    Additionally, a mapping from the user code to the device code is stored in Redis with the following structure:
+    - key: auth:user-code:<user_code>
+    - value: <device_code>
+
+    The device code is returned if it was successfully stored in Redis.
+    """
+    now = get_datetime_utc()
+
+    device_code = str(uuid.uuid4())
+
+    data = DeviceAuthorizationData(
+        device_code=device_code,
+        client_id=client_id,
+        expires_at=now + timedelta(minutes=settings.DEVICE_AUTH_TTL_MINUTES),
+    )
+
+    pipeline = redis.pipeline(True)
+
+    pipeline.set(
+        f"auth:device:{device_code}",
+        data.model_dump_json(),
+        ex=settings.DEVICE_AUTH_TTL_MINUTES * 60,
+    )
+    pipeline.set(
+        f"auth:user-code:{user_code}",
+        device_code,
+        ex=settings.DEVICE_AUTH_TTL_MINUTES * 60,
+    )
+
+    pipeline.execute()
+
+    return device_code
