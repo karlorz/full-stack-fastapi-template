@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse
@@ -10,6 +10,7 @@ from app import crud
 from app.api.deps import CurrentUser, RedisDep, SessionDep, get_first_superuser
 from app.core import security
 from app.core.config import settings
+from app.core.exceptions import OAuth2Exception
 from app.core.security import get_password_hash
 from app.models import Message, NewPassword, Token, UserMePublic, UserPublic
 from app.utils import (
@@ -17,6 +18,8 @@ from app.utils import (
     generate_password_reset_token,
     generate_reset_password_email,
     generate_user_code,
+    get_datetime_utc,
+    get_device_authorization_data,
     send_email,
     verify_password_reset_token,
 )
@@ -95,6 +98,39 @@ async def device_authorization(
         expires_in=settings.DEVICE_AUTH_TTL_MINUTES * 60,
         interval=settings.DEVICE_AUTH_POLL_INTERVAL_SECONDS,
     )
+
+
+@router.post("/login/device/token", response_model=Token)
+async def login_token(
+    client_id: Annotated[str, Form()],
+    device_code: Annotated[str, Form()],
+    grant_type: Annotated[  # noqa: ARG001
+        Literal["urn:ietf:params:oauth:grant-type:device_code"], Form()
+    ],
+    redis: RedisDep,
+) -> Any:
+    auth_data = get_device_authorization_data(device_code, redis=redis)
+
+    if auth_data is None or auth_data.client_id != client_id:
+        raise OAuth2Exception(
+            error="invalid_request",
+            error_description="Invalid device code",
+        )
+
+    now = get_datetime_utc()
+
+    if now > auth_data.expires_at:
+        raise OAuth2Exception(
+            error="expired_token",
+            error_description="Device code expired",
+        )
+
+    if auth_data.status == "pending":
+        raise OAuth2Exception(error="authorization_pending")
+
+    assert auth_data.status == "authorized"
+
+    return Token(access_token=auth_data.access_token)
 
 
 @router.post("/login/test-token", response_model=UserPublic)

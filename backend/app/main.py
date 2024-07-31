@@ -1,10 +1,12 @@
 import sentry_sdk
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
 from app.api.main import api_router
 from app.core.config import settings
+from app.core.exceptions import OAuth2Exception
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -19,6 +21,20 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
 )
+
+
+@app.exception_handler(OAuth2Exception)
+async def oauth2_exception_handler(
+    _request: Request, exc: OAuth2Exception
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=400,
+        content={
+            "error": exc.error,
+            "error_description": exc.error_description,
+        },
+    )
+
 
 # Set all CORS enabled origins
 if settings.BACKEND_CORS_ORIGINS:

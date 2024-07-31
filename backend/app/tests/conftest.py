@@ -1,9 +1,12 @@
 from collections.abc import Generator
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
+from redis import Redis
 from sqlmodel import Session, delete
 
+from app.api.deps import get_redis
 from app.core.config import settings
 from app.core.db import engine, init_db
 from app.main import app
@@ -46,3 +49,8 @@ def normal_user_token_headers(client: TestClient, db: Session) -> dict[str, str]
     return authentication_token_from_email(
         client=client, email=settings.EMAIL_TEST_USER, db=db
     )
+
+
+@pytest.fixture(scope="module")
+def redis() -> Generator["Redis[Any]", None, None]:
+    yield from get_redis()

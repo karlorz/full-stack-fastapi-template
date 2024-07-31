@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import emails  # type: ignore
 import jwt
@@ -273,6 +273,8 @@ class DeviceAuthorizationData(BaseModel):
     device_code: str
     client_id: str
     expires_at: datetime
+    status: Literal["pending", "authorized"]
+    access_token: str | None = None
 
 
 def create_and_store_device_code(
@@ -285,7 +287,9 @@ def create_and_store_device_code(
     - value: {
         "device_code": <device_code>,
         "client_id": <client_id>,
-        "expires_at": <expires_at>
+        "expires_at": <expires_at>,
+        "status": "pending",
+        "access_token": null
     }
 
     Additionally, a mapping from the user code to the device code is stored in Redis with the following structure:
@@ -302,6 +306,7 @@ def create_and_store_device_code(
         device_code=device_code,
         client_id=client_id,
         expires_at=now + timedelta(minutes=settings.DEVICE_AUTH_TTL_MINUTES),
+        status="pending",
     )
 
     pipeline = redis.pipeline(True)
@@ -320,3 +325,35 @@ def create_and_store_device_code(
     pipeline.execute()
 
     return device_code
+
+
+def get_device_authorization_data(
+    device_code: str, redis: "Redis[Any]"
+) -> DeviceAuthorizationData | None:
+    """Retrieve device authorization data from Redis using the device code."""
+    data = redis.get(f"auth:device:{device_code}")
+
+    if data:
+        return DeviceAuthorizationData.model_validate_json(data)
+
+    return None
+
+
+def authorize_device_code(
+    device_code: str, access_token: str, redis: "Redis[Any]"
+) -> None:
+    """Authorize the device code in Redis using the device code."""
+
+    data = get_device_authorization_data(device_code, redis)
+
+    if not data:
+        raise ValueError("Device code not found")
+
+    data.status = "authorized"
+    data.access_token = access_token
+
+    redis.set(
+        f"auth:device:{device_code}",
+        data.model_dump_json(),
+        ex=settings.DEVICE_AUTH_TTL_MINUTES * 60,
+    )
