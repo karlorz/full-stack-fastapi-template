@@ -10,6 +10,7 @@ from app.utils import (
     authorize_device_code,
     create_and_store_device_code,
     generate_user_code,
+    get_device_authorization_data,
 )
 
 
@@ -157,3 +158,60 @@ def test_device_access_token_authorized(
 
     assert response_data["token_type"] == "bearer"
     assert response_data["access_token"] == "valid-token"
+
+
+def test_can_authorize_device_code_401_when_not_logged_in(
+    client: TestClient, redis: "Redis[Any]"
+) -> None:
+    user_code = generate_user_code()
+
+    device_code = create_and_store_device_code(
+        user_code=user_code, client_id="valid_id", redis=redis
+    )
+
+    r = client.post(
+        f"{settings.API_V1_STR}/login/device/authorize",
+        json={"user_code": device_code},
+    )
+
+    assert r.status_code == 401
+
+
+def test_can_authorize_device_code_400_when_code_is_not_found(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    r = client.post(
+        f"{settings.API_V1_STR}/login/device/authorize",
+        json={"user_code": "some-random-code"},
+        headers=normal_user_token_headers,
+    )
+
+    assert r.status_code == 404
+
+
+def test_can_authorize_device_code(
+    client: TestClient, redis: "Redis[Any]", normal_user_token_headers: dict[str, str]
+) -> None:
+    user_code = generate_user_code()
+
+    device_code = create_and_store_device_code(
+        user_code=user_code, client_id="valid_id", redis=redis
+    )
+
+    r = client.post(
+        f"{settings.API_V1_STR}/login/device/authorize",
+        json={"user_code": user_code},
+        headers=normal_user_token_headers,
+    )
+
+    assert r.status_code == 200
+
+    response_data = r.json()
+
+    assert response_data["success"] is True
+
+    device_data = get_device_authorization_data(device_code, redis=redis)
+
+    assert device_data is not None
+    assert device_data.status == "authorized"
+    assert device_data.access_token is not None

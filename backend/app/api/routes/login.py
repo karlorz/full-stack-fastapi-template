@@ -14,12 +14,14 @@ from app.core.exceptions import OAuth2Exception
 from app.core.security import get_password_hash
 from app.models import Message, NewPassword, Token, UserMePublic, UserPublic
 from app.utils import (
+    authorize_device_code,
     create_and_store_device_code,
     generate_password_reset_token,
     generate_reset_password_email,
     generate_user_code,
     get_datetime_utc,
     get_device_authorization_data,
+    get_device_authorization_data_by_user_code,
     send_email,
     verify_password_reset_token,
 )
@@ -131,6 +133,32 @@ async def login_token(
     assert auth_data.status == "authorized"
 
     return Token(access_token=auth_data.access_token)
+
+
+class AuthorizeDeviceIn(BaseModel):
+    user_code: str
+
+
+@router.post("/login/device/authorize")
+async def authorize_device(
+    data: AuthorizeDeviceIn,
+    current_user: CurrentUser,
+    redis: RedisDep,
+) -> Any:
+    device_data = get_device_authorization_data_by_user_code(data.user_code, redis)
+
+    if device_data is None:
+        raise HTTPException(status_code=404, detail="Code not found")
+
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    access_token = security.create_access_token(
+        current_user.id, expires_delta=access_token_expires
+    )
+
+    authorize_device_code(device_data.device_code, access_token, redis)
+
+    return {"success": True}
 
 
 @router.post("/login/test-token", response_model=UserPublic)

@@ -339,6 +339,18 @@ def get_device_authorization_data(
     return None
 
 
+def get_device_authorization_data_by_user_code(
+    user_code: str, redis: "Redis[Any]"
+) -> DeviceAuthorizationData | None:
+    """Retrieve device authorization data from Redis using the user code."""
+    device_code = redis.get(f"auth:user-code:{user_code}")
+
+    if device_code:
+        return get_device_authorization_data(device_code.decode(), redis)
+
+    return None
+
+
 def authorize_device_code(
     device_code: str, access_token: str, redis: "Redis[Any]"
 ) -> None:
