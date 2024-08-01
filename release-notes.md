@@ -90,6 +90,7 @@
 
 ### Refactors
 
+* ♻️ Tweak frontend and add (temporary) image to empty state UI. PR [#173](https://github.com/fastapilabs/cloud/pull/173) by [@alejsdev](https://github.com/alejsdev).
 * 🚨 Fix unused import. PR [#176](https://github.com/fastapilabs/cloud/pull/176) by [@patrick91](https://github.com/patrick91).
 * ♻️ Close redis when request is done. PR [#165](https://github.com/fastapilabs/cloud/pull/165) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor Sidebar. PR [#169](https://github.com/fastapilabs/cloud/pull/169) by [@alejsdev](https://github.com/alejsdev).
