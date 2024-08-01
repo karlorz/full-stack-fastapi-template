@@ -1,14 +1,17 @@
 import {
   Box,
+  Center,
   Code,
   Container,
   Flex,
   Heading,
+  Image,
   Link,
   Text,
   VStack,
 } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
+import EmptyBox from "/assets/images/empty-box.jpg"
 
 export const Route = createFileRoute("/_layout/$team/projects")({
   component: Projects,
@@ -26,15 +29,32 @@ function Projects() {
       {projects.length > 0 ? (
         <></>
       ) : (
-        <Flex direction={{ base: "column", md: "row" }}>
-          <Box w={{ base: "100%", md: "70%" }} mb={{ base: 4, md: 0 }}>
+        <Flex direction={{ base: "column", md: "row" }} gap={4}>
+          <Box
+            w={{ base: "100%", md: "70%" }}
+            mb={{ base: 4, md: 0 }}
+            boxShadow="xs"
+            borderRadius="lg"
+            px={8}
+            py={4}
+          >
+            <Center>
+              {/* TODO: Replace image */}
+              <Image
+                w={{ base: "100%", md: "25%" }}
+                src={EmptyBox}
+                alt="Empty state"
+                alignSelf="center"
+              />
+            </Center>
             <Text textAlign="center">You don't have any projects yet</Text>
           </Box>
           <Box
-            p={6}
-            borderWidth="1px"
-            borderRadius="lg"
             w={{ base: "100%", md: "30%" }}
+            boxShadow="xs"
+            borderRadius="lg"
+            px={8}
+            py={4}
           >
             <VStack spacing={4} align="flex-start">
               <Heading size="md">Quick Start with FastAPI CLI</Heading>

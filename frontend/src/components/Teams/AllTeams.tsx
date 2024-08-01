@@ -1,25 +1,25 @@
 import {
-  Container,
-  Heading,
-  Table,
   Box,
-  Th,
-  Tr,
-  TableContainer,
+  Button,
+  Container,
+  Flex,
+  Heading,
   Link,
+  Skeleton,
+  Table,
+  TableContainer,
   Tbody,
   Td,
-  Thead,
-  Skeleton,
-  Flex,
   Text,
-  Button,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { useNavigate, Link as RouterLink } from "@tanstack/react-router"
+import { Link as RouterLink, useNavigate } from "@tanstack/react-router"
 
-import { TeamsService } from "../../client"
 import { useEffect } from "react"
+import { TeamsService } from "../../client"
 import { Route } from "../../routes/_layout/teams/all"
 
 const PER_PAGE = 5
@@ -68,7 +68,7 @@ function TeamsTable() {
     if (hasNextPage) {
       queryClient.prefetchQuery(getTeamsQueryOptions({ page: page + 1 }))
     }
-  }, [page, queryClient, hasNextPage, getTeamsQueryOptions])
+  }, [page, queryClient, hasNextPage])
 
   return (
     <>

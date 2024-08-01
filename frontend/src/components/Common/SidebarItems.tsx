@@ -15,6 +15,7 @@ import {
   type ToOptions,
   type UseLinkPropsOptions,
 } from "@tanstack/react-router"
+import { CgOrganisation } from "react-icons/cg"
 import {
   FaCog,
   FaCubes,
@@ -22,7 +23,6 @@ import {
   FaQuestionCircle,
   FaTools,
 } from "react-icons/fa"
-import { CgOrganisation } from "react-icons/cg"
 
 import { useCurrentUser } from "../../hooks/useAuth"
 import { Route } from "../../routes/_layout/$team"
