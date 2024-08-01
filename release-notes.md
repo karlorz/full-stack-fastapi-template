@@ -17,6 +17,7 @@
 
 ### Features
 
+* ✨ Add API to authorize device. PR [#171](https://github.com/fastapilabs/cloud/pull/171) by [@patrick91](https://github.com/patrick91).
 * ✨ Add endpoint to fetch token. PR [#170](https://github.com/fastapilabs/cloud/pull/170) by [@patrick91](https://github.com/patrick91).
 * ✨ Add endpoint to start device auth. PR [#159](https://github.com/fastapilabs/cloud/pull/159) by [@patrick91](https://github.com/patrick91).
 * ✨ Delete team/user e2e tests. PR [#168](https://github.com/fastapilabs/cloud/pull/168) by [@alejsdev](https://github.com/alejsdev).
