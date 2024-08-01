@@ -2,10 +2,22 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { AccessTokenWithUserMe,Body_login_login_access_token,Message,NewPassword,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateEmailMe,UserUpdateMe,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken } from './models';
+import type { AccessTokenWithUserMe,AuthorizeDeviceIn,Body_login_device_authorization,Body_login_login_access_token,Body_login_login_token,DeviceAuthorizationResponse,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateEmailMe,UserUpdateMe,HealthCheckResponse,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
+                
+            }
+export type TDataDeviceAuthorization = {
+                formData: Body_login_device_authorization
+                
+            }
+export type TDataLoginToken = {
+                formData: Body_login_login_token
+                
+            }
+export type TDataAuthorizeDevice = {
+                requestBody: AuthorizeDeviceIn
                 
             }
 export type TDataRecoverPassword = {
@@ -38,6 +50,68 @@ formData,
 			url: '/api/v1/login/access-token',
 			formData: formData,
 			mediaType: 'application/x-www-form-urlencoded',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Device Authorization
+	 * Device Authorization Grant
+	 * @returns DeviceAuthorizationResponse Successful Response
+	 * @throws ApiError
+	 */
+	public static deviceAuthorization(data: TDataDeviceAuthorization): CancelablePromise<DeviceAuthorizationResponse> {
+		const {
+formData,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/login/device/authorization',
+			formData: formData,
+			mediaType: 'application/x-www-form-urlencoded',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Login Token
+	 * @returns Token Successful Response
+	 * @throws ApiError
+	 */
+	public static loginToken(data: TDataLoginToken): CancelablePromise<Token> {
+		const {
+formData,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/login/device/token',
+			formData: formData,
+			mediaType: 'application/x-www-form-urlencoded',
+			errors: {
+				400: `Bad Request`,
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Authorize Device
+	 * @returns unknown Successful Response
+	 * @throws ApiError
+	 */
+	public static authorizeDevice(data: TDataAuthorizeDevice): CancelablePromise<unknown> {
+		const {
+requestBody,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/login/device/authorize',
+			body: requestBody,
+			mediaType: 'application/json',
 			errors: {
 				422: `Validation Error`,
 			},
@@ -360,12 +434,25 @@ emailTo,
 		});
 	}
 
+	/**
+	 * Health Check
+	 * Health check.
+	 * @returns HealthCheckResponse Successful Response
+	 * @throws ApiError
+	 */
+	public static healthCheck(): CancelablePromise<HealthCheckResponse> {
+				return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/utils/health-check/',
+		});
+	}
+
 }
 
 export type TDataReadTeams = {
                 limit?: number
 order?: 'asc' | 'desc'
-orderBy?: "created_at" | null
+orderBy?: 'created_at' | null
 owner?: boolean
 skip?: number
                 

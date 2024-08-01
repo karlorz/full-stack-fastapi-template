@@ -15,6 +15,24 @@ export const $AccessTokenWithUserMe = {
 	},
 } as const;
 
+export const $AuthorizeDeviceIn = {
+	properties: {
+		user_code: {
+	type: 'string',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $Body_login_device_authorization = {
+	properties: {
+		client_id: {
+	type: 'string',
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $Body_login_login_access_token = {
 	properties: {
 		grant_type: {
@@ -57,6 +75,70 @@ export const $Body_login_login_access_token = {
 	},
 } as const;
 
+export const $Body_login_login_token = {
+	properties: {
+		client_id: {
+	type: 'string',
+	isRequired: true,
+},
+		device_code: {
+	type: 'string',
+	isRequired: true,
+},
+		grant_type: {
+	type: 'Enum',
+	enum: ['urn:ietf:params:oauth:grant-type:device_code',],
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $DeviceAccessTokenError = {
+	properties: {
+		error: {
+	type: 'string',
+	isRequired: true,
+},
+		error_description: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+}, {
+	type: 'null',
+}],
+},
+	},
+} as const;
+
+export const $DeviceAuthorizationResponse = {
+	properties: {
+		device_code: {
+	type: 'string',
+	isRequired: true,
+},
+		user_code: {
+	type: 'string',
+	isRequired: true,
+},
+		verification_uri: {
+	type: 'string',
+	isRequired: true,
+},
+		verification_uri_complete: {
+	type: 'string',
+	isRequired: true,
+},
+		expires_in: {
+	type: 'number',
+	isRequired: true,
+},
+		interval: {
+	type: 'number',
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $EmailVerificationToken = {
 	properties: {
 		token: {
@@ -73,6 +155,15 @@ export const $HTTPValidationError = {
 	contains: {
 		type: 'ValidationError',
 	},
+},
+	},
+} as const;
+
+export const $HealthCheckResponse = {
+	properties: {
+		redis: {
+	type: 'boolean',
+	isRequired: true,
 },
 	},
 } as const;
@@ -328,6 +419,19 @@ export const $TeamsPublic = {
 		count: {
 	type: 'number',
 	isRequired: true,
+},
+	},
+} as const;
+
+export const $Token = {
+	properties: {
+		access_token: {
+	type: 'string',
+	isRequired: true,
+},
+		token_type: {
+	type: 'string',
+	default: 'bearer',
 },
 	},
 } as const;

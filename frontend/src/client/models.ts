@@ -6,6 +6,18 @@ export type AccessTokenWithUserMe = {
 
 
 
+export type AuthorizeDeviceIn = {
+	user_code: string;
+};
+
+
+
+export type Body_login_device_authorization = {
+	client_id: string;
+};
+
+
+
 export type Body_login_login_access_token = {
 	grant_type?: string | null;
 	username: string;
@@ -13,6 +25,33 @@ export type Body_login_login_access_token = {
 	scope?: string;
 	client_id?: string | null;
 	client_secret?: string | null;
+};
+
+
+
+export type Body_login_login_token = {
+	client_id: string;
+	device_code: string;
+	grant_type: 'urn:ietf:params:oauth:grant-type:device_code';
+};
+
+
+
+
+export type DeviceAccessTokenError = {
+	error: string;
+	error_description?: string | null;
+};
+
+
+
+export type DeviceAuthorizationResponse = {
+	device_code: string;
+	user_code: string;
+	verification_uri: string;
+	verification_uri_complete: string;
+	expires_in: number;
+	interval: number;
 };
 
 
@@ -25,6 +64,12 @@ export type EmailVerificationToken = {
 
 export type HTTPValidationError = {
 	detail?: Array<ValidationError>;
+};
+
+
+
+export type HealthCheckResponse = {
+	redis: boolean;
 };
 
 
@@ -125,6 +170,13 @@ export type TeamWithUserPublic = {
 export type TeamsPublic = {
 	data: Array<TeamPublic>;
 	count: number;
+};
+
+
+
+export type Token = {
+	access_token: string;
+	token_type?: string;
 };
 
 
