@@ -8,7 +8,7 @@ import {
   Icon,
   Box,
 } from "@chakra-ui/react"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 
 import { formatDate } from "date-fns"
 
@@ -19,6 +19,7 @@ import { LoginService, type ApiError } from "../client"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import { useState } from "react"
 import { FaExclamationTriangle } from "react-icons/fa"
+import { isLoggedIn } from "../hooks/useAuth"
 
 const deviceSearchSchema = z.object({
   code: z.string(),
@@ -28,6 +29,14 @@ export const Route = createFileRoute("/device")({
   component: AuthorizeDevice,
   errorComponent: CodeNotFound,
   validateSearch: (search) => deviceSearchSchema.parse(search),
+  beforeLoad: async ({ location }) => {
+    if (!isLoggedIn()) {
+      throw redirect({
+        to: "/login",
+        search: { redirect: location.href },
+      })
+    }
+  },
   loaderDeps: ({ search }) => ({
     code: search.code,
   }),
