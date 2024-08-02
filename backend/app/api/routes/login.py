@@ -1,7 +1,7 @@
 from datetime import timedelta
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Depends, Form, HTTPException
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
@@ -81,13 +81,17 @@ class DeviceAuthorizationResponse(BaseModel):
 async def device_authorization(
     client_id: Annotated[str, Form()],
     redis: RedisDep,
+    request: Request,
 ) -> DeviceAuthorizationResponse:
     """
     Device Authorization Grant
     """
     user_code = generate_user_code()
+    request_ip = request.client.host if request.client else None
 
-    device_code = create_and_store_device_code(user_code, client_id, redis)
+    device_code = create_and_store_device_code(
+        user_code=user_code, request_ip=request_ip, client_id=client_id, redis=redis
+    )
 
     verification_uri = f"{settings.server_host}/device"
     verification_uri_complete = f"{verification_uri}?code={user_code}"
@@ -99,6 +103,32 @@ async def device_authorization(
         verification_uri_complete=verification_uri_complete,
         expires_in=settings.DEVICE_AUTH_TTL_MINUTES * 60,
         interval=settings.DEVICE_AUTH_POLL_INTERVAL_SECONDS,
+    )
+
+
+class DeviceAuthorizationInfo(BaseModel):
+    device_code: str
+    created_at: str
+    request_ip: str | None
+
+
+@router.get("/login/device/authorization/{user_code}")
+async def device_authorization_info(
+    user_code: str,
+    redis: RedisDep,
+) -> DeviceAuthorizationInfo:
+    """
+    Get device authorization info
+    """
+    auth_data = get_device_authorization_data_by_user_code(user_code, redis)
+
+    if auth_data is None:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    return DeviceAuthorizationInfo(
+        device_code=auth_data.device_code,
+        created_at=auth_data.created_at.isoformat(),
+        request_ip=auth_data.request_ip,
     )
 
 

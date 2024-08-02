@@ -12,7 +12,7 @@ import emails  # type: ignore
 import jwt
 from jinja2 import Template
 from jwt.exceptions import InvalidTokenError
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from redis import Redis
 
 from app.core.config import settings
@@ -272,13 +272,15 @@ def generate_user_code() -> str:
 class DeviceAuthorizationData(BaseModel):
     device_code: str
     client_id: str
+    created_at: datetime = Field(default_factory=get_datetime_utc)
     expires_at: datetime
+    request_ip: str | None
     status: Literal["pending", "authorized"]
     access_token: str | None = None
 
 
 def create_and_store_device_code(
-    user_code: str, client_id: str, redis: "Redis[Any]"
+    user_code: str, client_id: str, request_ip: str | None, redis: "Redis[Any]"
 ) -> str:
     """Create a new device code and store it in Redis.
 
@@ -307,6 +309,7 @@ def create_and_store_device_code(
         client_id=client_id,
         expires_at=now + timedelta(minutes=settings.DEVICE_AUTH_TTL_MINUTES),
         status="pending",
+        request_ip=request_ip,
     )
 
     pipeline = redis.pipeline(True)
