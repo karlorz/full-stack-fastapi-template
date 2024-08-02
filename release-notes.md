@@ -17,6 +17,7 @@
 
 ### Features
 
+* ✨ Show authorization info in authorize page. PR [#175](https://github.com/fastapilabs/cloud/pull/175) by [@patrick91](https://github.com/patrick91).
 * ✨ Add request information to authorization requests. PR [#174](https://github.com/fastapilabs/cloud/pull/174) by [@patrick91](https://github.com/patrick91).
 * ✨ Add page for user to authorize device login. PR [#172](https://github.com/fastapilabs/cloud/pull/172) by [@patrick91](https://github.com/patrick91).
 * ✨ Add API to authorize device. PR [#171](https://github.com/fastapilabs/cloud/pull/171) by [@patrick91](https://github.com/patrick91).
