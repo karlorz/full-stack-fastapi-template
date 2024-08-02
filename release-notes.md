@@ -2,6 +2,7 @@
 
 ## Latest Changes
 
+* ✨ Redirect if not logged in device authorization page. PR [#177](https://github.com/fastapilabs/cloud/pull/177) by [@patrick91](https://github.com/patrick91).
 * ✨ Add redis configuration. PR [#158](https://github.com/fastapilabs/cloud/pull/158) by [@patrick91](https://github.com/patrick91).
 * 🚨 Add missing dependencies. PR [#132](https://github.com/fastapilabs/cloud/pull/132) by [@patrick91](https://github.com/patrick91).
 * 🚸 Add minLength to team name and user full name. PR [#131](https://github.com/fastapilabs/cloud/pull/131) by [@patrick91](https://github.com/patrick91).
