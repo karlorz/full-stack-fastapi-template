@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { AccessTokenWithUserMe,AuthorizeDeviceIn,Body_login_device_authorization,Body_login_login_access_token,Body_login_login_token,DeviceAuthorizationResponse,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateEmailMe,UserUpdateMe,HealthCheckResponse,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken } from './models';
+import type { AccessTokenWithUserMe,AuthorizeDeviceIn,Body_login_device_authorization,Body_login_login_access_token,Body_login_login_token,DeviceAuthorizationInfo,DeviceAuthorizationResponse,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateEmailMe,UserUpdateMe,HealthCheckResponse,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -10,6 +10,10 @@ export type TDataLoginAccessToken = {
             }
 export type TDataDeviceAuthorization = {
                 formData: Body_login_device_authorization
+                
+            }
+export type TDataDeviceAuthorizationInfo = {
+                userCode: string
                 
             }
 export type TDataLoginToken = {
@@ -78,6 +82,28 @@ formData,
 	}
 
 	/**
+	 * Device Authorization Info
+	 * Get device authorization info
+	 * @returns DeviceAuthorizationInfo Successful Response
+	 * @throws ApiError
+	 */
+	public static deviceAuthorizationInfo(data: TDataDeviceAuthorizationInfo): CancelablePromise<DeviceAuthorizationInfo> {
+		const {
+userCode,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/login/device/authorization/{user_code}',
+			path: {
+				user_code: userCode
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
 	 * Login Token
 	 * @returns Token Successful Response
 	 * @throws ApiError
@@ -92,7 +118,6 @@ formData,
 			formData: formData,
 			mediaType: 'application/x-www-form-urlencoded',
 			errors: {
-				400: `Bad Request`,
 				422: `Validation Error`,
 			},
 		});

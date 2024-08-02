@@ -93,19 +93,24 @@ export const $Body_login_login_token = {
 	},
 } as const;
 
-export const $DeviceAccessTokenError = {
+export const $DeviceAuthorizationInfo = {
 	properties: {
-		error: {
+		device_code: {
 	type: 'string',
 	isRequired: true,
 },
-		error_description: {
+		created_at: {
+	type: 'string',
+	isRequired: true,
+},
+		request_ip: {
 	type: 'any-of',
 	contains: [{
 	type: 'string',
 }, {
 	type: 'null',
 }],
+	isRequired: true,
 },
 	},
 } as const;

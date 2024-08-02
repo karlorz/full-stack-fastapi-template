@@ -38,9 +38,10 @@ export type Body_login_login_token = {
 
 
 
-export type DeviceAccessTokenError = {
-	error: string;
-	error_description?: string | null;
+export type DeviceAuthorizationInfo = {
+	device_code: string;
+	created_at: string;
+	request_ip: string | null;
 };
 
 

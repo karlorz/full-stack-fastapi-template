@@ -1,6 +1,16 @@
 import { z } from "zod"
-import { Button, Container, Heading, Flex, Text } from "@chakra-ui/react"
+import {
+  Button,
+  Container,
+  Heading,
+  Flex,
+  Text,
+  Icon,
+  Box,
+} from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
+
+import { formatDate } from "date-fns"
 
 import { useMutation } from "@tanstack/react-query"
 import useCustomToast from "../hooks/useCustomToast"
@@ -8,6 +18,7 @@ import useCustomToast from "../hooks/useCustomToast"
 import { LoginService, type ApiError } from "../client"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import { useState } from "react"
+import { FaExclamationTriangle } from "react-icons/fa"
 
 const deviceSearchSchema = z.object({
   code: z.string(),
@@ -15,10 +26,34 @@ const deviceSearchSchema = z.object({
 
 export const Route = createFileRoute("/device")({
   component: AuthorizeDevice,
+  errorComponent: CodeNotFound,
   validateSearch: (search) => deviceSearchSchema.parse(search),
+  loaderDeps: ({ search }) => ({
+    code: search.code,
+  }),
+  loader: async ({ deps }) => {
+    return await LoginService.deviceAuthorizationInfo({
+      userCode: deps.code,
+    })
+  },
 })
 
+function CodeNotFound() {
+  return (
+    <Flex
+      flexDir="column"
+      justifyContent="center"
+      alignItems="center"
+      h="100vh"
+    >
+      <Heading size="md">Invalid code</Heading>
+      <Text>The code you provided is invalid or has expired.</Text>
+    </Flex>
+  )
+}
+
 function AuthorizeDevice() {
+  const deviceAuthInfo = Route.useLoaderData()
   const { code } = Route.useSearch()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<boolean>(false)
@@ -59,6 +94,22 @@ function AuthorizeDevice() {
               Authorize FastAPI CLI
             </Heading>
             <Text>Click the button below to authorize FastAPI CLI</Text>
+            <Box bg="yellow.50" p={4} borderRadius="md">
+              <Icon
+                as={FaExclamationTriangle}
+                color="yellow.500"
+                verticalAlign="middle"
+              />{" "}
+              This authorization was requested from{" "}
+              <Text fontWeight="bold" as="span" data-testid="request-ip">
+                {deviceAuthInfo.request_ip}
+              </Text>{" "}
+              on{" "}
+              {formatDate(
+                deviceAuthInfo.created_at,
+                "MMMM dd, yyyy 'at' HH:mm (OOOO)",
+              )}
+            </Box>
 
             <Button
               isLoading={mutation.isPending}
