@@ -12,7 +12,7 @@ export async function requestDeviceCode({
     },
   )
 
-  let data = await response.json()
+  const data = await response.json()
 
   return data.user_code
 }

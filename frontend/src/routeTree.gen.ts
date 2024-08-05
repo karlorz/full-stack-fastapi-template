@@ -32,7 +32,6 @@ import { Route as LayoutTeamItemsImport } from './routes/_layout/$team/items'
 import { Route as LayoutTeamHelpImport } from './routes/_layout/$team/help'
 import { Route as LayoutTeamBillingImport } from './routes/_layout/$team/billing'
 import { Route as LayoutTeamsTeamSlugIndexImport } from './routes/_layout/teams/$teamSlug/index'
-import { Route as LayoutTeamsTeamSlugInvitationsImport } from './routes/_layout/teams/$teamSlug/invitations'
 
 // Create/Update Routes
 
@@ -141,12 +140,6 @@ const LayoutTeamsTeamSlugIndexRoute = LayoutTeamsTeamSlugIndexImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutTeamsTeamSlugInvitationsRoute =
-  LayoutTeamsTeamSlugInvitationsImport.update({
-    path: '/teams/$teamSlug/invitations',
-    getParentRoute: () => LayoutRoute,
-  } as any)
-
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -231,10 +224,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutTeamIndexImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/teams/$teamSlug/invitations': {
-      preLoaderRoute: typeof LayoutTeamsTeamSlugInvitationsImport
-      parentRoute: typeof LayoutImport
-    }
     '/_layout/teams/$teamSlug/': {
       preLoaderRoute: typeof LayoutTeamsTeamSlugIndexImport
       parentRoute: typeof LayoutImport
@@ -257,7 +246,6 @@ export const routeTree = rootRoute.addChildren([
     LayoutTeamsAllRoute,
     LayoutTeamsNewRoute,
     LayoutTeamIndexRoute,
-    LayoutTeamsTeamSlugInvitationsRoute,
     LayoutTeamsTeamSlugIndexRoute,
   ]),
   DeviceRoute,

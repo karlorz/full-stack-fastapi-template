@@ -1,24 +1,24 @@
-import { z } from "zod"
 import {
+  Box,
   Button,
   Container,
-  Heading,
   Flex,
-  Text,
+  Heading,
   Icon,
-  Box,
+  Text,
 } from "@chakra-ui/react"
 import { createFileRoute, redirect } from "@tanstack/react-router"
+import { z } from "zod"
 
 import { formatDate } from "date-fns"
 
 import { useMutation } from "@tanstack/react-query"
 import useCustomToast from "../hooks/useCustomToast"
 
-import { LoginService, type ApiError } from "../client"
-import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import { useState } from "react"
 import { FaExclamationTriangle } from "react-icons/fa"
+import { type ApiError, LoginService } from "../client"
+import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import { isLoggedIn } from "../hooks/useAuth"
 
 const deviceSearchSchema = z.object({
