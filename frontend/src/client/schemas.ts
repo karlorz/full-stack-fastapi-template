@@ -341,6 +341,15 @@ export const $TeamPublic = {
 	type: 'string',
 	maxLength: 255,
 },
+		is_personal_team: {
+	type: 'boolean',
+	isRequired: true,
+},
+		owner_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
 	},
 } as const;
 
@@ -401,6 +410,15 @@ export const $TeamWithUserPublic = {
 		slug: {
 	type: 'string',
 	maxLength: 255,
+},
+		is_personal_team: {
+	type: 'boolean',
+	isRequired: true,
+},
+		owner_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
 },
 		user_links: {
 	type: 'array',

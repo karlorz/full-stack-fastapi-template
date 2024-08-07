@@ -1,4 +1,4 @@
-import { expect, request, test } from "@playwright/test"
+import { expect, test } from "@playwright/test"
 import { findLastEmail } from "./utils/mailcatcher"
 import { randomEmail, randomTeamName, slugify } from "./utils/random"
 import {

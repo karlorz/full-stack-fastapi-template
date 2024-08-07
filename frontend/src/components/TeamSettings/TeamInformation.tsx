@@ -15,6 +15,7 @@ import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
 import Team from "../Teams/Team"
 import DeleteTeam from "./DeleteTeam"
+import TransferTeam from "./TransferTeam"
 
 const TeamInformation = () => {
   const queryClient = useQueryClient()
@@ -102,6 +103,15 @@ const TeamInformation = () => {
               </Flex>
             </Box>
           </Flex>
+
+          <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
+            <Text fontWeight="bold" mb={4}>
+              Transfer Ownership
+            </Text>
+            <Flex>
+              <TransferTeam />
+            </Flex>
+          </Box>
 
           <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
             <Text fontWeight="bold" mb={4}>

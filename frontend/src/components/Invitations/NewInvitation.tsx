@@ -85,6 +85,7 @@ const NewInvitation = () => {
             placeholder="Email address"
             type="text"
             w="auto"
+            data-testid="invitation-email"
           />
           {errors.email && (
             <FormErrorMessage>{errors.email.message}</FormErrorMessage>

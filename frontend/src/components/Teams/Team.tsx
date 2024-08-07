@@ -36,11 +36,7 @@ function TeamTableBody() {
         <Tr key={user.id}>
           <Td isTruncated maxWidth="200px">
             {user.email}
-            {currentUser?.id === user.id && (
-              <Badge ml="1" colorScheme="gray">
-                You
-              </Badge>
-            )}
+            {currentUser?.id === user.id && <Badge ml="2">You</Badge>}
           </Td>
           <Td>{role === "admin" ? "Admin" : "Member"}</Td>
           <Td>

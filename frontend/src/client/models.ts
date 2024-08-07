@@ -141,6 +141,8 @@ export type TeamPublic = {
 	description?: string | null;
 	id: string;
 	slug?: string;
+	is_personal_team: boolean;
+	owner_id: string;
 };
 
 
@@ -163,6 +165,8 @@ export type TeamWithUserPublic = {
 	description?: string | null;
 	id: string;
 	slug?: string;
+	is_personal_team: boolean;
+	owner_id: string;
 	user_links: Array<UserLinkPublic>;
 };
 

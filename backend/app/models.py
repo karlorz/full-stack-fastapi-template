@@ -178,6 +178,8 @@ class TeamUpdate(SQLModel):
 class TeamPublic(TeamBase):
     id: uuid.UUID
     slug: str = Field(default=None, max_length=255)
+    is_personal_team: bool
+    owner_id: uuid.UUID
 
 
 class TeamsPublic(SQLModel):

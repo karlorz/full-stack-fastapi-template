@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   Container,
@@ -19,7 +20,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link as RouterLink, useNavigate } from "@tanstack/react-router"
 
 import { useEffect } from "react"
-import { TeamsService } from "../../client"
+import { TeamsService, type UserPublic, UsersService } from "../../client"
+import { isLoggedIn } from "../../hooks/useAuth"
 import { Route } from "../../routes/_layout/teams/all"
 
 const PER_PAGE = 5
@@ -61,6 +63,11 @@ function TeamsTable() {
     placeholderData: (prevData) => prevData,
   })
 
+  const { data: currentUser } = useQuery<UserPublic | null, Error>({
+    queryKey: ["currentUser"],
+    queryFn: () => (isLoggedIn() ? UsersService.readUserMe() : null),
+  })
+
   const hasNextPage = !isPlaceholderData && teams?.data.length === PER_PAGE
   const hasPreviousPage = page > 1
 
@@ -85,9 +92,9 @@ function TeamsTable() {
                 <Tr key={index}>
                   {new Array(1).fill(null).map((_, index) => (
                     <Td key={index}>
-                      <Flex>
-                        <Skeleton height="20px" width="20px" />
-                      </Flex>
+                      <Box width="20%">
+                        <Skeleton height="20px" />
+                      </Box>
                     </Td>
                   ))}
                 </Tr>
@@ -102,9 +109,20 @@ function TeamsTable() {
                       as={RouterLink}
                       to={`/${team.slug}/`}
                       _hover={{ color: "ui.main", textDecoration: "underline" }}
+                      display="inline-block"
+                      minW="20%"
                     >
                       {team.name}
                     </Link>
+                    {team.is_personal_team ? (
+                      <Badge ml={2}>Personal</Badge>
+                    ) : team.owner_id === currentUser?.id ? (
+                      <Badge ml={2} colorScheme="purple">
+                        Owner
+                      </Badge>
+                    ) : (
+                      <Badge ml={2}>Member</Badge>
+                    )}
                   </Td>
                 </Tr>
               ))}
