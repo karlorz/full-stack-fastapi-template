@@ -18,6 +18,7 @@
 
 ### Features
 
+* ✨ Use full layout in device auth screen. PR [#179](https://github.com/fastapilabs/cloud/pull/179) by [@patrick91](https://github.com/patrick91).
 * ✨ Don't allow removing user account if owning teams . PR [#152](https://github.com/fastapilabs/cloud/pull/152) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Show authorization info in authorize page. PR [#175](https://github.com/fastapilabs/cloud/pull/175) by [@patrick91](https://github.com/patrick91).
 * ✨ Add request information to authorization requests. PR [#174](https://github.com/fastapilabs/cloud/pull/174) by [@patrick91](https://github.com/patrick91).
