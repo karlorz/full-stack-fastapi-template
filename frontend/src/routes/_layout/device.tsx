@@ -7,25 +7,22 @@ import {
   Icon,
   Text,
 } from "@chakra-ui/react"
-import { createFileRoute, redirect } from "@tanstack/react-router"
-import { z } from "zod"
-
-import { formatDate } from "date-fns"
-
 import { useMutation } from "@tanstack/react-query"
-import useCustomToast from "../hooks/useCustomToast"
-
+import { createFileRoute, redirect } from "@tanstack/react-router"
+import { formatDate } from "date-fns"
 import { useState } from "react"
 import { FaExclamationTriangle } from "react-icons/fa"
-import { type ApiError, LoginService } from "../client"
-import BackgroundPanel from "../components/Auth/BackgroundPanel"
-import { isLoggedIn } from "../hooks/useAuth"
+import { z } from "zod"
+
+import { type ApiError, LoginService } from "../../client"
+import { isLoggedIn } from "../../hooks/useAuth"
+import useCustomToast from "../../hooks/useCustomToast"
 
 const deviceSearchSchema = z.object({
   code: z.string(),
 })
 
-export const Route = createFileRoute("/device")({
+export const Route = createFileRoute("/_layout/device")({
   component: AuthorizeDevice,
   errorComponent: CodeNotFound,
   validateSearch: (search) => deviceSearchSchema.parse(search),
@@ -89,7 +86,6 @@ function AuthorizeDevice() {
   return (
     <>
       <Flex flexDir={{ base: "column", md: "row" }} justify="center" h="100vh">
-        <BackgroundPanel />
         {!success ? (
           <Container
             maxW={{ base: "xs", md: "md" }}

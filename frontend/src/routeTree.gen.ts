@@ -18,10 +18,10 @@ import { Route as SignupImport } from './routes/signup'
 import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as RecoverPasswordImport } from './routes/recover-password'
 import { Route as LoginImport } from './routes/login'
-import { Route as DeviceImport } from './routes/device'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
+import { Route as LayoutDeviceImport } from './routes/_layout/device'
 import { Route as LayoutTeamIndexImport } from './routes/_layout/$team/index'
 import { Route as LayoutTeamsNewImport } from './routes/_layout/teams/new'
 import { Route as LayoutTeamsAllImport } from './routes/_layout/teams/all'
@@ -70,11 +70,6 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const DeviceRoute = DeviceImport.update({
-  path: '/device',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const LayoutRoute = LayoutImport.update({
   id: '/_layout',
   getParentRoute: () => rootRoute,
@@ -87,6 +82,11 @@ const LayoutIndexRoute = LayoutIndexImport.update({
 
 const LayoutSettingsRoute = LayoutSettingsImport.update({
   path: '/settings',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutDeviceRoute = LayoutDeviceImport.update({
+  path: '/device',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -148,10 +148,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutImport
       parentRoute: typeof rootRoute
     }
-    '/device': {
-      preLoaderRoute: typeof DeviceImport
-      parentRoute: typeof rootRoute
-    }
     '/login': {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
@@ -179,6 +175,10 @@ declare module '@tanstack/react-router' {
     '/verify-update-email': {
       preLoaderRoute: typeof VerifyUpdateEmailImport
       parentRoute: typeof rootRoute
+    }
+    '/_layout/device': {
+      preLoaderRoute: typeof LayoutDeviceImport
+      parentRoute: typeof LayoutImport
     }
     '/_layout/settings': {
       preLoaderRoute: typeof LayoutSettingsImport
@@ -235,6 +235,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   LayoutRoute.addChildren([
+    LayoutDeviceRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
     LayoutTeamBillingRoute,
@@ -248,7 +249,6 @@ export const routeTree = rootRoute.addChildren([
     LayoutTeamIndexRoute,
     LayoutTeamsTeamSlugIndexRoute,
   ]),
-  DeviceRoute,
   LoginRoute,
   RecoverPasswordRoute,
   ResetPasswordRoute,
