@@ -192,6 +192,7 @@
 
 ### Internal
 
+* 🔧 Comment temporarily deployment workflows for staging and production. PR [#181](https://github.com/fastapilabs/cloud/pull/181) by [@alejsdev](https://github.com/alejsdev).
 * 👷 Only run tests in CI, not the full backend service. PR [#162](https://github.com/fastapilabs/cloud/pull/162) by [@patrick91](https://github.com/patrick91).
 * 👷 Separate lint step from tests. PR [#160](https://github.com/fastapilabs/cloud/pull/160) by [@patrick91](https://github.com/patrick91).
 * 🔥 Remove issue templates. PR [#149](https://github.com/fastapilabs/cloud/pull/149) by [@alejsdev](https://github.com/alejsdev).
