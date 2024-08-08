@@ -2,6 +2,7 @@
 
 ## Latest Changes
 
+* ✨ Redirect user to login if we get 401/403. PR [#196](https://github.com/fastapilabs/cloud/pull/196) by [@patrick91](https://github.com/patrick91).
 * ✨ Redirect if not logged in device authorization page. PR [#177](https://github.com/fastapilabs/cloud/pull/177) by [@patrick91](https://github.com/patrick91).
 * ✨ Add redis configuration. PR [#158](https://github.com/fastapilabs/cloud/pull/158) by [@patrick91](https://github.com/patrick91).
 * 🚨 Add missing dependencies. PR [#132](https://github.com/fastapilabs/cloud/pull/132) by [@patrick91](https://github.com/patrick91).
