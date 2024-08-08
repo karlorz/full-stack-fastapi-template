@@ -29,7 +29,7 @@ const EditableField = ({
     register,
     handleSubmit,
     reset,
-    formState: { isSubmitting, errors, isDirty },
+    formState: { isSubmitting, errors, isDirty, isValid },
   } = useForm({
     mode: "onBlur",
     criteriaMode: "all",
@@ -38,19 +38,17 @@ const EditableField = ({
     },
   })
 
-  const toggleEditMode = () => {
-    setEditMode(!editMode)
-  }
-
   const onCancel = () => {
     reset()
-    toggleEditMode()
+    setEditMode(false)
   }
 
   const onSubmitForm: SubmitHandler<{ [key: string]: string }> = async (
     data,
   ) => {
     onSubmit(data[type])
+
+    setEditMode(false)
   }
 
   return (
@@ -66,7 +64,7 @@ const EditableField = ({
             <Input
               id={type}
               {...register(type, { required: "This field is required" })}
-              type="text"
+              type={type}
               size="md"
               isInvalid={!!errors[type]}
             />
@@ -89,10 +87,10 @@ const EditableField = ({
             variant="outline"
             leftIcon={<Icon as={editMode ? AiFillSave : AiFillEdit} />}
             size="sm"
-            onClick={toggleEditMode}
-            type={editMode ? "button" : "submit"}
+            onClick={editMode ? undefined : () => setEditMode(true)}
+            type={editMode ? "submit" : "button"}
             isLoading={editMode ? isSubmitting : false}
-            isDisabled={editMode ? !isDirty : false}
+            isDisabled={editMode ? !isDirty || !isValid : false}
           >
             {editMode ? "Save" : "Edit"}
           </Button>
