@@ -22,7 +22,7 @@ function Projects() {
   const projects = []
 
   return (
-    <Container maxW="full" p={12} h="100%">
+    <Container maxW="full">
       <Heading size="md" textAlign={{ base: "center", md: "left" }} mb={6}>
         Projects
       </Heading>

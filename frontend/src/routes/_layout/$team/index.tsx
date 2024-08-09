@@ -17,7 +17,7 @@ const CurrentUser = () => {
 function Dashboard() {
   return (
     <>
-      <Container maxW="full" p={12}>
+      <Container maxW="full">
         <Box data-testid="result">
           <Box fontSize="2xl" isTruncated maxWidth="250px">
             Hi,{" "}

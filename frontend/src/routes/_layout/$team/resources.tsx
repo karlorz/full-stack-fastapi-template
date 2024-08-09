@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_layout/$team/resources")({
 
 function Resources() {
   return (
-    <Container maxW="full" p={12}>
+    <Container maxW="full">
       <Heading size="md" textAlign={{ base: "center", md: "left" }}>
         Resources
       </Heading>

@@ -151,7 +151,7 @@ function TeamsTable() {
 
 const AllTeams = () => {
   return (
-    <Container maxW="full" p={12}>
+    <Container maxW="full">
       <Box mb={10}>
         <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
           Teams
