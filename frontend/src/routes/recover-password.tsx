@@ -13,12 +13,12 @@ import { createFileRoute, redirect } from "@tanstack/react-router"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { type ApiError, LoginService } from "../client"
+import { LoginService } from "../client"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import EmailSent from "../components/Common/EmailSent"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import useCustomToast from "../hooks/useCustomToast"
-import { emailPattern } from "../utils"
+import { emailPattern, handleError } from "../utils"
 
 interface FormData {
   email: string
@@ -58,10 +58,7 @@ function RecoverPassword() {
       setEmailSent(true)
       reset()
     },
-    onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      showToast("Something went wrong.", `${errDetail}`, "error")
-    },
+    onError: handleError.bind(showToast),
   })
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {

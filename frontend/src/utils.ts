@@ -1,4 +1,4 @@
-import type { TeamWithUserPublic, UserPublic } from "./client"
+import type { ApiError, TeamWithUserPublic, UserPublic } from "./client"
 
 export const emailPattern = {
   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -64,4 +64,13 @@ export function getCurrentUserRole(
   currentUser: UserPublic | null,
 ) {
   return team.user_links.find(({ user }) => user.id === currentUser?.id)?.role
+}
+
+export const handleError = function (this: any, err: ApiError) {
+  const errDetail = (err.body as any)?.detail
+  let errorMessage = errDetail || "Something went wrong."
+  if (Array.isArray(errDetail) && errDetail.length > 0) {
+    errorMessage = errDetail[0].msg
+  }
+  this("Error", errorMessage, "error")
 }

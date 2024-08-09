@@ -12,12 +12,9 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 
-import {
-  type ApiError,
-  type InvitationPublic,
-  InvitationsService,
-} from "../../client"
+import { type InvitationPublic, InvitationsService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
+import { handleError } from "../../utils"
 
 interface AcceptInvitationProps {
   isOpen: boolean
@@ -48,10 +45,7 @@ const AcceptInvitation = ({
       navigate({ to: "/teams/all" })
       onClose()
     },
-    onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      showToast("Something went wrong.", `${errDetail}`, "error")
-    },
+    onError: handleError.bind(showToast),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["invitations"] })
     },

@@ -12,10 +12,10 @@ import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { type ApiError, LoginService, type NewPassword } from "../client"
+import { LoginService, type NewPassword } from "../client"
 import { isLoggedIn } from "../hooks/useAuth"
 import useCustomToast from "../hooks/useCustomToast"
-import { confirmPasswordRules, passwordRules } from "../utils"
+import { confirmPasswordRules, handleError, passwordRules } from "../utils"
 
 interface NewPasswordForm extends NewPassword {
   confirm_password: string
@@ -64,10 +64,7 @@ function ResetPassword() {
       reset()
       navigate({ to: "/login" })
     },
-    onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      showToast("Something went wrong.", `${errDetail}`, "error")
-    },
+    onError: handleError.bind(showToast),
   })
 
   const onSubmit: SubmitHandler<NewPasswordForm> = async (data) => {

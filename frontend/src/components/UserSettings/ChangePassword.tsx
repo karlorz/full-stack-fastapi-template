@@ -2,9 +2,9 @@ import { Box, Button, Container, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { type ApiError, type UpdatePassword, UsersService } from "../../client"
+import { type UpdatePassword, UsersService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
-import { confirmPasswordRules, passwordRules } from "../../utils"
+import { confirmPasswordRules, handleError, passwordRules } from "../../utils"
 import PasswordField from "../Common/PasswordField"
 
 interface UpdatePasswordForm extends UpdatePassword {
@@ -31,10 +31,7 @@ const ChangePassword = () => {
       showToast("Success!", "Password updated successfully", "success")
       reset()
     },
-    onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      showToast("Something went wrong.", `${errDetail}`, "error")
-    },
+    onError: handleError.bind(showToast),
   })
 
   const onSubmit: SubmitHandler<UpdatePasswordForm> = async (data) => {

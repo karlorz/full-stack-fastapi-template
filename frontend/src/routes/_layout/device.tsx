@@ -14,9 +14,10 @@ import { useState } from "react"
 import { FaExclamationTriangle } from "react-icons/fa"
 import { z } from "zod"
 
-import { type ApiError, LoginService } from "../../client"
+import { LoginService } from "../../client"
 import { isLoggedIn } from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
+import { handleError } from "../../utils"
 
 const deviceSearchSchema = z.object({
   code: z.string(),
@@ -78,10 +79,7 @@ function AuthorizeDevice() {
         setError((err as any).body.detail)
       }
     },
-    onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      showToast("Something went wrong.", `${errDetail}`, "error")
-    },
+    onError: handleError.bind(showToast),
   })
   return (
     <>

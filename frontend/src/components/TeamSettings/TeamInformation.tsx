@@ -5,11 +5,11 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query"
 
-import { type ApiError, type TeamUpdate, TeamsService } from "../../client"
+import { type TeamUpdate, TeamsService } from "../../client"
 import { useCurrentUser } from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
 import { Route } from "../../routes/_layout/$team"
-import { getCurrentUserRole } from "../../utils"
+import { getCurrentUserRole, handleError } from "../../utils"
 import EditableField from "../Common/EditableField"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
@@ -34,10 +34,7 @@ const TeamInformation = () => {
     onSuccess: () => {
       showToast("Success!", "Team updated successfully", "success")
     },
-    onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      showToast("Something went wrong.", `${errDetail}`, "error")
-    },
+    onError: handleError.bind(showToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

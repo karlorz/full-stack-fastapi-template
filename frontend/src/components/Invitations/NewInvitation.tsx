@@ -11,14 +11,10 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import {
-  type ApiError,
-  type InvitationCreate,
-  InvitationsService,
-} from "../../client"
+import { type InvitationCreate, InvitationsService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { Route } from "../../routes/_layout/$team"
-import { emailPattern } from "../../utils"
+import { emailPattern, handleError } from "../../utils"
 
 const NewInvitation = () => {
   const { team: teamSlug } = Route.useParams()
@@ -41,10 +37,7 @@ const NewInvitation = () => {
       showToast("Success!", "Invitation sent successfully.", "success")
       reset()
     },
-    onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      showToast("Something went wrong.", `${errDetail}`, "error")
-    },
+    onError: handleError.bind(showToast),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["invitations"] })
     },

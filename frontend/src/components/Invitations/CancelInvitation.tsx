@@ -7,6 +7,7 @@ import {
   type TDataDeleteInvitation,
 } from "../../client/services"
 import useCustomToast from "../../hooks/useCustomToast"
+import { handleError } from "../../utils"
 
 const CancelInvitation = ({ id }: { id: string }) => {
   const queryClient = useQueryClient()
@@ -19,13 +20,7 @@ const CancelInvitation = ({ id }: { id: string }) => {
     onSuccess: () => {
       showToast("Success", "The invitation was cancelled.", "success")
     },
-    onError: () => {
-      showToast(
-        "An error occurred.",
-        "An error occurred while cancelling the invitation.",
-        "error",
-      )
-    },
+    onError: handleError.bind(showToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

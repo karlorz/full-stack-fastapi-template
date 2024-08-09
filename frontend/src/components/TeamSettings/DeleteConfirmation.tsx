@@ -1,3 +1,4 @@
+import { WarningTwoIcon } from "@chakra-ui/icons"
 import {
   AlertDialog,
   AlertDialogBody,
@@ -19,10 +20,10 @@ import { useNavigate } from "@tanstack/react-router"
 import { useRef } from "react"
 import { useForm } from "react-hook-form"
 
-import { WarningTwoIcon } from "@chakra-ui/icons"
 import { TeamsService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { Route } from "../../routes/_layout/$team"
+import { handleError } from "../../utils"
 
 interface DeleteProps {
   isOpen: boolean
@@ -57,13 +58,7 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
       onClose()
       navigate({ to: "/teams/all" })
     },
-    onError: () => {
-      showToast(
-        "An error occurred.",
-        "An error occurred while deleting the team",
-        "error",
-      )
-    },
+    onError: handleError.bind(showToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

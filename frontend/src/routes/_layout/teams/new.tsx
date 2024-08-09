@@ -12,9 +12,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { type ApiError, type TeamCreate, TeamsService } from "../../../client"
+import { type TeamCreate, TeamsService } from "../../../client"
 import Plans from "../../../components/Billing/Plans"
 import useCustomToast from "../../../hooks/useCustomToast"
+import { handleError } from "../../../utils"
 
 export const Route = createFileRoute("/_layout/teams/new")({
   component: NewTeam,
@@ -42,10 +43,7 @@ function NewTeam() {
       reset()
       navigate({ to: "/teams/all" })
     },
-    onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      showToast("Something went wrong.", `${errDetail}`, "error")
-    },
+    onError: handleError.bind(showToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

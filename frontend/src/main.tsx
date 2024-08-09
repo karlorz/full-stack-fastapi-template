@@ -6,10 +6,10 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
+import { StrictMode } from "react"
 import ReactDOM from "react-dom/client"
 import { routeTree } from "./routeTree.gen"
 
-import { StrictMode } from "react"
 import { ApiError, OpenAPI } from "./client"
 import theme from "./theme"
 

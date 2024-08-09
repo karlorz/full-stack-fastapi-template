@@ -18,6 +18,7 @@ import {
   type UserPublic,
 } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
+import { handleError } from "../../utils"
 
 interface ChangeRoleProps {
   userRole?: string
@@ -53,13 +54,7 @@ const ChangeRole = ({
       showToast("Success", "The role was updated successfully.", "success")
       onClose()
     },
-    onError: () => {
-      showToast(
-        "An error occurred.",
-        "An error occurred while updating the role.",
-        "error",
-      )
-    },
+    onError: handleError.bind(showToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

@@ -7,13 +7,14 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-import { FaGithub } from "react-icons/fa"
-
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
-import { type ApiError, UsersService } from "../../client"
+import { FaGithub } from "react-icons/fa"
+
+import { UsersService } from "../../client"
 import { useCurrentUser } from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
+import { handleError } from "../../utils"
 import EditableField from "../Common/EditableField"
 import UpdateEmailVerification from "../Common/UpdateEmailVerification"
 import ChangePassword from "./ChangePassword"
@@ -35,10 +36,7 @@ const UserInformation = () => {
       setShowUpdateEmailModal(true)
       onOpen()
     },
-    onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      showToast("Something went wrong.", `${errDetail}`, "error")
-    },
+    onError: handleError.bind(showToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },
@@ -52,10 +50,7 @@ const UserInformation = () => {
     onSuccess: () => {
       showToast("Success!", "Full name updated successfully", "success")
     },
-    onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      showToast("Something went wrong.", `${errDetail}`, "error")
-    },
+    onError: handleError.bind(showToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

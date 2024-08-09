@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form"
 
 import { type TDataRemoveMemberFromTeam, TeamsService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
+import { handleError } from "../../utils"
 
 interface RemoveProps {
   teamSlug?: string
@@ -38,13 +39,7 @@ const RemoveUser = ({ teamSlug, userId, isOpen, onClose }: RemoveProps) => {
       showToast("Success", "The user was removed successfully.", "success")
       onClose()
     },
-    onError: () => {
-      showToast(
-        "An error occurred.",
-        "An error occurred while removing the user.",
-        "error",
-      )
-    },
+    onError: handleError.bind(showToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

@@ -17,13 +17,14 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { Link as RouterLink } from "@tanstack/react-router"
 import { useRef } from "react"
 import { useForm } from "react-hook-form"
 
-import { Link as RouterLink } from "@tanstack/react-router"
 import { TeamsService, UsersService } from "../../client"
 import useAuth from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
+import { handleError } from "../../utils"
 
 interface DeleteProps {
   isOpen: boolean
@@ -67,13 +68,7 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
       onClose()
       logout()
     },
-    onError: () => {
-      showToast(
-        "An error occurred.",
-        "An error occurred while deleting your account",
-        "error",
-      )
-    },
+    onError: handleError.bind(showToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },
