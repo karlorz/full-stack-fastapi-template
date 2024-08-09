@@ -97,6 +97,7 @@
 
 ### Refactors
 
+* ♻️ Refactor error handling. PR [#182](https://github.com/fastapilabs/cloud/pull/182) by [@alejsdev](https://github.com/alejsdev).
 * 🎨 Lint and tweaks. PR [#180](https://github.com/fastapilabs/cloud/pull/180) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Tweak frontend and add (temporary) image to empty state UI. PR [#173](https://github.com/fastapilabs/cloud/pull/173) by [@alejsdev](https://github.com/alejsdev).
 * 🚨 Fix unused import. PR [#176](https://github.com/fastapilabs/cloud/pull/176) by [@patrick91](https://github.com/patrick91).
