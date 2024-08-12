@@ -165,6 +165,8 @@ class Team(TeamBase, table=True):
         back_populates="team", cascade_delete=True
     )
 
+    apps: list["App"] = Relationship(back_populates="team")
+
 
 class TeamCreate(TeamBase):
     pass
@@ -251,3 +253,35 @@ class Invitation(InvitationBase, table=True):
     )
 
     team: Team = Relationship(back_populates="invitations")
+
+
+class App(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    name: str = Field(max_length=255, min_length=1)
+    team_id: uuid.UUID = Field(foreign_key="team.id")
+    team: Team = Relationship(back_populates="apps")
+    slug: str = Field(max_length=255, unique=True)
+    created_at: datetime = Field(default_factory=get_datetime_utc)
+    updated_at: datetime = Field(default_factory=get_datetime_utc)
+    deployments: list["Deployment"] = Relationship(
+        back_populates="app", cascade_delete=True
+    )
+
+
+class DeploymentStatus(str, Enum):
+    waiting_upload = "waiting_upload"
+    building = "building"
+    deploying = "deploying"
+    success = "success"
+    failed = "failed"
+
+
+class Deployment(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    image_hash: str | None = Field(default=None, max_length=255)
+    app_id: uuid.UUID = Field(foreign_key="app.id", ondelete="CASCADE")
+    app: App = Relationship(back_populates="deployments")
+    slug: str = Field(max_length=255)
+    created_at: datetime = Field(default_factory=get_datetime_utc)
+    updated_at: datetime = Field(default_factory=get_datetime_utc)
+    status: DeploymentStatus = Field(default=DeploymentStatus.waiting_upload)
