@@ -201,6 +201,7 @@
 
 ### Internal
 
+* 🔧 Update config for labeler. PR [#205](https://github.com/fastapilabs/cloud/pull/205) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add GitHub Actions to add labels and check labels. PR [#204](https://github.com/fastapilabs/cloud/pull/204) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Comment temporarily deployment workflows for staging and production. PR [#181](https://github.com/fastapilabs/cloud/pull/181) by [@alejsdev](https://github.com/alejsdev).
 * 👷 Only run tests in CI, not the full backend service. PR [#162](https://github.com/fastapilabs/cloud/pull/162) by [@patrick91](https://github.com/patrick91).
