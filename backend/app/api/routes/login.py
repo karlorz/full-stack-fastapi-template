@@ -7,7 +7,13 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 
 from app import crud
-from app.api.deps import CurrentUser, RedisDep, SessionDep, get_first_superuser
+from app.api.deps import (
+    CurrentUser,
+    RedisDep,
+    SessionDep,
+    get_first_superuser,
+    rate_limit_5_per_minute,
+)
 from app.core import security
 from app.core.config import settings
 from app.core.exceptions import OAuth2Exception
@@ -77,7 +83,9 @@ class DeviceAuthorizationResponse(BaseModel):
     interval: int
 
 
-@router.post("/login/device/authorization")
+@router.post(
+    "/login/device/authorization", dependencies=[Depends(rate_limit_5_per_minute)]
+)
 async def device_authorization(
     client_id: Annotated[str, Form()],
     redis: RedisDep,
@@ -112,7 +120,10 @@ class DeviceAuthorizationInfo(BaseModel):
     request_ip: str | None
 
 
-@router.get("/login/device/authorization/{user_code}")
+@router.get(
+    "/login/device/authorization/{user_code}",
+    dependencies=[Depends(rate_limit_5_per_minute)],
+)
 async def device_authorization_info(
     user_code: str,
     redis: RedisDep,
@@ -132,7 +143,11 @@ async def device_authorization_info(
     )
 
 
-@router.post("/login/device/token", response_model=Token)
+@router.post(
+    "/login/device/token",
+    response_model=Token,
+    dependencies=[Depends(rate_limit_5_per_minute)],
+)
 async def login_token(
     client_id: Annotated[str, Form()],
     device_code: Annotated[str, Form()],

@@ -256,3 +256,32 @@ def test_can_authorize_device_code(
     assert device_data is not None
     assert device_data.status == "authorized"
     assert device_data.access_token is not None
+
+
+def test_rate_limit_on_device_authorization(client: TestClient) -> None:
+    data = {"client_id": "valid_id"}
+
+    for _ in range(6):
+        r = client.post(f"{settings.API_V1_STR}/login/device/authorization", data=data)
+
+    assert r.status_code == 429
+
+
+def test_rate_limit_on_device_code(client: TestClient) -> None:
+    for _ in range(6):
+        r = client.get(f"{settings.API_V1_STR}/login/device/authorization/some-code")
+
+    assert r.status_code == 429
+
+
+def test_rate_limit_on_device_token(client: TestClient) -> None:
+    data = {
+        "client_id": "valid_id",
+        "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
+        "device_code": "some-code",
+    }
+
+    for _ in range(6):
+        r = client.post(f"{settings.API_V1_STR}/login/device/token", data=data)
+
+    assert r.status_code == 429

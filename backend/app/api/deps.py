@@ -3,7 +3,7 @@ from typing import Annotated, Any
 
 import jwt
 import redis
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from pydantic import ValidationError
@@ -83,3 +83,15 @@ def get_first_superuser(current_user: CurrentUser) -> User:
         )
 
     return current_user
+
+
+def rate_limit_5_per_minute(request: Request, redis: RedisDep) -> None:
+    host_ip = request.client and request.client.host or "unknown"
+    current_path = request.url.path
+
+    key = f"rate_limit:{host_ip}:{current_path}"
+    value = redis.incr(key)
+    redis.expire(key, time=60, nx=True)
+
+    if value > 5:
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
