@@ -179,7 +179,7 @@ class TeamUpdate(SQLModel):
 
 class TeamPublic(TeamBase):
     id: uuid.UUID
-    slug: str = Field(default=None, max_length=255)
+    slug: str = Field(max_length=255)
     is_personal_team: bool
     owner_id: uuid.UUID
 
@@ -255,9 +255,12 @@ class Invitation(InvitationBase, table=True):
     team: Team = Relationship(back_populates="invitations")
 
 
-class App(SQLModel, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+class AppBase(SQLModel):
     name: str = Field(max_length=255, min_length=1)
+
+
+class App(AppBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     team_id: uuid.UUID = Field(foreign_key="team.id")
     team: Team = Relationship(back_populates="apps")
     slug: str = Field(max_length=255, unique=True)
@@ -266,6 +269,18 @@ class App(SQLModel, table=True):
     deployments: list["Deployment"] = Relationship(
         back_populates="app", cascade_delete=True
     )
+
+
+class AppCreate(AppBase):
+    team_slug: str
+
+
+class AppPublic(AppBase):
+    id: uuid.UUID
+    team_id: uuid.UUID
+    slug: str
+    created_at: datetime
+    updated_at: datetime
 
 
 class DeploymentStatus(str, Enum):

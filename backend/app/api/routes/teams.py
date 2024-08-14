@@ -6,7 +6,7 @@ from sqlalchemy.orm import selectinload
 from sqlmodel import col, func, select
 
 from app.api.deps import CurrentUser, SessionDep, get_current_user
-from app.api.utils.teams import verify_and_generate_slug_name
+from app.api.utils.teams import generate_team_slug_name
 from app.models import (
     Message,
     Role,
@@ -92,7 +92,7 @@ def create_team(
     """
     Create a new team with the provided details.
     """
-    team_slug = verify_and_generate_slug_name(team_in.name, session)
+    team_slug = generate_team_slug_name(team_in.name, session)
 
     team = Team.model_validate(
         team_in, update={"slug": team_slug, "owner_id": current_user.id}

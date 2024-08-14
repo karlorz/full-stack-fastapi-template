@@ -7,7 +7,7 @@ from sqlmodel import select
 
 from app import crud
 from app.api.deps import CurrentUser, SessionDep, get_first_superuser
-from app.api.utils.teams import verify_and_generate_slug_name
+from app.api.utils.teams import generate_team_slug_name
 from app.core.security import get_password_hash, verify_password
 from app.models import (
     EmailVerificationToken,
@@ -205,7 +205,7 @@ def verify_email_token(session: SessionDep, payload: EmailVerificationToken) -> 
     if user.is_verified:
         raise HTTPException(status_code=400, detail="Email already verified")
 
-    team_slug = verify_and_generate_slug_name(session=session, name=user.username)
+    team_slug = generate_team_slug_name(session=session, name=user.username)
     team = Team(name=user.full_name, slug=team_slug, owner=user, is_personal_team=True)
     user_team_link = UserTeamLink(team=team, user=user, role=Role.admin)
 
