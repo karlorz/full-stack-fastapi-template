@@ -202,6 +202,7 @@
 
 ### Internal
 
+* 👷 Update GitHub Action labeler to add only one label. PR [#213](https://github.com/fastapilabs/cloud/pull/213) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update labeler GitHub Action. PR [#212](https://github.com/fastapilabs/cloud/pull/212) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Update config for labeler. PR [#205](https://github.com/fastapilabs/cloud/pull/205) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add GitHub Actions to add labels and check labels. PR [#204](https://github.com/fastapilabs/cloud/pull/204) by [@tiangolo](https://github.com/tiangolo).
