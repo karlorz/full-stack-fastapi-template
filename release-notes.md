@@ -100,6 +100,7 @@
 
 ### Refactors
 
+* 👷🏻 Auto-generate frontend client. PR [#215](https://github.com/fastapilabs/cloud/pull/215) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Add necessary configs to allow running the tests in VS Code. PR [#203](https://github.com/fastapilabs/cloud/pull/203) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor Navbar. PR [#197](https://github.com/fastapilabs/cloud/pull/197) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor error handling. PR [#182](https://github.com/fastapilabs/cloud/pull/182) by [@alejsdev](https://github.com/alejsdev).
