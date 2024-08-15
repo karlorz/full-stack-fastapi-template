@@ -4,9 +4,46 @@ from sqlmodel import Session, select
 from app.core.config import settings
 from app.crud import add_user_to_team
 from app.models import App, Role
+from app.tests.utils.apps import create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 from app.tests.utils.utils import random_email
+
+
+def test_read_apps(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+    app2 = create_random_app(db, team=team)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/?team_slug={team.slug}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["count"] == 2
+    assert data["data"][0]["id"] == str(app.id)
+    assert data["data"][0]["name"] == app.name
+    assert data["data"][0]["slug"] == app.slug
+    assert data["data"][1]["id"] == str(app2.id)
+    assert data["data"][1]["name"] == app2.name
+    assert data["data"][1]["slug"] == app2.slug
 
 
 def test_create_app_admin(client: TestClient, db: Session) -> None:
