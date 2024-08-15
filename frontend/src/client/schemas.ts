@@ -15,6 +15,56 @@ export const $AccessTokenWithUserMe = {
 	},
 } as const;
 
+export const $AppCreate = {
+	properties: {
+		name: {
+	type: 'string',
+	isRequired: true,
+	maxLength: 255,
+	minLength: 1,
+},
+		team_slug: {
+	type: 'string',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $AppPublic = {
+	properties: {
+		name: {
+	type: 'string',
+	isRequired: true,
+	maxLength: 255,
+	minLength: 1,
+},
+		id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		team_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		slug: {
+	type: 'string',
+	isRequired: true,
+},
+		created_at: {
+	type: 'string',
+	isRequired: true,
+	format: 'date-time',
+},
+		updated_at: {
+	type: 'string',
+	isRequired: true,
+	format: 'date-time',
+},
+	},
+} as const;
+
 export const $AuthorizeDeviceIn = {
 	properties: {
 		user_code: {
@@ -339,6 +389,7 @@ export const $TeamPublic = {
 },
 		slug: {
 	type: 'string',
+	isRequired: true,
 	maxLength: 255,
 },
 		is_personal_team: {
@@ -409,6 +460,7 @@ export const $TeamWithUserPublic = {
 },
 		slug: {
 	type: 'string',
+	isRequired: true,
 	maxLength: 255,
 },
 		is_personal_team: {

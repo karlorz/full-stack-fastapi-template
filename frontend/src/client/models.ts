@@ -6,6 +6,24 @@ export type AccessTokenWithUserMe = {
 
 
 
+export type AppCreate = {
+	name: string;
+	team_slug: string;
+};
+
+
+
+export type AppPublic = {
+	name: string;
+	id: string;
+	team_id: string;
+	slug: string;
+	created_at: string;
+	updated_at: string;
+};
+
+
+
 export type AuthorizeDeviceIn = {
 	user_code: string;
 };
@@ -140,7 +158,7 @@ export type TeamPublic = {
 	name: string;
 	description?: string | null;
 	id: string;
-	slug?: string;
+	slug: string;
 	is_personal_team: boolean;
 	owner_id: string;
 };
@@ -164,7 +182,7 @@ export type TeamWithUserPublic = {
 	name: string;
 	description?: string | null;
 	id: string;
-	slug?: string;
+	slug: string;
 	is_personal_team: boolean;
 	owner_id: string;
 	user_links: Array<UserLinkPublic>;
