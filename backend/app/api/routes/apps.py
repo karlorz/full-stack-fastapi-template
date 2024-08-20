@@ -56,7 +56,7 @@ def read_apps(
     return AppsPublic(data=apps, count=count)
 
 
-@router.post("/", response_model=AppPublic)
+@router.post("/", response_model=AppPublic, status_code=201)
 def create_app(
     session: SessionDep, current_user: CurrentUser, app_in: AppCreate
 ) -> Any:
