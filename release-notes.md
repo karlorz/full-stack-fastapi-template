@@ -2,6 +2,7 @@
 
 ## Latest Changes
 
+* 👷 Do not sync labels as it overrides manually added labels. PR [#216](https://github.com/fastapilabs/cloud/pull/216) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Redirect user to login if we get 401/403. PR [#196](https://github.com/fastapilabs/cloud/pull/196) by [@patrick91](https://github.com/patrick91).
 * ✨ Redirect if not logged in device authorization page. PR [#177](https://github.com/fastapilabs/cloud/pull/177) by [@patrick91](https://github.com/patrick91).
 * ✨ Add redis configuration. PR [#158](https://github.com/fastapilabs/cloud/pull/158) by [@patrick91](https://github.com/patrick91).
@@ -19,6 +20,7 @@
 
 ### Features
 
+* ✨ Add endpoint to read apps. PR [#214](https://github.com/fastapilabs/cloud/pull/214) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add endpoint to create an app. PR [#202](https://github.com/fastapilabs/cloud/pull/202) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add rate limit to device authorization endpoints. PR [#183](https://github.com/fastapilabs/cloud/pull/183) by [@patrick91](https://github.com/patrick91).
 * 🗃️ New DB models for apps and deployments. PR [#198](https://github.com/fastapilabs/cloud/pull/198) by [@alejsdev](https://github.com/alejsdev).
@@ -100,6 +102,7 @@
 
 ### Refactors
 
+* 👷🏻 Auto-generate frontend client. PR [#215](https://github.com/fastapilabs/cloud/pull/215) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Add necessary configs to allow running the tests in VS Code. PR [#203](https://github.com/fastapilabs/cloud/pull/203) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor Navbar. PR [#197](https://github.com/fastapilabs/cloud/pull/197) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor error handling. PR [#182](https://github.com/fastapilabs/cloud/pull/182) by [@alejsdev](https://github.com/alejsdev).
