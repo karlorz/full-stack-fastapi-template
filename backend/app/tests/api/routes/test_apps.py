@@ -24,6 +24,12 @@ def test_read_apps(client: TestClient, db: Session) -> None:
     app = create_random_app(db, team=team)
     app2 = create_random_app(db, team=team)
 
+    team2 = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team2, role=Role.admin)
+
+    app3 = create_random_app(db, team=team2)
+    app4 = create_random_app(db, team=team2)
+
     user_auth_headers = user_authentication_headers(
         client=client,
         email=user.email,
@@ -44,6 +50,7 @@ def test_read_apps(client: TestClient, db: Session) -> None:
     assert data["data"][1]["id"] == str(app2.id)
     assert data["data"][1]["name"] == app2.name
     assert data["data"][1]["slug"] == app2.slug
+    assert all(app["id"] not in {str(app3.id), str(app4.id)} for app in data["data"])
 
 
 def test_create_app_admin(client: TestClient, db: Session) -> None:
