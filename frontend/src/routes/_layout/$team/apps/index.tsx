@@ -222,10 +222,7 @@ function Apps() {
               </Text>
               <Text>
                 You can learn more in the{" "}
-                <Link color="ui.main" href="https://fastapi.tiangolo.com/">
-                  FastAPI CLI documentation
-                </Link>
-                .
+                <Link color="ui.main">FastAPI CLI documentation</Link>.
               </Text>
             </VStack>
           </Box>
