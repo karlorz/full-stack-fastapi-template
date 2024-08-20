@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✨ Add endpoint to read apps. PR [#214](https://github.com/fastapilabs/cloud/pull/214) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add endpoint to create an app. PR [#202](https://github.com/fastapilabs/cloud/pull/202) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add rate limit to device authorization endpoints. PR [#183](https://github.com/fastapilabs/cloud/pull/183) by [@patrick91](https://github.com/patrick91).
 * 🗃️ New DB models for apps and deployments. PR [#198](https://github.com/fastapilabs/cloud/pull/198) by [@alejsdev](https://github.com/alejsdev).
