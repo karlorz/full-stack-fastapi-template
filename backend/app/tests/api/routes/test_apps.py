@@ -77,7 +77,7 @@ def test_create_app_admin(client: TestClient, db: Session) -> None:
         json=app_in,
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["id"]
     assert data["name"] == app_in["name"]
@@ -114,7 +114,7 @@ def test_create_app_member(client: TestClient, db: Session) -> None:
         json=app_in,
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["id"]
     assert data["name"] == app_in["name"]

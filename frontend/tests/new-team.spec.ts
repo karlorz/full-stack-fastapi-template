@@ -1,13 +1,13 @@
 import { expect, test } from "@playwright/test"
 import { randomTeamName } from "./utils/random"
 
-const sections = ["Details", "Plan", "Payment"]
+const sections = ["Name", "Pricing Plan", "Payment"]
 
 test("New team is visible", async ({ page }) => {
   await page.goto("/teams/new")
   await expect(page.getByRole("heading", { name: "New Team" })).toBeVisible()
   for (const section of sections) {
-    await expect(page.getByRole("heading", { name: section })).toBeVisible()
+    await expect(page.getByText(section)).toBeVisible()
   }
   await expect(page.getByPlaceholder("Name")).toBeVisible()
   await expect(page.getByRole("button", { name: "Add card" })).toBeVisible()

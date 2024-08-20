@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✨ Create an app. PR [#207](https://github.com/fastapilabs/cloud/pull/207) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add endpoint to read apps. PR [#214](https://github.com/fastapilabs/cloud/pull/214) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add endpoint to create an app. PR [#202](https://github.com/fastapilabs/cloud/pull/202) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add rate limit to device authorization endpoints. PR [#183](https://github.com/fastapilabs/cloud/pull/183) by [@patrick91](https://github.com/patrick91).
@@ -102,6 +103,7 @@
 
 ### Refactors
 
+* ♻️ Add status code 201 to create app endpoint. PR [#217](https://github.com/fastapilabs/cloud/pull/217) by [@alejsdev](https://github.com/alejsdev).
 * 👷🏻 Auto-generate frontend client. PR [#215](https://github.com/fastapilabs/cloud/pull/215) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Add necessary configs to allow running the tests in VS Code. PR [#203](https://github.com/fastapilabs/cloud/pull/203) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor Navbar. PR [#197](https://github.com/fastapilabs/cloud/pull/197) by [@alejsdev](https://github.com/alejsdev).

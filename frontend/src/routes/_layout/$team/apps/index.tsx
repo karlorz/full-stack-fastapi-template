@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Center,
   Code,
   Container,
@@ -10,23 +11,23 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
-import { createFileRoute } from "@tanstack/react-router"
+import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
 import EmptyBox from "/assets/images/empty-box.jpg"
 
-export const Route = createFileRoute("/_layout/$team/projects")({
-  component: Projects,
+export const Route = createFileRoute("/_layout/$team/apps/")({
+  component: Apps,
 })
 
-function Projects() {
+function Apps() {
   // Just to test the UI
-  const projects = []
+  const apps = []
 
   return (
     <Container maxW="full">
       <Heading size="md" textAlign={{ base: "center", md: "left" }} mb={6}>
-        Projects
+        Apps
       </Heading>
-      {projects.length > 0 ? (
+      {apps.length > 0 ? (
         <></>
       ) : (
         <Flex direction={{ base: "column", md: "row" }} gap={4}>
@@ -47,7 +48,14 @@ function Projects() {
                 alignSelf="center"
               />
             </Center>
-            <Text textAlign="center">You don't have any projects yet</Text>
+            <Text textAlign="center" mb={2}>
+              You don't have any apps yet
+            </Text>
+            <Center>
+              <Button as={RouterLink} to="/$team/apps/new">
+                Create App
+              </Button>
+            </Center>
           </Box>
           <Box
             w={{ base: "100%", md: "30%" }}
@@ -59,19 +67,19 @@ function Projects() {
             <VStack spacing={4} align="flex-start">
               <Heading size="md">Quick Start with FastAPI CLI</Heading>
               <Text>
-                FastAPI CLI is your primary tool for managing your projects.
-                Before you start, make sure you have FastAPI CLI installed on
-                your machine. You can install it using pip:
+                FastAPI CLI is your primary tool for managing your apps. Before
+                you start, make sure you have FastAPI CLI installed on your
+                machine. You can install it using pip:
               </Text>
               <Text>
                 <Code>pip install fastapi-cli</Code>
               </Text>
               <Heading size="sm">Getting started:</Heading>
               <Text>
-                1. Initialize your project: <Code>fastapi init</Code>
+                1. Initialize your app: <Code>fastapi init</Code>
               </Text>
               <Text>
-                2. Deploy your project: <Code>fastapi deploy</Code>
+                2. Deploy your app: <Code>fastapi deploy</Code>
               </Text>
               <Text>
                 You can learn more in the{" "}

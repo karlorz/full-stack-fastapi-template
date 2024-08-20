@@ -27,11 +27,12 @@ import { Route as LayoutTeamsNewImport } from './routes/_layout/teams/new'
 import { Route as LayoutTeamsAllImport } from './routes/_layout/teams/all'
 import { Route as LayoutTeamSettingsImport } from './routes/_layout/$team/settings'
 import { Route as LayoutTeamResourcesImport } from './routes/_layout/$team/resources'
-import { Route as LayoutTeamProjectsImport } from './routes/_layout/$team/projects'
 import { Route as LayoutTeamItemsImport } from './routes/_layout/$team/items'
 import { Route as LayoutTeamHelpImport } from './routes/_layout/$team/help'
 import { Route as LayoutTeamBillingImport } from './routes/_layout/$team/billing'
 import { Route as LayoutTeamsTeamSlugIndexImport } from './routes/_layout/teams/$teamSlug/index'
+import { Route as LayoutTeamAppsIndexImport } from './routes/_layout/$team/apps/index'
+import { Route as LayoutTeamAppsNewImport } from './routes/_layout/$team/apps/new'
 
 // Create/Update Routes
 
@@ -115,11 +116,6 @@ const LayoutTeamResourcesRoute = LayoutTeamResourcesImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutTeamProjectsRoute = LayoutTeamProjectsImport.update({
-  path: '/$team/projects',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
 const LayoutTeamItemsRoute = LayoutTeamItemsImport.update({
   path: '/$team/items',
   getParentRoute: () => LayoutRoute,
@@ -137,6 +133,16 @@ const LayoutTeamBillingRoute = LayoutTeamBillingImport.update({
 
 const LayoutTeamsTeamSlugIndexRoute = LayoutTeamsTeamSlugIndexImport.update({
   path: '/teams/$teamSlug/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutTeamAppsIndexRoute = LayoutTeamAppsIndexImport.update({
+  path: '/$team/apps/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutTeamAppsNewRoute = LayoutTeamAppsNewImport.update({
+  path: '/$team/apps/new',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -200,10 +206,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutTeamItemsImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/$team/projects': {
-      preLoaderRoute: typeof LayoutTeamProjectsImport
-      parentRoute: typeof LayoutImport
-    }
     '/_layout/$team/resources': {
       preLoaderRoute: typeof LayoutTeamResourcesImport
       parentRoute: typeof LayoutImport
@@ -224,6 +226,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutTeamIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/$team/apps/new': {
+      preLoaderRoute: typeof LayoutTeamAppsNewImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/$team/apps/': {
+      preLoaderRoute: typeof LayoutTeamAppsIndexImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/teams/$teamSlug/': {
       preLoaderRoute: typeof LayoutTeamsTeamSlugIndexImport
       parentRoute: typeof LayoutImport
@@ -241,12 +251,13 @@ export const routeTree = rootRoute.addChildren([
     LayoutTeamBillingRoute,
     LayoutTeamHelpRoute,
     LayoutTeamItemsRoute,
-    LayoutTeamProjectsRoute,
     LayoutTeamResourcesRoute,
     LayoutTeamSettingsRoute,
     LayoutTeamsAllRoute,
     LayoutTeamsNewRoute,
     LayoutTeamIndexRoute,
+    LayoutTeamAppsNewRoute,
+    LayoutTeamAppsIndexRoute,
     LayoutTeamsTeamSlugIndexRoute,
   ]),
   LoginRoute,
