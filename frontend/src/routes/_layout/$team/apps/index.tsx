@@ -35,7 +35,7 @@ const appsSearchSchema = z.object({
   page: z.number().catch(1).optional(),
   orderBy: z.enum(["created_at"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
-  teamSlug: z.string(),
+  teamSlug: z.string().optional(),
 })
 
 export const Route = createFileRoute("/_layout/$team/apps/")({
@@ -71,10 +71,14 @@ function getAppsQueryOptions({
 
 function Apps() {
   const queryClient = useQueryClient()
-  const { page = 1, orderBy, order, teamSlug } = Route.useSearch()
+  const { team: teamSlug } = Route.useParams()
+  console.log("teamSlug", teamSlug)
+
+  const { page = 1, orderBy, order } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
     navigate({ search: (prev) => ({ ...prev, page }) })
+
   const {
     data: apps,
     isPending,
