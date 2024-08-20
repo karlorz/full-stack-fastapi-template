@@ -18,8 +18,8 @@ import {
 import { CgOrganisation } from "react-icons/cg"
 import {
   FaCog,
-  FaCubes,
   FaHome,
+  FaLayerGroup,
   FaQuestionCircle,
   FaTools,
 } from "react-icons/fa"
@@ -54,10 +54,10 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
       }),
     },
     {
-      icon: FaCubes,
-      title: "Projects",
+      icon: FaLayerGroup,
+      title: "Apps",
       ...link({
-        to: "/$team/projects",
+        to: "/$team/apps",
         params: { team },
       }),
     },

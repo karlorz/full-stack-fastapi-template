@@ -13,17 +13,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { type TeamCreate, TeamsService } from "../../../client"
-import Plans from "../../../components/Billing/Plans"
-import useCustomToast from "../../../hooks/useCustomToast"
-import { handleError } from "../../../utils"
+import { FaGithub } from "react-icons/fa"
+import { type AppCreate, AppsService } from "../../../../client"
+import useCustomToast from "../../../../hooks/useCustomToast"
+import { handleError } from "../../../../utils"
 
-export const Route = createFileRoute("/_layout/teams/new")({
-  component: NewTeam,
+export const Route = createFileRoute("/_layout/$team/apps/new")({
+  component: NewApp,
 })
 
-function NewTeam() {
+function NewApp() {
   const navigate = useNavigate()
+  const { team } = Route.useParams()
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const {
@@ -31,18 +32,18 @@ function NewTeam() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<TeamCreate>({
+  } = useForm<AppCreate>({
     mode: "onBlur",
     criteriaMode: "all",
   })
 
   const mutation = useMutation({
-    mutationFn: (data: TeamCreate) =>
-      TeamsService.createTeam({ requestBody: data }),
+    mutationFn: (data: AppCreate) =>
+      AppsService.createApp({ requestBody: data }),
     onSuccess: () => {
-      showToast("Success!", "Team created successfully.", "success")
+      showToast("Success!", "App created successfully", "success")
       reset()
-      navigate({ to: "/teams/all" })
+      navigate({ to: "/$team/apps", params: { team } })
     },
     onError: handleError.bind(showToast),
     onSettled: () => {
@@ -50,14 +51,14 @@ function NewTeam() {
     },
   })
 
-  const onSubmit: SubmitHandler<TeamCreate> = (data) => {
-    mutation.mutate(data)
+  const onSubmit: SubmitHandler<AppCreate> = (data) => {
+    mutation.mutate({ ...data, team_slug: team })
   }
 
   return (
     <Container maxW="full">
       <Heading size="md" textAlign={{ base: "center", md: "left" }}>
-        New Team
+        New App
       </Heading>
       <Box as="form" onSubmit={handleSubmit(onSubmit)} pt={10}>
         <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
@@ -78,20 +79,17 @@ function NewTeam() {
         </Box>
         <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
           <Text fontWeight="bold" mb={4}>
-            Pricing Plan
+            Source Code
           </Text>
-          <Plans />
-        </Box>
-        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-          <Text fontWeight="bold" mb={4}>
-            Payment
+          <Text mb={4}>
+            Connect your app to a source code repository to deploy it.
           </Text>
-          <Button color="ui.defaultText" mt={2} mb={4}>
-            Add card
+          <Button variant="outline" colorScheme="gray" leftIcon={<FaGithub />}>
+            Connect
           </Button>
         </Box>
         <Button variant="primary" my={4} type="submit" isLoading={isSubmitting}>
-          Create Team
+          Create App
         </Button>
       </Box>
     </Container>
