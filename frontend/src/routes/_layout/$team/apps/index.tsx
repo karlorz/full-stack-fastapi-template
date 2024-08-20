@@ -72,8 +72,6 @@ function getAppsQueryOptions({
 function Apps() {
   const queryClient = useQueryClient()
   const { team: teamSlug } = Route.useParams()
-  console.log("teamSlug", teamSlug)
-
   const { page = 1, orderBy, order } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
