@@ -35,7 +35,6 @@ const appsSearchSchema = z.object({
   page: z.number().catch(1).optional(),
   orderBy: z.enum(["created_at"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
-  teamSlug: z.string().optional(),
 })
 
 export const Route = createFileRoute("/_layout/$team/apps/")({
@@ -44,17 +43,16 @@ export const Route = createFileRoute("/_layout/$team/apps/")({
 })
 
 const PER_PAGE = 5
+const teamSlug = Route.useParams().team
 
 function getAppsQueryOptions({
   page,
   orderBy,
   order,
-  teamSlug,
 }: {
   page: number
   orderBy?: "created_at"
   order?: "asc" | "desc"
-  teamSlug: string
 }) {
   return {
     queryFn: () =>
@@ -71,9 +69,6 @@ function getAppsQueryOptions({
 
 function Apps() {
   const queryClient = useQueryClient()
-  const { team: teamSlug } = Route.useParams()
-  console.log("teamSlug", teamSlug)
-
   const { page = 1, orderBy, order } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
@@ -84,7 +79,7 @@ function Apps() {
     isPending,
     isPlaceholderData,
   } = useQuery({
-    ...getAppsQueryOptions({ page, orderBy, order, teamSlug }),
+    ...getAppsQueryOptions({ page, orderBy, order }),
     placeholderData: (prevData) => prevData,
   })
 
@@ -94,7 +89,7 @@ function Apps() {
   useEffect(() => {
     if (hasNextPage) {
       queryClient.prefetchQuery(
-        getAppsQueryOptions({ page: page + 1, orderBy, order, teamSlug }),
+        getAppsQueryOptions({ page: page + 1, orderBy, order }),
       )
     }
   }, [page, queryClient, hasNextPage])
