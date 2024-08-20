@@ -24,6 +24,13 @@ export type AppPublic = {
 
 
 
+export type AppsPublic = {
+	data: Array<AppPublic>;
+	count: number;
+};
+
+
+
 export type AuthorizeDeviceIn = {
 	user_code: string;
 };

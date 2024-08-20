@@ -65,6 +65,22 @@ export const $AppPublic = {
 	},
 } as const;
 
+export const $AppsPublic = {
+	properties: {
+		data: {
+	type: 'array',
+	contains: {
+		type: 'AppPublic',
+	},
+	isRequired: true,
+},
+		count: {
+	type: 'number',
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $AuthorizeDeviceIn = {
 	properties: {
 		user_code: {

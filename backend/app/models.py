@@ -283,6 +283,11 @@ class AppPublic(AppBase):
     updated_at: datetime
 
 
+class AppsPublic(SQLModel):
+    data: list[AppPublic]
+    count: int
+
+
 class DeploymentStatus(str, Enum):
     waiting_upload = "waiting_upload"
     building = "building"
