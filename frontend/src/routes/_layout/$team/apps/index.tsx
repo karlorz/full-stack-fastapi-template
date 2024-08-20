@@ -35,6 +35,7 @@ const appsSearchSchema = z.object({
   page: z.number().catch(1).optional(),
   orderBy: z.enum(["created_at"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
+  teamSlug: z.string().optional(),
 })
 
 export const Route = createFileRoute("/_layout/$team/apps/")({
@@ -43,16 +44,17 @@ export const Route = createFileRoute("/_layout/$team/apps/")({
 })
 
 const PER_PAGE = 5
-const teamSlug = Route.useParams().team
 
 function getAppsQueryOptions({
   page,
   orderBy,
   order,
+  teamSlug,
 }: {
   page: number
   orderBy?: "created_at"
   order?: "asc" | "desc"
+  teamSlug: string
 }) {
   return {
     queryFn: () =>
@@ -69,6 +71,9 @@ function getAppsQueryOptions({
 
 function Apps() {
   const queryClient = useQueryClient()
+  const { team: teamSlug } = Route.useParams()
+  console.log("teamSlug", teamSlug)
+
   const { page = 1, orderBy, order } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
@@ -79,7 +84,7 @@ function Apps() {
     isPending,
     isPlaceholderData,
   } = useQuery({
-    ...getAppsQueryOptions({ page, orderBy, order }),
+    ...getAppsQueryOptions({ page, orderBy, order, teamSlug }),
     placeholderData: (prevData) => prevData,
   })
 
@@ -89,7 +94,7 @@ function Apps() {
   useEffect(() => {
     if (hasNextPage) {
       queryClient.prefetchQuery(
-        getAppsQueryOptions({ page: page + 1, orderBy, order }),
+        getAppsQueryOptions({ page: page + 1, orderBy, order, teamSlug }),
       )
     }
   }, [page, queryClient, hasNextPage])
@@ -99,7 +104,7 @@ function Apps() {
       <Heading size="md" textAlign={{ base: "center", md: "left" }} mb={6}>
         Apps
       </Heading>
-      {apps?.data?.length ?? 0 > 0 ? (
+      {apps?.data?.length ? (
         <>
           <TableContainer data-testid="apps-table">
             <Table size={{ base: "sm", md: "md" }}>
@@ -129,7 +134,7 @@ function Apps() {
                       <Td>
                         <Link
                           as={RouterLink}
-                          to={`/${app.slug}/`}
+                          to={`/$team/${app.slug}/`}
                           _hover={{
                             color: "ui.main",
                             textDecoration: "underline",
