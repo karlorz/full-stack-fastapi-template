@@ -1,23 +1,18 @@
 import {
   Box,
   Button,
-  Center,
-  Code,
   Container,
   Flex,
   Heading,
-  Image,
   Link,
   Skeleton,
   Table,
   TableContainer,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr,
-  VStack,
 } from "@chakra-ui/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import {
@@ -28,8 +23,9 @@ import {
 import { z } from "zod"
 
 import { useEffect } from "react"
-import EmptyBox from "/assets/images/empty-box.jpg"
+import { ErrorBoundary } from "react-error-boundary"
 import { AppsService } from "../../../../client"
+import EmptyState from "../../../../components/Apps/EmptyState"
 
 const appsSearchSchema = z.object({
   page: z.number().catch(1).optional(),
@@ -101,132 +97,79 @@ function Apps() {
       <Heading size="md" textAlign={{ base: "center", md: "left" }} mb={6}>
         Apps
       </Heading>
-      {apps?.data?.length ? (
-        <>
-          <TableContainer data-testid="apps-table">
-            <Table size={{ base: "sm", md: "md" }}>
-              <Thead>
+      <TableContainer>
+        <Table size={{ base: "sm", md: "md" }} variant="unstyled">
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+            </Tr>
+          </Thead>
+          <ErrorBoundary
+            fallbackRender={({ error }) => (
+              <Tbody>
                 <Tr>
-                  <Th>Name</Th>
+                  <Td colSpan={4}>Something went wrong: {error.message}</Td>
                 </Tr>
-              </Thead>
+              </Tbody>
+            )}
+          >
+            <Tbody>
               {isPending ? (
-                <Tbody>
-                  {new Array(5).fill(null).map((_, index) => (
+                <>
+                  {new Array(3).fill(null).map((_, index) => (
                     <Tr key={index}>
-                      {new Array(1).fill(null).map((_, index) => (
-                        <Td key={index}>
-                          <Box width="20%">
-                            <Skeleton height="20px" />
-                          </Box>
-                        </Td>
-                      ))}
-                    </Tr>
-                  ))}
-                </Tbody>
-              ) : (
-                <Tbody>
-                  {apps?.data.map((app) => (
-                    <Tr key={app.id} opacity={isPlaceholderData ? 0.5 : 1}>
                       <Td>
-                        <Link
-                          as={RouterLink}
-                          to={`/$team/${app.slug}/`}
-                          _hover={{
-                            color: "ui.main",
-                            textDecoration: "underline",
-                          }}
-                          display="inline-block"
-                          minW="20%"
-                        >
-                          {app.name}
-                        </Link>
+                        <Box width="50%">
+                          <Skeleton height="20px" />
+                        </Box>
                       </Td>
                     </Tr>
                   ))}
-                </Tbody>
+                </>
+              ) : apps?.data?.length ? (
+                apps?.data.map((app) => (
+                  <Tr key={app.id} opacity={isPlaceholderData ? 0.5 : 1}>
+                    <Td>
+                      <Link
+                        as={RouterLink}
+                        to={`/$team/${app.slug}/`}
+                        _hover={{
+                          color: "ui.main",
+                          textDecoration: "underline",
+                        }}
+                        display="inline-block"
+                        minW="20%"
+                      >
+                        {app.name}
+                      </Link>
+                    </Td>
+                  </Tr>
+                ))
+              ) : (
+                <Tr>
+                  <EmptyState />
+                </Tr>
               )}
-            </Table>
-          </TableContainer>
-          <Flex
-            gap={4}
-            alignItems="center"
-            mt={4}
-            direction="row"
-            justifyContent="flex-end"
-          >
-            <Button
-              onClick={() => setPage(page - 1)}
-              isDisabled={!hasPreviousPage}
-            >
-              Previous
-            </Button>
-            <span>Page {page}</span>
-            <Button isDisabled={!hasNextPage} onClick={() => setPage(page + 1)}>
-              Next
-            </Button>
-          </Flex>
-        </>
-      ) : (
-        <Flex direction={{ base: "column", md: "row" }} gap={4}>
-          <Box
-            w={{ base: "100%", md: "70%" }}
-            mb={{ base: 4, md: 0 }}
-            boxShadow="xs"
-            borderRadius="lg"
-            px={8}
-            py={4}
-          >
-            <Center>
-              {/* TODO: Replace image */}
-              <Image
-                w={{ base: "100%", md: "25%" }}
-                src={EmptyBox}
-                alt="Empty state"
-                alignSelf="center"
-              />
-            </Center>
-            <Text textAlign="center" mb={2}>
-              You don't have any apps yet
-            </Text>
-            <Center>
-              <Button as={RouterLink} to="/$team/apps/new">
-                Create App
-              </Button>
-            </Center>
-          </Box>
-          <Box
-            w={{ base: "100%", md: "30%" }}
-            boxShadow="xs"
-            borderRadius="lg"
-            px={8}
-            py={4}
-          >
-            <VStack spacing={4} align="flex-start">
-              <Heading size="md">Quick Start with FastAPI CLI</Heading>
-              <Text>
-                FastAPI CLI is your primary tool for managing your apps. Before
-                you start, make sure you have FastAPI CLI installed on your
-                machine. You can install it using pip:
-              </Text>
-              <Text>
-                <Code>pip install fastapi-cli</Code>
-              </Text>
-              <Heading size="sm">Getting started:</Heading>
-              <Text>
-                1. Initialize your app: <Code>fastapi init</Code>
-              </Text>
-              <Text>
-                2. Deploy your app: <Code>fastapi deploy</Code>
-              </Text>
-              <Text>
-                You can learn more in the{" "}
-                <Link color="ui.main">FastAPI CLI documentation</Link>.
-              </Text>
-            </VStack>
-          </Box>
-        </Flex>
-      )}
+            </Tbody>
+          </ErrorBoundary>
+        </Table>
+      </TableContainer>
+
+      <Flex
+        gap={4}
+        alignItems="center"
+        mt={4}
+        direction="row"
+        justifyContent="flex-end"
+      >
+        <Button onClick={() => setPage(page - 1)} isDisabled={!hasPreviousPage}>
+          Previous
+        </Button>
+        <span>Page {page}</span>
+        <Button isDisabled={!hasNextPage} onClick={() => setPage(page + 1)}>
+          Next
+        </Button>
+      </Flex>
     </Container>
   )
 }
