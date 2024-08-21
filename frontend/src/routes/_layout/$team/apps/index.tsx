@@ -97,79 +97,89 @@ function Apps() {
       <Heading size="md" textAlign={{ base: "center", md: "left" }} mb={6}>
         Apps
       </Heading>
-      <TableContainer>
-        <Table size={{ base: "sm", md: "md" }} variant="unstyled">
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-            </Tr>
-          </Thead>
-          <ErrorBoundary
-            fallbackRender={({ error }) => (
-              <Tbody>
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <Box>Something went wrong: {error.message}</Box>
+        )}
+      >
+        {isPending ? (
+          <TableContainer>
+            <Table size={{ base: "sm", md: "md" }} variant="unstyled">
+              <Thead>
                 <Tr>
-                  <Td colSpan={4}>Something went wrong: {error.message}</Td>
+                  <Th>Name</Th>
                 </Tr>
+              </Thead>
+              <Tbody>
+                {new Array(3).fill(null).map((_, index) => (
+                  <Tr key={index}>
+                    <Td>
+                      <Box width="50%">
+                        <Skeleton height="20px" />
+                      </Box>
+                    </Td>
+                  </Tr>
+                ))}
               </Tbody>
-            )}
-          >
-            <Tbody>
-              {isPending ? (
-                <>
-                  {new Array(3).fill(null).map((_, index) => (
-                    <Tr key={index}>
+            </Table>
+          </TableContainer>
+        ) : apps?.data?.length ? (
+          <>
+            <TableContainer>
+              <Table size={{ base: "sm", md: "md" }} variant="unstyled">
+                <Thead>
+                  <Tr>
+                    <Th>Name</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {apps?.data.map((app) => (
+                    <Tr key={app.id} opacity={isPlaceholderData ? 0.5 : 1}>
                       <Td>
-                        <Box width="50%">
-                          <Skeleton height="20px" />
-                        </Box>
+                        <Link
+                          as={RouterLink}
+                          to={`/$team/${app.slug}/`}
+                          _hover={{
+                            color: "ui.main",
+                            textDecoration: "underline",
+                          }}
+                          display="inline-block"
+                          minW="20%"
+                        >
+                          {app.name}
+                        </Link>
                       </Td>
                     </Tr>
                   ))}
-                </>
-              ) : apps?.data?.length ? (
-                apps?.data.map((app) => (
-                  <Tr key={app.id} opacity={isPlaceholderData ? 0.5 : 1}>
-                    <Td>
-                      <Link
-                        as={RouterLink}
-                        to={`/$team/${app.slug}/`}
-                        _hover={{
-                          color: "ui.main",
-                          textDecoration: "underline",
-                        }}
-                        display="inline-block"
-                        minW="20%"
-                      >
-                        {app.name}
-                      </Link>
-                    </Td>
-                  </Tr>
-                ))
-              ) : (
-                <Tr>
-                  <EmptyState />
-                </Tr>
-              )}
-            </Tbody>
-          </ErrorBoundary>
-        </Table>
-      </TableContainer>
-
-      <Flex
-        gap={4}
-        alignItems="center"
-        mt={4}
-        direction="row"
-        justifyContent="flex-end"
-      >
-        <Button onClick={() => setPage(page - 1)} isDisabled={!hasPreviousPage}>
-          Previous
-        </Button>
-        <span>Page {page}</span>
-        <Button isDisabled={!hasNextPage} onClick={() => setPage(page + 1)}>
-          Next
-        </Button>
-      </Flex>
+                </Tbody>
+              </Table>
+            </TableContainer>
+            <Flex
+              gap={4}
+              alignItems="center"
+              mt={4}
+              direction="row"
+              justifyContent="flex-end"
+            >
+              <Button
+                onClick={() => setPage(page - 1)}
+                isDisabled={!hasPreviousPage}
+              >
+                Previous
+              </Button>
+              <span>Page {page}</span>
+              <Button
+                isDisabled={!hasNextPage}
+                onClick={() => setPage(page + 1)}
+              >
+                Next
+              </Button>
+            </Flex>
+          </>
+        ) : (
+          <EmptyState />
+        )}
+      </ErrorBoundary>
     </Container>
   )
 }

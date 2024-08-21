@@ -16,7 +16,7 @@ import EmptyBox from "/assets/images/empty-box.jpg"
 
 const EmptyState = () => {
   return (
-    <Flex direction={{ base: "column", md: "row" }} gap={4}>
+    <Flex>
       <Box
         w={{ base: "100%", md: "70%" }}
         mb={{ base: 4, md: 0 }}
