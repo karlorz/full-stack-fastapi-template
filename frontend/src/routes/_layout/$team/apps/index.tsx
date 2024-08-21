@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Center,
   Container,
   Flex,
   Heading,
@@ -97,6 +98,11 @@ function Apps() {
       <Heading size="md" textAlign={{ base: "center", md: "left" }} mb={6}>
         Apps
       </Heading>
+      <Flex justifyContent="end">
+        <Button as={RouterLink} to="/$team/apps/new" mb={4}>
+          Create App
+        </Button>
+      </Flex>
       <ErrorBoundary
         fallbackRender={({ error }) => (
           <Box>Something went wrong: {error.message}</Box>
