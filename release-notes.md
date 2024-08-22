@@ -103,6 +103,7 @@
 
 ### Refactors
 
+* ♻️ Update PostgreSQL URL generation to support Neon. PR [#223](https://github.com/fastapilabs/cloud/pull/223) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Add status code 201 to create app endpoint. PR [#217](https://github.com/fastapilabs/cloud/pull/217) by [@alejsdev](https://github.com/alejsdev).
 * 👷🏻 Auto-generate frontend client. PR [#215](https://github.com/fastapilabs/cloud/pull/215) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Add necessary configs to allow running the tests in VS Code. PR [#203](https://github.com/fastapilabs/cloud/pull/203) by [@tiangolo](https://github.com/tiangolo).
