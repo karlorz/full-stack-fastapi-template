@@ -143,7 +143,7 @@ function Apps() {
                       <Td>
                         <Link
                           as={RouterLink}
-                          to={`/$team/${app.slug}/`}
+                          to={`/$team/apps/${app.slug}/`}
                           _hover={{
                             color: "ui.main",
                             textDecoration: "underline",
