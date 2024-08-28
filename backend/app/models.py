@@ -305,3 +305,16 @@ class Deployment(SQLModel, table=True):
     created_at: datetime = Field(default_factory=get_datetime_utc)
     updated_at: datetime = Field(default_factory=get_datetime_utc)
     status: DeploymentStatus = Field(default=DeploymentStatus.waiting_upload)
+
+
+class DeploymentCreate(SQLModel):
+    app_id: str
+
+
+class DeploymentPublic(SQLModel):
+    id: uuid.UUID
+    app_id: uuid.UUID
+    slug: str
+    created_at: datetime
+    updated_at: datetime
+    status: DeploymentStatus

@@ -63,6 +63,27 @@ export type Body_login_login_token = {
 
 
 
+export type DeploymentCreate = {
+	app_id: string;
+};
+
+
+
+export type DeploymentPublic = {
+	id: string;
+	app_id: string;
+	slug: string;
+	created_at: string;
+	updated_at: string;
+	status: DeploymentStatus;
+};
+
+
+
+export type DeploymentStatus = 'waiting_upload' | 'building' | 'deploying' | 'success' | 'failed';
+
+
+
 export type DeviceAuthorizationInfo = {
 	device_code: string;
 	created_at: string;

@@ -159,6 +159,53 @@ export const $Body_login_login_token = {
 	},
 } as const;
 
+export const $DeploymentCreate = {
+	properties: {
+		app_id: {
+	type: 'string',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $DeploymentPublic = {
+	properties: {
+		id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		app_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		slug: {
+	type: 'string',
+	isRequired: true,
+},
+		created_at: {
+	type: 'string',
+	isRequired: true,
+	format: 'date-time',
+},
+		updated_at: {
+	type: 'string',
+	isRequired: true,
+	format: 'date-time',
+},
+		status: {
+	type: 'DeploymentStatus',
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $DeploymentStatus = {
+	type: 'Enum',
+	enum: ['waiting_upload','building','deploying','success','failed',],
+} as const;
+
 export const $DeviceAuthorizationInfo = {
 	properties: {
 		device_code: {

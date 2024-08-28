@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { AccessTokenWithUserMe,AuthorizeDeviceIn,Body_login_device_authorization,Body_login_login_access_token,Body_login_login_token,DeviceAuthorizationInfo,DeviceAuthorizationResponse,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateEmailMe,UserUpdateMe,HealthCheckResponse,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken,AppCreate,AppPublic,AppsPublic } from './models';
+import type { AccessTokenWithUserMe,AuthorizeDeviceIn,Body_login_device_authorization,Body_login_login_access_token,Body_login_login_token,DeviceAuthorizationInfo,DeviceAuthorizationResponse,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateEmailMe,UserUpdateMe,HealthCheckResponse,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken,AppCreate,AppPublic,AppsPublic,DeploymentCreate,DeploymentPublic } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -983,6 +983,36 @@ requestBody,
 		return __request(OpenAPI, {
 			method: 'POST',
 			url: '/api/v1/apps/',
+			body: requestBody,
+			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+}
+
+export type TDataCreateDeployment = {
+                requestBody: DeploymentCreate
+                
+            }
+
+export class DeploymentsService {
+
+	/**
+	 * Create Deployment
+	 * Create a new deployment.
+	 * @returns DeploymentPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static createDeployment(data: TDataCreateDeployment): CancelablePromise<DeploymentPublic> {
+		const {
+requestBody,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/deployments/',
 			body: requestBody,
 			mediaType: 'application/json',
 			errors: {
