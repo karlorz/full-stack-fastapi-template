@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✨ Read apps. PR [#218](https://github.com/fastapilabs/cloud/pull/218) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Create an app. PR [#207](https://github.com/fastapilabs/cloud/pull/207) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add endpoint to read apps. PR [#214](https://github.com/fastapilabs/cloud/pull/214) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add endpoint to create an app. PR [#202](https://github.com/fastapilabs/cloud/pull/202) by [@alejsdev](https://github.com/alejsdev).
