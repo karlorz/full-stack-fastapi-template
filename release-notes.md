@@ -209,6 +209,7 @@
 
 ### Internal
 
+* 👷 Fix Pulumi stack name and make staging deploy manually. PR [#230](https://github.com/fastapilabs/cloud/pull/230) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update `latest-changes` GitHub Action. PR [#224](https://github.com/fastapilabs/cloud/pull/224) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update GitHub Action labeler to add only one label. PR [#213](https://github.com/fastapilabs/cloud/pull/213) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update labeler GitHub Action. PR [#212](https://github.com/fastapilabs/cloud/pull/212) by [@tiangolo](https://github.com/tiangolo).
