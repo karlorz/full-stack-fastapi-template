@@ -40,10 +40,12 @@ jobs:
         working-directory: infra
       - uses: pulumi/actions@v5
         id: pulumi
+        # staging manually, production on release
+        if: github.event_name == 'release'
         with:
           command: up
           # stack-name: org-name/stack-name # When using an individual account, only use stack-name.
-          # staging on push, production on release
+          # production on release, staging on push (if enabled)
           stack-name: ${{ github.event_name == 'release' && 'production' || 'staging' }}
           work-dir: infra
         env:
