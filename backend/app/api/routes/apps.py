@@ -29,9 +29,6 @@ def read_apps(
     """
     Retrieve a list of apps for the provided team.
     """
-    count_statement = select(func.count()).select_from(App)
-    statement = select(App).offset(skip).limit(limit)
-
     user_team_link = get_user_team_link_by_user_id_and_team_slug(
         session=session, user_id=current_user.id, team_slug=team_slug
     )
@@ -40,8 +37,17 @@ def read_apps(
             status_code=404, detail="Team not found for the current user"
         )
 
-    statement = statement.where(App.team_id == user_team_link.team_id)
-    count_statement = count_statement.where(App.team_id == user_team_link.team_id)
+    count_statement = (
+        select(func.count())
+        .where(App.team_id == user_team_link.team_id)
+        .select_from(App)
+    )
+    statement = (
+        select(App)
+        .where(App.team_id == user_team_link.team_id)
+        .offset(skip)
+        .limit(limit)
+    )
 
     order_key = col(App.created_at) if order_by == "created_at" else None
 
