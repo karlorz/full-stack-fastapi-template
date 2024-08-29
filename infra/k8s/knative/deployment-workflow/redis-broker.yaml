@@ -1,0 +1,26 @@
+# Reference: https://docs.triggermesh.io/1.27/brokers/redisbroker/
+apiVersion: eventing.triggermesh.io/v1alpha1
+kind: RedisBroker
+metadata:
+  name: redis-broker
+
+---
+
+apiVersion: eventing.triggermesh.io/v1alpha1
+kind: Trigger
+metadata:
+  name: redis-broker-trigger
+spec:
+  broker:
+    kind: RedisBroker
+    group: eventing.triggermesh.io
+    name: redis-broker
+  target:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: docker
+    uri: /apps
+
+  delivery:
+    retry: 3

@@ -4,10 +4,13 @@ import pulumi_awsx as awsx
 import pulumi_eks as eks
 import pulumi_aws as aws
 import pulumi_kubernetes as k8s
+from pulumi_deployment_workflow import iam, sqs, s3
 
 
 # Get some values from the Pulumi configuration (or use defaults)
 config = pulumi.Config()
+account_id = config.get("aws_accountId")
+region = config.get("aws_region")
 min_cluster_size = config.get_int("minClusterSize", 3)
 max_cluster_size = config.get_int("maxClusterSize", 6)
 desired_cluster_size = config.get_int("desiredClusterSize", 3)
@@ -99,6 +102,11 @@ aws_lb_controller_policy_content = (
 service_account_name = f"system:serviceaccount:kube-system:{aws_load_balancer_name}"
 oidc_url = eks_cluster.core.apply(lambda x: x.oidc_provider and x.oidc_provider.url)
 oidc_arn = eks_cluster.core.apply(lambda x: x.oidc_provider and x.oidc_provider.arn)
+oidc_id = oidc_url.apply(lambda x: x.split("/")[-1])
+eks_namespace = "default"
+k8s_service_acount_name = "default"
+# Get the security group ID from the EKS cluster
+cluster_security_group_id = eks_cluster.cluster_security_group.id
 
 
 aws_lb_controller_role = aws.iam.Role(
@@ -141,6 +149,39 @@ aws.iam.PolicyAttachment(
     roles=[aws_lb_controller_role.name],
 )
 
+k8s_iam_deployment_workflow_role = aws.iam.Role("k8sDeploymentServiceAccountRole",
+    assume_role_policy=pulumi.Output.json_dumps({
+        "Version": "2012-10-17",
+        "Statement": [{
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": pulumi.Output.format(
+                    "arn:aws:iam::{account_id}:oidc-provider/oidc.eks.{region}.amazonaws.com/id/{oidc_id}",
+                    account_id=account_id,
+                    region=region,
+                    oidc_id=oidc_id
+                )
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    pulumi.Output.format(
+                        "oidc.eks.{region}.amazonaws.com/id/{oidc_id}:aud",
+                        region=region,
+                        oidc_id=oidc_id
+                    ): "sts.amazonaws.com"
+                }
+            }
+        }]
+    })
+)
+
+
+aws.iam.RolePolicyAttachment("eksDeploymentRolePolicyAttachment",
+    role=k8s_iam_deployment_workflow_role.name,
+    policy_arn=iam.knative_deploy_workflow_policy.arn
+)
+
 ### Kubernetes Resources ###
 
 provider = k8s.Provider("provider", kubeconfig=eks_cluster.kubeconfig)
@@ -159,8 +200,68 @@ aws_load_balancer_service_account = k8s.core.v1.ServiceAccount(
     opts=pulumi.ResourceOptions(provider=provider),
 )
 
+service_account = k8s.core.v1.ServiceAccount("defaultServiceAccountAnnotation",
+    metadata=k8s.meta.v1.ObjectMetaArgs(
+        name=k8s_service_acount_name,
+        namespace=eks_namespace,
+        annotations={
+            "eks.amazonaws.com/role-arn": k8s_iam_deployment_workflow_role.arn
+        }
+    ),
+    opts=pulumi.ResourceOptions(provider=provider)
+)
+
 cluster_name = eks_cluster.core.apply(lambda x: x.cluster.name)
 
+
+# Redis stuff
+
+redis_subnet_group = aws.elasticache.SubnetGroup(
+    "redis-deployment-customer-apps-subnet-group",
+    subnet_ids=eks_vpc.private_subnet_ids,
+)
+
+# Create a security group for Redis
+redis_security_group = aws.ec2.SecurityGroup(
+    "redis-security-group",
+    vpc_id=eks_vpc.vpc_id,
+    description="Security group for Redis to communicate with EKS cluster",
+    ingress=[
+        aws.ec2.SecurityGroupIngressArgs(
+            protocol="tcp",
+            from_port=6379,
+            to_port=6379,
+            security_groups=[cluster_security_group_id],
+            description="Allow inbound from EKS cluster",
+        )
+    ],
+    egress=[
+        aws.ec2.SecurityGroupEgressArgs(
+            protocol="-1",
+            from_port=0,
+            to_port=0,
+            cidr_blocks=["0.0.0.0/0"],
+            description="Allow all outbound traffic",
+        )
+    ],
+    tags={
+        "Name": "redis-security-group",
+    },
+)
+
+# Redis cluster
+redis_deployment_customer_apps = aws.elasticache.Cluster(
+    "redis-deployment-customer-apps",
+    cluster_id="redis-deployment-customer-apps",
+    engine="redis",
+    engine_version="7.0",
+    node_type="cache.t3.micro",
+    num_cache_nodes=1,
+    port=6379,
+    subnet_group_name=redis_subnet_group.name,
+    security_group_ids=[redis_security_group.id],
+    apply_immediately=True,  # Add this line to apply changes immediately
+)
 # TODO: Fix this
 
 # error: 1 error occurred:
@@ -193,3 +294,6 @@ pulumi.export("cluster_name", cluster_name)
 pulumi.export("vpc_id", eks_vpc.vpc_id)
 pulumi.export("k8s_role_arn", k8s_role_arn)
 pulumi.export("aws_lb_controller_policy", aws_lb_controller_policy.arn)
+pulumi.export("sqs_deployment_customer_apps_arn", sqs.sqs_deployment_customer_apps)
+pulumi.export("s3_deployment_customer_apps", s3.s3_deployment_customer_apps.arn)
+pulumi.export("redis_deployment_customer_apps", redis_deployment_customer_apps.cache_nodes[0].address)

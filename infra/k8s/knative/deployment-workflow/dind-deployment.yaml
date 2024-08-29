@@ -1,0 +1,82 @@
+# Reference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker
+spec:
+  selector:
+    matchLabels:
+      app: docker
+  template:
+    metadata:
+      labels:
+        app: docker
+    spec:
+      containers:
+      - name: docker
+        image: 992382821657.dkr.ecr.us-east-1.amazonaws.com/docker-builder@sha256:1d676086c0804aaef172a82e132c4403302bfde46288e4d63b0a9c8cbdf40979
+        ports:
+        - containerPort: 8080
+        securityContext:
+          privileged: true
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        env:
+            - name: AWS_REGION
+              value: us-east-1
+            - name: DOCKER_HOST
+              value: tcp://localhost:2375
+            - name: DOCKER_TLS_CERTDIR
+              value: ""
+        volumeMounts:
+        - mountPath: /var/lib/docker
+          name: docker-graph-storage
+      volumes:
+      - name: docker-graph-storage
+        emptyDir: {}
+
+---
+# Reference: https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: docker
+spec:
+  selector:
+    app: docker
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+
+---
+# Reference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: docker-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: docker
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80

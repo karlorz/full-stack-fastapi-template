@@ -1,0 +1,27 @@
+# Reference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+# This role is used to allow Knative Serving to create services
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: knative-service-manager
+  namespace: default  # Adjust the namespace as needed
+rules:
+- apiGroups: ["serving.knative.dev"]
+  resources: ["services"]
+  verbs: ["create"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: knative-service-manager-binding
+  namespace: default  # Adjust the namespace as needed
+subjects:
+- kind: ServiceAccount
+  name: default  # Adjust if your service account has a different name
+  namespace: default  # Adjust the namespace as needed
+roleRef:
+  kind: Role
+  name: knative-service-manager
+  apiGroup: rbac.authorization.k8s.io

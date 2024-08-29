@@ -1,0 +1,17 @@
+# Reference: https://docs.triggermesh.io/1.27/sources/awssqs/
+apiVersion: sources.triggermesh.io/v1alpha1
+kind: AWSSQSSource
+metadata:
+  name: sqs-guide
+spec:
+  arn: arn:aws:sqs:us-east-1:992382821657:sqs-deployment-customer-apps
+  receiveOptions:
+    visibilityTimeout: 30m
+  auth:
+    iam:
+      serviceAccount: default
+  sink:
+    ref:
+      apiVersion: eventing.triggermesh.io/v1alpha1
+      kind: RedisBroker
+      name: redis-broker
