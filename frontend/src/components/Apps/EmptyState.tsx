@@ -50,7 +50,7 @@ const EmptyState = () => {
         px={8}
         py={4}
       >
-        <VStack spacing={4} align="flex-start">
+        <VStack spacing={4} align="flex-start" data-testid="fastapi-cli">
           <Heading size="md">Quick Start with FastAPI CLI</Heading>
           <Text>
             FastAPI CLI is your primary tool for managing your apps. Before you
