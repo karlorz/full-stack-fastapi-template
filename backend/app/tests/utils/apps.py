@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlmodel import Session
 
-from app.models import App, Team
+from app.models import App, Deployment, Team
 from app.tests.utils.utils import random_lower_string
 
 
@@ -24,3 +24,17 @@ def create_random_app(
     db.commit()
     db.refresh(app)
     return app
+
+
+def create_deployment_for_app(
+    db: Session,
+    app: App,
+) -> Deployment:
+    deployment = Deployment(
+        app_id=app.id,
+        slug=app.slug,
+    )
+    db.add(deployment)
+    db.commit()
+    db.refresh(deployment)
+    return deployment

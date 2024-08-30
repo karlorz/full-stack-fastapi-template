@@ -11,6 +11,4 @@ api_router.include_router(
     invitations.router, prefix="/invitations", tags=["invitations"]
 )
 api_router.include_router(apps.router, prefix="/apps", tags=["apps"])
-api_router.include_router(
-    deployments.router, prefix="/deployments", tags=["deployments"]
-)
+api_router.include_router(deployments.router, tags=["deployments"])

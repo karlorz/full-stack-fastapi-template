@@ -63,12 +63,6 @@ export type Body_login_login_token = {
 
 
 
-export type DeploymentCreate = {
-	app_id: string;
-};
-
-
-
 export type DeploymentPublic = {
 	id: string;
 	app_id: string;
@@ -81,6 +75,13 @@ export type DeploymentPublic = {
 
 
 export type DeploymentStatus = 'waiting_upload' | 'building' | 'deploying' | 'success' | 'failed';
+
+
+
+export type DeploymentsPublic = {
+	data: Array<DeploymentPublic>;
+	count: number;
+};
 
 
 

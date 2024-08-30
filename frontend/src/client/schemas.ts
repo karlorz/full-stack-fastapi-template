@@ -159,15 +159,6 @@ export const $Body_login_login_token = {
 	},
 } as const;
 
-export const $DeploymentCreate = {
-	properties: {
-		app_id: {
-	type: 'string',
-	isRequired: true,
-},
-	},
-} as const;
-
 export const $DeploymentPublic = {
 	properties: {
 		id: {
@@ -204,6 +195,22 @@ export const $DeploymentPublic = {
 export const $DeploymentStatus = {
 	type: 'Enum',
 	enum: ['waiting_upload','building','deploying','success','failed',],
+} as const;
+
+export const $DeploymentsPublic = {
+	properties: {
+		data: {
+	type: 'array',
+	contains: {
+		type: 'DeploymentPublic',
+	},
+	isRequired: true,
+},
+		count: {
+	type: 'number',
+	isRequired: true,
+},
+	},
 } as const;
 
 export const $DeviceAuthorizationInfo = {

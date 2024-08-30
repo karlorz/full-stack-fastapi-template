@@ -307,10 +307,6 @@ class Deployment(SQLModel, table=True):
     status: DeploymentStatus = Field(default=DeploymentStatus.waiting_upload)
 
 
-class DeploymentCreate(SQLModel):
-    app_id: str
-
-
 class DeploymentPublic(SQLModel):
     id: uuid.UUID
     app_id: uuid.UUID
@@ -318,3 +314,8 @@ class DeploymentPublic(SQLModel):
     created_at: datetime
     updated_at: datetime
     status: DeploymentStatus
+
+
+class DeploymentsPublic(SQLModel):
+    data: list[DeploymentPublic]
+    count: int

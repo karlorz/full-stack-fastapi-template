@@ -6,10 +6,49 @@ from sqlmodel import Session, select
 from app.core.config import settings
 from app.crud import add_user_to_team
 from app.models import Deployment, Role
-from app.tests.utils.apps import create_random_app
+from app.tests.utils.apps import create_deployment_for_app, create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 from app.tests.utils.utils import random_email
+
+
+def test_read_deployments(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+
+    deployment = create_deployment_for_app(db, app=app)
+    deployment1 = create_deployment_for_app(db, app=app)
+    deployment2 = create_deployment_for_app(db, app=app)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{app.id}/deployments/",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["count"] == 3
+    assert data["data"][0]["id"] == str(deployment.id)
+    assert data["data"][0]["slug"] == deployment.slug
+    assert data["data"][1]["id"] == str(deployment1.id)
+    assert data["data"][1]["slug"] == deployment1.slug
+    assert data["data"][2]["id"] == str(deployment2.id)
+    assert data["data"][2]["slug"] == deployment2.slug
 
 
 def test_create_deployment_admin(client: TestClient, db: Session) -> None:
@@ -31,12 +70,9 @@ def test_create_deployment_admin(client: TestClient, db: Session) -> None:
 
     app = create_random_app(db, team=team)
 
-    deployment_in = {"app_id": str(app.id)}
-
     response = client.post(
-        f"{settings.API_V1_STR}/deployments/",
+        f"{settings.API_V1_STR}/apps/{app.id}/deployments/",
         headers=user_auth_headers,
-        json=deployment_in,
     )
 
     assert response.status_code == 201
@@ -71,12 +107,9 @@ def test_create_deployment_member(client: TestClient, db: Session) -> None:
 
     app = create_random_app(db, team=team)
 
-    deployment_in = {"app_id": str(app.id)}
-
     response = client.post(
-        f"{settings.API_V1_STR}/deployments/",
+        f"{settings.API_V1_STR}/apps/{app.id}/deployments/",
         headers=user_auth_headers,
-        json=deployment_in,
     )
 
     assert response.status_code == 201
@@ -109,12 +142,9 @@ def test_create_deployment_user_not_in_team(client: TestClient, db: Session) -> 
         password="password12345",
     )
 
-    deployment_in = {"app_id": str(app.id)}
-
     response = client.post(
-        f"{settings.API_V1_STR}/deployments/",
+        f"{settings.API_V1_STR}/apps/{app.id}/deployments/",
         headers=user_auth_headers,
-        json=deployment_in,
     )
 
     assert response.status_code == 404
@@ -140,12 +170,9 @@ def test_create_deployment_app_not_found(client: TestClient, db: Session) -> Non
         password="password12345",
     )
 
-    deployment_in = {"app_id": str(fake_app_id)}
-
     response = client.post(
-        f"{settings.API_V1_STR}/deployments/",
+        f"{settings.API_V1_STR}/apps/{fake_app_id}/deployments/",
         headers=user_auth_headers,
-        json=deployment_in,
     )
 
     assert response.status_code == 404

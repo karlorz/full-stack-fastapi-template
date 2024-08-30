@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { AccessTokenWithUserMe,AuthorizeDeviceIn,Body_login_device_authorization,Body_login_login_access_token,Body_login_login_token,DeviceAuthorizationInfo,DeviceAuthorizationResponse,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateEmailMe,UserUpdateMe,HealthCheckResponse,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken,AppCreate,AppPublic,AppsPublic,DeploymentCreate,DeploymentPublic } from './models';
+import type { AccessTokenWithUserMe,AuthorizeDeviceIn,Body_login_device_authorization,Body_login_login_access_token,Body_login_login_token,DeviceAuthorizationInfo,DeviceAuthorizationResponse,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateEmailMe,UserUpdateMe,HealthCheckResponse,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken,AppCreate,AppPublic,AppsPublic,DeploymentPublic,DeploymentsPublic } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -993,12 +993,49 @@ requestBody,
 
 }
 
+export type TDataReadDeployments = {
+                appId: string
+limit?: number
+order?: 'asc' | 'desc'
+orderBy?: 'created_at' | null
+skip?: number
+                
+            }
 export type TDataCreateDeployment = {
-                requestBody: DeploymentCreate
+                appId: string
                 
             }
 
 export class DeploymentsService {
+
+	/**
+	 * Read Deployments
+	 * Retrieve a list of deployments for the provided app.
+	 * @returns DeploymentsPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static readDeployments(data: TDataReadDeployments): CancelablePromise<DeploymentsPublic> {
+		const {
+appId,
+limit = 100,
+order = 'asc',
+orderBy,
+skip = 0,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/apps/{app_id}/deployments/',
+			path: {
+				app_id: appId
+			},
+			query: {
+				skip, limit, order_by: orderBy, order
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
 
 	/**
 	 * Create Deployment
@@ -1008,13 +1045,14 @@ export class DeploymentsService {
 	 */
 	public static createDeployment(data: TDataCreateDeployment): CancelablePromise<DeploymentPublic> {
 		const {
-requestBody,
+appId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: '/api/v1/deployments/',
-			body: requestBody,
-			mediaType: 'application/json',
+			url: '/api/v1/apps/{app_id}/deployments/',
+			path: {
+				app_id: appId
+			},
 			errors: {
 				422: `Validation Error`,
 			},
