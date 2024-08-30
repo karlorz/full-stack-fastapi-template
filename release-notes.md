@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✅ Add apps e2e tests. PR [#227](https://github.com/fastapilabs/cloud/pull/227) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add read deployments endpoint. PR [#235](https://github.com/fastapilabs/cloud/pull/235) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add endpoint to create a deployment. PR [#219](https://github.com/fastapilabs/cloud/pull/219) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Read apps. PR [#218](https://github.com/fastapilabs/cloud/pull/218) by [@alejsdev](https://github.com/alejsdev).
