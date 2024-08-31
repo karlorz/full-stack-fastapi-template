@@ -1,7 +1,7 @@
 import uuid
 from typing import Any, Literal
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile
 from sqlalchemy import func
 from sqlmodel import col, select
 
@@ -92,3 +92,14 @@ def create_deployment(
     session.commit()
     session.refresh(new_deployment)
     return new_deployment
+
+
+@router.post("/deployments/{deployment_id}/upload")
+def upload_deployment_artifact(
+    deployment_id: uuid.UUID,  # noqa F841
+    upload_file: UploadFile,
+) -> Any:
+    """
+    Upload a new deployment artifact.
+    """
+    return {"filename": upload_file.filename}

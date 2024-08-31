@@ -90,6 +90,16 @@ export const $AuthorizeDeviceIn = {
 	},
 } as const;
 
+export const $Body_deployments_upload_deployment_artifact = {
+	properties: {
+		upload_file: {
+	type: 'binary',
+	isRequired: true,
+	format: 'binary',
+},
+	},
+} as const;
+
 export const $Body_login_device_authorization = {
 	properties: {
 		client_id: {
