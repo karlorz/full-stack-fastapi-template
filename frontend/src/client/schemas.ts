@@ -90,16 +90,6 @@ export const $AuthorizeDeviceIn = {
 	},
 } as const;
 
-export const $Body_deployments_upload_deployment_artifact = {
-	properties: {
-		upload_file: {
-	type: 'binary',
-	isRequired: true,
-	format: 'binary',
-},
-	},
-} as const;
-
 export const $Body_login_device_authorization = {
 	properties: {
 		client_id: {
@@ -205,6 +195,23 @@ export const $DeploymentPublic = {
 export const $DeploymentStatus = {
 	type: 'Enum',
 	enum: ['waiting_upload','building','deploying','success','failed',],
+} as const;
+
+export const $DeploymentUploadOut = {
+	properties: {
+		url: {
+	type: 'string',
+	isRequired: true,
+},
+		fields: {
+	type: 'dictionary',
+	contains: {
+	properties: {
+	},
+},
+	isRequired: true,
+},
+	},
 } as const;
 
 export const $DeploymentsPublic = {

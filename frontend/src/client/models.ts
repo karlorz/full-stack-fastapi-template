@@ -37,12 +37,6 @@ export type AuthorizeDeviceIn = {
 
 
 
-export type Body_deployments_upload_deployment_artifact = {
-	upload_file: Blob | File;
-};
-
-
-
 export type Body_login_device_authorization = {
 	client_id: string;
 };
@@ -81,6 +75,13 @@ export type DeploymentPublic = {
 
 
 export type DeploymentStatus = 'waiting_upload' | 'building' | 'deploying' | 'success' | 'failed';
+
+
+
+export type DeploymentUploadOut = {
+	url: string;
+	fields: Record<string, unknown>;
+};
 
 
 

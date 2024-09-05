@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Any
 
 from pydantic import EmailStr, computed_field
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -319,3 +320,8 @@ class DeploymentPublic(SQLModel):
 class DeploymentsPublic(SQLModel):
     data: list[DeploymentPublic]
     count: int
+
+
+class DeploymentUploadOut(SQLModel):
+    url: str
+    fields: dict[str, Any]

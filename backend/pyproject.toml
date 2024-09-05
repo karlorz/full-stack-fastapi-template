@@ -27,6 +27,8 @@ pydantic-settings = "^2.2.1"
 sentry-sdk = {extras = ["fastapi"], version = "^1.40.6"}
 pyjwt = "^2.8.0"
 redis = {extras = ["hiredis"], version = "^5.0.7"}
+boto3-stubs = {extras = ["s3"], version = "^1.35.10"}
+boto3 = "^1.35.10"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"

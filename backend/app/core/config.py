@@ -138,5 +138,7 @@ class Settings(BaseSettings):
 
         return self
 
+    AWS_DEPLOYMENT_BUCKET: str
+
 
 settings = Settings()  # type: ignore

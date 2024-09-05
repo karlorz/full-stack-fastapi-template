@@ -1,11 +1,13 @@
 import uuid
 from typing import Any, Literal
 
-from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException
 from sqlalchemy import func
 from sqlmodel import col, select
 
 from app.api.deps import CurrentUser, SessionDep
+from app.api.utils.aws_s3 import generate_presigned_url_post
+from app.core.config import settings
 from app.crud import get_user_team_link_by_user_id_and_team_slug
 from app.models import (
     App,
@@ -13,6 +15,7 @@ from app.models import (
     DeploymentPublic,
     DeploymentsPublic,
     DeploymentStatus,
+    DeploymentUploadOut,
 )
 
 router = APIRouter()
@@ -94,12 +97,44 @@ def create_deployment(
     return new_deployment
 
 
-@router.post("/deployments/{deployment_id}/upload")
+@router.post("/deployments/{deployment_id}/upload", response_model=DeploymentUploadOut)
 def upload_deployment_artifact(
-    deployment_id: uuid.UUID,  # noqa F841
-    upload_file: UploadFile,
+    session: SessionDep,
+    current_user: CurrentUser,
+    deployment_id: uuid.UUID,
 ) -> Any:
     """
     Upload a new deployment artifact.
     """
-    return {"filename": upload_file.filename}
+    deployment = session.exec(
+        select(Deployment).where(Deployment.id == deployment_id)
+    ).first()
+    if not deployment:
+        raise HTTPException(status_code=404, detail="Deployment not found")
+
+    app = session.exec(select(App).where(App.id == deployment.app_id)).first()
+    if not app:
+        raise HTTPException(status_code=404, detail="App not found")
+
+    user_team_link = get_user_team_link_by_user_id_and_team_slug(
+        session=session, user_id=current_user.id, team_slug=app.team.slug
+    )
+    if not user_team_link:
+        raise HTTPException(
+            status_code=404, detail="Team not found for the current user"
+        )
+
+    object_name = f"{app.id}/{deployment.id}.tar"
+
+    presigned_url = generate_presigned_url_post(
+        bucket_name=settings.AWS_DEPLOYMENT_BUCKET,
+        object_name=object_name,
+    )
+    if not presigned_url:
+        raise HTTPException(status_code=500, detail="Error generating presigned URL")
+
+    deployment_url = DeploymentUploadOut(
+        url=presigned_url["url"], fields=presigned_url["fields"]
+    )
+
+    return deployment_url

@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { AccessTokenWithUserMe,AuthorizeDeviceIn,Body_login_device_authorization,Body_login_login_access_token,Body_login_login_token,DeviceAuthorizationInfo,DeviceAuthorizationResponse,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateEmailMe,UserUpdateMe,HealthCheckResponse,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken,AppCreate,AppPublic,AppsPublic,Body_deployments_upload_deployment_artifact,DeploymentPublic,DeploymentsPublic } from './models';
+import type { AccessTokenWithUserMe,AuthorizeDeviceIn,Body_login_device_authorization,Body_login_login_access_token,Body_login_login_token,DeviceAuthorizationInfo,DeviceAuthorizationResponse,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateEmailMe,UserUpdateMe,HealthCheckResponse,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken,AppCreate,AppPublic,AppsPublic,DeploymentPublic,DeploymentsPublic,DeploymentUploadOut } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -1007,7 +1007,6 @@ export type TDataCreateDeployment = {
             }
 export type TDataUploadDeploymentArtifact = {
                 deploymentId: string
-formData: Body_deployments_upload_deployment_artifact
                 
             }
 
@@ -1067,13 +1066,12 @@ appId,
 	/**
 	 * Upload Deployment Artifact
 	 * Upload a new deployment artifact.
-	 * @returns unknown Successful Response
+	 * @returns DeploymentUploadOut Successful Response
 	 * @throws ApiError
 	 */
-	public static uploadDeploymentArtifact(data: TDataUploadDeploymentArtifact): CancelablePromise<unknown> {
+	public static uploadDeploymentArtifact(data: TDataUploadDeploymentArtifact): CancelablePromise<DeploymentUploadOut> {
 		const {
 deploymentId,
-formData,
 } = data;
 		return __request(OpenAPI, {
 			method: 'POST',
@@ -1081,8 +1079,6 @@ formData,
 			path: {
 				deployment_id: deploymentId
 			},
-			formData: formData,
-			mediaType: 'multipart/form-data',
 			errors: {
 				422: `Validation Error`,
 			},
