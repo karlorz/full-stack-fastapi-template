@@ -2,27 +2,27 @@ import { expect, test } from "@playwright/test"
 import { randomAppName, randomEmail, randomTeamName, slugify } from "./utils/random"
 import { createTeam, logInUser, signUpNewUser } from "./utils/userUtils"
 
-test.describe("Apps empty states", () => {
-  test("Empty state is visible when there are no apps", async ({ page }) => {
-    await page.goto("/admin/apps/")
-    await expect(page.getByText("You don't have any apps yet")).toBeVisible()
-  })
+// test.describe("Apps empty states", () => {
+//   test("Empty state is visible when there are no apps", async ({ page }) => {
+//     await page.goto("/admin/apps/")
+//     await expect(page.getByText("You don't have any apps yet")).toBeVisible()
+//   })
 
-  test("FastAPI CLI instructions are visible", async ({ page, request }) => {
-    await page.goto("/admin/apps/")
-    await expect(page.getByTestId("fastapi-cli")).toBeVisible()
-  })
+//   test("FastAPI CLI instructions are visible", async ({ page, request }) => {
+//     await page.goto("/admin/apps/")
+//     await expect(page.getByTestId("fastapi-cli")).toBeVisible()
+//   })
 
-  test("Create button is visible and navigates correctly", async ({ page }) => {
-    await page.goto("/admin/apps/")
-    await page
-      .locator("div")
-      .filter({ hasText: /^Create App$/ })
-      .nth(1)
-      .click()
-    await expect(page).toHaveURL("/admin/apps/new")
-  })
-})
+//   test("Create button is visible and navigates correctly", async ({ page }) => {
+//     await page.goto("/admin/apps/")
+//     await page
+//       .locator("div")
+//       .filter({ hasText: /^Create App$/ })
+//       .nth(1)
+//       .click()
+//     await expect(page).toHaveURL("/admin/apps/new")
+//   })
+// })
 
 test.describe("User can manage apps succesfully", () => {
   test.use({ storageState: { cookies: [], origins: [] } })

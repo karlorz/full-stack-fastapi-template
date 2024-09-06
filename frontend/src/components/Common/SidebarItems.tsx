@@ -19,9 +19,7 @@ import { CgOrganisation } from "react-icons/cg"
 import {
   FaCog,
   FaHome,
-  FaLayerGroup,
-  FaQuestionCircle,
-  FaTools,
+  FaLayerGroup
 } from "react-icons/fa"
 
 import { useCurrentUser } from "../../hooks/useAuth"
@@ -62,14 +60,6 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
       }),
     },
     {
-      icon: FaTools,
-      title: "Resources",
-      ...link({
-        to: "/$team/resources",
-        params: { team },
-      }),
-    },
-    {
       icon: FaCog,
       title: "Team Settings",
       ...link({
@@ -83,15 +73,7 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
       ...link({
         to: "/teams/all",
       }),
-    },
-    {
-      icon: FaQuestionCircle,
-      title: "Help",
-      ...link({
-        to: "/$team/help",
-        params: { team },
-      }),
-    },
+    }
   ]
 }
 
@@ -138,8 +120,8 @@ const SidebarItems = ({ onClose }: SidebarItemsProps) => {
     </FlexLink>
   ))
 
-  const menu = listItems.slice(0, 4)
-  const others = listItems.slice(4)
+  const menu = listItems.slice(0, 3)
+  const others = listItems.slice(3)
 
   return (
     <>

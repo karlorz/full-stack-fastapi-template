@@ -26,10 +26,6 @@ import { Route as LayoutTeamIndexImport } from './routes/_layout/$team/index'
 import { Route as LayoutTeamsNewImport } from './routes/_layout/teams/new'
 import { Route as LayoutTeamsAllImport } from './routes/_layout/teams/all'
 import { Route as LayoutTeamSettingsImport } from './routes/_layout/$team/settings'
-import { Route as LayoutTeamResourcesImport } from './routes/_layout/$team/resources'
-import { Route as LayoutTeamItemsImport } from './routes/_layout/$team/items'
-import { Route as LayoutTeamHelpImport } from './routes/_layout/$team/help'
-import { Route as LayoutTeamBillingImport } from './routes/_layout/$team/billing'
 import { Route as LayoutTeamsTeamSlugIndexImport } from './routes/_layout/teams/$teamSlug/index'
 import { Route as LayoutTeamAppsIndexImport } from './routes/_layout/$team/apps/index'
 import { Route as LayoutTeamAppsNewImport } from './routes/_layout/$team/apps/new'
@@ -111,26 +107,6 @@ const LayoutTeamSettingsRoute = LayoutTeamSettingsImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutTeamResourcesRoute = LayoutTeamResourcesImport.update({
-  path: '/$team/resources',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutTeamItemsRoute = LayoutTeamItemsImport.update({
-  path: '/$team/items',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutTeamHelpRoute = LayoutTeamHelpImport.update({
-  path: '/$team/help',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutTeamBillingRoute = LayoutTeamBillingImport.update({
-  path: '/$team/billing',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
 const LayoutTeamsTeamSlugIndexRoute = LayoutTeamsTeamSlugIndexImport.update({
   path: '/teams/$teamSlug/',
   getParentRoute: () => LayoutRoute,
@@ -194,22 +170,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/$team/billing': {
-      preLoaderRoute: typeof LayoutTeamBillingImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/$team/help': {
-      preLoaderRoute: typeof LayoutTeamHelpImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/$team/items': {
-      preLoaderRoute: typeof LayoutTeamItemsImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/$team/resources': {
-      preLoaderRoute: typeof LayoutTeamResourcesImport
-      parentRoute: typeof LayoutImport
-    }
     '/_layout/$team/settings': {
       preLoaderRoute: typeof LayoutTeamSettingsImport
       parentRoute: typeof LayoutImport
@@ -248,10 +208,6 @@ export const routeTree = rootRoute.addChildren([
     LayoutDeviceRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
-    LayoutTeamBillingRoute,
-    LayoutTeamHelpRoute,
-    LayoutTeamItemsRoute,
-    LayoutTeamResourcesRoute,
     LayoutTeamSettingsRoute,
     LayoutTeamsAllRoute,
     LayoutTeamsNewRoute,

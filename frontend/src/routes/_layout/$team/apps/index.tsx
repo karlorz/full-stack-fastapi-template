@@ -25,7 +25,6 @@ import { z } from "zod"
 import { useEffect } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 import { AppsService } from "../../../../client"
-import EmptyState from "../../../../components/Apps/EmptyState"
 
 const appsSearchSchema = z.object({
   page: z.number().catch(1).optional(),
@@ -182,7 +181,8 @@ function Apps() {
             </Flex>
           </>
         ) : (
-          <EmptyState />
+          // TODO: Add new empty state component
+          <Box>No apps found</Box>
         )}
       </ErrorBoundary>
     </Container>
