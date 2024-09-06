@@ -102,13 +102,11 @@ test.describe("Edit user full name and email successfully", () => {
 
 test.describe("Edit user full name and email with invalid data", () => {
   test("Edit user name with a invalid name", async ({ page }) => {
-    const invalidName = ""
     await page.goto("/settings")
     await page.getByRole("button", { name: "fastapi admin" }).click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(0).click()
-    await page.locator("#full_name").fill(invalidName)
-    await page.locator("body").click()
+    await page.locator("#full_name").fill("")
     await expect(page.getByText("This field is required")).toBeVisible()
   })
 

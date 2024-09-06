@@ -63,9 +63,7 @@ test("Log in with valid email and password ", async ({ page }) => {
 
   await page.waitForURL("/")
 
-  await expect(page.getByTestId("result")).toContainText(
-    "Hi, fastapi admin 👋🏼",
-  )
+  await expect(page.getByTestId("result")).toContainText("Hi, fastapi admin")
 })
 
 test("Log in with invalid email", async ({ page }) => {
@@ -96,9 +94,7 @@ test("Successful log out", async ({ page }) => {
 
   await page.waitForURL("/")
 
-  await expect(page.getByTestId("result")).toContainText(
-    "Hi, fastapi admin 👋🏼",
-  )
+  await expect(page.getByTestId("result")).toContainText("Hi, fastapi admin")
 
   await page.getByRole("button", { name: "fastapi admin" }).click()
   await page.getByRole("menuitem", { name: "Log out" }).click()
@@ -113,9 +109,7 @@ test("Logged-out user cannot access protected routes", async ({ page }) => {
 
   await page.waitForURL("/")
 
-  await expect(page.getByTestId("result")).toContainText(
-    "Hi, fastapi admin 👋🏼",
-  )
+  await expect(page.getByTestId("result")).toContainText("Hi, fastapi admin")
 
   await page.getByRole("button", { name: "fastapi admin" }).click()
   await page.getByRole("menuitem", { name: "Log out" }).click()

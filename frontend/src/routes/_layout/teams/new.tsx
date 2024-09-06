@@ -7,7 +7,6 @@ import {
   FormLabel,
   Heading,
   Input,
-  Text,
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
@@ -15,6 +14,7 @@ import { type SubmitHandler, useForm } from "react-hook-form"
 
 import { type TeamCreate, TeamsService } from "../../../client"
 import Plans from "../../../components/Billing/Plans"
+import CustomCard from "../../../components/Common/CustomCard"
 import useCustomToast from "../../../hooks/useCustomToast"
 import { handleError } from "../../../utils"
 
@@ -40,7 +40,7 @@ function NewTeam() {
     mutationFn: (data: TeamCreate) =>
       TeamsService.createTeam({ requestBody: data }),
     onSuccess: () => {
-      showToast("Success!", "Team created successfully.", "success")
+      showToast("Success!", "Team created successfully", "success")
       reset()
       navigate({ to: "/teams/all" })
     },
@@ -60,13 +60,13 @@ function NewTeam() {
         New Team
       </Heading>
       <Box as="form" onSubmit={handleSubmit(onSubmit)} pt={10}>
-        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-          <FormLabel fontWeight="bold" mb={4}>
+        <CustomCard title="Name">
+          <FormLabel fontWeight="bold" mb={4} srOnly>
             Name
           </FormLabel>
           <FormControl isInvalid={!!errors.name}>
             <Input
-              placeholder="Name"
+              placeholder="Team Name"
               width="auto"
               minLength={3}
               {...register("name", { required: "Name is required" })}
@@ -75,22 +75,21 @@ function NewTeam() {
               <FormErrorMessage>{errors.name.message}</FormErrorMessage>
             )}
           </FormControl>
-        </Box>
-        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-          <Text fontWeight="bold" mb={4}>
-            Pricing Plan
-          </Text>
+        </CustomCard>
+        <CustomCard title="Pricing Plan">
           <Plans />
-        </Box>
-        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-          <Text fontWeight="bold" mb={4}>
-            Payment
-          </Text>
-          <Button color="ui.defaultText" mt={2} mb={4}>
+        </CustomCard>
+        <CustomCard title="Payment">
+          <Button mt={2} mb={4}>
             Add card
           </Button>
-        </Box>
-        <Button variant="primary" my={4} type="submit" isLoading={isSubmitting}>
+        </CustomCard>
+        <Button
+          variant="secondary"
+          my={4}
+          type="submit"
+          isLoading={isSubmitting}
+        >
           Create Team
         </Button>
       </Box>

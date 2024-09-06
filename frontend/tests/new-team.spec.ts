@@ -1,15 +1,14 @@
 import { expect, test } from "@playwright/test"
 import { randomTeamName } from "./utils/random"
 
-const sections = ["Name", "Pricing Plan", "Payment"]
 
 test("New team is visible", async ({ page }) => {
   await page.goto("/teams/new")
   await expect(page.getByRole("heading", { name: "New Team" })).toBeVisible()
-  for (const section of sections) {
-    await expect(page.getByText(section)).toBeVisible()
-  }
-  await expect(page.getByPlaceholder("Name")).toBeVisible()
+  await expect(page.locator("p").filter({ hasText: "Name" })).toBeVisible()
+  await expect(page.getByText("Pricing Plan")).toBeVisible()
+  await expect(page.getByText("Payment")).toBeVisible()
+  await expect(page.getByPlaceholder("Team Name")).toBeVisible()
   await expect(page.getByRole("button", { name: "Add card" })).toBeVisible()
   await expect(page.getByRole("button", { name: "Create Team" })).toBeVisible()
 })
@@ -20,7 +19,7 @@ test("User can create a new team with a valid name successfully", async ({
   const teamName = randomTeamName()
   await page.goto("/teams/new")
 
-  await page.getByPlaceholder("Name").fill(teamName)
+  await page.getByPlaceholder("Team Name").fill(teamName)
   await page.getByRole("button", { name: "Create Team" }).click()
 
   // The new team should be visible in the list of teams

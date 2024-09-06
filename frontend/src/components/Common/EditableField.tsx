@@ -31,7 +31,7 @@ const EditableField = ({
     reset,
     formState: { isSubmitting, errors, isDirty, isValid },
   } = useForm({
-    mode: "onBlur",
+    mode: "all",
     criteriaMode: "all",
     defaultValues: {
       [type]: value,

@@ -1,4 +1,4 @@
-import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react"
+import { Box, Container, Flex, Text } from "@chakra-ui/react"
 import {
   useMutation,
   useQueryClient,
@@ -10,6 +10,7 @@ import { useCurrentUser } from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
 import { Route } from "../../routes/_layout/$team"
 import { getCurrentUserRole, handleError } from "../../utils"
+import CustomCard from "../Common/CustomCard"
 import EditableField from "../Common/EditableField"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
@@ -41,56 +42,22 @@ const TeamInformation = () => {
   })
 
   return (
-    <Container maxW="full" m={4}>
-      <Heading size="sm">Team Information</Heading>
-      <Text py={2} mb={4}>
-        See information regarding your team.
-      </Text>
-      <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-        <Box my={4}>
-          <Text fontWeight="bold" mb={4}>
-            Team Name
-          </Text>
-
-          <Flex>
-            <EditableField
-              type="name"
-              value={team.name}
-              onSubmit={(newName) => mutation.mutate({ name: newName })}
-              canEdit={currentUserRole === "admin"}
-            />
-          </Flex>
-        </Box>
-      </Box>
-      <Box>
-        <Box
-          boxShadow="xs"
-          px={8}
-          py={4}
-          borderRadius="lg"
-          mb={8}
-          data-testid="team-members"
-        >
-          <Text fontWeight="bold" mb={4}>
-            Team Members
-          </Text>
-          <Team />
-        </Box>
-      </Box>
+    <Container maxW="full" my={4} p={0}>
+      <CustomCard title="Team Name">
+        <EditableField
+          type="name"
+          value={team.name}
+          onSubmit={(newName) => mutation.mutate({ name: newName })}
+          canEdit={currentUserRole === "admin"}
+        />
+      </CustomCard>
+      <CustomCard title="Team Members" data-testid="team-members">
+        <Team />
+      </CustomCard>
       {currentUserRole === "admin" && (
         <>
-          <Flex gap="8">
-            <Box width="70%">
-              <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-                <Text fontWeight="bold" mb={4}>
-                  Team Invitations
-                </Text>
-                <Flex>
-                  <Invitations />
-                </Flex>
-              </Box>
-            </Box>
-
+          <CustomCard title="Team Invitations">
+            <Invitations />
             <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
               <Text fontWeight="bold" mb={4}>
                 New Invitation
@@ -99,25 +66,15 @@ const TeamInformation = () => {
                 <NewInvitation />
               </Flex>
             </Box>
-          </Flex>
+          </CustomCard>
 
-          <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-            <Text fontWeight="bold" mb={4}>
-              Transfer Ownership
-            </Text>
-            <Flex>
-              <TransferTeam />
-            </Flex>
-          </Box>
+          <CustomCard title="Transfer Ownership">
+            <TransferTeam />
+          </CustomCard>
 
-          <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-            <Text fontWeight="bold" mb={4}>
-              Danger Zone
-            </Text>
-            <Flex>
-              <DeleteTeam />
-            </Flex>
-          </Box>
+          <CustomCard title="Danger Zone">
+            <DeleteTeam />
+          </CustomCard>
         </>
       )}
     </Container>

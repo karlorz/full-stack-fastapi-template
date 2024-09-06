@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test"
-import { randomAppName, randomEmail, randomTeamName, slugify } from "./utils/random"
+import {
+  randomAppName,
+  randomEmail,
+  randomTeamName,
+  slugify,
+} from "./utils/random"
 import { createTeam, logInUser, signUpNewUser } from "./utils/userUtils"
 
 // test.describe("Apps empty states", () => {
@@ -54,6 +59,6 @@ test.describe("User can manage apps succesfully", () => {
     await page.getByPlaceholder("Name").fill(appName)
     await page.getByRole("button", { name: "Create App" }).click()
     await expect(page).toHaveURL(`/${teamSlug}/apps`)
-    await expect(page.getByRole('cell', { name: appName })).toBeVisible();
+    await expect(page.getByRole("cell", { name: appName })).toBeVisible()
   })
 })

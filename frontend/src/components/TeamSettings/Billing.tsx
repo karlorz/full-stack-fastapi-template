@@ -5,7 +5,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  Heading,
   Skeleton,
   Table,
   TableContainer,
@@ -22,6 +21,7 @@ import { FaFileDownload } from "react-icons/fa"
 
 import CurrentPlan from "../Billing/CurrentPlan"
 import PaymentMethod from "../Billing/PaymentMethod"
+import CustomCard from "../Common/CustomCard"
 import { billings } from "./Billings"
 
 function BillingTableBody() {
@@ -99,36 +99,24 @@ function BillingTable() {
 
 const Billing = () => {
   return (
-    <Container maxW="full" m={4}>
-      <Heading size="sm">Billing Information</Heading>
-      <Text py={2} mb={4}>
-        See information regarding your current plan.
-      </Text>
-      <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-        <Box my={4}>
-          <FormControl id="email">
-            <FormLabel fontWeight="bold">Billing Email</FormLabel>
-            <Text>team1@domain.com</Text>
-          </FormControl>
-        </Box>
-      </Box>
-      <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-        <Box my={4}>
-          <Text fontWeight="bold">Current Plan</Text>
-          <Flex pt={4}>
-            <CurrentPlan />
-            <PaymentMethod />
-          </Flex>
-        </Box>
-      </Box>
-      <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-        <Box my={4}>
-          <Text fontWeight="bold" pt={4}>
-            Invoice History
-          </Text>
-          <BillingTable />
-        </Box>
-      </Box>
+    <Container maxW="full" my={4} p={0}>
+      <CustomCard title="Billing Email">
+        <FormControl id="email">
+          <FormLabel fontWeight="bold" fontSize="sm" srOnly>
+            Billing Email
+          </FormLabel>
+          <Text>team1@domain.com</Text>
+        </FormControl>
+      </CustomCard>
+      <CustomCard title="Current Plan">
+        <Flex p={4} flexDir={{ base: "column", md: "row" }} gap={4}>
+          <CurrentPlan />
+          <PaymentMethod />
+        </Flex>
+      </CustomCard>
+      <CustomCard title="Invoice History">
+        <BillingTable />
+      </CustomCard>
     </Container>
   )
 }

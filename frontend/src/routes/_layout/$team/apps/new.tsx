@@ -15,6 +15,7 @@ import { type SubmitHandler, useForm } from "react-hook-form"
 
 import { FaGithub } from "react-icons/fa"
 import { type AppCreate, AppsService } from "../../../../client"
+import CustomCard from "../../../../components/Common/CustomCard"
 import useCustomToast from "../../../../hooks/useCustomToast"
 import { handleError } from "../../../../utils"
 
@@ -61,13 +62,13 @@ function NewApp() {
         New App
       </Heading>
       <Box as="form" onSubmit={handleSubmit(onSubmit)} pt={10}>
-        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-          <FormLabel fontWeight="bold" mb={4}>
+        <CustomCard title="Name">
+          <FormLabel fontWeight="bold" mb={4} srOnly>
             Name
           </FormLabel>
           <FormControl isInvalid={!!errors.name}>
             <Input
-              placeholder="Name"
+              placeholder="App Name"
               width="auto"
               minLength={3}
               {...register("name", { required: "Name is required" })}
@@ -76,19 +77,21 @@ function NewApp() {
               <FormErrorMessage>{errors.name.message}</FormErrorMessage>
             )}
           </FormControl>
-        </Box>
-        <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-          <Text fontWeight="bold" mb={4}>
-            Source Code
-          </Text>
+        </CustomCard>
+        <CustomCard title="Source Code">
           <Text mb={4}>
             Connect your app to a source code repository to deploy it.
           </Text>
           <Button variant="outline" colorScheme="gray" leftIcon={<FaGithub />}>
             Connect
           </Button>
-        </Box>
-        <Button variant="primary" my={4} type="submit" isLoading={isSubmitting}>
+        </CustomCard>
+        <Button
+          my={4}
+          type="submit"
+          isLoading={isSubmitting}
+          variant="secondary"
+        >
           Create App
         </Button>
       </Box>
