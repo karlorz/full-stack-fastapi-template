@@ -217,6 +217,7 @@
 
 ### Internal
 
+* 👷 Update `issue-manager.yml`. PR [#246](https://github.com/fastapilabs/cloud/pull/246) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update `.github/labeler.yml`. PR [#236](https://github.com/fastapilabs/cloud/pull/236) by [@alejsdev](https://github.com/alejsdev).
 * 🚀 Add Pulumi K8s Deployment Customer Apps Flow. PR [#225](https://github.com/fastapilabs/cloud/pull/225) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Fix Pulumi stack name and make staging deploy manually. PR [#230](https://github.com/fastapilabs/cloud/pull/230) by [@tiangolo](https://github.com/tiangolo).
