@@ -109,6 +109,7 @@
 
 ### Refactors
 
+* ♻️ Add EmptyState and Quickstart components. PR [#245](https://github.com/fastapilabs/cloud/pull/245) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add CustomCard component for reusable card layout . PR [#243](https://github.com/fastapilabs/cloud/pull/243) by [@alejsdev](https://github.com/alejsdev).
 * 🔥 Remove unnecessary files. PR [#240](https://github.com/fastapilabs/cloud/pull/240) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor read apps endpoint. PR [#233](https://github.com/fastapilabs/cloud/pull/233) by [@alejsdev](https://github.com/alejsdev).
