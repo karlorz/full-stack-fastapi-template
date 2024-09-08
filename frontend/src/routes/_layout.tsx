@@ -1,7 +1,8 @@
-import { Box, Divider, Flex } from "@chakra-ui/react"
+import { Box, Flex } from "@chakra-ui/react"
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 import { Suspense } from "react"
 
+import Footer from "../components/Common/Footer"
 import Sidebar from "../components/Common/Sidebar"
 import UserMenu from "../components/Common/UserMenu"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
@@ -22,43 +23,45 @@ export const Route = createFileRoute("/_layout")({
 function Layout() {
   return (
     <>
-      <Flex maxW="large" h="auto">
-        {/* Sidebar */}
-        <Box
-          position="fixed"
-          top="0"
-          left="0"
-          height="100vh"
-          width={{ md: "250px" }}
-          zIndex="3"
-          bg="white"
-        >
-          <Suspense>
-            <Sidebar />
-          </Suspense>
-        </Box>
-        <Flex flexDir="column" flex="1" ml="250px">
-          {/* Navbar */}
+      <Flex minHeight="100vh" flexDirection="column">
+        <Flex flex="1">
+          {/* Sidebar */}
           <Box
-            display={{ base: "none", md: "flex" }}
-            justifyContent="flex-end"
             position="fixed"
             top="0"
-            right="0"
-            left={{ base: 0, md: "250px" }}
-            h="5%"
-            zIndex="2"
-            p={4}
-            bg="white"
+            left="0"
+            height="100vh"
+            width={{ md: "250px" }}
+            zIndex="3"
           >
-            <UserMenu />
+            <Suspense>
+              <Sidebar />
+            </Suspense>
           </Box>
-          <Divider />
-          {/* Main Content */}
-          <Box w="100%" mt="5%" p={10}>
-            <Outlet />
-          </Box>
+          <Flex flexDir="column" flex="1" ml={{ base: 0, md: "250px" }}>
+            {/* Navbar */}
+            <Box
+              id="navbar"
+              display={{ base: "none", md: "flex" }}
+              justifyContent="flex-end"
+              position="fixed"
+              top="0"
+              right="0"
+              left={{ base: 0, md: "250px" }}
+              height="64px"
+              zIndex="2"
+              p={4}
+              gap="2"
+            >
+              <UserMenu />
+            </Box>
+            {/* Main Content */}
+            <Box w="80%" p={10} mt="64px" mx="auto">
+              <Outlet />
+            </Box>
+          </Flex>
         </Flex>
+        <Footer />
       </Flex>
       <TeamInvitation />
     </>
