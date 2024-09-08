@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Container,
+  Divider,
   Flex,
   Skeleton,
   Table,
@@ -12,6 +13,7 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
 } from "@chakra-ui/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
@@ -20,6 +22,7 @@ import { ErrorBoundary } from "react-error-boundary"
 import { InvitationsService } from "../../client/services"
 import { Route } from "../../routes/_layout/$team"
 import CancelInvitation from "./CancelInvitation"
+import NewInvitation from "./NewInvitation"
 
 const PER_PAGE = 5
 
@@ -148,9 +151,16 @@ function InvitationsTable() {
 }
 
 function Invitations() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   return (
-    <Container maxW="full">
+    <Container maxW="full" p={0}>
       <InvitationsTable />
+      <Divider my={4} />
+      <Button variant="secondary" onClick={onOpen} mb={4}>
+        New Invitation
+      </Button>
+      <NewInvitation isOpen={isOpen} onClose={onClose} />
     </Container>
   )
 }

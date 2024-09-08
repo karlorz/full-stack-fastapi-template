@@ -76,7 +76,7 @@ export async function sendInvitation(
   email: string,
 ) {
   await page.goto(`/${teamSlug}/settings`)
-  await expect(page.getByTestId("new-invitation")).toBeVisible()
+  await page.getByRole("button", { name: "New Invitation" }).click()
   await page.getByTestId("invitation-email").fill(email)
   await page.getByRole("button", { name: "Send invitation" }).click()
 }

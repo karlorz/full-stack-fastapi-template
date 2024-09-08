@@ -66,11 +66,15 @@ export function getCurrentUserRole(
   return team.user_links.find(({ user }) => user.id === currentUser?.id)?.role
 }
 
-export const handleError = function (this: any, err: ApiError) {
+export function extractErrorMessage(err: ApiError): string {
   const errDetail = (err.body as any)?.detail
-  let errorMessage = errDetail || "Something went wrong."
   if (Array.isArray(errDetail) && errDetail.length > 0) {
-    errorMessage = errDetail[0].msg
+    return errDetail[0].msg
   }
+  return errDetail || "Something went wrong."
+}
+
+export const handleError = function (this: any, err: ApiError) {
+  const errorMessage = extractErrorMessage(err)
   this("Error", errorMessage, "error")
 }

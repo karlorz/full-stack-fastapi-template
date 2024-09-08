@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test"
 import { randomTeamName } from "./utils/random"
 
-
 test("New team is visible", async ({ page }) => {
   await page.goto("/teams/new")
   await expect(page.getByRole("heading", { name: "New Team" })).toBeVisible()

@@ -1,4 +1,4 @@
-import { Box, Container, Flex, Text } from "@chakra-ui/react"
+import { Container } from "@chakra-ui/react"
 import {
   useMutation,
   useQueryClient,
@@ -13,7 +13,6 @@ import { getCurrentUserRole, handleError } from "../../utils"
 import CustomCard from "../Common/CustomCard"
 import EditableField from "../Common/EditableField"
 import Invitations from "../Invitations/Invitations"
-import NewInvitation from "../Invitations/NewInvitation"
 import Team from "../Teams/Team"
 import DeleteTeam from "./DeleteTeam"
 import TransferTeam from "./TransferTeam"
@@ -58,14 +57,6 @@ const TeamInformation = () => {
         <>
           <CustomCard title="Team Invitations">
             <Invitations />
-            <Box boxShadow="xs" px={8} py={4} borderRadius="lg" mb={8}>
-              <Text fontWeight="bold" mb={4}>
-                New Invitation
-              </Text>
-              <Flex>
-                <NewInvitation />
-              </Flex>
-            </Box>
           </CustomCard>
 
           <CustomCard title="Transfer Ownership">

@@ -21,7 +21,9 @@ test.describe("User with role admin can manage team invitations", () => {
     await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
 
-    await expect(page.getByText("Invitation sent successfully")).toBeVisible()
+    await expect(
+      page.getByText(`The invitation has been sent to ${email} successfully`),
+    ).toBeVisible()
   })
 
   test("User can see the invitation in the invitations list", async ({
@@ -33,6 +35,7 @@ test.describe("User with role admin can manage team invitations", () => {
 
     await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
+    await page.getByRole("button", { name: "Ok" }).click()
 
     await expect(page.getByRole("cell", { name: email })).toBeVisible()
     await expect(page.getByRole("cell", { name: "pending" })).toBeVisible()
@@ -45,6 +48,7 @@ test.describe("User with role admin can manage team invitations", () => {
 
     await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
+    await page.getByRole("button", { name: "Ok" }).click()
 
     await page.getByTestId("cancel-invitation").click()
     await expect(page.getByText("The invitation was cancelled")).toBeVisible()
@@ -112,6 +116,7 @@ test.describe("User can accept invitations to a team", () => {
     // user 1 sends an invitation to user 2
     await page.goto(`/${teamSlug}`)
     await sendInvitation(page, teamSlug, user2Email)
+    await page.getByRole("button", { name: "Ok" }).click()
     await logOutUser(page, teamName)
 
     // user 2 logs in and accepts the invitation
@@ -171,6 +176,7 @@ test.describe("Different scenarios for viewing invitations", () => {
     // user 1 sends an invitation to user 2
     await page.goto(`/${teamSlug}`)
     await sendInvitation(page, teamSlug, user2Email)
+    await page.getByRole("button", { name: "Ok" }).click()
     await logOutUser(page, teamName)
 
     // view invitation logged out
@@ -199,6 +205,7 @@ test.describe("Different scenarios for viewing invitations", () => {
     // user 1 sends an invitation to user 2
     await page.goto(`/${teamSlug}`)
     await sendInvitation(page, teamSlug, user2Email)
+    await page.getByRole("button", { name: "Ok" }).click()
     await logOutUser(page, teamName)
 
     // user 3 logs in and tries to view the invitation
