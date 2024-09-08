@@ -10,6 +10,7 @@ import {
   TableContainer,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -20,11 +21,13 @@ import {
   createFileRoute,
   useNavigate,
 } from "@tanstack/react-router"
-import { z } from "zod"
-
 import { useEffect } from "react"
 import { ErrorBoundary } from "react-error-boundary"
+import { z } from "zod"
+
 import { AppsService } from "../../../../client"
+import EmptyState from "../../../../components/Common/EmptyState"
+import QuickStart from "../../../../components/Common/QuickStart"
 
 const appsSearchSchema = z.object({
   page: z.number().catch(1).optional(),
@@ -93,14 +96,22 @@ function Apps() {
 
   return (
     <Container maxW="full">
-      <Heading size="md" textAlign={{ base: "center", md: "left" }} mb={6}>
+      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
         Apps
       </Heading>
-      <Flex justifyContent="end">
-        <Button as={RouterLink} to="/$team/apps/new" mb={4}>
-          Create App
-        </Button>
-      </Flex>
+      <Text>View and manage apps related to your team.</Text>
+      {(apps?.data?.length ?? 0) > 0 && (
+        <Flex justifyContent="end">
+          <Button
+            variant="secondary"
+            as={RouterLink}
+            to="/$team/apps/new"
+            mb={4}
+          >
+            Create App
+          </Button>
+        </Flex>
+      )}
       <ErrorBoundary
         fallbackRender={({ error }) => (
           <Box>Something went wrong: {error.message}</Box>
@@ -181,8 +192,10 @@ function Apps() {
             </Flex>
           </>
         ) : (
-          // TODO: Add new empty state component
-          <Box>No apps found</Box>
+          <Flex gap={4} pt={10} flexDir={{ base: "column", md: "row" }}>
+            <EmptyState type="app" />
+            <QuickStart />
+          </Flex>
         )}
       </ErrorBoundary>
     </Container>

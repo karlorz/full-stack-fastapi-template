@@ -16,11 +16,7 @@ import {
   type UseLinkPropsOptions,
 } from "@tanstack/react-router"
 import { CgOrganisation } from "react-icons/cg"
-import {
-  FaCog,
-  FaHome,
-  FaLayerGroup
-} from "react-icons/fa"
+import { FaCog, FaHome, FaLayerGroup } from "react-icons/fa"
 
 import { useCurrentUser } from "../../hooks/useAuth"
 import { Route } from "../../routes/_layout/$team"
@@ -73,7 +69,7 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
       ...link({
         to: "/teams/all",
       }),
-    }
+    },
   ]
 }
 
