@@ -29,15 +29,43 @@ import { TeamsService } from "../../client"
 import useAuth, { useCurrentUser } from "../../hooks/useAuth"
 import { Route } from "../../routes/_layout/$team"
 
+interface MenuItemLinkProps {
+  to: string
+  icon: React.ElementType
+  label: string
+  onClick?: () => void
+}
+
 const CurrentUser = () => {
   const currentUser = useCurrentUser()
-
   return currentUser?.full_name || ""
 }
 
-const UserMenu = () => {
-  const { team } = Route.useParams()
+const MenuItemLink = ({ to, icon, label, onClick }: MenuItemLinkProps) => {
   const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
+  const bgMenu = useColorModeValue("white", "ui.darkBg")
+
+  return (
+    <MenuItem
+      as={Link}
+      to={to}
+      gap={2}
+      py={2}
+      onClick={onClick}
+      bg={bgMenu}
+      _hover={{ bg: bgHover, borderRadius: "sm" }}
+    >
+      <Icon as={icon} />
+      <Box isTruncated maxWidth="150px">
+        {label}
+      </Box>
+    </MenuItem>
+  )
+}
+
+const UserMenu = () => {
+  const bg = useColorModeValue("white", "ui.darkBg")
+  const { team } = Route.useParams()
   const { logout } = useAuth()
   const { data: teams } = useQuery({
     queryKey: ["teams"],
@@ -53,13 +81,14 @@ const UserMenu = () => {
   return (
     <>
       {/* Desktop */}
-      <Flex mr={8}>
+      <Flex>
         <Menu>
           <MenuButton
             as={Button}
             fontWeight="light"
-            variant="unstyled"
-            w="auto"
+            variant="outline"
+            px={4}
+            w="180px"
           >
             <Flex justify="space-between">
               <Box display="flex" alignItems="center">
@@ -77,62 +106,35 @@ const UserMenu = () => {
               <ChevronDownIcon alignSelf="center" />
             </Flex>
           </MenuButton>
-          <MenuList p={4}>
+          <MenuList p={4} bg={bg}>
             {/* Teams */}
             {teams?.data.slice(0, 3).map((team, index) => (
-              <MenuItem
-                as={Link}
+              <MenuItemLink
                 key={team.id}
-                gap={2}
-                py={2}
-                _hover={{ bg: bgHover, borderRadius: "12px" }}
                 to={`/${team.slug}/`}
-              >
-                <Icon as={index === 0 ? FaUser : FaUsers} />
-                <Box isTruncated maxWidth="150px">
-                  {team.name}
-                </Box>
-              </MenuItem>
+                icon={index === 0 ? FaUser : FaUsers}
+                label={team.name}
+              />
             ))}
-            <MenuItem
-              as={Link}
+            <MenuItemLink
               to="/teams/all"
-              gap={2}
-              py={2}
-              _hover={{ bg: bgHover, borderRadius: "12px" }}
-            >
-              <Icon as={FaList} />
-              View all teams
-            </MenuItem>
-            <MenuItem
-              as={Link}
+              icon={FaList}
+              label="View all teams"
+            />
+            <MenuItemLink
               to="/teams/new"
-              gap={2}
-              py={2}
-              _hover={{ bg: bgHover, borderRadius: "12px" }}
-            >
-              <Icon as={FaPlus} />
-              Create a new team
-            </MenuItem>
+              icon={FaPlus}
+              label="Create a new team"
+            />
             <Divider />
-            <MenuItem
-              as={Link}
-              to="/settings"
-              gap={2}
-              _hover={{ bg: bgHover, borderRadius: "12px" }}
-            >
-              <Icon as={FaCog} />
-              User Settings
-            </MenuItem>
+            <MenuItemLink to="/settings" icon={FaCog} label="User Settings" />
             <Divider />
-            <MenuItem
+            <MenuItemLink
+              to="#"
+              icon={FaSignOutAlt}
+              label="Log out"
               onClick={handleLogout}
-              gap={2}
-              _hover={{ bg: bgHover, borderRadius: "12px" }}
-            >
-              <Icon as={FaSignOutAlt} />
-              Log out
-            </MenuItem>
+            />
           </MenuList>
         </Menu>
       </Flex>

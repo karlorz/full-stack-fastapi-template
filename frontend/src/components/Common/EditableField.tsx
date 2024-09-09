@@ -65,7 +65,6 @@ const EditableField = ({
               id={type}
               {...register(type, { required: "This field is required" })}
               type={type}
-              size="md"
               isInvalid={!!errors[type]}
             />
             {errors[type] && (

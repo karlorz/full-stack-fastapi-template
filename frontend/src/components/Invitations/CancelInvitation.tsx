@@ -18,7 +18,7 @@ const CancelInvitation = ({ id }: { id: string }) => {
       await InvitationsService.deleteInvitation(data)
     },
     onSuccess: () => {
-      showToast("Success", "The invitation was cancelled.", "success")
+      showToast("Success", "The invitation was cancelled", "success")
     },
     onError: handleError.bind(showToast),
     onSettled: () => {

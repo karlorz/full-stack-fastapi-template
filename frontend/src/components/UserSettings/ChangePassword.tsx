@@ -66,7 +66,7 @@ const ChangePassword = () => {
             placeholder="Confirm Password"
           />
           <Button
-            variant="primary"
+            variant="secondary"
             mt={4}
             type="submit"
             isLoading={isSubmitting}

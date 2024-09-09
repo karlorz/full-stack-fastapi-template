@@ -7,7 +7,7 @@ const DeleteAccount = () => {
 
   return (
     <>
-      <Container maxW="full">
+      <Container maxW="full" p={0}>
         <Text py={2} mb={2}>
           Permanently delete your data and everything associated with your
           account.

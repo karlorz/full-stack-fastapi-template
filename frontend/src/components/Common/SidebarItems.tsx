@@ -99,20 +99,19 @@ const SidebarItems = ({ onClose }: SidebarItemsProps) => {
       gap={4}
       px={4}
       py={2}
-      fontSize="md"
       _hover={{
         background: bgHover,
-        borderRadius: "12px",
+        borderRadius: "sm",
       }}
       activeProps={{
         style: {
-          color: "#009688",
+          background: "gray.200",
         },
       }}
       onClick={onClose}
     >
-      <Icon as={icon} alignSelf="center" fontSize="18px" />
-      <Text>{title}</Text>
+      <Icon as={icon} alignSelf="center" />
+      {title}
     </FlexLink>
   ))
 
@@ -121,23 +120,11 @@ const SidebarItems = ({ onClose }: SidebarItemsProps) => {
 
   return (
     <>
-      <Text
-        fontSize="xs"
-        px={4}
-        py={2}
-        textTransform="uppercase"
-        fontWeight="bold"
-      >
+      <Text fontSize="xs" px={4} py={2} fontWeight="bold">
         Menu
       </Text>
       <Box>{menu}</Box>
-      <Text
-        fontSize="xs"
-        px={4}
-        py={2}
-        textTransform="uppercase"
-        fontWeight="bold"
-      >
+      <Text fontSize="xs" px={4} py={2} fontWeight="bold">
         Others
       </Text>
       <Box>{others}</Box>

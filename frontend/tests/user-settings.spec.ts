@@ -252,41 +252,51 @@ test.describe("Delete account successfully", () => {
 // Appearance
 
 test("Appearance tab is visible", async ({ page }) => {
-  await page.goto("/settings")
-  await page.getByRole("tab", { name: "Appearance" }).click()
-  await expect(page.getByLabel("Appearance")).toBeVisible()
+  await page.goto("/")
+  await expect(page.getByLabel("Toggle dark mode")).toBeVisible()
 })
 
-test("User can switch from light mode to dark mode", async ({ page }) => {
-  await page.goto("/settings")
-  await page.getByRole("tab", { name: "Appearance" }).click()
-  await page.getByLabel("Appearance").locator("span").nth(3).click()
+test("User can switch from light mode to dark mode and vice versa", async ({
+  page,
+}) => {
+  await page.goto("/")
+
+  let isLightMode = await page.evaluate(() =>
+    document.body.classList.contains("chakra-ui-light"),
+  )
+  expect(isLightMode).toBe(true)
+
+  await page.getByLabel("Toggle dark mode").click()
   const isDarkMode = await page.evaluate(() =>
     document.body.classList.contains("chakra-ui-dark"),
   )
   expect(isDarkMode).toBe(true)
-})
 
-test("User can switch from dark mode to light mode", async ({ page }) => {
-  await page.goto("/settings")
-  await page.getByRole("tab", { name: "Appearance" }).click()
-  await page.getByLabel("Appearance").locator("span").first().click()
-  const isLightMode = await page.evaluate(() =>
+  await page.getByLabel("Toggle dark mode").click()
+  isLightMode = await page.evaluate(() =>
     document.body.classList.contains("chakra-ui-light"),
   )
   expect(isLightMode).toBe(true)
 })
 
 test("Selected mode is preserved across sessions", async ({ page }) => {
-  await page.goto("/settings")
-  await page.goto("/settings")
-  await page.getByRole("tab", { name: "Appearance" }).click()
-  await page.getByLabel("Appearance").locator("span").nth(3).click()
+  await page.goto("/")
+
+  const isLightMode = await page.evaluate(() =>
+    document.body.classList.contains("chakra-ui-light"),
+  )
+  expect(isLightMode).toBe(true)
+
+  await page.getByLabel("Toggle dark mode").click()
+  let isDarkMode = await page.evaluate(() =>
+    document.body.classList.contains("chakra-ui-dark"),
+  )
+  expect(isDarkMode).toBe(true)
 
   await logOutUser(page, "fastapi admin")
-
   await logInUser(page, "admin@example.com", "changethis")
-  const isDarkMode = await page.evaluate(() =>
+
+  isDarkMode = await page.evaluate(() =>
     document.body.classList.contains("chakra-ui-dark"),
   )
   expect(isDarkMode).toBe(true)

@@ -84,7 +84,7 @@ function SignUp() {
           <Container
             as="form"
             onSubmit={handleSubmit(onSubmit)}
-            maxW={{ base: "xs", md: "md" }}
+            maxW={{ base: "xs", md: "sm" }}
             flexDir="column"
             alignItems="stretch"
             justifyContent="center"

@@ -1,12 +1,13 @@
-import { WarningTwoIcon } from "@chakra-ui/icons"
 import {
+  Alert,
   AlertDialog,
   AlertDialogBody,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogOverlay,
-  Box,
+  AlertIcon,
+  AlertTitle,
   Button,
   FormControl,
   FormErrorMessage,
@@ -95,24 +96,14 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
           >
             <AlertDialogHeader>Delete Account</AlertDialogHeader>
 
-            <AlertDialogBody>
-              {ownsTeams ? (
-                <>
-                  <Box
-                    bg="orange.100"
-                    color="ui.danger"
-                    w="100%"
-                    p={4}
-                    borderRadius="md"
-                    display="flex"
-                    alignItems="center"
-                    gap={2}
-                  >
-                    <WarningTwoIcon w={4} h={4} color="ui.danger" />
-                    <Text>
-                      <strong>Warning:</strong> You cannot delete your account.
-                    </Text>
-                  </Box>
+            {ownsTeams ? (
+              <>
+                <AlertDialogBody>
+                  <Alert status="warning" borderRadius="md">
+                    <AlertIcon />
+                    <AlertTitle mr={2}>Warning:</AlertTitle>
+                    You cannot delete your account.
+                  </Alert>
                   <Text my={4}>
                     You must remove or transfer ownership of your teams before
                     deleting your account. Please visit the{" "}
@@ -126,75 +117,70 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
                     </Link>{" "}
                     to manage your teams.
                   </Text>
-                  <AlertDialogFooter>
-                    <Button onClick={onClose}>Ok</Button>
-                  </AlertDialogFooter>
-                </>
-              ) : (
-                <VStack spacing={4}>
-                  <Box
-                    bg="orange.100"
-                    color="ui.danger"
-                    w="100%"
-                    p={4}
-                    borderRadius="md"
-                    display="flex"
-                    alignItems="center"
-                    gap={2}
-                  >
-                    <WarningTwoIcon w={4} h={4} color="ui.danger" />
-                    <Text>
-                      <strong>Warning:</strong> This action cannot be undone.
-                    </Text>
-                  </Box>
-                  {/* TODO: Update this text when the other features are completed*/}
-                  <Text w="100%">
-                    All your account data will be{" "}
-                    <strong>permanently deleted.</strong>
-                  </Text>
-                  <Text>
-                    Type <strong>delete my account</strong> below to confirm and
-                    click the confirm button.
-                  </Text>
-                  <FormControl
-                    id="confirmation"
-                    isInvalid={!!errors.confirmation}
-                  >
-                    <FormLabel htmlFor="confirmation" srOnly>
-                      Confirmation
-                    </FormLabel>
-                    <Input
-                      id="confirmation"
-                      {...register("confirmation", {
-                        required: "Field is required",
-                        validate: (value) =>
-                          value === "delete my account"
-                            ? true
-                            : "Confirmation does not match",
-                      })}
-                    />
-                    {errors.confirmation && (
-                      <FormErrorMessage>
-                        {errors.confirmation.message}
-                      </FormErrorMessage>
-                    )}{" "}
-                  </FormControl>
+                </AlertDialogBody>
 
-                  <AlertDialogFooter gap={3}>
-                    <Button
-                      ref={cancelRef}
-                      onClick={onClose}
-                      isDisabled={isSubmitting}
+                <AlertDialogFooter>
+                  <Button onClick={onClose}>Ok</Button>
+                </AlertDialogFooter>
+              </>
+            ) : (
+              <>
+                <AlertDialogBody>
+                  <VStack spacing={4}>
+                    <Alert status="warning" borderRadius="md">
+                      <AlertIcon />
+                      <AlertTitle mr={2}>Warning:</AlertTitle>
+                      This action cannot be undone.
+                    </Alert>
+                    {/* TODO: Update this text when the other features are completed*/}
+                    <Text w="100%">
+                      All your account data will be{" "}
+                      <strong>permanently deleted.</strong>
+                    </Text>
+                    <Text>
+                      Type <strong>delete my account</strong> below to confirm
+                      and click the confirm button.
+                    </Text>
+                    <FormControl
+                      id="confirmation"
+                      isInvalid={!!errors.confirmation}
                     >
-                      Cancel
-                    </Button>
-                    <Button variant="danger" type="submit">
-                      Confirm
-                    </Button>
-                  </AlertDialogFooter>
-                </VStack>
-              )}
-            </AlertDialogBody>
+                      <FormLabel htmlFor="confirmation" srOnly>
+                        Confirmation
+                      </FormLabel>
+                      <Input
+                        id="confirmation"
+                        {...register("confirmation", {
+                          required: "Field is required",
+                          validate: (value) =>
+                            value === "delete my account"
+                              ? true
+                              : "Confirmation does not match",
+                        })}
+                      />
+                      {errors.confirmation && (
+                        <FormErrorMessage>
+                          {errors.confirmation.message}
+                        </FormErrorMessage>
+                      )}{" "}
+                    </FormControl>
+                  </VStack>
+                </AlertDialogBody>
+
+                <AlertDialogFooter gap={3}>
+                  <Button
+                    ref={cancelRef}
+                    onClick={onClose}
+                    isDisabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button variant="danger" type="submit">
+                    Confirm
+                  </Button>
+                </AlertDialogFooter>
+              </>
+            )}
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>

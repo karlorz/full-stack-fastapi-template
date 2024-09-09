@@ -1,10 +1,8 @@
 import {
   Box,
+  Button,
   Container,
   Flex,
-  List,
-  ListIcon,
-  ListItem,
   SkeletonText,
   Stat,
   StatGroup,
@@ -16,7 +14,6 @@ import {
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 
-import { FaCheck } from "react-icons/fa"
 import CustomCard from "../../../components/Common/CustomCard"
 import { useCurrentUser } from "../../../hooks/useAuth"
 
@@ -31,12 +28,6 @@ const CurrentUser = () => {
 }
 
 function Dashboard() {
-  const activities = [
-    "User1 logged in",
-    "App XYZ was updated",
-    "New user User2 registered",
-  ]
-
   return (
     <Container maxW="full">
       <CustomCard data-testid="result">
@@ -48,22 +39,15 @@ function Dashboard() {
         </Box>
         <Text>Welcome back, nice to see you again!</Text>
       </CustomCard>
-
       <Flex direction={{ base: "column", md: "row" }} gap={4}>
-        <CustomCard title="Recent Activity" w={{ base: "100%", md: "55%" }}>
+        <CustomCard title="Last Deployment" w={{ base: "100%", md: "55%" }}>
           <Text mt={2}>
-            View the latest activities and logs related to your apps.
+            Last deployment was successful. Your app is up and running.
           </Text>
-          <List spacing={3} mt={4}>
-            {activities.map((activity, index) => (
-              <ListItem key={index}>
-                <ListIcon as={FaCheck} color="ui.main" />
-                {activity}
-              </ListItem>
-            ))}
-          </List>
+          <Button mt={4}>View Deployment</Button>
         </CustomCard>
 
+        {/* TODO: Finalize once real data is available */}
         <CustomCard title="Statistics" w={{ base: "100%", md: "45%" }}>
           <StatGroup mt={2}>
             <Stat>

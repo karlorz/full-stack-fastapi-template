@@ -6,12 +6,15 @@ import {
   Spacer,
   Text,
   VStack,
+  useColorModeValue,
 } from "@chakra-ui/react"
 
 const PaymentMethod = () => {
+  const borderColor = useColorModeValue("#e4e5eb", "#2a2a2a")
+
   return (
-    <Container boxShadow="xs" p={8} borderRadius="lg">
-      <HStack spacing={4}>
+    <Container p={8} borderRadius="md" border={`1px solid ${borderColor}`}>
+      <HStack flexDirection={["column", "row"]}>
         <VStack spacing={4} align="start">
           <Text fontSize="md" fontWeight="bold">
             Payment Method
@@ -28,7 +31,7 @@ const PaymentMethod = () => {
           </VStack>
         </VStack>
         <Spacer />
-        <Button variant="outline" size="sm" fontSize="sm" p={4}>
+        <Button variant="outline" size="sm" fontSize="sm">
           Update Card
         </Button>
       </HStack>

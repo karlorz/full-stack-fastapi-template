@@ -20,6 +20,7 @@ import { FaCommentDots, FaFileAlt, FaQuestionCircle } from "react-icons/fa"
 
 const Footer = () => {
   return (
+    // TODO: Add links to help and docs once available
     <Box as="footer" w="100%" p={4}>
       <Flex justifyContent="flex-end" alignItems="center">
         <Popover>
@@ -36,7 +37,10 @@ const Footer = () => {
             <PopoverCloseButton />
             <PopoverHeader fontWeight="semibold">Feedback</PopoverHeader>
             <PopoverBody>
-              <Text my={3}>Please let us know your thoughts and suggestions to help us improve:</Text>
+              <Text my={3}>
+                Please let us know your thoughts and suggestions to help us
+                improve:
+              </Text>
               <Input placeholder="Your email" mb={3} />
               <Textarea placeholder="Your comments" mb={3} />
             </PopoverBody>

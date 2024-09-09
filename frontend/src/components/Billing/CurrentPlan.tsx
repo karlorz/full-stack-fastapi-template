@@ -1,9 +1,19 @@
-import { Button, Container, HStack, Link, Text, VStack } from "@chakra-ui/react"
+import {
+  Button,
+  Container,
+  HStack,
+  Link,
+  Text,
+  VStack,
+  useColorModeValue,
+} from "@chakra-ui/react"
 
 const CurrentPlan = () => {
+  const borderColor = useColorModeValue("#e4e5eb", "#2a2a2a")
+
   return (
-    <Container bg="ui.light" p={8} borderRadius="lg">
-      <HStack spacing={4}>
+    <Container p={8} borderRadius="lg" border={`1px solid ${borderColor}`}>
+      <HStack spacing={4} flexDirection={["column", "row"]}>
         <VStack spacing={4} align="start">
           <Text fontSize="md" fontWeight="bold">
             Team
@@ -23,8 +33,8 @@ const CurrentPlan = () => {
           </Text>
           <Link color="red.600">Cancel Subscription</Link>
         </VStack>
-        <Button variant="primary" size="sm" fontSize="sm" p={4}>
-          Upgrade Plan
+        <Button variant="secondary" size="sm" fontSize="sm">
+          Upgrade
         </Button>
       </HStack>
     </Container>

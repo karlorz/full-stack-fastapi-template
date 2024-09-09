@@ -4,42 +4,42 @@ import {
   Flex,
   Icon,
   List,
-  Stack,
   Text,
   VStack,
+  useColorModeValue,
 } from "@chakra-ui/react"
 import { FaCheckCircle } from "react-icons/fa"
-
 import { FaCircleXmark } from "react-icons/fa6"
+
 import { items } from "./PlansData"
 
 const Plans = () => {
+  const borderColor = useColorModeValue("#e4e5eb", "#2a2a2a")
+
   const listItems = items.map(
     ({ value, title, description, price, features }) => (
       <Box
-        border="1px solid lightgray"
-        p={6}
-        borderRadius="lg"
+        border={`1px solid ${borderColor}`}
+        p={8}
+        borderRadius="md"
         key={value}
-        bg="white"
         _hover={{ boxShadow: "sm", transform: "scale(1.05)" }}
         transition="all 0.3s ease-in-out"
-        mb={6}
+        mb={8}
+        flex="1"
       >
         <VStack spacing={6}>
-          <Text textTransform="uppercase" fontWeight="bold">
-            {title}
-          </Text>
-          <Text fontSize="md" color="gray.600">
-            {description}
-          </Text>
+          <Box p={4} w="full" textAlign="center">
+            <Text textTransform="uppercase" fontWeight="bold">
+              {title}
+            </Text>
+          </Box>
+          <Text fontSize="md">{description}</Text>
           <Flex textAlign="center" flexDir="column">
-            <Text fontSize="4xl" fontWeight="bold" color="ui.main">
+            <Text fontSize="4xl" fontWeight="bold">
               $ {price}
             </Text>
-            <Text fontSize="sm" color="gray.500">
-              per month
-            </Text>
+            <Text fontSize="sm">per month</Text>
           </Flex>
           <List>
             {Object.values(features).map((feature, index) => (
@@ -51,15 +51,15 @@ const Plans = () => {
                 )}
                 <Text
                   fontSize="sm"
-                  color="gray.700"
                   textDecoration={feature.value ? "none" : "line-through"}
+                  ml={2}
                 >
                   {feature.name}
                 </Text>
               </Flex>
             ))}
           </List>
-          <Button variant="outline" size="sm">
+          <Button mt={6} variant="outline">
             Choose Plan
           </Button>
         </VStack>
@@ -68,11 +68,9 @@ const Plans = () => {
   )
 
   return (
-    <>
-      <Stack direction={{ base: "column", md: "row" }} gap={10}>
-        {listItems}
-      </Stack>
-    </>
+    <Flex direction={{ base: "column", md: "row" }} gap={10}>
+      {listItems}
+    </Flex>
   )
 }
 

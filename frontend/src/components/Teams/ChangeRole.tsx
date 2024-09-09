@@ -51,7 +51,7 @@ const ChangeRole = ({
         userId: user.id,
       }),
     onSuccess: () => {
-      showToast("Success", "The role was updated successfully.", "success")
+      showToast("Success", "The role was updated successfully", "success")
       onClose()
     },
     onError: handleError.bind(showToast),

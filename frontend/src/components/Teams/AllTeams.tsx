@@ -80,7 +80,7 @@ function TeamsTable() {
   return (
     <>
       <TableContainer data-testid="teams-table">
-        <Table size={{ base: "sm", md: "md" }}>
+        <Table size={{ base: "sm", md: "md" }} variant="unstyled">
           <Thead>
             <Tr>
               <Th>Name</Th>

@@ -8,10 +8,12 @@ import {
   Text,
 } from "@chakra-ui/react"
 
+// TODO: Complete this when the functionality is implemented
+
 const TransferTeam = () => {
   return (
     <>
-      <Container maxW="full">
+      <Container maxW="full" p={0}>
         <Box as="form">
           <Text py={2} mb={2}>
             Transfer the team ownership to other user.
@@ -27,7 +29,7 @@ const TransferTeam = () => {
               w="auto"
             />
           </FormControl>
-          <Button variant="primary" type="submit" mt={4}>
+          <Button variant="secondary" type="submit" mt={4}>
             Transfer
           </Button>
         </Box>

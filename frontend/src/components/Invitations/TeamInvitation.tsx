@@ -40,7 +40,7 @@ const TeamInvitation = () => {
     if (invitation?.status === "accepted") {
       showToast(
         "Invitation Status",
-        "Invitation has already been accepted.",
+        "Invitation has already been accepted",
         "warning",
       )
       navigate({ to: "/" })

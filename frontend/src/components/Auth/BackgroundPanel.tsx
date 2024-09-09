@@ -15,7 +15,7 @@ const BackgroundPanel = () => {
           display={{ base: "none", md: "flex" }}
           flexDir="column"
           justify="center"
-          color="ui.light"
+          color="ui.lightText"
           h="100%"
           p={8}
         >

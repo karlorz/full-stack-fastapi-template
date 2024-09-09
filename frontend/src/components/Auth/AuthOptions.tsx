@@ -1,11 +1,4 @@
-import {
-  AbsoluteCenter,
-  Box,
-  Button,
-  Divider,
-  HStack,
-  Link,
-} from "@chakra-ui/react"
+import { Box, Button, Divider, Flex, HStack, Link } from "@chakra-ui/react"
 import { Link as RouterLink } from "@tanstack/react-router"
 import { FaGithub } from "react-icons/fa"
 import { FcGoogle } from "react-icons/fc"
@@ -18,12 +11,13 @@ interface OptionsProps {
 const AuthOptions = ({ description, path }: OptionsProps) => {
   return (
     <>
-      <Box position="relative" py={4}>
+      <Flex align="center">
         <Divider />
-        <AbsoluteCenter bg="white" px={4}>
+        <Box textAlign="center" px={4}>
           or
-        </AbsoluteCenter>
-      </Box>
+        </Box>
+        <Divider />
+      </Flex>
       <HStack>
         <Button leftIcon={<FcGoogle />} variant="outline" flex="1">
           Google

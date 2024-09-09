@@ -36,7 +36,7 @@ const RemoveUser = ({ teamSlug, userId, isOpen, onClose }: RemoveProps) => {
       await TeamsService.removeMemberFromTeam(data)
     },
     onSuccess: () => {
-      showToast("Success", "The user was removed successfully.", "success")
+      showToast("Success", "The user was removed successfully", "success")
       onClose()
     },
     onError: handleError.bind(showToast),

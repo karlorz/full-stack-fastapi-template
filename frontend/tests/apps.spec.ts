@@ -21,9 +21,9 @@ test.describe("Apps empty states", () => {
   })
 
   test("Create button is visible and navigates correctly", async ({ page }) => {
-      await page.goto("/admin/apps/")
-      await page.getByRole('link', { name: 'Create App' }).click();
-      await expect(page).toHaveURL('/admin/apps/new')
+    await page.goto("/admin/apps/")
+    await page.getByRole("link", { name: "Create App" }).click()
+    await expect(page).toHaveURL("/admin/apps/new")
   })
 })
 

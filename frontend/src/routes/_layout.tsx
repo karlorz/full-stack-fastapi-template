@@ -6,6 +6,7 @@ import Footer from "../components/Common/Footer"
 import Sidebar from "../components/Common/Sidebar"
 import UserMenu from "../components/Common/UserMenu"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
+import Appearance from "../components/UserSettings/Appearance"
 import { isLoggedIn } from "../hooks/useAuth"
 
 export const Route = createFileRoute("/_layout")({
@@ -53,6 +54,7 @@ function Layout() {
               p={4}
               gap="2"
             >
+              <Appearance />
               <UserMenu />
             </Box>
             {/* Main Content */}

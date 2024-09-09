@@ -1,12 +1,13 @@
-import { WarningTwoIcon } from "@chakra-ui/icons"
 import {
+  Alert,
   AlertDialog,
   AlertDialogBody,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogOverlay,
-  Box,
+  AlertIcon,
+  AlertTitle,
   Button,
   FormControl,
   FormErrorMessage,
@@ -86,21 +87,11 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
             <AlertDialogHeader>Delete Team</AlertDialogHeader>
             <AlertDialogBody>
               <VStack spacing={4}>
-                <Box
-                  bg="orange.100"
-                  color="ui.danger"
-                  w="100%"
-                  p={4}
-                  borderRadius="md"
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
-                  <WarningTwoIcon w={4} h={4} color="ui.danger" />
-                  <Text>
-                    <strong>Warning:</strong> This action cannot be undone.
-                  </Text>
-                </Box>
+                <Alert status="warning" borderRadius="md">
+                  <AlertIcon />
+                  <AlertTitle mr={2}>Warning:</AlertTitle>
+                  This action cannot be undone.
+                </Alert>
                 {/* TODO: Update this text when the other features are completed*/}
                 <Text w="100%">
                   This team will be <strong>permanently deleted.</strong>

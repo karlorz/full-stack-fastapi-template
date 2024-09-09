@@ -30,7 +30,7 @@ function TeamSettings() {
         Team Settings
       </Heading>
       <Text>View and manage settings related to your team.</Text>
-      <Tabs variant="line" pt={10}>
+      <Tabs variant="basic" pt={10}>
         <TabList>
           {tabsConfig.map((tab, index) => (
             <Tab key={index}>{tab.title}</Tab>
@@ -38,7 +38,7 @@ function TeamSettings() {
         </TabList>
         <TabPanels>
           {tabsConfig.map((tab, index) => (
-            <TabPanel key={index}>
+            <TabPanel key={index} p={0}>
               <Suspense>
                 <tab.component />
               </Suspense>

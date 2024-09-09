@@ -8,19 +8,19 @@ import {
   DrawerOverlay,
   Flex,
   IconButton,
-  Image,
   Text,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react"
 import { FaBars, FaSignOutAlt } from "react-icons/fa"
 
-import Logo from "/assets/images/fastapi-logo.svg"
 import useAuth from "../../hooks/useAuth"
 import SidebarItems from "./SidebarItems"
 
 const Sidebar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { logout } = useAuth()
+  const borderColor = useColorModeValue("#e4e5eb", "#2a2a2a")
 
   const handleLogout = () => {
     logout()
@@ -45,7 +45,6 @@ const Sidebar = () => {
           <DrawerBody py={8}>
             <Flex flexDir="column" justify="space-between">
               <Box>
-                <Image src={Logo} alt="logo" p={6} />
                 <SidebarItems onClose={onClose} />
                 <Flex
                   as="button"
@@ -68,7 +67,7 @@ const Sidebar = () => {
       <Box
         position="sticky"
         display={{ base: "none", md: "flex" }}
-        boxShadow="md"
+        borderRight={`1px solid ${borderColor}`}
         minW="250px"
         h="100vh"
         top="0"
@@ -76,7 +75,9 @@ const Sidebar = () => {
       >
         <Box justifyContent="center" w="100%">
           <Center>
-            <Image src={Logo} alt="Logo" maxW="140px" py={6} />
+            <Text fontSize="xl" p="6" fontWeight="bold">
+              FastAPI Cloud
+            </Text>
           </Center>
           <SidebarItems />
         </Box>
