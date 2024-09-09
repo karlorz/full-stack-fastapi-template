@@ -277,3 +277,93 @@ def test_read_app_invalid_uuid(client: TestClient, db: Session) -> None:
     assert response.status_code == 404
     data = response.json()
     assert data["detail"] == "App not found"
+
+
+def test_delete_app(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.delete(
+        f"{settings.API_V1_STR}/apps/{app.slug}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "App deleted"
+
+    app_query = select(App).where(App.id == app.id)
+    app_db = db.exec(app_query).first()
+    assert not app_db
+
+
+def test_delete_app_user_not_in_team(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db)
+
+    app = create_random_app(db, team=team)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.delete(
+        f"{settings.API_V1_STR}/apps/{app.slug}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "Team not found for the current user"
+
+
+def test_delete_app_user_not_admin(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db)
+    add_user_to_team(session=db, user=user, team=team, role=Role.member)
+
+    app = create_random_app(db, team=team)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.delete(
+        f"{settings.API_V1_STR}/apps/{app.slug}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 403
+    data = response.json()
+    assert data["detail"] == "You do not have permission to delete this app"

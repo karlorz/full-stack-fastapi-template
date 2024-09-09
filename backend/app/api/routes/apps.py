@@ -11,6 +11,7 @@ from app.models import (
     AppCreate,
     AppPublic,
     AppsPublic,
+    Message,
 )
 
 router = APIRouter()
@@ -106,3 +107,33 @@ def read_app(session: SessionDep, current_user: CurrentUser, app_slug: str) -> A
         )
 
     return app
+
+
+@router.delete("/{app_slug}", response_model=Message)
+def delete_app(session: SessionDep, current_user: CurrentUser, app_slug: str) -> Any:
+    """
+    Delete the provided app.
+    """
+    app = session.exec(select(App).where(App.slug == app_slug)).first()
+
+    if not app:
+        raise HTTPException(status_code=404, detail="App not found")
+
+    team_slug = app.team.slug
+
+    user_team_link = get_user_team_link_by_user_id_and_team_slug(
+        session=session, user_id=current_user.id, team_slug=team_slug
+    )
+    if not user_team_link:
+        raise HTTPException(
+            status_code=404, detail="Team not found for the current user"
+        )
+
+    if user_team_link.role != "admin":
+        raise HTTPException(
+            status_code=403, detail="You do not have permission to delete this app"
+        )
+
+    session.delete(app)
+    session.commit()
+    return Message(message="App deleted")

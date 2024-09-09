@@ -945,6 +945,10 @@ export type TDataReadApp = {
                 appSlug: string
                 
             }
+export type TDataDeleteApp = {
+                appSlug: string
+                
+            }
 
 export class AppsService {
 
@@ -1007,6 +1011,28 @@ appSlug,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
+			url: '/api/v1/apps/{app_slug}',
+			path: {
+				app_slug: appSlug
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Delete App
+	 * Delete the provided app.
+	 * @returns Message Successful Response
+	 * @throws ApiError
+	 */
+	public static deleteApp(data: TDataDeleteApp): CancelablePromise<Message> {
+		const {
+appSlug,
+} = data;
+		return __request(OpenAPI, {
+			method: 'DELETE',
 			url: '/api/v1/apps/{app_slug}',
 			path: {
 				app_slug: appSlug
