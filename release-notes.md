@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✨ Add API to read single deployment. PR [#253](https://github.com/fastapilabs/cloud/pull/253) by [@patrick91](https://github.com/patrick91).
 * ✨ Add footer. PR [#250](https://github.com/fastapilabs/cloud/pull/250) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add deployment presigned url service and logic. PR [#239](https://github.com/fastapilabs/cloud/pull/239) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add upload artifact endpoint. PR [#234](https://github.com/fastapilabs/cloud/pull/234) by [@alejsdev](https://github.com/alejsdev).
