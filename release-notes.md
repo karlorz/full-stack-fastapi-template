@@ -221,6 +221,7 @@
 
 ### Internal
 
+* ⬆ Bump tiangolo/issue-manager from 0.5.0 to 0.5.1. PR [#251](https://github.com/fastapilabs/cloud/pull/251) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 👷 Update `issue-manager.yml`. PR [#246](https://github.com/fastapilabs/cloud/pull/246) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update `.github/labeler.yml`. PR [#236](https://github.com/fastapilabs/cloud/pull/236) by [@alejsdev](https://github.com/alejsdev).
 * 🚀 Add Pulumi K8s Deployment Customer Apps Flow. PR [#225](https://github.com/fastapilabs/cloud/pull/225) by [@estebanx64](https://github.com/estebanx64).
