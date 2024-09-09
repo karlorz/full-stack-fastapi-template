@@ -941,6 +941,10 @@ export type TDataCreateApp = {
                 requestBody: AppCreate
                 
             }
+export type TDataReadApp = {
+                appSlug: string
+                
+            }
 
 export class AppsService {
 
@@ -985,6 +989,28 @@ requestBody,
 			url: '/api/v1/apps/',
 			body: requestBody,
 			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Read App
+	 * Retrieve the details of the provided app.
+	 * @returns AppPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static readApp(data: TDataReadApp): CancelablePromise<AppPublic> {
+		const {
+appSlug,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/apps/{app_slug}',
+			path: {
+				app_slug: appSlug
+			},
 			errors: {
 				422: `Validation Error`,
 			},

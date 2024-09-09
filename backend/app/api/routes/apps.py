@@ -83,3 +83,26 @@ def create_app(
     session.commit()
     session.refresh(app)
     return app
+
+
+@router.get("/{app_slug}", response_model=AppPublic)
+def read_app(session: SessionDep, current_user: CurrentUser, app_slug: str) -> Any:
+    """
+    Retrieve the details of the provided app.
+    """
+    app = session.exec(select(App).where(App.slug == app_slug)).first()
+
+    if not app:
+        raise HTTPException(status_code=404, detail="App not found")
+
+    team_slug = app.team.slug
+
+    user_team_link = get_user_team_link_by_user_id_and_team_slug(
+        session=session, user_id=current_user.id, team_slug=team_slug
+    )
+    if not user_team_link:
+        raise HTTPException(
+            status_code=404, detail="Team not found for the current user"
+        )
+
+    return app

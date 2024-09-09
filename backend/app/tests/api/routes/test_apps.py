@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
@@ -185,3 +187,93 @@ def test_create_project_user_not_in_team(client: TestClient, db: Session) -> Non
 
     data = response.json()
     assert data["detail"] == "Team not found for the current user"
+
+
+def test_read_app(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{app.slug}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["id"] == str(app.id)
+    assert data["name"] == app.name
+    assert data["slug"] == app.slug
+    assert data["team_id"] == str(team.id)
+
+
+def test_read_app_user_not_in_team(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db)
+
+    app = create_random_app(db, team=team)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{app.slug}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "Team not found for the current user"
+
+
+def test_read_app_invalid_uuid(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+
+    invalid_uuid = uuid.uuid4()
+
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{invalid_uuid}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
