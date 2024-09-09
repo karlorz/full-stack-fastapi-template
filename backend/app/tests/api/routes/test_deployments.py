@@ -178,3 +178,35 @@ def test_create_deployment_app_not_found(client: TestClient, db: Session) -> Non
     assert response.status_code == 404
     data = response.json()
     assert data["detail"] == "App not found"
+
+
+def test_read_deployment(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+
+    deployment = create_deployment_for_app(db, app=app)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{app.id}/deployments/{deployment.id}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == str(deployment.id)
+    assert data["slug"] == deployment.slug

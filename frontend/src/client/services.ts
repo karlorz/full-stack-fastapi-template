@@ -1005,6 +1005,11 @@ export type TDataCreateDeployment = {
                 appId: string
                 
             }
+export type TDataReadDeployment = {
+                appId: string
+deploymentId: string
+                
+            }
 export type TDataUploadDeploymentArtifact = {
                 deploymentId: string
                 
@@ -1056,6 +1061,29 @@ appId,
 			url: '/api/v1/apps/{app_id}/deployments/',
 			path: {
 				app_id: appId
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Read Deployment
+	 * Retrieve a list of deployments for the provided app.
+	 * @returns DeploymentPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static readDeployment(data: TDataReadDeployment): CancelablePromise<DeploymentPublic> {
+		const {
+appId,
+deploymentId,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/apps/{app_id}/deployments/{deployment_id}',
+			path: {
+				app_id: appId, deployment_id: deploymentId
 			},
 			errors: {
 				422: `Validation Error`,

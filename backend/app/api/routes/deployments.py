@@ -3,7 +3,7 @@ from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import func
-from sqlmodel import col, select
+from sqlmodel import and_, col, select
 
 from app.api.deps import CurrentUser, SessionDep
 from app.api.utils.aws_s3 import generate_presigned_url_post
@@ -65,6 +65,43 @@ def read_deployments(
     count = session.exec(count_statement).one()
 
     return DeploymentsPublic(data=deployments, count=count)
+
+
+@router.get(
+    "/apps/{app_id}/deployments/{deployment_id}", response_model=DeploymentPublic
+)
+def read_deployment(
+    session: SessionDep,
+    current_user: CurrentUser,
+    app_id: uuid.UUID,
+    deployment_id: uuid.UUID,
+) -> Any:
+    """
+    Retrieve a list of deployments for the provided app.
+    """
+    app = session.exec(select(App).where(App.id == app_id)).first()
+    if not app:
+        raise HTTPException(status_code=404, detail="App not found")
+    team_slug = app.team.slug
+
+    user_team_link = get_user_team_link_by_user_id_and_team_slug(
+        session=session, user_id=current_user.id, team_slug=team_slug
+    )
+    if not user_team_link:
+        raise HTTPException(
+            status_code=404, detail="Team not found for the current user"
+        )
+
+    statement = select(Deployment).where(
+        and_(Deployment.app_id == app_id, Deployment.id == deployment_id)
+    )
+
+    deployment = session.exec(statement).first()
+
+    if not deployment:
+        raise HTTPException(status_code=404, detail="Deployment not found")
+
+    return deployment
 
 
 @router.post(
