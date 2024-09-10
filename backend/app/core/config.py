@@ -109,6 +109,14 @@ class Settings(BaseSettings):
     def emails_enabled(self) -> bool:
         return bool(self.SMTP_HOST and self.EMAILS_FROM_EMAIL)
 
+    EMAILS_DEV_ALLOWED_RECIPIENT_DOMAINS: list[str] = ["fastapilabs.com"]
+    EMAILS_DEV_ALLOWED_RECIPIENTS: list[str] = [
+        "tiangolo@gmail.com",
+        "alejsdev@gmail.com",
+        "patrick.arminio@gmail.com",
+        "emayacadavid9@gmail.com",
+    ]
+
     # TODO: update type to EmailStr when sqlmodel supports it
     EMAIL_TEST_USER: str = "test@example.com"
     # TODO: update type to EmailStr when sqlmodel supports it

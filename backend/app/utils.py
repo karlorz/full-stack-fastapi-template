@@ -58,6 +58,23 @@ def render_email_template(*, template_name: str, context: dict[str, Any]) -> str
     return html_content
 
 
+def allowed_recipient(email_to: str) -> bool:
+    if settings.ENVIRONMENT == "production":
+        return True
+    if settings.SMTP_HOST in {
+        "mailcatcher",
+        "localhost",
+    }:
+        return True
+    for domain in settings.EMAILS_DEV_ALLOWED_RECIPIENT_DOMAINS:
+        if email_to.endswith(f"@{domain}"):
+            return True
+    for email in settings.EMAILS_DEV_ALLOWED_RECIPIENTS:
+        if email_to == email:
+            return True
+    return False
+
+
 def send_email(
     *,
     email_to: str,
@@ -65,6 +82,7 @@ def send_email(
     html_content: str = "",
 ) -> None:
     assert settings.emails_enabled, "no provided configuration for email variables"
+    assert allowed_recipient(email_to), f"recipient email is not allowed: {email_to}"
     message = emails.Message(
         subject=subject,
         html=html_content,
