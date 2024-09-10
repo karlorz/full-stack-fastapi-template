@@ -189,6 +189,10 @@ export const $DeploymentPublic = {
 	type: 'DeploymentStatus',
 	isRequired: true,
 },
+		url: {
+	type: 'string',
+	isRequired: true,
+},
 	},
 } as const;
 

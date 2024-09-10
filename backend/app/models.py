@@ -7,6 +7,7 @@ from pydantic import EmailStr, computed_field
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlmodel import Field, Relationship, SQLModel
 
+from app.core.config import settings
 from app.utils import get_datetime_utc
 
 
@@ -307,6 +308,10 @@ class Deployment(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=get_datetime_utc)
     status: DeploymentStatus = Field(default=DeploymentStatus.waiting_upload)
 
+    @computed_field
+    def url(self) -> str:
+        return f"https://{self.slug}.{settings.DEPLOYMENTS_DOMAIN}"
+
 
 class DeploymentPublic(SQLModel):
     id: uuid.UUID
@@ -315,6 +320,7 @@ class DeploymentPublic(SQLModel):
     created_at: datetime
     updated_at: datetime
     status: DeploymentStatus
+    url: str
 
 
 class DeploymentsPublic(SQLModel):

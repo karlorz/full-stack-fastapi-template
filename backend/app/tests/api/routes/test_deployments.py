@@ -210,3 +210,5 @@ def test_read_deployment(client: TestClient, db: Session) -> None:
     data = response.json()
     assert data["id"] == str(deployment.id)
     assert data["slug"] == deployment.slug
+    assert data["status"] == deployment.status
+    assert data["url"] == deployment.url

@@ -140,5 +140,7 @@ class Settings(BaseSettings):
 
     AWS_DEPLOYMENT_BUCKET: str
 
+    DEPLOYMENTS_DOMAIN: str = "fastapicloud.club"
+
 
 settings = Settings()  # type: ignore

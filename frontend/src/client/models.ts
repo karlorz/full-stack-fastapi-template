@@ -70,6 +70,7 @@ export type DeploymentPublic = {
 	created_at: string;
 	updated_at: string;
 	status: DeploymentStatus;
+	url: string;
 };
 
 
