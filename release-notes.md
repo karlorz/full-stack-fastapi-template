@@ -114,6 +114,7 @@
 
 ### Refactors
 
+* 🔧 Increase rate limits for login api. PR [#263](https://github.com/fastapilabs/cloud/pull/263) by [@patrick91](https://github.com/patrick91).
 * 💄 UI improvements and refactors. PR [#237](https://github.com/fastapilabs/cloud/pull/237) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor new invitation . PR [#244](https://github.com/fastapilabs/cloud/pull/244) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add EmptyState and Quickstart components. PR [#245](https://github.com/fastapilabs/cloud/pull/245) by [@alejsdev](https://github.com/alejsdev).
