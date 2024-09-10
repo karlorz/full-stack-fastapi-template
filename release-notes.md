@@ -115,6 +115,7 @@
 
 ### Refactors
 
+* ♻️ Add check to ensure we don't send actual emails to random accounts from development and staging. PR [#265](https://github.com/fastapilabs/cloud/pull/265) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Increase rate limits for login api. PR [#263](https://github.com/fastapilabs/cloud/pull/263) by [@patrick91](https://github.com/patrick91).
 * 💄 UI improvements and refactors. PR [#237](https://github.com/fastapilabs/cloud/pull/237) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor new invitation . PR [#244](https://github.com/fastapilabs/cloud/pull/244) by [@alejsdev](https://github.com/alejsdev).
