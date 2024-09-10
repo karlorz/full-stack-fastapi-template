@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    model_config = {"env_ignore_empty": True}
     github_repository: str
     github_token: SecretStr
     deploy_url: str | None = None

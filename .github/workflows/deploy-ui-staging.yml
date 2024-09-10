@@ -60,7 +60,7 @@ jobs:
         if: steps.python-actions-cache.outputs.cache-hit != 'true'
         run: pip install -r requirements-github-actions.txt
       - name: Comment Deploy
-        run: python ./scripts/deploy_docs_status.py
+        run: python ./scripts/deploy_ui_status.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEPLOY_URL: ${{ steps.deploy.outputs.url }}
