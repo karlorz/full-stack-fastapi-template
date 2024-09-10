@@ -85,7 +85,7 @@ def get_first_superuser(current_user: CurrentUser) -> User:
     return current_user
 
 
-def rate_limit_5_per_minute(request: Request, redis: RedisDep) -> None:
+def _rate_limit_per_minute(request: Request, redis: RedisDep, limit: int) -> None:
     host_ip = request.client and request.client.host or "unknown"
     current_path = request.url.path
 
@@ -93,5 +93,13 @@ def rate_limit_5_per_minute(request: Request, redis: RedisDep) -> None:
     value = redis.incr(key)
     redis.expire(key, time=60, nx=True)
 
-    if value > 5:
+    if value > limit:
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
+
+
+def rate_limit_5_per_minute(request: Request, redis: RedisDep) -> None:
+    return _rate_limit_per_minute(request, redis, 5)
+
+
+def rate_limit_20_per_minute(request: Request, redis: RedisDep) -> None:
+    return _rate_limit_per_minute(request, redis, 20)

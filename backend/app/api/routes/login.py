@@ -13,6 +13,7 @@ from app.api.deps import (
     SessionDep,
     get_first_superuser,
     rate_limit_5_per_minute,
+    rate_limit_20_per_minute,
 )
 from app.core import security
 from app.core.config import settings
@@ -146,7 +147,7 @@ async def device_authorization_info(
 @router.post(
     "/login/device/token",
     response_model=Token,
-    dependencies=[Depends(rate_limit_5_per_minute)],
+    dependencies=[Depends(rate_limit_20_per_minute)],
 )
 async def login_token(
     client_id: Annotated[str, Form()],

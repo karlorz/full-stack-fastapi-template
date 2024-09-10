@@ -281,7 +281,7 @@ def test_rate_limit_on_device_token(client: TestClient) -> None:
         "device_code": "some-code",
     }
 
-    for _ in range(6):
+    for _ in range(21):
         r = client.post(f"{settings.API_V1_STR}/login/device/token", data=data)
 
     assert r.status_code == 429
