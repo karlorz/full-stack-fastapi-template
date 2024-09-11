@@ -7,7 +7,7 @@ from app.utils import send_email
 def test_send_email_not_allowed_local() -> None:
     settings.ENVIRONMENT = "local"
     settings.SMTP_HOST = "externalemailhost"
-    with pytest.raises(AssertionError) as er:
+    with pytest.raises(RuntimeError) as er:
         send_email(
             email_to="notallowed@example.com", subject="Test", html_content="Test"
         )
@@ -17,7 +17,7 @@ def test_send_email_not_allowed_local() -> None:
 def test_send_email_not_allowed_staging() -> None:
     settings.ENVIRONMENT = "staging"
     settings.SMTP_HOST = "externalemailhost"
-    with pytest.raises(AssertionError) as er:
+    with pytest.raises(RuntimeError) as er:
         send_email(
             email_to="notallowed@example.com", subject="Test", html_content="Test"
         )
