@@ -139,6 +139,7 @@ class Settings(BaseSettings):
         return self
 
     AWS_DEPLOYMENT_BUCKET: str
+    ECR_REGISTRY_URL: str
 
     DEPLOYMENTS_DOMAIN: str = "fastapicloud.club"
 

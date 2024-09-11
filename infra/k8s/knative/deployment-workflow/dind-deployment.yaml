@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: docker
-        image: 992382821657.dkr.ecr.us-east-1.amazonaws.com/docker-builder@sha256:1d676086c0804aaef172a82e132c4403302bfde46288e4d63b0a9c8cbdf40979
+        image: 992382821657.dkr.ecr.us-east-1.amazonaws.com/docker-builder@sha256:d10f72e78042c4680b4fe383e28fd2a361f24996121424a752869e2bb9e3ac50
         ports:
         - containerPort: 8080
         securityContext:
@@ -26,13 +26,11 @@ spec:
           limits:
             cpu: 500m
             memory: 512Mi
-        env:
-            - name: AWS_REGION
-              value: us-east-1
-            - name: DOCKER_HOST
-              value: tcp://localhost:2375
-            - name: DOCKER_TLS_CERTDIR
-              value: ""
+        envFrom:
+        - configMapRef:
+            name: docker-builder-config
+        - secretRef:
+            name: docker-builder-secrets
         volumeMounts:
         - mountPath: /var/lib/docker
           name: docker-graph-storage

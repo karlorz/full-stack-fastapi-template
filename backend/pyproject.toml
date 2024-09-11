@@ -29,6 +29,8 @@ pyjwt = "^2.8.0"
 redis = {extras = ["hiredis"], version = "^5.0.7"}
 boto3-stubs = {extras = ["s3"], version = "^1.35.10"}
 boto3 = "^1.35.10"
+docker = "^7.1.0"
+kubernetes = "^30.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
@@ -39,6 +41,8 @@ types-passlib = "^1.7.7.20240106"
 coverage = "^7.4.3"
 types-redis = "^4.6.0.20240425"
 time-machine = "^2.14.2"
+types-docker = "^7.1.0.20240827"
+kubernetes-typed = "^18.20.2"
 
 [build-system]
 requires = ["poetry>=0.12"]
