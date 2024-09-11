@@ -30,12 +30,13 @@ test.describe("Apps empty states", () => {
 test.describe("User can manage apps succesfully", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
   const fullName = "Test User"
-  const email = randomEmail()
   const password = "password"
-  const team = randomTeamName()
-  const teamSlug = slugify(team)
 
   test("User can create a new app", async ({ page, request }) => {
+    const email = randomEmail()
+    const team = randomTeamName()
+    const teamSlug = slugify(team)
+
     const appName = randomAppName()
     await signUpNewUser(page, fullName, email, password, request)
     await logInUser(page, email, password)
@@ -48,6 +49,10 @@ test.describe("User can manage apps succesfully", () => {
   })
 
   test("User can read all apps", async ({ page, request }) => {
+    const email = randomEmail()
+    const team = randomTeamName()
+    const teamSlug = slugify(team)
+
     const appName = randomAppName()
     await signUpNewUser(page, fullName, email, password, request)
     await logInUser(page, email, password)

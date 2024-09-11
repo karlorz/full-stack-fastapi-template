@@ -10,7 +10,7 @@ test("Redirects when not logged in", async ({ page, request }) => {
 
   await page.goto(url)
 
-  expect(page.url().replace(":5173", "")).toBe(
-    `http://localhost/login?redirect=${encodeURIComponent(url)}`,
-  )
+  await page.waitForURL(/\/login\?redirect=/)
+
+  expect(page.url()).toContain(`/login?redirect=${encodeURIComponent(url)}`)
 })

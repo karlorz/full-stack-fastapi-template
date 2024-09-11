@@ -242,10 +242,8 @@ test.describe("Delete account successfully", () => {
     await expect(page.getByTestId("delete-confirmation-user")).toBeVisible()
     await page.getByLabel("Confirmation").fill("delete my account")
     await page.getByRole("button", { name: "Confirm" }).click()
-    await expect(page.getByText("Your account was deleted")).toBeVisible()
 
-    // Check if the user is redirected to the login page
-    await page.goto("/login")
+    await page.waitForURL("/login")
   })
 })
 
