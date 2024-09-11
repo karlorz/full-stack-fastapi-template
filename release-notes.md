@@ -232,6 +232,7 @@
 
 ### Internal
 
+* 🚚 Rename Docker Compose file, with the new standard name, `compose.yml`. PR [#278](https://github.com/fastapilabs/cloud/pull/278) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove extra, old files not used or no longer valid. PR [#275](https://github.com/fastapilabs/cloud/pull/275) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Playwright CI improvements. PR [#267](https://github.com/fastapilabs/cloud/pull/267) by [@patrick91](https://github.com/patrick91).
 * 🔥 Remove unused scripts, not used, don't work (but add confusion). PR [#273](https://github.com/fastapilabs/cloud/pull/273) by [@tiangolo](https://github.com/tiangolo).
