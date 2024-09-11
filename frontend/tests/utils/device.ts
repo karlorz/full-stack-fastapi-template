@@ -4,7 +4,7 @@ export async function requestDeviceCode({
   request,
 }: { request: APIRequestContext }) {
   const response = await request.post(
-    "http://localhost/api/v1/login/device/authorization",
+    "http://localhost:8000/api/v1/login/device/authorization",
     {
       form: {
         client_id: "fastapi-cloud-cli",

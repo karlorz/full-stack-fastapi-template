@@ -1,100 +1,30 @@
-# FastAPI Project - Development
+# FastAPI Cloud - Development
 
-## Development in `localhost` with a custom domain
+## Docker Compose
 
-You might want to use something different than `localhost` as the domain. For example, if you are having problems with cookies that need a subdomain, and Chrome is not allowing you to use `localhost`.
-
-In that case, you have two options: you could use the instructions to modify your system `hosts` file with the instructions below in **Development with a custom IP** or you can just use `localhost.tiangolo.com`, it is set up to point to `localhost` (to the IP `127.0.0.1`) and all its subdomains too. And as it is an actual domain, the browsers will store the cookies you set during development, etc.
-
-If you used the default CORS enabled domains while generating the project, `localhost.tiangolo.com` was configured to be allowed. If you didn't, you will need to add it to the list in the variable `BACKEND_CORS_ORIGINS` in the `.env` file.
-
-To configure it in your stack, follow the section **Change the development "domain"** below, using the domain `localhost.tiangolo.com`.
-
-After performing those steps you should be able to open: http://localhost.tiangolo.com and it will be served by your stack in `localhost`.
-
-Check all the corresponding available URLs in the section at the end.
-
-## Development with a custom IP
-
-If you are running Docker in an IP address different than `127.0.0.1` (`localhost`), you will need to perform some additional steps. That will be the case if you are running a custom Virtual Machine or your Docker is located in a different machine in your network.
-
-In that case, you will need to use a fake local domain (`dev.example.com`) and make your computer think that the domain is served by the custom IP (e.g. `192.168.99.150`).
-
-If you have a custom domain like that, you need to add it to the list in the variable `BACKEND_CORS_ORIGINS` in the `.env` file.
-
-* Open your `hosts` file with administrative privileges using a text editor:
-
-  * **Note for Windows**: If you are in Windows, open the main Windows menu, search for "notepad", right click on it, and select the option "open as Administrator" or similar. Then click the "File" menu, "Open file", go to the directory `c:\Windows\System32\Drivers\etc\`, select the option to show "All files" instead of only "Text (.txt) files", and open the `hosts` file.
-  * **Note for Mac and Linux**: Your `hosts` file is probably located at `/etc/hosts`, you can edit it in a terminal running `sudo nano /etc/hosts`.
-
-* Additional to the contents it might have, add a new line with the custom IP (e.g. `192.168.99.150`) a space character, and your fake local domain: `dev.example.com`.
-
-The new line might look like:
-
-```
-192.168.99.150    dev.example.com
-```
-
-* Save the file.
-  * **Note for Windows**: Make sure you save the file as "All files", without an extension of `.txt`. By default, Windows tries to add the extension. Make sure the file is saved as is, without extension.
-
-...that will make your computer think that the fake local domain is served by that custom IP, and when you open that URL in your browser, it will talk directly to your locally running server when it is asked to go to `dev.example.com` and think that it is a remote server while it is actually running in your computer.
-
-To configure it in your stack, follow the section **Change the development "domain"** below, using the domain `dev.example.com`.
-
-After performing those steps you should be able to open: http://dev.example.com and it will be server by your stack in `192.168.99.150`.
-
-Check all the corresponding available URLs in the section at the end.
-
-## Change the development "domain"
-
-If you need to use your local stack with a different domain than `localhost`, you need to make sure the domain you use points to the IP where your stack is set up.
-
-To simplify your Docker Compose setup, for example, so that the API docs (Swagger UI) knows where is your API, you should let it know you are using that domain for development.
-
-* Open the file located at `./.env`. It would have a line like:
-
-```
-DOMAIN=localhost
-```
-
-* Change it to the domain you are going to use, e.g.:
-
-```
-DOMAIN=localhost.tiangolo.com
-```
-
-That variable will be used by the Docker Compose files.
-
-After that, you can restart your stack with:
+Start the local stack with:
 
 ```bash
 docker compose up -d
 ```
 
-and check all the corresponding available URLs in the section at the end.
+That starts everything, including the backend, frontend, database, mailcatcher, Redis, etc.
 
-## Docker Compose files and env vars
+If you need to make changes, edit `compose.yml`.
 
-There is a main `docker-compose.yml` file with all the configurations that apply to the whole stack, it is used automatically by `docker compose`.
+These Docker Compose file use the `.env` file containing configurations to be injected as environment variables in the containers, it is declared in the services in `compose.yml`.
 
-And there's also a `docker-compose.override.yml` with overrides for development, for example to mount the source code as a volume. It is used automatically by `docker compose` to apply overrides on top of `docker-compose.yml`.
-
-These Docker Compose files use the `.env` file containing configurations to be injected as environment variables in the containers.
-
-They also use some additional configurations taken from environment variables set in the scripts before calling the `docker compose` command.
+Docker Compose also reads the `.env` file itself, so the environment variables are also available inside of the `compose.yml` file, even if the file `.env` is not declared.
 
 ## The .env file
 
-The `.env` file is the one that contains all your configurations, generated keys and passwords, etc.
+The `.env` file is the one that contains all your local development configurations, generated keys and passwords, etc.
 
-Depending on your workflow, you could want to exclude it from Git, for example if your project is public. In that case, you would have to make sure to set up a way for your CI tools to obtain it while building or deploying your project.
-
-One way to do it could be to add each environment variable to your CI/CD system, and updating the `docker-compose.yml` file to read that specific env var instead of reading the `.env` file.
+For deployment, many of those environment variables will be overwrote.
 
 ### Pre-commits and code linting
 
-we are using a tool called [pre-commit](https://pre-commit.com/) for code linting and formatting.
+We are using a tool called [pre-commit](https://pre-commit.com/) for code linting and formatting.
 
 When you install it, it runs right before making a commit in git. This way it ensures that the code is consistent and formatted even before it is committed.
 
@@ -140,36 +70,83 @@ prettier.................................................................Passed
 
 ## URLs
 
-The production or staging URLs would use these same paths, but with your own domain.
-
 ### Development URLs
 
 Development URLs, for local development.
 
-Frontend: http://localhost
+Frontend: http://localhost:5173
 
-Backend: http://localhost/api/
+Backend docs: http://localhost:8000
 
-Automatic Interactive Docs (Swagger UI): http://localhost/docs
-
-Automatic Alternative Docs (ReDoc): http://localhost/redoc
+Automatic Interactive Docs (Swagger UI): http://localhost:8000
 
 Adminer: http://localhost:8080
 
-Traefik UI: http://localhost:8090
+## Run Locally
 
-### Development in localhost with a custom domain URLs
+### Develop the Frontend
 
-Development URLs, for local development.
+If you are developing the frontend, you might want to start the backend, database, etc, with Docker Compose, but not the frontend, so that you can run the local development frontend server.
 
-Frontend: http://localhost.tiangolo.com
+You can start a single Docker Compose service with its name, for example, to only start the `backend` (not the `frontend`), you can do:
 
-Backend: http://localhost.tiangolo.com/api/
+```bash
+docker compose up -d backend
+```
 
-Automatic Interactive Docs (Swagger UI): http://localhost.tiangolo.com/docs
+As the `backend` depends on `db`, `redis` and `mailcatcher`, Docker Compose will start them automatically.
 
-Automatic Alternative Docs (ReDoc): http://localhost.tiangolo.com/redoc
+Then you can run the frontend development server with:
 
-Adminer: http://localhost.tiangolo.com:8080
+```bash
+cd frontend
+npm run start
+```
 
-Traefik UI: http://localhost.tiangolo.com:8090
+### Develop the Backend
+
+If you are developing the backend, you might want to start the database, redis, etc, with Docker Compose, but not the backend, so that you can run the local development backend server.
+
+You can start the database and other required components (without the backend and frontend) with:
+
+```bash
+docker compose up -d db redis adminer mailcatcher
+```
+
+Then you can run the backend development server with:
+
+```bash
+cd backend
+source .venv/bin/activate
+fastapi dev backend/app/main.py
+```
+
+If you want to start the frontend in Docker to test the backend (but don't want to start the local development frontend server), you can do:
+
+```bash
+docker compose up -d frontend
+```
+
+## Ports
+
+The services in Docker Compose use the same ports that would be used by the local development servers for the frontend and backend.
+
+This allows you to stop a Docker Compose service (for example the `frontend`), or just not run it, and then start the local development frontend server and it will communicate with the backend on the same ports.
+
+If you stop the `backend` Docker Compose service, you can start the local development backend server and it will use the same ports, so the frontend will communicate with it.
+
+This way you don't have to keep changing configs to test one thing or the other.
+
+But have in mind that both the development servers and Docker Compose use the same ports.
+
+If you are not sure if you are communicating with the Docker Compose version or the local development server, you can check if the Docker Compose service is running with:
+
+```bash
+docker compose ps
+```
+
+If it's running and you want to use instead your local development server, you can stop it, for example to stop the `frontend`:
+
+```bash
+docker compose stop frontend
+```

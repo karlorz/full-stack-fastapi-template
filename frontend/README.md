@@ -1,4 +1,4 @@
-# FastAPI Project - Frontend
+# FastAPI Cloud - Frontend
 
 The frontend is built with [Vite](https://vitejs.dev/), [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/), [TanStack Query](https://tanstack.com/query), [TanStack Router](https://tanstack.com/router) and [Chakra UI](https://chakra-ui.com/).
 
@@ -51,27 +51,6 @@ Notice that this live server is not running inside Docker, it's for local develo
 
 Check the file `package.json` to see other available options.
 
-### Removing the frontend
-
-If you are developing an API-only app and want to remove the frontend, you can do it easily:
-
-* Remove the `./frontend` directory.
-
-* In the `docker-compose.yml` file, remove the whole service / section `frontend`.
-
-* In the `docker-compose.override.yml` file, remove the whole service / section `frontend`.
-
-Done, you have a frontend-less (api-only) app. 🤓
-
----
-
-If you want, you can also remove the `FRONTEND` environment variables from:
-
-* `.env`
-* `./scripts/*.sh`
-
-But it would be only to clean them up, leaving them won't really have any effect either way.
-
 ## Generate Client
 
 ### Automatically
@@ -105,7 +84,7 @@ npm run generate-client
 
 * Commit the changes.
 
-Notice that everytime the backend changes (changing the OpenAPI schema), you should follow these steps again to update the frontend client.
+Notice that every time the backend changes (changing the OpenAPI schema), you should follow these steps again to update the frontend client.
 
 ## Using a Remote API
 
@@ -116,6 +95,14 @@ VITE_API_URL=https://my-remote-api.example.com
 ```
 
 Then, when you run the frontend, it will use that URL as the base URL for the API.
+
+## Using the Docker Compose stack
+
+You can start the Docker Compose stack including only the backend, database, etc. (omitting the frontend), to then use the frontend local development server and communicate with that backend:
+
+```bash
+docker compose up -d backend
+```
 
 ## Code Structure
 

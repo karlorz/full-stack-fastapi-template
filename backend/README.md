@@ -1,4 +1,4 @@
-# FastAPI Project - Backend
+# FastAPI Cloud - Backend
 
 ## Requirements
 
@@ -7,25 +7,17 @@
 
 ## Local Development
 
-* Start the stack with Docker Compose:
+* Start the stack with Docker Compose, everything minus the backend:
 
 ```bash
-docker compose up -d
+docker compose up -d db redis adminer mailcatcher
 ```
 
-* Now you can open your browser and interact with these URLs:
+You can also start the frontend if you want:
 
-Frontend, built with Docker, with routes handled based on the path: http://localhost
-
-Backend, JSON based web API based on OpenAPI: http://localhost/api/
-
-Automatic interactive documentation with Swagger UI (from the OpenAPI backend): http://localhost/docs
-
-Adminer, database web administration: http://localhost:8080
-
-Traefik UI, to see how the routes are being handled by the proxy: http://localhost:8090
-
-**Note**: The first time you start your stack, it might take a minute for it to be ready. While the backend waits for the database to be ready and configures everything. You can check the logs to monitor it.
+```bash
+docker compose up -d frontend
+```
 
 To check the logs, run:
 
@@ -36,10 +28,20 @@ docker compose logs
 To check the logs of a specific service, add the name of the service, e.g.:
 
 ```bash
-docker compose logs backend
+docker compose logs db
 ```
 
-If your Docker is not running in `localhost` (the URLs above wouldn't work) you would need to use the IP or domain where your Docker is running.
+Read more about the Docker Compose setup in [development.md](../development.md), including how to start the required services but not the backend, to be able to run the development server locally.
+
+Then you can start the local development server:
+
+```bash
+cd backend
+source .venv/bin/activate
+fastapi dev app/main.py
+```
+
+You could also start the app through the editor debugger.
 
 ## Backend local development, additional details
 
@@ -69,13 +71,11 @@ There are already configurations in place to run the backend through the VS Code
 
 The setup is also already configured so you can run the tests through the VS Code Python tests tab.
 
-### Docker Compose Override
+### Docker Compose Local Development
 
-During development, you can change Docker Compose settings that will only affect the local development environment in the file `docker-compose.override.yml`.
+You might prefer to simply run the local server, or start it through the debugger in your editor, but if you want to start the entire Docker Compose stack, including the backend, there are some configurations to simplify your work.
 
-The changes to that file only affect the local development environment, not the production environment. So, you can add "temporary" changes that help the development workflow.
-
-For example, the directory with the backend code is mounted as a Docker "host volume", mapping the code you change live to the directory inside the container. That allows you to test your changes right away, without having to build the Docker image again. It should only be done during development, for production, you should build the Docker image with a recent version of the backend code. But during development, it allows you to iterate very fast.
+The directory with the backend code is mounted as a Docker "host volume", mapping the code you change live to the directory inside the container. That allows you to test your changes right away, without having to build the Docker image again. It should only be done during development, for production, you should build the Docker image with a recent version of the backend code. But during development, it allows you to iterate very fast.
 
 There is also a command override that runs `/start-reload.sh` (included in the base image) instead of the default `/start.sh` (also included in the base image). It starts a single server process (instead of multiple, as would be for production) and reloads the process whenever the code changes. Have in mind that if you have a syntax error and save the Python file, it will break and exit, and the container will stop. After that, you can restart the container by fixing the error and running again:
 
@@ -127,17 +127,25 @@ Nevertheless, if it doesn't detect a change but a syntax error, it will just sto
 
 To test the backend run:
 
-```console
-$ bash ./scripts/test.sh
+```bash
+cd backend
+source .venv/bin/activate
+bash scripts/test.sh
 ```
 
 The tests run with Pytest, modify and add tests to `./backend/app/tests/`.
 
-If you use GitHub Actions the tests will run automatically.
-
 #### Test running stack
 
-If your stack is already up and you just want to run the tests, you can use:
+If your stack is already up and you just want to run the tests, you can:
+
+* Run the DB migrations:
+
+```bash
+docker compose run backend bash /app/scripts/setup-db.sh
+```
+
+Then run the tests:
 
 ```bash
 docker compose exec backend bash /app/tests-start.sh
@@ -157,15 +165,9 @@ When the tests are run, a file `htmlcov/index.html` is generated, you can open i
 
 ### Migrations
 
-As during local development your app directory is mounted as a volume inside the container, you can also run the migrations with `alembic` commands inside the container and the migration code will be in your app directory (instead of being only inside the container). So you can add it to your git repository.
+After you load your virtual environment and install dependencies, you can run the migrations with `alembic` commands.
 
 Make sure you create a "revision" of your models and that you "upgrade" your database with that revision every time you change them. As this is what will update the tables in your database. Otherwise, your application will have errors.
-
-* Start an interactive session in the backend container:
-
-```console
-$ docker compose exec backend bash
-```
 
 * Alembic is already configured to import your SQLModel models from `./backend/app/models.py`.
 
@@ -183,16 +185,20 @@ $ alembic revision --autogenerate -m "Add column last_name to User model"
 $ alembic upgrade head
 ```
 
-If you don't want to use migrations at all, uncomment the lines in the file at `./backend/app/core/db.py` that end in:
+## Lint and Format
 
-```python
-SQLModel.metadata.create_all(engine)
+There are two scripts you can use to manually lint and format the backend code.
+
+Format:
+
+```bash
+cd backend
+bash scripts/format.sh
 ```
 
-and comment the line in the file `prestart.sh` that contains:
+Lint:
 
-```console
-$ alembic upgrade head
+```bash
+cd backend
+bash scripts/lint.sh
 ```
-
-If you don't want to start with the default models and want to remove them / modify them, from the beginning, without having any previous revision, you can remove the revision files (`.py` Python files) under `./backend/app/alembic/versions/`. And then create a first migration as described above.
