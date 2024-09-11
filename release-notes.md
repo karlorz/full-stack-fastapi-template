@@ -228,6 +228,7 @@
 
 ### Internal
 
+* 🔥 Remove unused scripts, not used, don't work (but add confusion). PR [#273](https://github.com/fastapilabs/cloud/pull/273) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove unused workflows. PR [#272](https://github.com/fastapilabs/cloud/pull/272) by [@tiangolo](https://github.com/tiangolo).
 * 🔨 Tweak script to comment preview, to not run on merge to master. PR [#269](https://github.com/fastapilabs/cloud/pull/269) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add GitHub Action workflows to deploy frontend for branches, staging, production. PR [#268](https://github.com/fastapilabs/cloud/pull/268) by [@tiangolo](https://github.com/tiangolo).
