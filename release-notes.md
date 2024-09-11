@@ -116,6 +116,7 @@
 
 ### Refactors
 
+* ♻️ Refactor and simplify Docker Compose and update docs for it. PR [#277](https://github.com/fastapilabs/cloud/pull/277) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor is_allowed_recipient and `send_email` to show extra info about why a sender is not allowed (for logs). PR [#276](https://github.com/fastapilabs/cloud/pull/276) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor `DOMAIN` variable to `FRONTEND_HOST` and `API_HOST`. PR [#274](https://github.com/fastapilabs/cloud/pull/274) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Add check to ensure we don't send actual emails to random accounts from development and staging. PR [#265](https://github.com/fastapilabs/cloud/pull/265) by [@tiangolo](https://github.com/tiangolo).
