@@ -30,10 +30,10 @@ def test_get_device_code(client: TestClient, redis: "Redis[Any]") -> None:
     assert "expires_in" in response_data
     assert "interval" in response_data
 
-    assert response_data["verification_uri"] == f"{settings.server_host}/device"
+    assert response_data["verification_uri"] == f"{settings.FRONTEND_HOST}/device"
     assert (
         response_data["verification_uri_complete"]
-        == f"{settings.server_host}/device?code={response_data['user_code']}"
+        == f"{settings.FRONTEND_HOST}/device?code={response_data['user_code']}"
     )
 
     device_authorization_data = get_device_authorization_data(

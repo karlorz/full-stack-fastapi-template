@@ -36,16 +36,8 @@ class Settings(BaseSettings):
     DEVICE_AUTH_TTL_MINUTES: int = 5
     DEVICE_AUTH_POLL_INTERVAL_SECONDS: int = 5
 
-    DOMAIN: str = "localhost"
+    FRONTEND_HOST: str = "http://localhost:5173"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
-
-    @computed_field  # type: ignore[misc]
-    @property
-    def server_host(self) -> str:
-        # Use HTTPS for anything other than local development
-        if self.ENVIRONMENT == "local":
-            return f"http://{self.DOMAIN}"
-        return f"https://{self.DOMAIN}"
 
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str, BeforeValidator(parse_cors)

@@ -114,11 +114,11 @@ def generate_test_email(email_to: str) -> EmailData:
 def generate_reset_password_email(email_to: str, email: str, token: str) -> EmailData:
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Password recovery for user {email}"
-    link = f"{settings.server_host}/reset-password?token={token}"
+    link = f"{settings.FRONTEND_HOST}/reset-password?token={token}"
     html_content = render_email_template(
         template_name="reset_password.html",
         context={
-            "server_host": settings.server_host,
+            "server_host": settings.FRONTEND_HOST,
             "project_name": settings.PROJECT_NAME,
             "username": email,
             "email": email_to,
@@ -137,12 +137,12 @@ def generate_new_account_email(
     html_content = render_email_template(
         template_name="new_account.html",
         context={
-            "server_host": settings.server_host,
+            "server_host": settings.FRONTEND_HOST,
             "project_name": settings.PROJECT_NAME,
             "username": username,
             "password": password,
             "email": email_to,
-            "link": settings.server_host,
+            "link": settings.FRONTEND_HOST,
         },
     )
     return EmailData(html_content=html_content, subject=subject)
@@ -182,11 +182,11 @@ def generate_verification_update_email_token(email: str, old_email: str) -> str:
 def generate_verification_email(email_to: str, token: str) -> EmailData:
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Verify your email address"
-    link = f"{settings.server_host}/verify-email?token={token}"
+    link = f"{settings.FRONTEND_HOST}/verify-email?token={token}"
     html_content = render_email_template(
         template_name="verify_email.html",
         context={
-            "server_host": settings.server_host,
+            "server_host": settings.FRONTEND_HOST,
             "project_name": settings.PROJECT_NAME,
             "email": email_to,
             "link": link,
@@ -247,11 +247,11 @@ def generate_verification_update_email(
 ) -> EmailData:
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Verify your email address"
-    link = f"{settings.server_host}/verify-update-email?token={token}"
+    link = f"{settings.FRONTEND_HOST}/verify-update-email?token={token}"
     html_content = render_email_template(
         template_name="email_update_confirmation.html",
         context={
-            "server_host": settings.server_host,
+            "server_host": settings.FRONTEND_HOST,
             "project_name": settings.PROJECT_NAME,
             "username": full_name,
             "email": email_to,
@@ -268,7 +268,7 @@ def generate_account_deletion_email(email_to: str) -> EmailData:
     html_content = render_email_template(
         template_name="account_deletion.html",
         context={
-            "server_host": settings.server_host,
+            "server_host": settings.FRONTEND_HOST,
             "project_name": settings.PROJECT_NAME,
             "email": email_to,
         },

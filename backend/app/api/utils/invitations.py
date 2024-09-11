@@ -13,11 +13,11 @@ def generate_invitation_token_email(
 ) -> EmailData:
     project_name = settings.PROJECT_NAME
     subject = f"{ project_name } - { email_from } wants you to join { team_name }"
-    link = f"{settings.server_host}/team-invitation?token={token}"
+    link = f"{settings.FRONTEND_HOST}/team-invitation?token={token}"
     html_content = render_email_template(
         template_name="accept_invitation.html",
         context={
-            "server_host": settings.server_host,
+            "server_host": settings.FRONTEND_HOST,
             "team_name": team_name,
             "email_to": email_to,
             "email_from": email_from,

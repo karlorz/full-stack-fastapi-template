@@ -102,7 +102,7 @@ async def device_authorization(
         user_code=user_code, request_ip=request_ip, client_id=client_id, redis=redis
     )
 
-    verification_uri = f"{settings.server_host}/device"
+    verification_uri = f"{settings.FRONTEND_HOST}/device"
     verification_uri_complete = f"{verification_uri}?code={user_code}"
 
     return DeviceAuthorizationResponse(
