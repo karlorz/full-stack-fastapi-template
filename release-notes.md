@@ -229,6 +229,7 @@
 
 ### Internal
 
+* 👷 Playwright CI improvements. PR [#267](https://github.com/fastapilabs/cloud/pull/267) by [@patrick91](https://github.com/patrick91).
 * 🔥 Remove unused scripts, not used, don't work (but add confusion). PR [#273](https://github.com/fastapilabs/cloud/pull/273) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove unused workflows. PR [#272](https://github.com/fastapilabs/cloud/pull/272) by [@tiangolo](https://github.com/tiangolo).
 * 🔨 Tweak script to comment preview, to not run on merge to master. PR [#269](https://github.com/fastapilabs/cloud/pull/269) by [@tiangolo](https://github.com/tiangolo).
