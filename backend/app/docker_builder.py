@@ -117,9 +117,9 @@ def create_ecr_repository(repository_name: str) -> dict[str, Any]:
 
 
 def download_and_extract_tar(
-    bucket_name: str, object_key: str, extract_to: str = "."
+    bucket_name: str, object_key: str, object_id: str, extract_to: str = "."
 ) -> None:
-    tar_path = f"/tmp/{object_key}/code.tar"
+    tar_path = f"/tmp/{object_id}/code.tar"
     s3.download_file(bucket_name, object_key, tar_path)
     with tarfile.open(tar_path, "r") as tar_ref:
         tar_ref.extractall(extract_to)
@@ -164,11 +164,14 @@ def process_message(event: dict[str, Any], session: SessionDep) -> None:
     # Extract necessary data from the message
     bucket_name = bucket.get("name")
     object_key = _object.get("key")
-    image_tag = _object.get("key").split(".")[0]
+    image_tag = _object.get("key").split(".")[0].replace("/", "_")
     registry_url = settings.ECR_REGISTRY_URL
 
+    object_name = object_key.split("/")[-1]
+    object_id = object_name.split(".")[0]
+
     # Create a temporary directory for the build context
-    build_context = f"/tmp/{object_key}/build_context"
+    build_context = f"/tmp/{object_id}/build_context"
     if os.path.exists(build_context):
         shutil.rmtree(build_context)
     os.makedirs(build_context)
@@ -177,16 +180,20 @@ def process_message(event: dict[str, Any], session: SessionDep) -> None:
     shutil.copy("/app/Dockerfile", build_context)
 
     # Update status to building
-    smt = select(Deployment).where(Deployment.id == object_key)
+    smt = select(Deployment).where(Deployment.id == object_id)
     deployment = session.exec(smt).first()
     if deployment is None:
         raise HTTPException(status_code=404, detail="Deployment not found")
+
+    app_name = deployment.slug
 
     deployment.status = DeploymentStatus.building
     session.commit()
 
     # Download and extract the tar file
-    download_and_extract_tar(bucket_name, object_key, extract_to=build_context)
+    download_and_extract_tar(
+        bucket_name, object_key, object_id, extract_to=build_context
+    )
 
     # Create ECR repository if it doesn't exist
     create_ecr_repository(image_tag)
@@ -199,7 +206,7 @@ def process_message(event: dict[str, Any], session: SessionDep) -> None:
     session.commit()
 
     # Deploy to Kubernetes
-    deploy_to_kubernetes(image_tag, f"{registry_url}/{image_tag}", sha256)
+    deploy_to_kubernetes(app_name, f"{registry_url}/{image_tag}", sha256)
 
     # Clean up the build context
     shutil.rmtree(build_context)
@@ -215,4 +222,4 @@ def event_service_handler(event: dict[str, Any], session: SessionDep) -> Any:
         process_message(event["Body"], session)
         return {"message": "OK"}
     except Exception as e:
-        return HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))

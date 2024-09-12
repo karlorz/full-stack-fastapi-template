@@ -62,6 +62,8 @@ knative_deploy_workflow_policy = aws.iam.Policy(
                     "Effect": "Allow",
                     "Action": [
                         "s3:GetObject",
+                        "s3:ListBucket",
+                        "s3:PutObject",
                         "s3:GetObjectVersion"
                     ],
                     "Resource": pulumi.Output.concat(s3.s3_deployment_customer_apps.arn, "/*")
