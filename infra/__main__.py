@@ -231,7 +231,7 @@ redis_security_group = aws.ec2.SecurityGroup(
             protocol="tcp",
             from_port=6379,
             to_port=6379,
-            security_groups=[cluster_security_group_id],
+            cidr_blocks=[vpc_network_cidr],
             description="Allow inbound from EKS cluster",
         )
     ],
@@ -262,6 +262,55 @@ redis_deployment_customer_apps = aws.elasticache.Cluster(
     security_group_ids=[redis_security_group.id],
     apply_immediately=True,  # Add this line to apply changes immediately
 )
+
+# Redis backend stuff
+
+redis_backend_subnet_group = aws.elasticache.SubnetGroup(
+    "redis-backend-deployment-customer-apps-subnet-group",
+    subnet_ids=eks_vpc.private_subnet_ids,
+)
+
+redis_backend_security_group = aws.ec2.SecurityGroup(
+    "redis-backend-security-group",
+    vpc_id=eks_vpc.vpc_id,
+    description="Security group for Redis backend to communicate with EKS cluster",
+    ingress=[
+        aws.ec2.SecurityGroupIngressArgs(
+            protocol="tcp",
+            from_port=6379,
+            to_port=6379,
+            cidr_blocks=[vpc_network_cidr],
+            description="Allow inbound from EKS cluster",
+        )
+    ],
+    egress=[
+        aws.ec2.SecurityGroupEgressArgs(
+            protocol="-1",
+            from_port=0,
+            to_port=0,
+            cidr_blocks=["0.0.0.0/0"],
+            description="Allow all outbound traffic",
+        )
+    ],
+    tags={
+        "Name": "redis-backend-security-group",
+    },
+)
+
+redis_backend_deployment_customer_apps = aws.elasticache.Cluster(
+    "redis-backend-deployment-customer-apps",
+    cluster_id="redis-backend-deployment-customer-apps",
+    engine="redis",
+    engine_version="7.0",
+    node_type="cache.t3.micro",
+    num_cache_nodes=1,
+    port=6379,
+    subnet_group_name=redis_backend_subnet_group.name,
+    security_group_ids=[redis_backend_security_group.id],
+    apply_immediately=True,  # Add this line to apply changes immediately
+)
+
+
 # TODO: Fix this
 
 # error: 1 error occurred:
@@ -297,3 +346,5 @@ pulumi.export("aws_lb_controller_policy", aws_lb_controller_policy.arn)
 pulumi.export("sqs_deployment_customer_apps_arn", sqs.sqs_deployment_customer_apps)
 pulumi.export("s3_deployment_customer_apps", s3.s3_deployment_customer_apps.arn)
 pulumi.export("redis_deployment_customer_apps", redis_deployment_customer_apps.cache_nodes[0].address)
+pulumi.export("redis_backend_deployment_customer_apps", redis_backend_deployment_customer_apps.cache_nodes[0].address)
+
