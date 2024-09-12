@@ -232,6 +232,7 @@
 
 ### Internal
 
+* 👷 Add redis in pulumi for backend services. PR [#270](https://github.com/fastapilabs/cloud/pull/270) by [@estebanx64](https://github.com/estebanx64).
 * 💚 Fix typos and name split in docker builder. PR [#281](https://github.com/fastapilabs/cloud/pull/281) by [@estebanx64](https://github.com/estebanx64).
 * 🚚 Rename Docker Compose file, with the new standard name, `compose.yml`. PR [#278](https://github.com/fastapilabs/cloud/pull/278) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove extra, old files not used or no longer valid. PR [#275](https://github.com/fastapilabs/cloud/pull/275) by [@tiangolo](https://github.com/tiangolo).
