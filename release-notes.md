@@ -97,6 +97,7 @@
 
 ### Fixes
 
+* 🐛 Fix TODOs. PR [#283](https://github.com/fastapilabs/cloud/pull/283) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix email validation in EditableField. PR [#195](https://github.com/fastapilabs/cloud/pull/195) by [@patrick91](https://github.com/patrick91).
 * 🚨 Add biome-ignore. PR [#166](https://github.com/fastapilabs/cloud/pull/166) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Limit the number of displayed teams in User Menu. PR [#133](https://github.com/fastapilabs/cloud/pull/133) by [@alejsdev](https://github.com/alejsdev).
