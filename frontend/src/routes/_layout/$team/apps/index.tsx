@@ -67,6 +67,7 @@ function getAppsQueryOptions({
 }
 
 function Apps() {
+  const headers = ["name", "slug", "created at"]
   const queryClient = useQueryClient()
   const { team: teamSlug } = Route.useParams()
   const { page = 1, orderBy, order } = Route.useSearch()
@@ -122,7 +123,11 @@ function Apps() {
             <Table size={{ base: "sm", md: "md" }} variant="unstyled">
               <Thead>
                 <Tr>
-                  <Th>Name</Th>
+                  {headers.map((header) => (
+                    <Th key={header} textTransform="capitalize">
+                      {header}
+                    </Th>
+                  ))}
                 </Tr>
               </Thead>
               <Tbody>
@@ -144,7 +149,11 @@ function Apps() {
               <Table size={{ base: "sm", md: "md" }} variant="unstyled">
                 <Thead>
                   <Tr>
-                    <Th>Name</Th>
+                    {headers.map((header) => (
+                      <Th key={header} textTransform="capitalize">
+                        {header}
+                      </Th>
+                    ))}
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -164,6 +173,8 @@ function Apps() {
                           {app.name}
                         </Link>
                       </Td>
+                      <Td>{app.slug}</Td>
+                      <Td>{new Date(app.created_at).toISOString()}</Td>
                     </Tr>
                   ))}
                 </Tbody>
