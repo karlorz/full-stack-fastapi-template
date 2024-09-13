@@ -6,6 +6,7 @@ from typing import Any
 
 import boto3
 import docker
+import sentry_sdk
 from botocore.exceptions import ClientError, NoCredentialsError
 from fastapi import FastAPI, HTTPException
 from kubernetes import client as k8s
@@ -32,6 +33,18 @@ docker_client = docker.from_env()
 config.load_incluster_config()
 # config.load_kube_config()
 
+# Sentry
+sentry_sdk.init(
+    dsn="https://c88c25ac97cd610c007760c0bd062fc6@o4506985151856640.ingest.us.sentry.io/4507940416716800",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
+
 # FastAPI app
 app = FastAPI()
 
@@ -48,7 +61,6 @@ def deploy_to_kubernetes(
         "spec": {
             "template": {
                 "spec": {
-                    "imagePullSecrets": [{"name": "ecr-secret"}],
                     "containers": [
                         {
                             "image": f"{image_url}@{image_sha256_hash}",
@@ -87,6 +99,9 @@ def docker_login(registry_url: str) -> None:
         docker_client.login(username=username, password=password, registry=registry_url)  # type: ignore
     except NoCredentialsError:
         print("Credentials not available")
+    except Exception as e:
+        print(f"Error during Docker login: {e}")
+        raise
 
 
 def repository_exists(repository_name: str) -> bool:
@@ -218,8 +233,5 @@ def process_message(event: dict[str, Any], session: SessionDep) -> None:
 
 @app.post("/apps")
 def event_service_handler(event: dict[str, Any], session: SessionDep) -> Any:
-    try:
-        process_message(event["Body"], session)
-        return {"message": "OK"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    process_message(event["Body"], session)
+    return {"message": "OK"}
