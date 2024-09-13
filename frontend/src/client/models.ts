@@ -20,6 +20,7 @@ export type AppPublic = {
 	slug: string;
 	created_at: string;
 	updated_at: string;
+	url: string;
 };
 
 

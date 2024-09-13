@@ -62,6 +62,10 @@ export const $AppPublic = {
 	isRequired: true,
 	format: 'date-time',
 },
+		url: {
+	type: 'string',
+	isRequired: true,
+},
 	},
 } as const;
 

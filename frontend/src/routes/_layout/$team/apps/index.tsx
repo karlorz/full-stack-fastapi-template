@@ -174,7 +174,7 @@ function Apps() {
                         </Link>
                       </Td>
                       <Td>{app.slug}</Td>
-                      <Td>{new Date(app.created_at).toISOString()}</Td>
+                      <Td>{new Date(app.created_at).toLocaleString()}</Td>
                     </Tr>
                   ))}
                 </Tbody>

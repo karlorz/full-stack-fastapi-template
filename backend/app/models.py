@@ -272,6 +272,10 @@ class App(AppBase, table=True):
         back_populates="app", cascade_delete=True
     )
 
+    @computed_field
+    def url(self) -> str:
+        return f"https://{self.slug}.{settings.DEPLOYMENTS_DOMAIN}"
+
 
 class AppCreate(AppBase):
     team_slug: str
@@ -283,6 +287,7 @@ class AppPublic(AppBase):
     slug: str
     created_at: datetime
     updated_at: datetime
+    url: str
 
 
 class AppsPublic(SQLModel):

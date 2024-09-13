@@ -61,17 +61,14 @@ function AppDetailContent({ appSlug }: { appSlug: string }) {
       </Flex>
       <Box>
         <Box pb={10}>
-          {/* TODO: Update URL when available */}
-          <Link
-            href="https://some-app-slug-1234abcd123.fastapicloud.club"
-            isExternal
-            color="ui.main"
-          >
-            some-app-slug-1234abcd123.fastapicloud.club{" "}
-            <ExternalLinkIcon mx="2px" />
-          </Link>
+          {app.url && (
+            <Link href={app.url} isExternal color="ui.main">
+              {app.url}
+              <ExternalLinkIcon mx="2px" />
+            </Link>
+          )}
           <Text>
-            Last Updated: {new Date(app?.updated_at).toISOString()}
+            Last Updated: {new Date(app?.updated_at).toLocaleString()}
           </Text>
           <Box pt={10}>
             <CustomCard title="Deployments">

@@ -45,7 +45,7 @@ const Deployments = ({ appId }: { appId: string }) => {
               <Tr key={deployment.id}>
                 <Td>{deployment.id}</Td>
                 <Td>{getStatusText(deployment.status)}</Td>
-                <Td>{new Date(deployment.created_at).toISOString()}</Td>
+                <Td>{new Date(deployment.created_at).toLocaleString()}</Td>
               </Tr>
             ))}
           </Tbody>
