@@ -117,6 +117,7 @@
 
 ### Refactors
 
+* ♻️ Add app URL. PR [#285](https://github.com/fastapilabs/cloud/pull/285) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add `slug` and `created at` columns to distinguish apps with the same name. PR [#284](https://github.com/fastapilabs/cloud/pull/284) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor and simplify Docker Compose and update docs for it. PR [#277](https://github.com/fastapilabs/cloud/pull/277) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor is_allowed_recipient and `send_email` to show extra info about why a sender is not allowed (for logs). PR [#276](https://github.com/fastapilabs/cloud/pull/276) by [@tiangolo](https://github.com/tiangolo).
