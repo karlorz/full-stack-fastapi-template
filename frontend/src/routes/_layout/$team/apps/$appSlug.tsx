@@ -71,8 +71,7 @@ function AppDetailContent({ appSlug }: { appSlug: string }) {
             <ExternalLinkIcon mx="2px" />
           </Link>
           <Text>
-            {/* TODO: update to use ISO string */}
-            Last Updated: {new Date(app?.updated_at).toLocaleString()}
+            Last Updated: {new Date(app?.updated_at).toISOString()}
           </Text>
           <Box pt={10}>
             <CustomCard title="Deployments">

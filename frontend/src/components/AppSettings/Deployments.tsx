@@ -45,8 +45,7 @@ const Deployments = ({ appId }: { appId: string }) => {
               <Tr key={deployment.id}>
                 <Td>{deployment.id}</Td>
                 <Td>{getStatusText(deployment.status)}</Td>
-                // TODO: make this show ISO strings, e.g. 2024-09-10 13:00:00Z
-                <Td>{new Date(deployment.created_at).toLocaleString()}</Td>
+                <Td>{new Date(deployment.created_at).toISOString()}</Td>
               </Tr>
             ))}
           </Tbody>
