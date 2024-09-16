@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Container,
-  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -77,23 +76,27 @@ function Login() {
 
   return (
     <>
-      <Flex flexDir={{ base: "column", md: "row" }} justify="center" h="100vh">
-        <BackgroundPanel />
+      <BackgroundPanel>
         <Container
           as="form"
           onSubmit={handleSubmit(onSubmit)}
-          maxW={{ base: "xs", md: "sm" }}
+          maxW={{ base: "xs", md: "lg" }}
+          p={{ base: 4, md: 12 }}
+          color="ui.defaultText"
+          h="70%"
           flexDir="column"
           alignItems="stretch"
           justifyContent="center"
           centerContent
+          borderRadius="md"
+          boxShadow="md"
+          bg="ui.lightBg"
           gap={4}
+          zIndex="4"
         >
           <Box>
             <Heading size="md">Welcome!</Heading>
-            <Text fontSize="md" color="gray.500">
-              Sign in to your account
-            </Text>
+            <Text>Sign in to your account</Text>
           </Box>
           <FormControl id="username" isInvalid={!!errors.username || !!error}>
             <FormLabel htmlFor="username" srOnly>
@@ -111,6 +114,7 @@ function Login() {
                 placeholder="Email"
                 type="email"
                 required
+                variant="outline"
               />
             </InputGroup>
             {errors.username && (
@@ -140,6 +144,7 @@ function Login() {
                 <Icon
                   onClick={setShow.toggle}
                   aria-label={show ? "Hide password" : "Show password"}
+                  color="ui.dim"
                 >
                   {show ? <ViewOffIcon /> : <ViewIcon />}
                 </Icon>
@@ -155,7 +160,12 @@ function Login() {
           >
             Forgot password?
           </Link>
-          <Button variant="primary" type="submit" isLoading={isSubmitting}>
+          <Button
+            variant="primary"
+            type="submit"
+            isLoading={isSubmitting}
+            size="md"
+          >
             Log In
           </Button>
           <AuthOptions
@@ -163,7 +173,7 @@ function Login() {
             path={"/signup"}
           />
         </Container>
-      </Flex>
+      </BackgroundPanel>
       <TeamInvitation />
     </>
   )

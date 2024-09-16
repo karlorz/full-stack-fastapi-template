@@ -24,6 +24,7 @@ test("User can successfully change the current team from the user menu", async (
   await page.goto(`/${teamSlug}`)
   await expect(page.getByRole("button", { name: teamName })).toBeVisible()
   await page.getByRole("button", { name: teamName }).click()
+  await page.waitForSelector('role=menuitem[name="fastapi admin"]')
   await page.getByRole("menuitem", { name: "fastapi admin" }).click()
   await expect(
     page.getByRole("button", { name: "fastapi admin" }),
@@ -38,7 +39,9 @@ test("User can successfully change the current team from the user's list of team
   await createTeam(page, teamName)
 
   await page.goto("/teams/all?orderBy=created_at&order=desc")
+  await page.waitForSelector(`a:has-text("${teamName}")`)
   await page.locator("a").filter({ hasText: teamName }).first().click()
+  await page.waitForSelector(`button:has-text("${teamName}")`)
   await page.goto(`/${teamSlug}`)
   await expect(page.getByRole("button", { name: teamName })).toBeVisible()
 })

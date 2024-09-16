@@ -2,10 +2,7 @@ import { Button, Center, Tooltip } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { FaTimes } from "react-icons/fa"
 
-import {
-  InvitationsService,
-  type TDataDeleteInvitation,
-} from "../../client/services"
+import { type InvitationsData, InvitationsService } from "../../client/services"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils"
 
@@ -14,7 +11,7 @@ const CancelInvitation = ({ id }: { id: string }) => {
   const showToast = useCustomToast()
 
   const mutation = useMutation({
-    mutationFn: async (data: TDataDeleteInvitation) => {
+    mutationFn: async (data: InvitationsData["DeleteInvitation"]) => {
       await InvitationsService.deleteInvitation(data)
     },
     onSuccess: () => {

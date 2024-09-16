@@ -31,9 +31,7 @@ const PaymentMethod = () => {
           </VStack>
         </VStack>
         <Spacer />
-        <Button variant="outline" size="sm" fontSize="sm">
-          Update Card
-        </Button>
+        <Button variant="outline">Update Card</Button>
       </HStack>
     </Container>
   )

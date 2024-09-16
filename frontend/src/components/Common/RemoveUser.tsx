@@ -11,7 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import React from "react"
 import { useForm } from "react-hook-form"
 
-import { type TDataRemoveMemberFromTeam, TeamsService } from "../../client"
+import { type TeamsData, TeamsService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils"
 
@@ -29,10 +29,10 @@ const RemoveUser = ({ teamSlug, userId, isOpen, onClose }: RemoveProps) => {
   const {
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<TDataRemoveMemberFromTeam>()
+  } = useForm<TeamsData["RemoveMemberFromTeam"]>()
 
   const mutation = useMutation({
-    mutationFn: async (data: TDataRemoveMemberFromTeam) => {
+    mutationFn: async (data: TeamsData["RemoveMemberFromTeam"]) => {
       await TeamsService.removeMemberFromTeam(data)
     },
     onSuccess: () => {

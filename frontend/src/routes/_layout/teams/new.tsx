@@ -84,12 +84,7 @@ function NewTeam() {
             Add card
           </Button>
         </CustomCard>
-        <Button
-          variant="secondary"
-          my={4}
-          type="submit"
-          isLoading={isSubmitting}
-        >
+        <Button variant="primary" my={4} type="submit" isLoading={isSubmitting}>
           Create Team
         </Button>
       </Box>

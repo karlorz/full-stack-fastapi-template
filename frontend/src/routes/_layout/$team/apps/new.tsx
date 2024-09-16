@@ -86,12 +86,7 @@ function NewApp() {
             Connect
           </Button>
         </CustomCard>
-        <Button
-          my={4}
-          type="submit"
-          isLoading={isSubmitting}
-          variant="secondary"
-        >
+        <Button my={4} type="submit" isLoading={isSubmitting} variant="primary">
           Create App
         </Button>
       </Box>

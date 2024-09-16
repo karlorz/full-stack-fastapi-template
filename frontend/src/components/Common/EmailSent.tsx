@@ -11,7 +11,7 @@ const EmailSent = ({ email }: { email: string }) => {
         centerContent
         gap={4}
       >
-        <Box data-testid="email-sent">
+        <Box data-testid="email-sent" color="ui.lightText">
           <Text fontWeight="bolder" fontSize="2xl">
             One More Step
           </Text>

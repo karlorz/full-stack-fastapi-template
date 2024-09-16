@@ -1,7 +1,11 @@
-import { extendTheme } from "@chakra-ui/react"
+import { background, extendTheme } from "@chakra-ui/react"
 import "./fonts.css"
 
 const theme = extendTheme({
+  config: {
+    initialColorMode: "dark",
+    useSystemColorMode: false,
+  },
   fonts: {
     heading: "Ubuntu, sans-serif",
     body: "Ubuntu, sans-serif",
@@ -75,22 +79,44 @@ const theme = extendTheme({
       },
       variants: {
         primary: {
-          backgroundColor: "ui.main",
+          backgroundColor: "rgba(0, 150, 136, 1.0)",
           color: "ui.lightText",
+          borderRadius: "md",
+          boxShadow: "0 2px 6px rgba(0, 150, 136, 0.2)",
           _hover: {
-            backgroundColor: "#00766C",
+            backgroundColor: "rgba(0, 150, 136, 0.8)",
+            boxShadow: "0 4px 8px rgba(0, 150, 136, 0.3)",
+          },
+          _active: {
+            backgroundColor: "rgba(0, 150, 136, 0.9)",
+            boxShadow: "0 4px 12px rgba(0, 150, 136, 0.4)",
           },
         },
-        secondary: (props: any) => ({
-          backgroundColor: props.colorMode === "dark" ? "gray.700" : "gray.500",
-          color: "ui.lightText",
+        glassmorphism: {
+          backgroundColor: "rgba(250, 250, 250, 1.0)",
+          borderColor: "rgba(255, 255, 255, 0.2)",
+          borderRadius: "md",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)",
+          backdropFilter: "blur(10px)",
+          color: "gray.700",
           _hover: {
-            backgroundColor:
-              props.colorMode === "dark" ? "gray.600" : "gray.400",
+            backgroundColor: "rgba(255, 255, 255, 0.15)",
+            borderColor: "rgba(255, 255, 255, 0.25)",
+            color: "gray.800",
+            boxShadow: "0 6px 8px rgba(0, 0, 0, 0.1)",
           },
-        }),
+          _focus: {
+            borderColor: "teal.400",
+            boxShadow: "0 0 0 2px rgba(66, 153, 225, 0.5)",
+          },
+          _active: {
+            backgroundColor: "rgba(255, 255, 255, 0.2)",
+            borderColor: "rgba(255, 255, 255, 0.3)",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.15)",
+          },
+        },
         outline: (props: any) => ({
-          color: props.colorMode === "dark" ? "white" : "ui.defaultText",
+          color: props.colorMode === "dark" ? "ui.light" : "ui.defaultText",
         }),
         danger: (props: any) => ({
           backgroundColor: props.colorMode === "dark" ? "red.700" : "red.600",
@@ -101,30 +127,44 @@ const theme = extendTheme({
         }),
       },
     },
-    Popover: {
-      baseStyle: (props: any) => ({
-        content: {
-          bg: props.colorMode === "dark" ? "ui.darkBg" : "white",
-        },
-      }),
-    },
-    Tabs: {
+    Input: {
       variants: {
-        basic: (props: any) => ({
-          tab: {
-            fontSize: "0.875rem",
-            color:
-              props.colorMode === "dark" ? "ui.lightText" : "ui.defaultText",
-            backgroundColor:
-              props.colorMode === "dark" ? "ui.darkBg" : "inherit",
-            _selected: {
-              bg: props.colorMode === "dark" ? "gray.700" : "gray.100",
-              borderRadius: "md",
+        outline: {
+          field: {
+            borderColor: "gray.300",
+            borderRadius: "md",
+            boxShadow: "sm",
+            _placeholder: {
+              color: "gray.500",
+            },
+            _focus: {
+              borderColor: "teal.400",
+              boxShadow: "0 0 0 1px rgba(66, 153, 225, 0.5)",
             },
           },
-        }),
+        },
       },
     },
+  },
+  Popover: {
+    baseStyle: (props: any) => ({
+      content: {
+        bg: props.colorMode === "dark" ? "ui.darkBg" : "white",
+      },
+    }),
+  },
+  Tabs: {
+    basic: (props: any) => ({
+      tab: {
+        fontSize: "0.875rem",
+        color: props.colorMode === "dark" ? "ui.lightText" : "ui.defaultText",
+        backgroundColor: props.colorMode === "dark" ? "ui.darkBg" : "inherit",
+        _selected: {
+          bg: props.colorMode === "dark" ? "gray.700" : "gray.100",
+          borderRadius: "md",
+        },
+      },
+    }),
   },
 })
 

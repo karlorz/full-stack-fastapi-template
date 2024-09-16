@@ -29,7 +29,7 @@ const TransferTeam = () => {
               w="auto"
             />
           </FormControl>
-          <Button variant="secondary" type="submit" mt={4}>
+          <Button variant="outline" type="submit" mt={4}>
             Transfer
           </Button>
         </Box>

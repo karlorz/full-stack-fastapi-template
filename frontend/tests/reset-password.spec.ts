@@ -64,8 +64,8 @@ test("User can reset password successfully using the link", async ({
   // Set the new password and confirm it
   await page.goto(url)
 
-  await page.getByLabel("Set Password").fill(new_password)
-  await page.getByLabel("Confirm Password").fill(new_password)
+  await page.getByPlaceholder("New Password").fill(new_password)
+  await page.getByPlaceholder("Confirm Password").fill(new_password)
   await page.getByRole("button", { name: "Reset Password" }).click()
   await expect(page.getByText("Password updated successfully")).toBeVisible()
 
@@ -78,8 +78,8 @@ test("Expired or invalid reset link", async ({ page }) => {
 
   await page.goto(invalidUrl)
 
-  await page.getByLabel("Set Password").fill("newpassword")
-  await page.getByLabel("Confirm Password").fill("newpassword")
+  await page.getByPlaceholder("New Password").fill("newpassword")
+  await page.getByPlaceholder("Confirm Password").fill("newpassword")
   await page.getByRole("button", { name: "Reset Password" }).click()
 
   await expect(page.getByText("Invalid token")).toBeVisible()
@@ -113,8 +113,8 @@ test("Weak new password validation", async ({ page, request }) => {
 
   // Set a weak new password
   await page.goto(url)
-  await page.getByLabel("Set Password").fill("123")
-  await page.getByLabel("Confirm Password").fill("123")
+  await page.getByPlaceholder("New Password").fill("123")
+  await page.getByPlaceholder("Confirm Password").fill("123")
   await page.getByRole("button", { name: "Reset Password" }).click()
 
   await expect(

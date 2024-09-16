@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Container,
-  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -13,6 +12,7 @@ import {
   InputLeftElement,
   Link,
   Text,
+  Tooltip,
 } from "@chakra-ui/react"
 import {
   Link as RouterLink,
@@ -76,136 +76,165 @@ function SignUp() {
 
   return (
     <>
-      <Flex flexDir={{ base: "column", md: "row" }} justify="center" h="100vh">
-        <BackgroundPanel />
+      <BackgroundPanel>
         {emailSent ? (
           <EmailSent email={userEmail} />
         ) : (
-          <Container
-            as="form"
-            onSubmit={handleSubmit(onSubmit)}
-            maxW={{ base: "xs", md: "sm" }}
-            flexDir="column"
-            alignItems="stretch"
-            justifyContent="center"
-            centerContent
-            gap={4}
-          >
-            <Box>
-              <Heading size="md">Sign Up</Heading>
-              <Text fontSize="" color="gray.500">
-                Create your account
-              </Text>
-            </Box>
-            <FormControl id="full_name" isInvalid={!!errors.full_name}>
-              <FormLabel htmlFor="full_name" srOnly>
-                Full Name
-              </FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <Icon as={FaUser} color="ui.dim" />
-                </InputLeftElement>
-                <Input
-                  id="full_name"
-                  minLength={3}
-                  {...register("full_name", nameRules())}
-                  placeholder="Full Name"
-                  type="text"
-                />
-              </InputGroup>
-              {errors.full_name && (
-                <FormErrorMessage>{errors.full_name.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <FormControl id="email" isInvalid={!!errors.email}>
-              <FormLabel htmlFor="username" srOnly>
-                Email
-              </FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <Icon as={FaEnvelope} color="ui.dim" />
-                </InputLeftElement>
-                <Input
-                  id="email"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: emailPattern,
-                  })}
-                  placeholder="Email"
-                  type="email"
-                />
-              </InputGroup>
-              {errors.email && (
-                <FormErrorMessage>{errors.email.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <FormControl id="password" isInvalid={!!errors.password}>
-              <FormLabel htmlFor="password" srOnly>
-                Password
-              </FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <Icon as={FaKey} color="ui.dim" />
-                </InputLeftElement>
-                <Input
-                  id="password"
-                  {...register("password", passwordRules())}
-                  placeholder="Password"
-                  type="password"
-                />
-              </InputGroup>
-              {errors.password && (
-                <FormErrorMessage>{errors.password.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <FormControl
-              id="confirm_password"
-              isInvalid={!!errors.confirm_password}
+          <>
+            <Container
+              as="form"
+              onSubmit={handleSubmit(onSubmit)}
+              maxW={{ base: "xs", md: "lg" }}
+              p={{ base: 4, md: 12 }}
+              color="ui.defaultText"
+              h="70%"
+              flexDir="column"
+              alignItems="stretch"
+              justifyContent="center"
+              centerContent
+              boxShadow="md"
+              borderRadius="md"
+              bg="ui.lightBg"
+              zIndex="4"
+              gap={4}
             >
-              <FormLabel htmlFor="confirm_password" srOnly>
-                Confirm Password
-              </FormLabel>
+              <Box>
+                <Heading size="md">Sign Up</Heading>
+                <Text>Create your account</Text>
+              </Box>
+              <FormControl id="full_name" isInvalid={!!errors.full_name}>
+                <FormLabel htmlFor="full_name" srOnly>
+                  Full Name
+                </FormLabel>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <Icon as={FaUser} color="ui.dim" />
+                  </InputLeftElement>
+                  <Input
+                    id="full_name"
+                    minLength={3}
+                    {...register("full_name", nameRules())}
+                    placeholder="Full Name"
+                    type="text"
+                    variant="outline"
+                  />
+                </InputGroup>
+                {errors.full_name && (
+                  <FormErrorMessage>
+                    {errors.full_name.message}
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+              <FormControl id="email" isInvalid={!!errors.email}>
+                <FormLabel htmlFor="username" srOnly>
+                  Email
+                </FormLabel>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <Icon as={FaEnvelope} color="ui.dim" />
+                  </InputLeftElement>
+                  <Input
+                    id="email"
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: emailPattern,
+                    })}
+                    placeholder="Email"
+                    type="email"
+                    variant="outline"
+                  />
+                </InputGroup>
+                {errors.email && (
+                  <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+                )}
+              </FormControl>
+              <FormControl id="password" isInvalid={!!errors.password}>
+                <FormLabel htmlFor="password" srOnly>
+                  Password
+                </FormLabel>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <Icon as={FaKey} color="ui.dim" />
+                  </InputLeftElement>
+                  <Input
+                    id="password"
+                    {...register("password", passwordRules())}
+                    placeholder="Password"
+                    type="password"
+                    variant="outline"
+                  />
+                </InputGroup>
+                {errors.password && (
+                  <FormErrorMessage>{errors.password.message}</FormErrorMessage>
+                )}
+              </FormControl>
+              <FormControl
+                id="confirm_password"
+                isInvalid={!!errors.confirm_password}
+              >
+                <FormLabel htmlFor="confirm_password" srOnly>
+                  Confirm Password
+                </FormLabel>
 
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <Icon as={FaKey} color="ui.dim" />
-                </InputLeftElement>
-                <Input
-                  id="confirm_password"
-                  {...register(
-                    "confirm_password",
-                    confirmPasswordRules(getValues),
-                  )}
-                  placeholder="Repeat Password"
-                  type="password"
-                />
-              </InputGroup>
-              {errors.confirm_password && (
-                <FormErrorMessage>
-                  {errors.confirm_password.message}
-                </FormErrorMessage>
-              )}
-            </FormControl>
-            <Text>
-              {"By signing up, you agree to our "}
-              <Link as={RouterLink} to="/" color="ui.main">
-                Terms
-              </Link>
-              {" and "}
-              <Link as={RouterLink} to="/" color="ui.main">
-                Privacy Policy.
-              </Link>
-            </Text>
-            <Button variant="primary" type="submit" isLoading={isSubmitting}>
-              Sign Up
-            </Button>
-            <AuthOptions
-              description={"Already have an account?"}
-              path={"/login"}
-            />
-          </Container>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <Icon as={FaKey} color="ui.dim" />
+                  </InputLeftElement>
+                  <Input
+                    id="confirm_password"
+                    {...register(
+                      "confirm_password",
+                      confirmPasswordRules(getValues),
+                    )}
+                    placeholder="Repeat Password"
+                    type="password"
+                    variant="outline"
+                  />
+                </InputGroup>
+                {errors.confirm_password && (
+                  <FormErrorMessage>
+                    {errors.confirm_password.message}
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+              <Tooltip label="By agreeing, you're entering the Matrix (legally).">
+                <Text>
+                  {"By signing up, you agree to our "}
+                  <Link
+                    as={RouterLink}
+                    to="/"
+                    color="ui.main"
+                    fontWeight="bolder"
+                  >
+                    Terms
+                  </Link>
+                  {" and "}
+                  <Link
+                    as={RouterLink}
+                    to="/"
+                    color="ui.main"
+                    fontWeight="bolder"
+                  >
+                    Privacy Policy.
+                  </Link>
+                </Text>
+              </Tooltip>
+              <Button
+                variant="primary"
+                type="submit"
+                isLoading={isSubmitting}
+                size="md"
+              >
+                Sign Up
+              </Button>
+              <AuthOptions
+                description={"Already have an account?"}
+                path={"/login"}
+              />
+            </Container>
+          </>
         )}
-      </Flex>
+      </BackgroundPanel>
     </>
   )
 }

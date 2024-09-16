@@ -4,38 +4,208 @@ import { request as __request } from './core/request';
 
 import type { AccessTokenWithUserMe,AuthorizeDeviceIn,Body_login_device_authorization,Body_login_login_access_token,Body_login_login_token,DeviceAuthorizationInfo,DeviceAuthorizationResponse,Message,NewPassword,Token,UserPublic,EmailVerificationToken,UpdatePassword,UserMePublic,UserRegister,UserUpdateEmailMe,UserUpdateMe,HealthCheckResponse,TeamCreate,TeamPublic,TeamsPublic,TeamUpdate,TeamUpdateMember,TeamWithUserPublic,UserTeamLinkPublic,InvitationCreate,InvitationPublic,InvitationsPublic,InvitationStatus,InvitationToken,AppCreate,AppPublic,AppsPublic,DeploymentPublic,DeploymentsPublic,DeploymentUploadOut } from './models';
 
-export type TDataLoginAccessToken = {
-                formData: Body_login_login_access_token
-                
-            }
-export type TDataDeviceAuthorization = {
-                formData: Body_login_device_authorization
-                
-            }
-export type TDataDeviceAuthorizationInfo = {
-                userCode: string
-                
-            }
-export type TDataLoginToken = {
-                formData: Body_login_login_token
-                
-            }
-export type TDataAuthorizeDevice = {
-                requestBody: AuthorizeDeviceIn
-                
-            }
-export type TDataRecoverPassword = {
-                email: string
-                
-            }
-export type TDataResetPassword = {
-                requestBody: NewPassword
-                
-            }
-export type TDataRecoverPasswordHtmlContent = {
-                email: string
-                
-            }
+export type LoginData = {
+        LoginAccessToken: {
+                    formData: Body_login_login_access_token
+                    
+                };
+DeviceAuthorization: {
+                    formData: Body_login_device_authorization
+                    
+                };
+DeviceAuthorizationInfo: {
+                    userCode: string
+                    
+                };
+LoginToken: {
+                    formData: Body_login_login_token
+                    
+                };
+AuthorizeDevice: {
+                    requestBody: AuthorizeDeviceIn
+                    
+                };
+RecoverPassword: {
+                    email: string
+                    
+                };
+ResetPassword: {
+                    requestBody: NewPassword
+                    
+                };
+RecoverPasswordHtmlContent: {
+                    email: string
+                    
+                };
+    }
+
+export type UsersData = {
+        UpdateUserMe: {
+                    requestBody: UserUpdateMe
+                    
+                };
+RequestEmailUpdate: {
+                    requestBody: UserUpdateEmailMe
+                    
+                };
+VerifyUpdateEmailToken: {
+                    requestBody: EmailVerificationToken
+                    
+                };
+UpdatePasswordMe: {
+                    requestBody: UpdatePassword
+                    
+                };
+RegisterUser: {
+                    requestBody: UserRegister
+                    
+                };
+VerifyEmailToken: {
+                    requestBody: EmailVerificationToken
+                    
+                };
+VerifyEmailHtmlContent: {
+                    email: string
+                    
+                };
+    }
+
+export type UtilsData = {
+        TestEmail: {
+                    emailTo: string
+                    
+                };
+    }
+
+export type TeamsData = {
+        ReadTeams: {
+                    limit?: number
+order?: 'asc' | 'desc'
+orderBy?: 'created_at' | null
+owner?: boolean
+skip?: number
+                    
+                };
+CreateTeam: {
+                    requestBody: TeamCreate
+                    
+                };
+ReadTeam: {
+                    teamSlug: string
+                    
+                };
+UpdateTeam: {
+                    requestBody: TeamUpdate
+teamSlug: string
+                    
+                };
+DeleteTeam: {
+                    teamSlug: string
+                    
+                };
+UpdateMemberInTeam: {
+                    requestBody: TeamUpdateMember
+teamSlug: string
+userId: string
+                    
+                };
+RemoveMemberFromTeam: {
+                    teamSlug: string
+userId: string
+                    
+                };
+ValidateTeamName: {
+                    teamSlug: string
+                    
+                };
+    }
+
+export type InvitationsData = {
+        ReadInvitationsMe: {
+                    limit?: number
+skip?: number
+                    
+                };
+ReadInvitationsSent: {
+                    limit?: number
+skip?: number
+                    
+                };
+ReadInvitationsTeamByAdmin: {
+                    limit?: number
+skip?: number
+status?: InvitationStatus | null
+teamSlug: string
+                    
+                };
+CreateInvitation: {
+                    requestBody: InvitationCreate
+                    
+                };
+AcceptInvitation: {
+                    requestBody: InvitationToken
+                    
+                };
+VerifyInvitation: {
+                    requestBody: InvitationToken
+                    
+                };
+InvitationHtmlContent: {
+                    invitationId: string
+                    
+                };
+DeleteInvitation: {
+                    invId: string
+                    
+                };
+    }
+
+export type AppsData = {
+        ReadApps: {
+                    limit?: number
+order?: 'asc' | 'desc'
+orderBy?: 'created_at' | null
+skip?: number
+teamSlug: string
+                    
+                };
+CreateApp: {
+                    requestBody: AppCreate
+                    
+                };
+ReadApp: {
+                    appSlug: string
+                    
+                };
+DeleteApp: {
+                    appSlug: string
+                    
+                };
+    }
+
+export type DeploymentsData = {
+        ReadDeployments: {
+                    appId: string
+limit?: number
+order?: 'asc' | 'desc'
+orderBy?: 'created_at' | null
+skip?: number
+                    
+                };
+CreateDeployment: {
+                    appId: string
+                    
+                };
+ReadDeployment: {
+                    appId: string
+deploymentId: string
+                    
+                };
+UploadDeploymentArtifact: {
+                    deploymentId: string
+                    
+                };
+    }
 
 export class LoginService {
 
@@ -45,7 +215,7 @@ export class LoginService {
 	 * @returns AccessTokenWithUserMe Successful Response
 	 * @throws ApiError
 	 */
-	public static loginAccessToken(data: TDataLoginAccessToken): CancelablePromise<AccessTokenWithUserMe> {
+	public static loginAccessToken(data: LoginData['LoginAccessToken']): CancelablePromise<AccessTokenWithUserMe> {
 		const {
 formData,
 } = data;
@@ -66,7 +236,7 @@ formData,
 	 * @returns DeviceAuthorizationResponse Successful Response
 	 * @throws ApiError
 	 */
-	public static deviceAuthorization(data: TDataDeviceAuthorization): CancelablePromise<DeviceAuthorizationResponse> {
+	public static deviceAuthorization(data: LoginData['DeviceAuthorization']): CancelablePromise<DeviceAuthorizationResponse> {
 		const {
 formData,
 } = data;
@@ -87,7 +257,7 @@ formData,
 	 * @returns DeviceAuthorizationInfo Successful Response
 	 * @throws ApiError
 	 */
-	public static deviceAuthorizationInfo(data: TDataDeviceAuthorizationInfo): CancelablePromise<DeviceAuthorizationInfo> {
+	public static deviceAuthorizationInfo(data: LoginData['DeviceAuthorizationInfo']): CancelablePromise<DeviceAuthorizationInfo> {
 		const {
 userCode,
 } = data;
@@ -108,7 +278,7 @@ userCode,
 	 * @returns Token Successful Response
 	 * @throws ApiError
 	 */
-	public static loginToken(data: TDataLoginToken): CancelablePromise<Token> {
+	public static loginToken(data: LoginData['LoginToken']): CancelablePromise<Token> {
 		const {
 formData,
 } = data;
@@ -128,7 +298,7 @@ formData,
 	 * @returns unknown Successful Response
 	 * @throws ApiError
 	 */
-	public static authorizeDevice(data: TDataAuthorizeDevice): CancelablePromise<unknown> {
+	public static authorizeDevice(data: LoginData['AuthorizeDevice']): CancelablePromise<unknown> {
 		const {
 requestBody,
 } = data;
@@ -162,7 +332,7 @@ requestBody,
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static recoverPassword(data: TDataRecoverPassword): CancelablePromise<Message> {
+	public static recoverPassword(data: LoginData['RecoverPassword']): CancelablePromise<Message> {
 		const {
 email,
 } = data;
@@ -184,7 +354,7 @@ email,
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static resetPassword(data: TDataResetPassword): CancelablePromise<Message> {
+	public static resetPassword(data: LoginData['ResetPassword']): CancelablePromise<Message> {
 		const {
 requestBody,
 } = data;
@@ -205,7 +375,7 @@ requestBody,
 	 * @returns string Successful Response
 	 * @throws ApiError
 	 */
-	public static recoverPasswordHtmlContent(data: TDataRecoverPasswordHtmlContent): CancelablePromise<string> {
+	public static recoverPasswordHtmlContent(data: LoginData['RecoverPasswordHtmlContent']): CancelablePromise<string> {
 		const {
 email,
 } = data;
@@ -222,35 +392,6 @@ email,
 	}
 
 }
-
-export type TDataUpdateUserMe = {
-                requestBody: UserUpdateMe
-                
-            }
-export type TDataRequestEmailUpdate = {
-                requestBody: UserUpdateEmailMe
-                
-            }
-export type TDataVerifyUpdateEmailToken = {
-                requestBody: EmailVerificationToken
-                
-            }
-export type TDataUpdatePasswordMe = {
-                requestBody: UpdatePassword
-                
-            }
-export type TDataRegisterUser = {
-                requestBody: UserRegister
-                
-            }
-export type TDataVerifyEmailToken = {
-                requestBody: EmailVerificationToken
-                
-            }
-export type TDataVerifyEmailHtmlContent = {
-                email: string
-                
-            }
 
 export class UsersService {
 
@@ -286,7 +427,7 @@ export class UsersService {
 	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static updateUserMe(data: TDataUpdateUserMe): CancelablePromise<UserPublic> {
+	public static updateUserMe(data: UsersData['UpdateUserMe']): CancelablePromise<UserPublic> {
 		const {
 requestBody,
 } = data;
@@ -307,7 +448,7 @@ requestBody,
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static requestEmailUpdate(data: TDataRequestEmailUpdate): CancelablePromise<Message> {
+	public static requestEmailUpdate(data: UsersData['RequestEmailUpdate']): CancelablePromise<Message> {
 		const {
 requestBody,
 } = data;
@@ -328,7 +469,7 @@ requestBody,
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static verifyUpdateEmailToken(data: TDataVerifyUpdateEmailToken): CancelablePromise<Message> {
+	public static verifyUpdateEmailToken(data: UsersData['VerifyUpdateEmailToken']): CancelablePromise<Message> {
 		const {
 requestBody,
 } = data;
@@ -349,7 +490,7 @@ requestBody,
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static updatePasswordMe(data: TDataUpdatePasswordMe): CancelablePromise<Message> {
+	public static updatePasswordMe(data: UsersData['UpdatePasswordMe']): CancelablePromise<Message> {
 		const {
 requestBody,
 } = data;
@@ -370,7 +511,7 @@ requestBody,
 	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static registerUser(data: TDataRegisterUser): CancelablePromise<UserPublic> {
+	public static registerUser(data: UsersData['RegisterUser']): CancelablePromise<UserPublic> {
 		const {
 requestBody,
 } = data;
@@ -391,7 +532,7 @@ requestBody,
 	 * @returns unknown Successful Response
 	 * @throws ApiError
 	 */
-	public static verifyEmailToken(data: TDataVerifyEmailToken): CancelablePromise<unknown> {
+	public static verifyEmailToken(data: UsersData['VerifyEmailToken']): CancelablePromise<unknown> {
 		const {
 requestBody,
 } = data;
@@ -412,7 +553,7 @@ requestBody,
 	 * @returns string Successful Response
 	 * @throws ApiError
 	 */
-	public static verifyEmailHtmlContent(data: TDataVerifyEmailHtmlContent): CancelablePromise<string> {
+	public static verifyEmailHtmlContent(data: UsersData['VerifyEmailHtmlContent']): CancelablePromise<string> {
 		const {
 email,
 } = data;
@@ -430,11 +571,6 @@ email,
 
 }
 
-export type TDataTestEmail = {
-                emailTo: string
-                
-            }
-
 export class UtilsService {
 
 	/**
@@ -443,7 +579,7 @@ export class UtilsService {
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static testEmail(data: TDataTestEmail): CancelablePromise<Message> {
+	public static testEmail(data: UtilsData['TestEmail']): CancelablePromise<Message> {
 		const {
 emailTo,
 } = data;
@@ -474,47 +610,6 @@ emailTo,
 
 }
 
-export type TDataReadTeams = {
-                limit?: number
-order?: 'asc' | 'desc'
-orderBy?: 'created_at' | null
-owner?: boolean
-skip?: number
-                
-            }
-export type TDataCreateTeam = {
-                requestBody: TeamCreate
-                
-            }
-export type TDataReadTeam = {
-                teamSlug: string
-                
-            }
-export type TDataUpdateTeam = {
-                requestBody: TeamUpdate
-teamSlug: string
-                
-            }
-export type TDataDeleteTeam = {
-                teamSlug: string
-                
-            }
-export type TDataUpdateMemberInTeam = {
-                requestBody: TeamUpdateMember
-teamSlug: string
-userId: string
-                
-            }
-export type TDataRemoveMemberFromTeam = {
-                teamSlug: string
-userId: string
-                
-            }
-export type TDataValidateTeamName = {
-                teamSlug: string
-                
-            }
-
 export class TeamsService {
 
 	/**
@@ -523,13 +618,13 @@ export class TeamsService {
 	 * @returns TeamsPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readTeams(data: TDataReadTeams = {}): CancelablePromise<TeamsPublic> {
+	public static readTeams(data: TeamsData['ReadTeams'] = {}): CancelablePromise<TeamsPublic> {
 		const {
-limit = 100,
-order = 'asc',
-orderBy,
-owner = false,
 skip = 0,
+limit = 100,
+orderBy,
+order = 'asc',
+owner = false,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
@@ -549,7 +644,7 @@ skip = 0,
 	 * @returns TeamPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static createTeam(data: TDataCreateTeam): CancelablePromise<TeamPublic> {
+	public static createTeam(data: TeamsData['CreateTeam']): CancelablePromise<TeamPublic> {
 		const {
 requestBody,
 } = data;
@@ -570,7 +665,7 @@ requestBody,
 	 * @returns TeamWithUserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readTeam(data: TDataReadTeam): CancelablePromise<TeamWithUserPublic> {
+	public static readTeam(data: TeamsData['ReadTeam']): CancelablePromise<TeamWithUserPublic> {
 		const {
 teamSlug,
 } = data;
@@ -592,10 +687,10 @@ teamSlug,
 	 * @returns TeamPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static updateTeam(data: TDataUpdateTeam): CancelablePromise<TeamPublic> {
+	public static updateTeam(data: TeamsData['UpdateTeam']): CancelablePromise<TeamPublic> {
 		const {
-requestBody,
 teamSlug,
+requestBody,
 } = data;
 		return __request(OpenAPI, {
 			method: 'PUT',
@@ -617,7 +712,7 @@ teamSlug,
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static deleteTeam(data: TDataDeleteTeam): CancelablePromise<Message> {
+	public static deleteTeam(data: TeamsData['DeleteTeam']): CancelablePromise<Message> {
 		const {
 teamSlug,
 } = data;
@@ -639,11 +734,11 @@ teamSlug,
 	 * @returns UserTeamLinkPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static updateMemberInTeam(data: TDataUpdateMemberInTeam): CancelablePromise<UserTeamLinkPublic> {
+	public static updateMemberInTeam(data: TeamsData['UpdateMemberInTeam']): CancelablePromise<UserTeamLinkPublic> {
 		const {
-requestBody,
 teamSlug,
 userId,
+requestBody,
 } = data;
 		return __request(OpenAPI, {
 			method: 'PUT',
@@ -665,7 +760,7 @@ userId,
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static removeMemberFromTeam(data: TDataRemoveMemberFromTeam): CancelablePromise<Message> {
+	public static removeMemberFromTeam(data: TeamsData['RemoveMemberFromTeam']): CancelablePromise<Message> {
 		const {
 teamSlug,
 userId,
@@ -688,7 +783,7 @@ userId,
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static validateTeamName(data: TDataValidateTeamName): CancelablePromise<Message> {
+	public static validateTeamName(data: TeamsData['ValidateTeamName']): CancelablePromise<Message> {
 		const {
 teamSlug,
 } = data;
@@ -706,44 +801,6 @@ teamSlug,
 
 }
 
-export type TDataReadInvitationsMe = {
-                limit?: number
-skip?: number
-                
-            }
-export type TDataReadInvitationsSent = {
-                limit?: number
-skip?: number
-                
-            }
-export type TDataReadInvitationsTeamByAdmin = {
-                limit?: number
-skip?: number
-status?: InvitationStatus | null
-teamSlug: string
-                
-            }
-export type TDataCreateInvitation = {
-                requestBody: InvitationCreate
-                
-            }
-export type TDataAcceptInvitation = {
-                requestBody: InvitationToken
-                
-            }
-export type TDataVerifyInvitation = {
-                requestBody: InvitationToken
-                
-            }
-export type TDataInvitationHtmlContent = {
-                invitationId: string
-                
-            }
-export type TDataDeleteInvitation = {
-                invId: string
-                
-            }
-
 export class InvitationsService {
 
 	/**
@@ -752,10 +809,10 @@ export class InvitationsService {
 	 * @returns InvitationsPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readInvitationsMe(data: TDataReadInvitationsMe = {}): CancelablePromise<InvitationsPublic> {
+	public static readInvitationsMe(data: InvitationsData['ReadInvitationsMe'] = {}): CancelablePromise<InvitationsPublic> {
 		const {
-limit = 100,
 skip = 0,
+limit = 100,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
@@ -775,10 +832,10 @@ skip = 0,
 	 * @returns InvitationsPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readInvitationsSent(data: TDataReadInvitationsSent = {}): CancelablePromise<InvitationsPublic> {
+	public static readInvitationsSent(data: InvitationsData['ReadInvitationsSent'] = {}): CancelablePromise<InvitationsPublic> {
 		const {
-limit = 100,
 skip = 0,
+limit = 100,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
@@ -798,12 +855,12 @@ skip = 0,
 	 * @returns InvitationsPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readInvitationsTeamByAdmin(data: TDataReadInvitationsTeamByAdmin): CancelablePromise<InvitationsPublic> {
+	public static readInvitationsTeamByAdmin(data: InvitationsData['ReadInvitationsTeamByAdmin']): CancelablePromise<InvitationsPublic> {
 		const {
-limit = 100,
-skip = 0,
-status,
 teamSlug,
+skip = 0,
+limit = 100,
+status,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
@@ -826,7 +883,7 @@ teamSlug,
 	 * @returns InvitationPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static createInvitation(data: TDataCreateInvitation): CancelablePromise<InvitationPublic> {
+	public static createInvitation(data: InvitationsData['CreateInvitation']): CancelablePromise<InvitationPublic> {
 		const {
 requestBody,
 } = data;
@@ -847,7 +904,7 @@ requestBody,
 	 * @returns InvitationPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static acceptInvitation(data: TDataAcceptInvitation): CancelablePromise<InvitationPublic> {
+	public static acceptInvitation(data: InvitationsData['AcceptInvitation']): CancelablePromise<InvitationPublic> {
 		const {
 requestBody,
 } = data;
@@ -868,7 +925,7 @@ requestBody,
 	 * @returns InvitationPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static verifyInvitation(data: TDataVerifyInvitation): CancelablePromise<InvitationPublic> {
+	public static verifyInvitation(data: InvitationsData['VerifyInvitation']): CancelablePromise<InvitationPublic> {
 		const {
 requestBody,
 } = data;
@@ -889,7 +946,7 @@ requestBody,
 	 * @returns string Successful Response
 	 * @throws ApiError
 	 */
-	public static invitationHtmlContent(data: TDataInvitationHtmlContent): CancelablePromise<string> {
+	public static invitationHtmlContent(data: InvitationsData['InvitationHtmlContent']): CancelablePromise<string> {
 		const {
 invitationId,
 } = data;
@@ -911,7 +968,7 @@ invitationId,
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static deleteInvitation(data: TDataDeleteInvitation): CancelablePromise<Message> {
+	public static deleteInvitation(data: InvitationsData['DeleteInvitation']): CancelablePromise<Message> {
 		const {
 invId,
 } = data;
@@ -929,27 +986,6 @@ invId,
 
 }
 
-export type TDataReadApps = {
-                limit?: number
-order?: 'asc' | 'desc'
-orderBy?: 'created_at' | null
-skip?: number
-teamSlug: string
-                
-            }
-export type TDataCreateApp = {
-                requestBody: AppCreate
-                
-            }
-export type TDataReadApp = {
-                appSlug: string
-                
-            }
-export type TDataDeleteApp = {
-                appSlug: string
-                
-            }
-
 export class AppsService {
 
 	/**
@@ -958,13 +994,13 @@ export class AppsService {
 	 * @returns AppsPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readApps(data: TDataReadApps): CancelablePromise<AppsPublic> {
+	public static readApps(data: AppsData['ReadApps']): CancelablePromise<AppsPublic> {
 		const {
-limit = 100,
-order = 'asc',
-orderBy,
-skip = 0,
 teamSlug,
+skip = 0,
+limit = 100,
+orderBy,
+order = 'asc',
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
@@ -984,7 +1020,7 @@ teamSlug,
 	 * @returns AppPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static createApp(data: TDataCreateApp): CancelablePromise<AppPublic> {
+	public static createApp(data: AppsData['CreateApp']): CancelablePromise<AppPublic> {
 		const {
 requestBody,
 } = data;
@@ -1005,7 +1041,7 @@ requestBody,
 	 * @returns AppPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readApp(data: TDataReadApp): CancelablePromise<AppPublic> {
+	public static readApp(data: AppsData['ReadApp']): CancelablePromise<AppPublic> {
 		const {
 appSlug,
 } = data;
@@ -1027,7 +1063,7 @@ appSlug,
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static deleteApp(data: TDataDeleteApp): CancelablePromise<Message> {
+	public static deleteApp(data: AppsData['DeleteApp']): CancelablePromise<Message> {
 		const {
 appSlug,
 } = data;
@@ -1045,28 +1081,6 @@ appSlug,
 
 }
 
-export type TDataReadDeployments = {
-                appId: string
-limit?: number
-order?: 'asc' | 'desc'
-orderBy?: 'created_at' | null
-skip?: number
-                
-            }
-export type TDataCreateDeployment = {
-                appId: string
-                
-            }
-export type TDataReadDeployment = {
-                appId: string
-deploymentId: string
-                
-            }
-export type TDataUploadDeploymentArtifact = {
-                deploymentId: string
-                
-            }
-
 export class DeploymentsService {
 
 	/**
@@ -1075,13 +1089,13 @@ export class DeploymentsService {
 	 * @returns DeploymentsPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readDeployments(data: TDataReadDeployments): CancelablePromise<DeploymentsPublic> {
+	public static readDeployments(data: DeploymentsData['ReadDeployments']): CancelablePromise<DeploymentsPublic> {
 		const {
 appId,
-limit = 100,
-order = 'asc',
-orderBy,
 skip = 0,
+limit = 100,
+orderBy,
+order = 'asc',
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
@@ -1104,7 +1118,7 @@ skip = 0,
 	 * @returns DeploymentPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static createDeployment(data: TDataCreateDeployment): CancelablePromise<DeploymentPublic> {
+	public static createDeployment(data: DeploymentsData['CreateDeployment']): CancelablePromise<DeploymentPublic> {
 		const {
 appId,
 } = data;
@@ -1126,7 +1140,7 @@ appId,
 	 * @returns DeploymentPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static readDeployment(data: TDataReadDeployment): CancelablePromise<DeploymentPublic> {
+	public static readDeployment(data: DeploymentsData['ReadDeployment']): CancelablePromise<DeploymentPublic> {
 		const {
 appId,
 deploymentId,
@@ -1149,7 +1163,7 @@ deploymentId,
 	 * @returns DeploymentUploadOut Successful Response
 	 * @throws ApiError
 	 */
-	public static uploadDeploymentArtifact(data: TDataUploadDeploymentArtifact): CancelablePromise<DeploymentUploadOut> {
+	public static uploadDeploymentArtifact(data: DeploymentsData['UploadDeploymentArtifact']): CancelablePromise<DeploymentUploadOut> {
 		const {
 deploymentId,
 } = data;

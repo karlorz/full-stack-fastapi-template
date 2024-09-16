@@ -250,14 +250,23 @@ test.describe("Delete account successfully", () => {
 // Appearance
 
 test("Appearance tab is visible", async ({ page }) => {
-  await page.goto("/")
+  await page.goto("/admin")
   await expect(page.getByLabel("Toggle dark mode")).toBeVisible()
 })
 
 test("User can switch from light mode to dark mode and vice versa", async ({
   page,
 }) => {
-  await page.goto("/")
+  await page.goto("/admin")
+
+  // Ensure the initial state is light mode
+  if (
+    await page.evaluate(() =>
+      document.body.classList.contains("chakra-ui-dark"),
+    )
+  ) {
+    await page.getByLabel("Toggle dark mode").click()
+  }
 
   let isLightMode = await page.evaluate(() =>
     document.body.classList.contains("chakra-ui-light"),
@@ -278,7 +287,16 @@ test("User can switch from light mode to dark mode and vice versa", async ({
 })
 
 test("Selected mode is preserved across sessions", async ({ page }) => {
-  await page.goto("/")
+  await page.goto("/admin")
+
+  // Ensure the initial state is light mode
+  if (
+    await page.evaluate(() =>
+      document.body.classList.contains("chakra-ui-dark"),
+    )
+  ) {
+    await page.getByLabel("Toggle dark mode").click()
+  }
 
   const isLightMode = await page.evaluate(() =>
     document.body.classList.contains("chakra-ui-light"),

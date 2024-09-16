@@ -42,7 +42,7 @@ const EmailVerification = () => {
         gap={4}
       >
         {loading && (
-          <Box>
+          <Box color="ui.lightText">
             <Text fontWeight="bolder" fontSize="2xl">
               Verifying Email
             </Text>
@@ -50,7 +50,7 @@ const EmailVerification = () => {
           </Box>
         )}
         {mutation.isSuccess && (
-          <Box data-testid="result">
+          <Box data-testid="result" color="ui.lightText">
             <Text fontWeight="bolder" fontSize="2xl">
               Successful Email Verification
             </Text>
@@ -64,16 +64,14 @@ const EmailVerification = () => {
         )}
 
         {mutation.isError && (
-          <Box data-testid="error">
+          <Box data-testid="error" color="ui.lightText">
             <Text fontWeight="bolder" fontSize="2xl">
               Email Verification Failed
             </Text>
             <Text>
               There was an error verifying your email. Please try again.
             </Text>
-            <Text color="red.500">
-              Error detail: {(mutation.error as any).body?.detail}
-            </Text>
+            <Text>Error detail: {(mutation.error as any).body?.detail}</Text>
           </Box>
         )}
       </Container>

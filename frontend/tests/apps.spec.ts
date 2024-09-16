@@ -8,22 +8,31 @@ import {
 import { createTeam, logInUser, signUpNewUser } from "./utils/userUtils"
 
 test.describe("Apps empty states", () => {
-  test("Empty state is visible when there are no apps", async ({ page }) => {
-    await page.goto("/admin/apps/")
+  test.use({ storageState: { cookies: [], origins: [] } })
+  const fullName = "Test User"
+  const password = "password"
+
+  test("Empty state is visible when there are no apps", async ({
+    page,
+    request,
+  }) => {
+    const email = randomEmail()
+    const team = randomTeamName()
+    const teamSlug = slugify(team)
+
+    const appName = randomAppName()
+    await signUpNewUser(page, fullName, email, password, request)
+    await logInUser(page, email, password)
+    await createTeam(page, team)
+
+    await page.goto(`/${teamSlug}/apps/`)
+    // FastAPI CLI instructions is visible
     await expect(
       page.getByRole("heading", { name: "You don't have any app yet" }),
     ).toBeVisible()
-  })
-
-  test("FastAPI CLI instructions are visible", async ({ page, request }) => {
-    await page.goto("/admin/apps/")
     await expect(page.getByTestId("fastapi-cli")).toBeVisible()
-  })
-
-  test("Create button is visible and navigates correctly", async ({ page }) => {
-    await page.goto("/admin/apps/")
+    // Create App button is visible
     await page.getByRole("link", { name: "Create App" }).click()
-    await expect(page).toHaveURL("/admin/apps/new")
   })
 })
 

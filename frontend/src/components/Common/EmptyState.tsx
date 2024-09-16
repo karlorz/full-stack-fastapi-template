@@ -1,5 +1,6 @@
-import { Button, Heading, Text } from "@chakra-ui/react"
+import { Button, Heading, Image, Text } from "@chakra-ui/react"
 import { Link as RouterLink } from "@tanstack/react-router"
+import EmptyBox from "../../assets/empty-box.svg"
 import CustomCard from "./CustomCard"
 
 interface EmptyStateProps {
@@ -16,13 +17,14 @@ const EmptyState = ({ type }: EmptyStateProps) => {
       flexDirection="column"
       gap="4"
     >
+      <Image src={EmptyBox} alt="Empty box" w="50px" />
       <Heading size="sm" textAlign="center">
         You don't have any {type} yet
       </Heading>
       <Text>
         Create your first {type} to get started and deploy it to the cloud.
       </Text>
-      <Button as={RouterLink} to="/$team/apps/new" variant="secondary">
+      <Button as={RouterLink} to="/$team/apps/new" variant="primary">
         Create {`${type[0].toLocaleUpperCase()}${type.slice(1)}`}
       </Button>
     </CustomCard>

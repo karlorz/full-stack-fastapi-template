@@ -73,7 +73,7 @@ function Apps() {
   const { page = 1, orderBy, order } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
-    navigate({ search: (prev) => ({ ...prev, page }) })
+    navigate({ search: (prev: any) => ({ ...prev, page }) })
 
   const {
     data: apps,
@@ -103,12 +103,7 @@ function Apps() {
       <Text>View and manage apps related to your team.</Text>
       {(apps?.data?.length ?? 0) > 0 && (
         <Flex justifyContent="end">
-          <Button
-            variant="secondary"
-            as={RouterLink}
-            to="/$team/apps/new"
-            mb={4}
-          >
+          <Button variant="primary" as={RouterLink} to="/$team/apps/new" mb={4}>
             Create App
           </Button>
         </Flex>

@@ -157,7 +157,7 @@ function Invitations() {
     <Container maxW="full" p={0}>
       <InvitationsTable />
       <Divider my={4} />
-      <Button variant="secondary" onClick={onOpen} mb={4}>
+      <Button variant="primary" onClick={onOpen} mb={4}>
         New Invitation
       </Button>
       <NewInvitation isOpen={isOpen} onClose={onClose} />

@@ -5,14 +5,22 @@ import {
   FormErrorMessage,
   FormLabel,
   Heading,
+  Icon,
   Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
   Text,
+  useBoolean,
 } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
+import { FaKey } from "react-icons/fa"
 import { LoginService, type NewPassword } from "../client"
+import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import { isLoggedIn } from "../hooks/useAuth"
 import useCustomToast from "../hooks/useCustomToast"
 import { confirmPasswordRules, handleError, passwordRules } from "../utils"
@@ -46,6 +54,7 @@ function ResetPassword() {
       new_password: "",
     },
   })
+  const [show, setShow] = useBoolean()
   const showToast = useCustomToast()
   const navigate = useNavigate()
 
@@ -72,49 +81,101 @@ function ResetPassword() {
   }
 
   return (
-    <Container
-      as="form"
-      onSubmit={handleSubmit(onSubmit)}
-      h="100vh"
-      maxW="sm"
-      alignItems="stretch"
-      justifyContent="center"
-      gap={4}
-      centerContent
-    >
-      <Heading size="lg" textAlign="center" mb={2}>
-        Reset Password
-      </Heading>
-      <Text textAlign="center">
-        Please enter your new password and confirm it to reset your password.
-      </Text>
-      <FormControl mt={4} isInvalid={!!errors.new_password}>
-        <FormLabel htmlFor="password">Set Password</FormLabel>
-        <Input
-          id="password"
-          {...register("new_password", passwordRules())}
-          placeholder="Password"
-          type="password"
-        />
-        {errors.new_password && (
-          <FormErrorMessage>{errors.new_password.message}</FormErrorMessage>
-        )}
-      </FormControl>
-      <FormControl mt={4} isInvalid={!!errors.confirm_password}>
-        <FormLabel htmlFor="confirm_password">Confirm Password</FormLabel>
-        <Input
-          id="confirm_password"
-          {...register("confirm_password", confirmPasswordRules(getValues))}
-          placeholder="Password"
-          type="password"
-        />
-        {errors.confirm_password && (
-          <FormErrorMessage>{errors.confirm_password.message}</FormErrorMessage>
-        )}
-      </FormControl>
-      <Button variant="primary" type="submit">
-        Reset Password
-      </Button>
-    </Container>
+    <BackgroundPanel>
+      <Container
+        as="form"
+        onSubmit={handleSubmit(onSubmit)}
+        maxW={{ base: "xs", md: "lg" }}
+        p={{ base: 4, md: 12 }}
+        color="ui.defaultText"
+        h="70%"
+        alignItems="stretch"
+        justifyContent="center"
+        centerContent
+        borderRadius="md"
+        boxShadow="md"
+        bg="ui.lightBg"
+        gap={4}
+        zIndex="4"
+      >
+        <Heading size="md">Reset Password</Heading>
+        <Text>
+          Please enter your new password and confirm it to reset your password.
+        </Text>
+        <FormControl id="password" isInvalid={!!errors.new_password}>
+          <FormLabel htmlFor="password" srOnly>
+            Password
+          </FormLabel>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={FaKey} color="ui.dim" />
+            </InputLeftElement>
+            <Input
+              {...register("new_password", passwordRules())}
+              type={show ? "text" : "password"}
+              placeholder="New Password"
+              required
+              variant="outline"
+            />
+            <InputRightElement
+              color="ui.dim"
+              _hover={{
+                cursor: "pointer",
+              }}
+            >
+              <Icon
+                onClick={setShow.toggle}
+                aria-label={show ? "Hide password" : "Show password"}
+                color="ui.dim"
+              >
+                {show ? <ViewOffIcon /> : <ViewIcon />}
+              </Icon>
+            </InputRightElement>
+          </InputGroup>
+          {errors.new_password && (
+            <FormErrorMessage>{errors.new_password.message}</FormErrorMessage>
+          )}
+        </FormControl>
+
+        <FormControl id="password" isInvalid={!!errors.confirm_password}>
+          <FormLabel htmlFor="password" srOnly>
+            Password
+          </FormLabel>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={FaKey} color="ui.dim" />
+            </InputLeftElement>
+            <Input
+              id="confirm_password"
+              {...register("confirm_password", confirmPasswordRules(getValues))}
+              type={show ? "text" : "password"}
+              placeholder="Confirm Password"
+              required
+              variant="outline"
+            />
+            <InputRightElement
+              color="ui.dim"
+              _hover={{
+                cursor: "pointer",
+              }}
+            >
+              <Icon
+                onClick={setShow.toggle}
+                aria-label={show ? "Hide password" : "Show password"}
+                color="ui.dim"
+              >
+                {show ? <ViewOffIcon /> : <ViewIcon />}
+              </Icon>
+            </InputRightElement>
+          </InputGroup>
+          {errors.new_password && (
+            <FormErrorMessage>{errors.new_password.message}</FormErrorMessage>
+          )}
+        </FormControl>
+        <Button variant="primary" type="submit" size="md">
+          Reset Password
+        </Button>
+      </Container>
+    </BackgroundPanel>
   )
 }
