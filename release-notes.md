@@ -117,6 +117,7 @@
 
 ### Refactors
 
+* ♻️ Update logo, animated icons, and responsiveness tweaks. PR [#291](https://github.com/fastapilabs/cloud/pull/291) by [@alejsdev](https://github.com/alejsdev).
 * 💄 Refactor auth views and add animations. PR [#280](https://github.com/fastapilabs/cloud/pull/280) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add app URL. PR [#285](https://github.com/fastapilabs/cloud/pull/285) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add `slug` and `created at` columns to distinguish apps with the same name. PR [#284](https://github.com/fastapilabs/cloud/pull/284) by [@alejsdev](https://github.com/alejsdev).
