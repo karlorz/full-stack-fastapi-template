@@ -6,7 +6,10 @@ from sqlmodel import col, func, select
 
 from app.api.deps import CurrentUser, SessionDep
 from app.api.utils.teams import generate_app_slug_name
-from app.crud import get_user_team_link_by_user_id_and_team_slug
+from app.crud import (
+    get_user_team_link_by_user_id_and_team,
+    get_user_team_link_by_user_id_and_team_slug,
+)
 from app.models import (
     App,
     AppCreate,
@@ -76,8 +79,8 @@ def create_app(
     """
     Create a new app with the provided details.
     """
-    user_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=current_user.id, team_slug=app_in.team_slug
+    user_team_link = get_user_team_link_by_user_id_and_team(
+        session=session, user_id=current_user.id, team_id=app_in.team_id
     )
     if not user_team_link:
         raise HTTPException(

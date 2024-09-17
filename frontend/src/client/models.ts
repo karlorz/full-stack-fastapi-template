@@ -8,7 +8,7 @@ export type AccessTokenWithUserMe = {
 
 export type AppCreate = {
 	name: string;
-	team_slug: string;
+	team_id: string;
 };
 
 

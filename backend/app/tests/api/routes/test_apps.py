@@ -108,7 +108,7 @@ def test_create_app_admin(client: TestClient, db: Session) -> None:
         password="password12345",
     )
 
-    app_in = {"name": "test app", "team_slug": team.slug}
+    app_in = {"name": "test app", "team_id": str(team.id)}
     response = client.post(
         f"{settings.API_V1_STR}/apps/",
         headers=user_auth_headers,
@@ -145,7 +145,7 @@ def test_create_app_member(client: TestClient, db: Session) -> None:
         password="password12345",
     )
 
-    app_in = {"name": "test app", "team_slug": team.slug}
+    app_in = {"name": "test app", "team_id": str(team.id)}
     response = client.post(
         f"{settings.API_V1_STR}/apps/",
         headers=user_auth_headers,
@@ -181,7 +181,7 @@ def test_create_app_with_empty_name(client: TestClient, db: Session) -> None:
         password="password12345",
     )
 
-    app_in = {"name": "", "team_slug": team.slug}
+    app_in = {"name": "", "team_id": str(team.id)}
     response = client.post(
         f"{settings.API_V1_STR}/apps/",
         headers=user_auth_headers,
@@ -212,7 +212,7 @@ def test_create_project_user_not_in_team(client: TestClient, db: Session) -> Non
         password="password12345",
     )
 
-    app_in = {"name": "test app", "team_slug": team.slug}
+    app_in = {"name": "test app", "team_id": str(team.id)}
     response = client.post(
         f"{settings.API_V1_STR}/apps/",
         headers=user_auth_headers,

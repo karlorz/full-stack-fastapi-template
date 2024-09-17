@@ -94,3 +94,15 @@ def get_user_team_link_by_user_id_and_team_slug(
     )
 
     return session.exec(statement).first()
+
+
+def get_user_team_link_by_user_id_and_team(
+    *, session: Session, user_id: uuid.UUID | None, team_id: uuid.UUID | None
+) -> UserTeamLink | None:
+    statement = select(UserTeamLink).where(
+        UserTeamLink.user_id == user_id,
+        Team.id == UserTeamLink.team_id,
+        Team.id == team_id,
+    )
+
+    return session.exec(statement).first()

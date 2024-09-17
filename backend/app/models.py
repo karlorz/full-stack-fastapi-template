@@ -278,7 +278,7 @@ class App(AppBase, table=True):
 
 
 class AppCreate(AppBase):
-    team_slug: str
+    team_id: uuid.UUID
 
 
 class AppPublic(AppBase):

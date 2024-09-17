@@ -17,15 +17,17 @@ import { FaGithub } from "react-icons/fa"
 import { type AppCreate, AppsService } from "../../../../client"
 import CustomCard from "../../../../components/Common/CustomCard"
 import useCustomToast from "../../../../hooks/useCustomToast"
-import { handleError } from "../../../../utils"
+import { fetchTeamBySlug, handleError } from "../../../../utils"
 
 export const Route = createFileRoute("/_layout/$team/apps/new")({
   component: NewApp,
+  loader: async ({ params }) => fetchTeamBySlug(params.team),
 })
 
 function NewApp() {
   const navigate = useNavigate()
-  const { team } = Route.useParams()
+  const team = Route.useLoaderData()
+
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const {
@@ -44,7 +46,7 @@ function NewApp() {
     onSuccess: () => {
       showToast("Success!", "App created successfully", "success")
       reset()
-      navigate({ to: "/$team/apps", params: { team } })
+      navigate({ to: "/$team/apps", params: { team: team.slug } })
     },
     onError: handleError.bind(showToast),
     onSettled: () => {
@@ -53,7 +55,7 @@ function NewApp() {
   })
 
   const onSubmit: SubmitHandler<AppCreate> = (data) => {
-    mutation.mutate({ ...data, team_slug: team })
+    mutation.mutate({ ...data, team_id: team.id })
   }
 
   return (

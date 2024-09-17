@@ -23,9 +23,10 @@ export const $AppCreate = {
 	maxLength: 255,
 	minLength: 1,
 },
-		team_slug: {
+		team_id: {
 	type: 'string',
 	isRequired: true,
+	format: 'uuid',
 },
 	},
 } as const;
