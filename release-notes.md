@@ -238,6 +238,7 @@
 
 ### Internal
 
+* ♻️ Pass team id instead of slug when creating apps. PR [#292](https://github.com/fastapilabs/cloud/pull/292) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor teams URLs. PR [#290](https://github.com/fastapilabs/cloud/pull/290) by [@patrick91](https://github.com/patrick91).
 * 🧱 Add Sentry and FastAPI packages installed by default for docker builder. PR [#288](https://github.com/fastapilabs/cloud/pull/288) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Add redis in pulumi for backend services. PR [#270](https://github.com/fastapilabs/cloud/pull/270) by [@estebanx64](https://github.com/estebanx64).
