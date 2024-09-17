@@ -28,6 +28,7 @@ import { handleError } from "../../utils"
 interface DeleteProps {
   isOpen: boolean
   onClose: () => void
+  appId: string
   appSlug: string
 }
 
@@ -35,7 +36,7 @@ interface DeleteInput {
   confirmation: string
 }
 
-const DeleteConfirmation = ({ isOpen, onClose, appSlug }: DeleteProps) => {
+const DeleteConfirmation = ({ isOpen, onClose, appId, appSlug }: DeleteProps) => {
   const cancelRef = useRef<HTMLButtonElement | null>(null)
   const queryClient = useQueryClient()
   const {
@@ -51,7 +52,7 @@ const DeleteConfirmation = ({ isOpen, onClose, appSlug }: DeleteProps) => {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      await AppsService.deleteApp({ appSlug })
+      await AppsService.deleteApp({ appId })
     },
     onSuccess: () => {
       showToast("Success", "The app was deleted successfully", "success")

@@ -1,3 +1,4 @@
+import uuid
 from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException
@@ -24,6 +25,7 @@ def read_apps(
     team_slug: str,
     skip: int = 0,
     limit: int = 100,
+    slug: str | None = None,
     order_by: Literal["created_at"] | None = None,
     order: Literal["asc", "desc"] = "asc",
 ) -> Any:
@@ -49,6 +51,10 @@ def read_apps(
         .offset(skip)
         .limit(limit)
     )
+
+    if slug:
+        statement = statement.where(App.slug == slug)
+        count_statement = count_statement.where(App.slug == slug)
 
     order_key = col(App.created_at) if order_by == "created_at" else None
 
@@ -86,12 +92,12 @@ def create_app(
     return app
 
 
-@router.get("/{app_slug}", response_model=AppPublic)
-def read_app(session: SessionDep, current_user: CurrentUser, app_slug: str) -> Any:
+@router.get("/{app_id}", response_model=AppPublic)
+def read_app(session: SessionDep, current_user: CurrentUser, app_id: uuid.UUID) -> Any:
     """
     Retrieve the details of the provided app.
     """
-    app = session.exec(select(App).where(App.slug == app_slug)).first()
+    app = session.exec(select(App).where(App.id == app_id)).first()
 
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -109,12 +115,14 @@ def read_app(session: SessionDep, current_user: CurrentUser, app_slug: str) -> A
     return app
 
 
-@router.delete("/{app_slug}", response_model=Message)
-def delete_app(session: SessionDep, current_user: CurrentUser, app_slug: str) -> Any:
+@router.delete("/{app_id}", response_model=Message)
+def delete_app(
+    session: SessionDep, current_user: CurrentUser, app_id: uuid.UUID
+) -> Any:
     """
     Delete the provided app.
     """
-    app = session.exec(select(App).where(App.slug == app_slug)).first()
+    app = session.exec(select(App).where(App.id == app_id)).first()
 
     if not app:
         raise HTTPException(status_code=404, detail="App not found")

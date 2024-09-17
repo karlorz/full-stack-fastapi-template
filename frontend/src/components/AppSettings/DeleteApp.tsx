@@ -2,7 +2,7 @@ import { Button, Container, Text, useDisclosure } from "@chakra-ui/react"
 
 import DeleteConfirmation from "./DeleteConfirmation"
 
-const DeleteApp = ({ appSlug }: { appSlug: string }) => {
+const DeleteApp = ({ appSlug, appId }: { appSlug: string; appId: string }) => {
   const confirmationModal = useDisclosure()
 
   return (
@@ -15,6 +15,7 @@ const DeleteApp = ({ appSlug }: { appSlug: string }) => {
           Delete App
         </Button>
         <DeleteConfirmation
+          appId={appId}
           appSlug={appSlug}
           isOpen={confirmationModal.isOpen}
           onClose={confirmationModal.onClose}

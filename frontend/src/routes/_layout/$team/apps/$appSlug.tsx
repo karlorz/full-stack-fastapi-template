@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_layout/$team/apps/$appSlug")({
 })
 
 function AppDetail() {
-  const { appSlug } = Route.useParams()
+  const { appSlug, team } = Route.useParams()
 
   return (
     <ErrorBoundary
@@ -40,16 +40,23 @@ function AppDetail() {
           </Box>
         }
       >
-        <AppDetailContent appSlug={appSlug} />
+        <AppDetailContent appSlug={appSlug} teamSlug={team} />
       </Suspense>
     </ErrorBoundary>
   )
 }
 
-function AppDetailContent({ appSlug }: { appSlug: string }) {
+function AppDetailContent({
+  appSlug,
+  teamSlug,
+}: { appSlug: string; teamSlug: string }) {
   const { data: app } = useSuspenseQuery({
     queryKey: ["app", appSlug],
-    queryFn: () => AppsService.readApp({ appSlug }),
+    queryFn: async () => {
+      const apps = await AppsService.readApps({ teamSlug, slug: appSlug })
+
+      return apps.data[0]
+    },
   })
 
   return (
@@ -75,7 +82,7 @@ function AppDetailContent({ appSlug }: { appSlug: string }) {
               <Deployments appId={app.id} />
             </CustomCard>
             <CustomCard title="Danger Zone">
-              <DeleteApp appSlug={appSlug} />
+              <DeleteApp appSlug={appSlug} appId={app.id} />
             </CustomCard>
           </Box>
         </Box>

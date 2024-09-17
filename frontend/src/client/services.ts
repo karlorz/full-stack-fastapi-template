@@ -166,6 +166,7 @@ export type AppsData = {
 order?: 'asc' | 'desc'
 orderBy?: 'created_at' | null
 skip?: number
+slug?: string | null
 teamSlug: string
                     
                 };
@@ -174,11 +175,11 @@ CreateApp: {
                     
                 };
 ReadApp: {
-                    appSlug: string
+                    appId: string
                     
                 };
 DeleteApp: {
-                    appSlug: string
+                    appId: string
                     
                 };
     }
@@ -999,6 +1000,7 @@ export class AppsService {
 teamSlug,
 skip = 0,
 limit = 100,
+slug,
 orderBy,
 order = 'asc',
 } = data;
@@ -1006,7 +1008,7 @@ order = 'asc',
 			method: 'GET',
 			url: '/api/v1/apps/',
 			query: {
-				team_slug: teamSlug, skip, limit, order_by: orderBy, order
+				team_slug: teamSlug, skip, limit, slug, order_by: orderBy, order
 			},
 			errors: {
 				422: `Validation Error`,
@@ -1043,13 +1045,13 @@ requestBody,
 	 */
 	public static readApp(data: AppsData['ReadApp']): CancelablePromise<AppPublic> {
 		const {
-appSlug,
+appId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: '/api/v1/apps/{app_slug}',
+			url: '/api/v1/apps/{app_id}',
 			path: {
-				app_slug: appSlug
+				app_id: appId
 			},
 			errors: {
 				422: `Validation Error`,
@@ -1065,13 +1067,13 @@ appSlug,
 	 */
 	public static deleteApp(data: AppsData['DeleteApp']): CancelablePromise<Message> {
 		const {
-appSlug,
+appId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'DELETE',
-			url: '/api/v1/apps/{app_slug}',
+			url: '/api/v1/apps/{app_id}',
 			path: {
-				app_slug: appSlug
+				app_id: appId
 			},
 			errors: {
 				422: `Validation Error`,
