@@ -2,7 +2,7 @@ import { Button, Container, Text, useDisclosure } from "@chakra-ui/react"
 
 import DeleteConfirmation from "./DeleteConfirmation"
 
-const DeleteTeam = () => {
+const DeleteTeam = ({ teamId }: { teamId: string }) => {
   const confirmationModal = useDisclosure()
 
   return (
@@ -15,6 +15,7 @@ const DeleteTeam = () => {
           Delete Team
         </Button>
         <DeleteConfirmation
+          teamId={teamId}
           isOpen={confirmationModal.isOpen}
           onClose={confirmationModal.onClose}
         />

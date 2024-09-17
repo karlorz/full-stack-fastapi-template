@@ -86,6 +86,57 @@ def test_read_teams(client: TestClient, db: Session) -> None:
     assert teams[0]["id"] == str(org3.id)
 
 
+def test_read_teams_filter_by_slug(client: TestClient, db: Session) -> None:
+    # Create test data in the database using db fixture
+    org1 = create_random_team(db)
+    org2 = create_random_team(db)
+    org3 = create_random_team(db)
+
+    # Create a user and link it to the first team
+    user1 = create_user(
+        session=db,
+        email="test-slug@fastapi.com",
+        password="test12345",
+        full_name="test",
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user1, team=org1, role=Role.admin)
+    add_user_to_team(session=db, user=user1, team=org2, role=Role.admin)
+    user2 = create_user(
+        session=db,
+        email="user2-slug@example.com",
+        password="secret2345",
+        full_name="test2",
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user2, team=org3, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1.email, password="test12345"
+    )
+
+    # Make a request to the get_teams route using the client fixture and superuser_token_headers
+    response = client.get(
+        f"{settings.API_V1_STR}/teams/?slug={org1.slug}",
+        headers=user_auth_headers,
+    )
+
+    # Assert the response and the expected behavior
+    assert response.status_code == 200
+
+    # Organizations should be sorted by id to match the order in the database
+    organizations = [org1, org2]
+    organizations.sort(key=lambda org: org.id, reverse=False)
+
+    data = response.json()
+    teams = data["data"]
+    teams.sort(key=lambda team: team["id"], reverse=False)
+    count = data["count"]
+    assert len(teams) == 1
+    assert count == 1
+    assert teams[0]["id"] == str(org1.id)
+
+
 def test_read_owned_team(client: TestClient, db: Session) -> None:
     user1 = create_user(
         session=db,
@@ -188,7 +239,7 @@ def test_read_team(client: TestClient, db: Session) -> None:
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/teams/{team.slug}",
+        f"{settings.API_V1_STR}/teams/{team.id}",
         headers=user_auth_headers,
     )
 
@@ -216,7 +267,7 @@ def test_read_team_not_found(client: TestClient) -> None:
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/teams/myteam",
+        f"{settings.API_V1_STR}/teams/00000000-0000-0000-0000-000000000000",
         headers=user_auth_headers,
     )
 
@@ -338,7 +389,7 @@ def test_update_team(client: TestClient, db: Session) -> None:
         "description": "test description updated",
     }
     response = client.put(
-        f"{settings.API_V1_STR}/teams/{team.slug}",
+        f"{settings.API_V1_STR}/teams/{team.id}",
         headers=user_auth_headers,
         json=team_in,
     )
@@ -363,7 +414,7 @@ def test_update_team_not_found(client: TestClient) -> None:
         "description": "test description updated",
     }
     response = client.put(
-        f"{settings.API_V1_STR}/teams/myteam",
+        f"{settings.API_V1_STR}/teams/00000000-0000-0000-0000-000000000000",
         headers=user_auth_headers,
         json=team_in,
     )
@@ -401,7 +452,7 @@ def test_update_team_not_enough_permissions(client: TestClient, db: Session) -> 
         "description": "test description updated",
     }
     response = client.put(
-        f"{settings.API_V1_STR}/teams/{team.slug}",
+        f"{settings.API_V1_STR}/teams/{team.id}",
         headers=user_auth_headers,
         json=team_in,
     )
@@ -427,7 +478,7 @@ def test_delete_team(client: TestClient, db: Session) -> None:
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/teams/{team.slug}",
+        f"{settings.API_V1_STR}/teams/{team.id}",
         headers=user_auth_headers,
     )
 
@@ -448,7 +499,7 @@ def test_delete_team_not_found(client: TestClient) -> None:
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/teams/myteam",
+        f"{settings.API_V1_STR}/teams/00000000-0000-0000-0000-000000000000",
         headers=user_auth_headers,
     )
 
@@ -481,7 +532,7 @@ def test_delete_team_not_enough_permissions(client: TestClient, db: Session) -> 
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/teams/{team.slug}",
+        f"{settings.API_V1_STR}/teams/{team.id}",
         headers=user_auth_headers,
     )
 
@@ -511,7 +562,7 @@ def test_delete_personal_team_forbidden(client: TestClient, db: Session) -> None
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     response = client.delete(
-        f"{settings.API_V1_STR}/teams/{team.slug}",
+        f"{settings.API_V1_STR}/teams/{team.id}",
         headers=user_auth_headers,
     )
 
@@ -540,7 +591,7 @@ def test_update_member_in_team(client: TestClient, db: Session) -> None:
     )
 
     response = client.put(
-        f"{settings.API_V1_STR}/teams/{team.slug}/users/{user.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user.id}",
         headers=user_auth_headers,
         json={"role": "member"},
     )
@@ -585,7 +636,7 @@ def test_update_member_in_team_not_enough_permissions(
     )
 
     response = client.put(
-        f"{settings.API_V1_STR}/teams/{team.slug}/users/{user.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user.id}",
         headers=user_auth_headers,
         json={"role": "admin"},
     )
@@ -620,7 +671,7 @@ def test_update_member_in_team_user_not_in_team(
     )
 
     response = client.put(
-        f"{settings.API_V1_STR}/teams/{team.slug}/users/{user_to_update.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user_to_update.id}",
         headers=user_auth_headers,
         json={"role": "admin"},
     )
@@ -643,7 +694,7 @@ def test_update_member_in_team_not_found(client: TestClient, db: Session) -> Non
     )
 
     response = client.put(
-        f"{settings.API_V1_STR}/teams/myteam/users/{user.id}",
+        f"{settings.API_V1_STR}/teams/00000000-0000-0000-0000-000000000000/users/{user.id}",
         headers=user_auth_headers,
         json={"role": "admin"},
     )
@@ -677,7 +728,7 @@ def test_remove_member_from_team(client: TestClient, db: Session) -> None:
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/teams/{team.slug}/users/{user_member.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user_member.id}",
         headers=user_auth_headers,
     )
 
@@ -716,7 +767,7 @@ def test_remove_member_from_team_not_enough_permissions(
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/teams/{team.slug}/users/{user.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user.id}",
         headers=user_auth_headers,
     )
 
@@ -738,7 +789,7 @@ def test_remove_member_from_team_not_found(client: TestClient, db: Session) -> N
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/teams/myteam/users/{uuid.uuid4()}",
+        f"{settings.API_V1_STR}/teams/00000000-0000-0000-0000-000000000000/users/{uuid.uuid4()}",
         headers=user_auth_headers,
     )
 
@@ -765,7 +816,7 @@ def test_remove_member_from_team_user_not_found(
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/teams/{team.slug}/users/{uuid.uuid4()}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{uuid.uuid4()}",
         headers=user_auth_headers,
     )
 
@@ -790,7 +841,7 @@ def test_remove_from_team_not_allow_yourself(client: TestClient, db: Session) ->
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/teams/{team.slug}/users/{user.id}",
+        f"{settings.API_V1_STR}/teams/{team.id}/users/{user.id}",
         headers=user_auth_headers,
     )
 

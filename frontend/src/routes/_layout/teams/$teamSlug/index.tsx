@@ -21,22 +21,17 @@ import { ErrorBoundary } from "react-error-boundary"
 import { FaCheckCircle } from "react-icons/fa"
 import { FaCircleXmark } from "react-icons/fa6"
 
-import { TeamsService } from "../../../../client"
+import { TeamWithUserPublic } from "../../../../client"
 import ActionsMenu from "../../../../components/Common/ActionsMenu"
 import { useCurrentUser } from "../../../../hooks/useAuth"
-import { getCurrentUserRole } from "../../../../utils"
+import { fetchTeamBySlug, getCurrentUserRole } from "../../../../utils"
 
 export const Route = createFileRoute("/_layout/teams/$teamSlug/")({
   component: Team,
 })
 
-function TeamTableBody() {
-  const { teamSlug } = Route.useParams()
+function TeamTableBody({ team }: { team: TeamWithUserPublic }) {
   const currentUser = useCurrentUser()
-  const { data: team } = useSuspenseQuery({
-    queryKey: ["team", teamSlug],
-    queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
-  })
   const currentUserRole = getCurrentUserRole(team, currentUser)
 
   return (
@@ -82,7 +77,7 @@ function TeamTableBody() {
   )
 }
 
-function TeamTable() {
+function TeamTable({ team }: { team: TeamWithUserPublic }) {
   return (
     <TableContainer>
       <Table size={{ base: "sm", md: "md" }}>
@@ -119,7 +114,7 @@ function TeamTable() {
               </Tbody>
             }
           >
-            <TeamTableBody />
+            <TeamTableBody team={team} />
           </Suspense>
         </ErrorBoundary>
       </Table>
@@ -131,7 +126,7 @@ function Team() {
   const { teamSlug } = Route.useParams()
   const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamSlug],
-    queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
+    queryFn: () => fetchTeamBySlug(teamSlug),
   })
 
   return (
@@ -147,7 +142,7 @@ function Team() {
             </Heading>
           </Flex>
         </Flex>
-        <TeamTable />
+        <TeamTable team={team} />
       </Container>
     </>
   )

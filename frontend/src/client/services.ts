@@ -84,6 +84,7 @@ order?: 'asc' | 'desc'
 orderBy?: 'created_at' | null
 owner?: boolean
 skip?: number
+slug?: string | null
                     
                 };
 CreateTeam: {
@@ -91,26 +92,26 @@ CreateTeam: {
                     
                 };
 ReadTeam: {
-                    teamSlug: string
+                    teamId: string
                     
                 };
 UpdateTeam: {
                     requestBody: TeamUpdate
-teamSlug: string
+teamId: string
                     
                 };
 DeleteTeam: {
-                    teamSlug: string
+                    teamId: string
                     
                 };
 UpdateMemberInTeam: {
                     requestBody: TeamUpdateMember
-teamSlug: string
+teamId: string
 userId: string
                     
                 };
 RemoveMemberFromTeam: {
-                    teamSlug: string
+                    teamId: string
 userId: string
                     
                 };
@@ -626,12 +627,13 @@ limit = 100,
 orderBy,
 order = 'asc',
 owner = false,
+slug,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
 			url: '/api/v1/teams/',
 			query: {
-				skip, limit, order_by: orderBy, order, owner
+				skip, limit, order_by: orderBy, order, owner, slug
 			},
 			errors: {
 				422: `Validation Error`,
@@ -668,13 +670,13 @@ requestBody,
 	 */
 	public static readTeam(data: TeamsData['ReadTeam']): CancelablePromise<TeamWithUserPublic> {
 		const {
-teamSlug,
+teamId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: '/api/v1/teams/{team_slug}',
+			url: '/api/v1/teams/{team_id}',
 			path: {
-				team_slug: teamSlug
+				team_id: teamId
 			},
 			errors: {
 				422: `Validation Error`,
@@ -690,14 +692,14 @@ teamSlug,
 	 */
 	public static updateTeam(data: TeamsData['UpdateTeam']): CancelablePromise<TeamPublic> {
 		const {
-teamSlug,
+teamId,
 requestBody,
 } = data;
 		return __request(OpenAPI, {
 			method: 'PUT',
-			url: '/api/v1/teams/{team_slug}',
+			url: '/api/v1/teams/{team_id}',
 			path: {
-				team_slug: teamSlug
+				team_id: teamId
 			},
 			body: requestBody,
 			mediaType: 'application/json',
@@ -715,13 +717,13 @@ requestBody,
 	 */
 	public static deleteTeam(data: TeamsData['DeleteTeam']): CancelablePromise<Message> {
 		const {
-teamSlug,
+teamId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'DELETE',
-			url: '/api/v1/teams/{team_slug}',
+			url: '/api/v1/teams/{team_id}',
 			path: {
-				team_slug: teamSlug
+				team_id: teamId
 			},
 			errors: {
 				422: `Validation Error`,
@@ -737,15 +739,15 @@ teamSlug,
 	 */
 	public static updateMemberInTeam(data: TeamsData['UpdateMemberInTeam']): CancelablePromise<UserTeamLinkPublic> {
 		const {
-teamSlug,
+teamId,
 userId,
 requestBody,
 } = data;
 		return __request(OpenAPI, {
 			method: 'PUT',
-			url: '/api/v1/teams/{team_slug}/users/{user_id}',
+			url: '/api/v1/teams/{team_id}/users/{user_id}',
 			path: {
-				team_slug: teamSlug, user_id: userId
+				team_id: teamId, user_id: userId
 			},
 			body: requestBody,
 			mediaType: 'application/json',
@@ -763,14 +765,14 @@ requestBody,
 	 */
 	public static removeMemberFromTeam(data: TeamsData['RemoveMemberFromTeam']): CancelablePromise<Message> {
 		const {
-teamSlug,
+teamId,
 userId,
 } = data;
 		return __request(OpenAPI, {
 			method: 'DELETE',
-			url: '/api/v1/teams/{team_slug}/users/{user_id}',
+			url: '/api/v1/teams/{team_id}/users/{user_id}',
 			path: {
-				team_slug: teamSlug, user_id: userId
+				team_id: teamId, user_id: userId
 			},
 			errors: {
 				422: `Validation Error`,

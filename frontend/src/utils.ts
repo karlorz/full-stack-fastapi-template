@@ -1,4 +1,9 @@
-import type { ApiError, TeamWithUserPublic, UserPublic } from "./client"
+import {
+  TeamsService,
+  type ApiError,
+  type TeamWithUserPublic,
+  type UserPublic,
+} from "./client"
 
 export const emailPattern = {
   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -77,4 +82,14 @@ export function extractErrorMessage(err: ApiError): string {
 export const handleError = function (this: any, err: ApiError) {
   const errorMessage = extractErrorMessage(err)
   this("Error", errorMessage, "error")
+}
+
+export const fetchTeamBySlug = async (teamSlug: string) => {
+  const teams = await TeamsService.readTeams({ slug: teamSlug })
+
+  if (!teams.data.length) {
+    throw new Error("Team not found")
+  }
+
+  return TeamsService.readTeam({ teamId: teams.data[0].id })
 }

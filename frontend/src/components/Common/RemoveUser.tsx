@@ -16,13 +16,13 @@ import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils"
 
 interface RemoveProps {
-  teamSlug?: string
+  teamId?: string
   userId: string
   isOpen: boolean
   onClose: () => void
 }
 
-const RemoveUser = ({ teamSlug, userId, isOpen, onClose }: RemoveProps) => {
+const RemoveUser = ({ teamId, userId, isOpen, onClose }: RemoveProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const cancelRef = React.useRef<HTMLButtonElement | null>(null)
@@ -46,7 +46,7 @@ const RemoveUser = ({ teamSlug, userId, isOpen, onClose }: RemoveProps) => {
   })
 
   const onSubmit = async () => {
-    mutation.mutate({ teamSlug: teamSlug!, userId })
+    mutation.mutate({ teamId: teamId!, userId })
   }
 
   return (

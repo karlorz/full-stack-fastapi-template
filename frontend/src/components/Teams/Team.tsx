@@ -15,10 +15,9 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
-import { TeamsService } from "../../client"
 import { useCurrentUser } from "../../hooks/useAuth"
 import { Route } from "../../routes/_layout/$team"
-import { getCurrentUserRole } from "../../utils"
+import { fetchTeamBySlug, getCurrentUserRole } from "../../utils"
 import ActionsMenu from "../Common/ActionsMenu"
 
 function TeamTableBody() {
@@ -26,8 +25,9 @@ function TeamTableBody() {
   const currentUser = useCurrentUser()
   const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamSlug],
-    queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
+    queryFn: () => fetchTeamBySlug(teamSlug),
   })
+
   const currentUserRole = getCurrentUserRole(team, currentUser)
 
   return (

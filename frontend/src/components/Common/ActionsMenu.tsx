@@ -70,14 +70,14 @@ const ActionsMenu = ({
         </MenuList>
         <ChangeRole
           userRole={userRole}
-          teamSlug={team?.slug}
+          teamId={team?.id}
           user={value as UserPublic}
           isOpen={changeRoleModal.isOpen}
           onClose={changeRoleModal.onClose}
         />
         <RemoveUser
           userId={value.id}
-          teamSlug={team?.slug}
+          teamId={team?.id}
           isOpen={removeUserModal.isOpen}
           onClose={removeUserModal.onClose}
         />

@@ -27,6 +27,7 @@ import { Route } from "../../routes/_layout/$team"
 import { handleError } from "../../utils"
 
 interface DeleteProps {
+  teamId: string
   isOpen: boolean
   onClose: () => void
 }
@@ -35,7 +36,7 @@ interface DeleteInput {
   confirmation: string
 }
 
-const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
+const DeleteConfirmation = ({ teamId, isOpen, onClose }: DeleteProps) => {
   const cancelRef = useRef<HTMLButtonElement | null>(null)
   const { team } = Route.useParams()
   const queryClient = useQueryClient()
@@ -52,7 +53,7 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      await TeamsService.deleteTeam({ teamSlug: team })
+      await TeamsService.deleteTeam({ teamId: teamId })
     },
     onSuccess: () => {
       showToast("Success", "The team was deleted successfully", "success")

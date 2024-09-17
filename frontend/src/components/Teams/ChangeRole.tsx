@@ -22,7 +22,7 @@ import { handleError } from "../../utils"
 
 interface ChangeRoleProps {
   userRole?: string
-  teamSlug?: string
+  teamId?: string
   user: UserPublic
   isOpen: boolean
   onClose: () => void
@@ -30,7 +30,7 @@ interface ChangeRoleProps {
 
 const ChangeRole = ({
   userRole,
-  teamSlug,
+  teamId,
   user,
   isOpen,
   onClose,
@@ -46,7 +46,7 @@ const ChangeRole = ({
   const mutation = useMutation({
     mutationFn: (data: { newRole: Role }) =>
       TeamsService.updateMemberInTeam({
-        teamSlug: teamSlug!,
+        teamId: teamId!,
         requestBody: { role: data.newRole },
         userId: user.id,
       }),

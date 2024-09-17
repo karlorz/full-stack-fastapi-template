@@ -9,7 +9,7 @@ import { type TeamUpdate, TeamsService } from "../../client"
 import { useCurrentUser } from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
 import { Route } from "../../routes/_layout/$team"
-import { getCurrentUserRole, handleError } from "../../utils"
+import { fetchTeamBySlug, getCurrentUserRole, handleError } from "../../utils"
 import CustomCard from "../Common/CustomCard"
 import EditableField from "../Common/EditableField"
 import Invitations from "../Invitations/Invitations"
@@ -24,13 +24,13 @@ const TeamInformation = () => {
   const currentUser = useCurrentUser()
   const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamSlug],
-    queryFn: () => TeamsService.readTeam({ teamSlug: teamSlug }),
+    queryFn: () => fetchTeamBySlug(teamSlug),
   })
   const currentUserRole = getCurrentUserRole(team, currentUser)
 
   const mutation = useMutation({
     mutationFn: (data: TeamUpdate) =>
-      TeamsService.updateTeam({ requestBody: data, teamSlug: teamSlug }),
+      TeamsService.updateTeam({ requestBody: data, teamId: team.id }),
     onSuccess: () => {
       showToast("Success!", "Team updated successfully", "success")
     },
@@ -64,7 +64,7 @@ const TeamInformation = () => {
           </CustomCard>
 
           <CustomCard title="Danger Zone">
-            <DeleteTeam />
+            <DeleteTeam teamId={team.id} />
           </CustomCard>
         </>
       )}

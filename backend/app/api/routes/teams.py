@@ -33,6 +33,7 @@ def read_teams(
     order_by: Literal["created_at"] | None = None,
     order: Literal["asc", "desc"] = "asc",
     owner: bool = False,
+    slug: str | None = None,
 ) -> Any:
     """
     Retrieve a list of teams accessible to the current user.
@@ -51,6 +52,10 @@ def read_teams(
             col(Team.user_links).any(col(UserTeamLink.user) == current_user)
         )
 
+    if slug:
+        count_statement = count_statement.where(Team.slug == slug)
+        statement = statement.where(Team.slug == slug)
+
     order_key = col(Team.created_at) if order_by == "created_at" else None
 
     if order_key:
@@ -64,8 +69,10 @@ def read_teams(
     return TeamsPublic(data=teams, count=count)
 
 
-@router.get("/{team_slug}", response_model=TeamWithUserPublic)
-def read_team(session: SessionDep, current_user: CurrentUser, team_slug: str) -> Any:
+@router.get("/{team_id}", response_model=TeamWithUserPublic)
+def read_team(
+    session: SessionDep, current_user: CurrentUser, team_id: uuid.UUID
+) -> Any:
     """
     Retrieve a team by its name and returns it along with its associated users.
     """
@@ -73,7 +80,7 @@ def read_team(session: SessionDep, current_user: CurrentUser, team_slug: str) ->
         selectinload(Team.user_links).selectinload(UserTeamLink.user)  # type: ignore
     )
     query = query.where(
-        Team.slug == team_slug,
+        Team.id == team_id,
         col(Team.user_links).any(col(UserTeamLink.user) == current_user),
     )
     team = session.exec(query).first()
@@ -104,11 +111,11 @@ def create_team(
     return team
 
 
-@router.put("/{team_slug}", response_model=TeamPublic)
+@router.put("/{team_id}", response_model=TeamPublic)
 def update_team(
     session: SessionDep,
     current_user: CurrentUser,
-    team_slug: str,
+    team_id: uuid.UUID,
     team_in: TeamUpdate,
 ) -> Any:
     """
@@ -117,7 +124,7 @@ def update_team(
     query = (
         select(UserTeamLink)
         .join(Team, col(Team.id) == UserTeamLink.team_id)
-        .where(Team.slug == team_slug, UserTeamLink.user_id == current_user.id)
+        .where(Team.id == team_id, UserTeamLink.user_id == current_user.id)
     )
     link = session.exec(query).first()
     if not link:
@@ -138,9 +145,9 @@ def update_team(
     return team
 
 
-@router.delete("/{team_slug}", response_model=Message)
+@router.delete("/{team_id}", response_model=Message)
 def delete_team(
-    session: SessionDep, current_user: CurrentUser, team_slug: str
+    session: SessionDep, current_user: CurrentUser, team_id: uuid.UUID
 ) -> Message:
     """
     Delete a team from the database by its name.
@@ -148,7 +155,7 @@ def delete_team(
     query = (
         select(UserTeamLink)
         .join(Team, col(Team.id) == UserTeamLink.team_id)
-        .where(Team.slug == team_slug, UserTeamLink.user_id == current_user.id)
+        .where(Team.id == team_id, UserTeamLink.user_id == current_user.id)
     )
     link = session.exec(query).first()
     if not link:
@@ -177,11 +184,11 @@ def delete_team(
     return Message(message="Team deleted")
 
 
-@router.put("/{team_slug}/users/{user_id}", response_model=UserTeamLinkPublic)
+@router.put("/{team_id}/users/{user_id}", response_model=UserTeamLinkPublic)
 def update_member_in_team(
     session: SessionDep,
     current_user: CurrentUser,
-    team_slug: str,
+    team_id: uuid.UUID,
     user_id: uuid.UUID,
     member_in: TeamUpdateMember,
 ) -> Any:
@@ -191,7 +198,7 @@ def update_member_in_team(
     query = (
         select(UserTeamLink)
         .join(Team, col(Team.id) == UserTeamLink.team_id)
-        .where(Team.slug == team_slug, UserTeamLink.user_id == current_user.id)
+        .where(Team.id == team_id, UserTeamLink.user_id == current_user.id)
     )
     link = session.exec(query).first()
     if not link:
@@ -220,11 +227,11 @@ def update_member_in_team(
     return member_link
 
 
-@router.delete("/{team_slug}/users/{user_id}", response_model=Message)
+@router.delete("/{team_id}/users/{user_id}", response_model=Message)
 def remove_member_from_team(
     session: SessionDep,
     current_user: CurrentUser,
-    team_slug: str,
+    team_id: uuid.UUID,
     user_id: uuid.UUID,
 ) -> Message:
     """
@@ -238,7 +245,7 @@ def remove_member_from_team(
     query = (
         select(UserTeamLink)
         .join(Team, col(Team.id) == UserTeamLink.team_id)
-        .where(Team.slug == team_slug, UserTeamLink.user_id == current_user.id)
+        .where(Team.id == team_id, UserTeamLink.user_id == current_user.id)
     )
     link = session.exec(query).first()
     if not link:
