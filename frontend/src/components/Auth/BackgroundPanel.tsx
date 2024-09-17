@@ -1,5 +1,7 @@
-import { Box, Flex, Text } from "@chakra-ui/react"
+import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import { type ReactNode, useEffect, useState } from "react"
+
+import Logo from "../../assets/logo-text-white.svg"
 
 const words = ["simplest", "smartest", "fastest"]
 
@@ -65,7 +67,9 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
             textAlign={{ base: "center", md: "left" }}
             width="100%"
             ml={{ base: 0, md: 8 }}
+            gap={10}
           >
+            <Image src={Logo} alt="Logo" w={{ base: "50%", md: "35%" }} />
             <Text fontSize={{ base: "4xl", md: "6xl" }} fontWeight="bold">
               The{" "}
               <Text as="span" color="purple.200">

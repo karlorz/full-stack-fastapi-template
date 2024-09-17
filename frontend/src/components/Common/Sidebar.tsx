@@ -1,6 +1,5 @@
 import {
   Box,
-  Center,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -11,12 +10,12 @@ import {
   Image,
   Text,
   useColorModeValue,
-  useDisclosure,
+  useDisclosure
 } from "@chakra-ui/react"
 import { FaBars, FaSignOutAlt } from "react-icons/fa"
 
-import LogoLight from "../../assets/logo-line-white.svg"
-import LogoDark from "../../assets/logo-text-gradient.svg"
+import LogoLight from "../../assets/logo-mosaic-white.svg"
+import LogoDark from "../../assets/logo-mosaic.svg"
 import useAuth from "../../hooks/useAuth"
 import SidebarItems from "./SidebarItems"
 
@@ -49,6 +48,7 @@ const Sidebar = () => {
           <DrawerBody py={8}>
             <Flex flexDir="column" justify="space-between">
               <Box>
+                <Image src={logo} alt="Logo" p={6} />
                 <SidebarItems onClose={onClose} />
                 <Flex
                   as="button"
@@ -78,9 +78,7 @@ const Sidebar = () => {
         p={6}
       >
         <Box justifyContent="center" w="100%">
-          <Center>
-            <Image src={logo} alt="Logo" py={4} />
-          </Center>
+          <Image src={logo} alt="Logo" p={6} />
           <SidebarItems />
         </Box>
       </Box>

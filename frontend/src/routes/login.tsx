@@ -80,7 +80,7 @@ function Login() {
         <Container
           as="form"
           onSubmit={handleSubmit(onSubmit)}
-          maxW={{ base: "xs", md: "lg" }}
+          maxW={{ base: "md", md: "lg" }}
           p={{ base: 4, md: 12 }}
           color="ui.defaultText"
           h="70%"

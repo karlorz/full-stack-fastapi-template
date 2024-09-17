@@ -1,6 +1,5 @@
 import {
   Button,
-  Center,
   FormControl,
   FormLabel,
   Input,
@@ -18,8 +17,8 @@ import Lottie from "lottie-react"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import attention from "../../assets/attention.json"
-import firework from "../../assets/firework.json"
+import emailSent from "../../assets/email.json"
+import warning from "../../assets/failed.json"
 import {
   type ApiError,
   type InvitationCreate,
@@ -135,14 +134,12 @@ const NewInvitation = ({ isOpen, onClose }: NewInvitationProps) => {
             <ModalHeader>Success!</ModalHeader>
             <ModalCloseButton aria-label="Close invitation modal" />
             <ModalBody>
-              <Center>
-                <Lottie
-                  animationData={firework}
-                  loop={false}
-                  style={{ width: 75, height: 75 }}
-                />
-              </Center>
-              <Text textAlign="center" pt={2}>
+              <Lottie
+                animationData={emailSent}
+                loop={false}
+                style={{ width: 75, height: 75 }}
+              />
+              <Text my={4}>
                 The invitation has been sent to <b>{mutation.data?.email}</b>{" "}
                 successfully. Now they just need to accept it.
               </Text>
@@ -158,19 +155,17 @@ const NewInvitation = ({ isOpen, onClose }: NewInvitationProps) => {
             <ModalHeader>Error</ModalHeader>
             <ModalCloseButton aria-label="Close invitation modal" />
             <ModalBody>
-              <Center>
-                <Lottie
-                  animationData={attention}
-                  loop={false}
-                  style={{ width: 75, height: 75 }}
-                />
-              </Center>
-              <Text textAlign="center" pt={2}>
+              <Lottie
+                animationData={warning}
+                loop={false}
+                style={{ width: 75, height: 75 }}
+              />
+              <Text my={4}>
                 An error occurred while sending the invitation. Please try
                 again.
               </Text>
 
-              <Text textAlign="center" color="red.500" mt={2}>
+              <Text color="red.500">
                 {extractErrorMessage(mutation.error as ApiError)}
               </Text>
             </ModalBody>
