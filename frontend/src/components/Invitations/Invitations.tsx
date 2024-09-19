@@ -27,27 +27,27 @@ import NewInvitation from "./NewInvitation"
 const PER_PAGE = 5
 
 const getInvitationsQueryOptions = ({
-  team,
+  teamId,
   page,
-}: { team: string; page: number }) => ({
+}: { teamId: string; page: number }) => ({
   queryKey: ["invitations", { page }],
   queryFn: () =>
     InvitationsService.readInvitationsTeamByAdmin({
       status: "pending",
-      teamSlug: team,
+      teamId: teamId,
       skip: (page - 1) * PER_PAGE,
       limit: PER_PAGE,
     }),
 })
 
-function InvitationsTable() {
+function InvitationsTable({ teamId }: { teamId: string }) {
   const { team } = Route.useParams()
   const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
 
   useEffect(() => {
     queryClient.prefetchQuery(
-      getInvitationsQueryOptions({ team, page: page + 1 }),
+      getInvitationsQueryOptions({ teamId, page: page + 1 }),
     )
   }, [page, queryClient, getInvitationsQueryOptions, team])
 
@@ -56,7 +56,7 @@ function InvitationsTable() {
     isPending,
     isPlaceholderData,
   } = useQuery({
-    ...getInvitationsQueryOptions({ team, page }),
+    ...getInvitationsQueryOptions({ teamId, page }),
     placeholderData: (previous) => previous,
   })
 
@@ -150,17 +150,17 @@ function InvitationsTable() {
   )
 }
 
-function Invitations() {
+function Invitations({ teamId }: { teamId: string }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <Container maxW="full" p={0}>
-      <InvitationsTable />
+      <InvitationsTable teamId={teamId} />
       <Divider my={4} />
       <Button variant="primary" onClick={onOpen} mb={4}>
         New Invitation
       </Button>
-      <NewInvitation isOpen={isOpen} onClose={onClose} />
+      <NewInvitation isOpen={isOpen} onClose={onClose} teamId={teamId} />
     </Container>
   )
 }

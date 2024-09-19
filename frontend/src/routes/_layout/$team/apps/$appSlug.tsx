@@ -8,56 +8,37 @@ import {
   Skeleton,
   Text,
 } from "@chakra-ui/react"
-import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { Suspense } from "react"
-import { ErrorBoundary } from "react-error-boundary"
 
 import { AppsService } from "../../../../client"
 import DeleteApp from "../../../../components/AppSettings/DeleteApp"
 import Deployments from "../../../../components/AppSettings/Deployments"
 import CustomCard from "../../../../components/Common/CustomCard"
+import { fetchTeamBySlug } from "../../../../utils"
 
 export const Route = createFileRoute("/_layout/$team/apps/$appSlug")({
   component: AppDetail,
+  loader: async ({ params }) => {
+    const team = await fetchTeamBySlug(params.team)
+
+    const apps = await AppsService.readApps({
+      teamId: team.id,
+      slug: params.appSlug,
+    })
+
+    return apps.data[0]
+  },
+  pendingComponent: () => (
+    <Box>
+      <Skeleton height="20px" my="10px" />
+      <Skeleton height="20px" my="10px" />
+      <Skeleton height="20px" my="10px" />
+    </Box>
+  ),
 })
 
 function AppDetail() {
-  const { appSlug, team } = Route.useParams()
-
-  return (
-    <ErrorBoundary
-      fallbackRender={({ error }) => (
-        <Text>Something went wrong: {error.message}</Text>
-      )}
-    >
-      <Suspense
-        fallback={
-          <Box>
-            <Skeleton height="20px" my="10px" />
-            <Skeleton height="20px" my="10px" />
-            <Skeleton height="20px" my="10px" />
-          </Box>
-        }
-      >
-        <AppDetailContent appSlug={appSlug} teamSlug={team} />
-      </Suspense>
-    </ErrorBoundary>
-  )
-}
-
-function AppDetailContent({
-  appSlug,
-  teamSlug,
-}: { appSlug: string; teamSlug: string }) {
-  const { data: app } = useSuspenseQuery({
-    queryKey: ["app", appSlug],
-    queryFn: async () => {
-      const apps = await AppsService.readApps({ teamSlug, slug: appSlug })
-
-      return apps.data[0]
-    },
-  })
+  const app = Route.useLoaderData()
 
   return (
     <Container maxW="full">
@@ -82,7 +63,7 @@ function AppDetailContent({
               <Deployments appId={app.id} />
             </CustomCard>
             <CustomCard title="Danger Zone">
-              <DeleteApp appSlug={appSlug} appId={app.id} />
+              <DeleteApp appSlug={app.slug} appId={app.id} />
             </CustomCard>
           </Box>
         </Box>

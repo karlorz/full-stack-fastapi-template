@@ -84,20 +84,8 @@ def add_user_to_team(
     return user_org_link
 
 
-def get_user_team_link_by_user_id_and_team_slug(
-    *, session: Session, user_id: uuid.UUID | None, team_slug: str | None
-) -> UserTeamLink | None:
-    statement = select(UserTeamLink).where(
-        UserTeamLink.user_id == user_id,
-        Team.id == UserTeamLink.team_id,
-        Team.slug == team_slug,
-    )
-
-    return session.exec(statement).first()
-
-
-def get_user_team_link_by_user_id_and_team(
-    *, session: Session, user_id: uuid.UUID | None, team_id: uuid.UUID | None
+def get_user_team_link(
+    *, session: Session, user_id: uuid.UUID, team_id: uuid.UUID
 ) -> UserTeamLink | None:
     statement = select(UserTeamLink).where(
         UserTeamLink.user_id == user_id,

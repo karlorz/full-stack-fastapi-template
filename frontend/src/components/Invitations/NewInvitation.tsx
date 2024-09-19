@@ -24,19 +24,18 @@ import {
   type InvitationCreate,
   InvitationsService,
 } from "../../client"
-import { Route } from "../../routes/_layout/$team"
 import { emailPattern, extractErrorMessage } from "../../utils"
 
 interface NewInvitationProps {
+  teamId: string
   isOpen: boolean
   onClose: () => void
 }
 
-const NewInvitation = ({ isOpen, onClose }: NewInvitationProps) => {
+const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle")
-  const { team: teamSlug } = Route.useParams()
   const queryClient = useQueryClient()
   const {
     register,
@@ -68,7 +67,7 @@ const NewInvitation = ({ isOpen, onClose }: NewInvitationProps) => {
     const updatedData: InvitationCreate = {
       ...data,
       role: "member",
-      team_slug: teamSlug,
+      team_id: teamId,
     }
     mutation.mutate(updatedData)
   }

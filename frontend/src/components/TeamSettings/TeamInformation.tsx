@@ -56,7 +56,7 @@ const TeamInformation = () => {
       {currentUserRole === "admin" && (
         <>
           <CustomCard title="Team Invitations">
-            <Invitations />
+            <Invitations teamId={team.id} />
           </CustomCard>
 
           <CustomCard title="Transfer Ownership">

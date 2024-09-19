@@ -39,7 +39,7 @@ def test_read_apps(client: TestClient, db: Session) -> None:
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/apps/?team_slug={team.slug}",
+        f"{settings.API_V1_STR}/apps/?team_id={team.id}",
         headers=user_auth_headers,
     )
 
@@ -79,7 +79,7 @@ def test_read_apps_filter_by_slug(client: TestClient, db: Session) -> None:
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/apps/?team_slug={team.slug}&slug={app.slug}",
+        f"{settings.API_V1_STR}/apps/?team_id={team.id}&slug={app.slug}",
         headers=user_auth_headers,
     )
 

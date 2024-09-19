@@ -8,7 +8,7 @@ from sqlmodel import and_, col, select
 from app.api.deps import CurrentUser, SessionDep
 from app.api.utils.aws_s3 import generate_presigned_url_post
 from app.core.config import settings
-from app.crud import get_user_team_link_by_user_id_and_team_slug
+from app.crud import get_user_team_link
 from app.models import (
     App,
     Deployment,
@@ -37,10 +37,9 @@ def read_deployments(
     app = session.exec(select(App).where(App.id == app_id)).first()
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
-    team_slug = app.team.slug
 
-    user_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=current_user.id, team_slug=team_slug
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=app.team_id
     )
     if not user_team_link:
         raise HTTPException(
@@ -82,10 +81,9 @@ def read_deployment(
     app = session.exec(select(App).where(App.id == app_id)).first()
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
-    team_slug = app.team.slug
 
-    user_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=current_user.id, team_slug=team_slug
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=app.team_id
     )
     if not user_team_link:
         raise HTTPException(
@@ -117,8 +115,8 @@ def create_deployment(
     app = session.exec(select(App).where(App.id == app_id)).first()
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
-    user_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=current_user.id, team_slug=app.team.slug
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=app.team_id
     )
     if not user_team_link:
         raise HTTPException(
@@ -153,8 +151,8 @@ def upload_deployment_artifact(
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
 
-    user_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=current_user.id, team_slug=app.team.slug
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=app.team_id
     )
     if not user_team_link:
         raise HTTPException(

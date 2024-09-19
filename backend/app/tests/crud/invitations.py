@@ -20,9 +20,7 @@ def create_invitation(
         select(User).where(User.email == invitation_in.email)
     ).first()
 
-    team = session.exec(
-        select(Team).where(Team.slug == invitation_in.team_slug)
-    ).first()
+    team = session.exec(select(Team).where(Team.id == invitation_in.team_id)).first()
 
     assert team
 

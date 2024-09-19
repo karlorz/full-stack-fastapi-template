@@ -136,7 +136,7 @@ ReadInvitationsTeamByAdmin: {
                     limit?: number
 skip?: number
 status?: InvitationStatus | null
-teamSlug: string
+teamId: string
                     
                 };
 CreateInvitation: {
@@ -168,7 +168,7 @@ order?: 'asc' | 'desc'
 orderBy?: 'created_at' | null
 skip?: number
 slug?: string | null
-teamSlug: string
+teamId: string
                     
                 };
 CreateApp: {
@@ -860,16 +860,16 @@ limit = 100,
 	 */
 	public static readInvitationsTeamByAdmin(data: InvitationsData['ReadInvitationsTeamByAdmin']): CancelablePromise<InvitationsPublic> {
 		const {
-teamSlug,
+teamId,
 skip = 0,
 limit = 100,
 status,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: '/api/v1/invitations/team/{team_slug}',
+			url: '/api/v1/invitations/team/{team_id}',
 			path: {
-				team_slug: teamSlug
+				team_id: teamId
 			},
 			query: {
 				skip, limit, status
@@ -999,7 +999,7 @@ export class AppsService {
 	 */
 	public static readApps(data: AppsData['ReadApps']): CancelablePromise<AppsPublic> {
 		const {
-teamSlug,
+teamId,
 skip = 0,
 limit = 100,
 slug,
@@ -1010,7 +1010,7 @@ order = 'asc',
 			method: 'GET',
 			url: '/api/v1/apps/',
 			query: {
-				team_slug: teamSlug, skip, limit, slug, order_by: orderBy, order
+				team_id: teamId, skip, limit, slug, order_by: orderBy, order
 			},
 			errors: {
 				422: `Validation Error`,

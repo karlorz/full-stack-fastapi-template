@@ -15,7 +15,7 @@ from app.api.utils.invitations import (
     verify_invitation_token,
 )
 from app.core.config import settings
-from app.crud import add_user_to_team, get_user_team_link_by_user_id_and_team_slug
+from app.crud import add_user_to_team, get_user_team_link
 from app.models import (
     Invitation,
     InvitationCreate,
@@ -83,11 +83,11 @@ def read_invitations_sent(
     return InvitationsPublic(data=invitations, count=count)
 
 
-@router.get("/team/{team_slug}", response_model=InvitationsPublic)
+@router.get("/team/{team_id}", response_model=InvitationsPublic)
 def read_invitations_team_by_admin(
     session: SessionDep,
     current_user: CurrentUser,
-    team_slug: str,
+    team_id: uuid.UUID,
     skip: int = 0,
     limit: int = 100,
     status: InvitationStatus | None = None,
@@ -95,8 +95,8 @@ def read_invitations_team_by_admin(
     """
     Retrieve a list of invitations sent by the current user.
     """
-    user_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=current_user.id, team_slug=team_slug
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=team_id
     )
     if not user_team_link:
         raise HTTPException(
@@ -109,9 +109,7 @@ def read_invitations_team_by_admin(
         )
 
     def _apply_filters(statement: SelectOfScalar[T]) -> SelectOfScalar[T]:
-        statement = statement.where(
-            Invitation.team_id == Team.id, Team.slug == team_slug
-        )
+        statement = statement.where(Invitation.team_id == Team.id, Team.id == team_id)
 
         if status:
             statement = statement.where(Invitation.status == status)
@@ -137,8 +135,8 @@ def create_invitation(
     """
     Create new invitation.
     """
-    user_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=current_user.id, team_slug=invitation_in.team_slug
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=invitation_in.team_id
     )
     if not user_team_link:
         raise HTTPException(
@@ -198,8 +196,8 @@ def create_invitation(
 
         return invitation
 
-    user_to_invite_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=user_to_invite.id, team_slug=invitation_in.team_slug
+    user_to_invite_team_link = get_user_team_link(
+        session=session, user_id=user_to_invite.id, team_id=invitation_in.team_id
     )
     if user_to_invite_team_link:
         raise HTTPException(
@@ -338,8 +336,8 @@ def delete_invitation(
         )
 
     assert current_user.id  # For type checking
-    user_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=current_user.id, team_slug=invitation.team.slug
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=invitation.team_id
     )
 
     if not user_team_link:

@@ -215,7 +215,7 @@ class InvitationBase(SQLModel):
 
 
 class InvitationCreate(InvitationBase):
-    team_slug: str
+    team_id: uuid.UUID
 
 
 class InvitationUpdateStatus(SQLModel):

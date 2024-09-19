@@ -28,6 +28,7 @@ import { z } from "zod"
 import { AppsService } from "../../../../client"
 import EmptyState from "../../../../components/Common/EmptyState"
 import QuickStart from "../../../../components/Common/QuickStart"
+import { fetchTeamBySlug } from "../../../../utils"
 
 const appsSearchSchema = z.object({
   page: z.number().catch(1).optional(),
@@ -38,6 +39,7 @@ const appsSearchSchema = z.object({
 export const Route = createFileRoute("/_layout/$team/apps/")({
   component: Apps,
   validateSearch: (search) => appsSearchSchema.parse(search),
+  loader: ({ params }) => fetchTeamBySlug(params.team),
 })
 
 const PER_PAGE = 5
@@ -46,12 +48,12 @@ function getAppsQueryOptions({
   page,
   orderBy,
   order,
-  teamSlug,
+  teamId,
 }: {
   page: number
   orderBy?: "created_at"
   order?: "asc" | "desc"
-  teamSlug: string
+  teamId: string
 }) {
   return {
     queryFn: () =>
@@ -60,27 +62,28 @@ function getAppsQueryOptions({
         limit: PER_PAGE,
         orderBy,
         order,
-        teamSlug,
+        teamId,
       }),
-    queryKey: ["apps", { page, orderBy, order, teamSlug }],
+    queryKey: ["apps", { page, orderBy, order, teamId }],
   }
 }
 
 function Apps() {
   const headers = ["name", "slug", "created at"]
   const queryClient = useQueryClient()
-  const { team: teamSlug } = Route.useParams()
   const { page = 1, orderBy, order } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
     navigate({ search: (prev: any) => ({ ...prev, page }) })
+
+  const team = Route.useLoaderData()
 
   const {
     data: apps,
     isPending,
     isPlaceholderData,
   } = useQuery({
-    ...getAppsQueryOptions({ page, orderBy, order, teamSlug }),
+    ...getAppsQueryOptions({ page, orderBy, order, teamId: team.id }),
     placeholderData: (prevData) => prevData,
   })
 
@@ -90,7 +93,12 @@ function Apps() {
   useEffect(() => {
     if (hasNextPage) {
       queryClient.prefetchQuery(
-        getAppsQueryOptions({ page: page + 1, orderBy, order, teamSlug }),
+        getAppsQueryOptions({
+          page: page + 1,
+          orderBy,
+          order,
+          teamId: team.id,
+        }),
       )
     }
   }, [page, queryClient, hasNextPage])

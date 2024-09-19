@@ -134,7 +134,7 @@ export type HealthCheckResponse = {
 export type InvitationCreate = {
 	role: 'member' | 'admin';
 	email: string;
-	team_slug: string;
+	team_id: string;
 };
 
 

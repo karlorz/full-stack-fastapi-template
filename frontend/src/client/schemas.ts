@@ -332,9 +332,10 @@ export const $InvitationCreate = {
 	format: 'email',
 	maxLength: 255,
 },
-		team_slug: {
+		team_id: {
 	type: 'string',
 	isRequired: true,
+	format: 'uuid',
 },
 	},
 } as const;

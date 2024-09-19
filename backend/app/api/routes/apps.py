@@ -6,10 +6,7 @@ from sqlmodel import col, func, select
 
 from app.api.deps import CurrentUser, SessionDep
 from app.api.utils.teams import generate_app_slug_name
-from app.crud import (
-    get_user_team_link_by_user_id_and_team,
-    get_user_team_link_by_user_id_and_team_slug,
-)
+from app.crud import get_user_team_link
 from app.models import (
     App,
     AppCreate,
@@ -25,7 +22,7 @@ router = APIRouter()
 def read_apps(
     session: SessionDep,
     current_user: CurrentUser,
-    team_slug: str,
+    team_id: uuid.UUID,
     skip: int = 0,
     limit: int = 100,
     slug: str | None = None,
@@ -35,8 +32,8 @@ def read_apps(
     """
     Retrieve a list of apps for the provided team.
     """
-    user_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=current_user.id, team_slug=team_slug
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=team_id
     )
     if not user_team_link:
         raise HTTPException(
@@ -79,7 +76,7 @@ def create_app(
     """
     Create a new app with the provided details.
     """
-    user_team_link = get_user_team_link_by_user_id_and_team(
+    user_team_link = get_user_team_link(
         session=session, user_id=current_user.id, team_id=app_in.team_id
     )
     if not user_team_link:
@@ -105,10 +102,8 @@ def read_app(session: SessionDep, current_user: CurrentUser, app_id: uuid.UUID) 
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
 
-    team_slug = app.team.slug
-
-    user_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=current_user.id, team_slug=team_slug
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=app.team_id
     )
     if not user_team_link:
         raise HTTPException(
@@ -130,10 +125,8 @@ def delete_app(
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
 
-    team_slug = app.team.slug
-
-    user_team_link = get_user_team_link_by_user_id_and_team_slug(
-        session=session, user_id=current_user.id, team_slug=team_slug
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=app.team_id
     )
     if not user_team_link:
         raise HTTPException(

@@ -41,7 +41,7 @@ def test_read_invitations_me(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=admin_user, team=team2, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=invited_user.email, role=Role.member
+        team_id=team1.id, email=invited_user.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -50,7 +50,7 @@ def test_read_invitations_me(client: TestClient, db: Session) -> None:
         invitation_status=InvitationStatus.pending,
     )
     invitation_to_create = InvitationCreate(
-        team_slug=team2.slug, email=invited_user.email, role=Role.member
+        team_id=team2.id, email=invited_user.email, role=Role.member
     )
     invitation2 = create_invitation(
         session=db,
@@ -118,7 +118,7 @@ def test_read_invitations_me_empty(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -172,7 +172,7 @@ def test_read_invitations_sent(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team2, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -181,7 +181,7 @@ def test_read_invitations_sent(client: TestClient, db: Session) -> None:
         invitation_status=InvitationStatus.pending,
     )
     invitation_to_create = InvitationCreate(
-        team_slug=team2.slug, email=user2.email, role=Role.member
+        team_id=team2.id, email=user2.email, role=Role.member
     )
     invitation2 = create_invitation(
         session=db,
@@ -251,7 +251,7 @@ def test_read_invitations_sent_empty(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -308,7 +308,7 @@ def test_read_invitations_team_success(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team.slug, email=user2.email, role=Role.member
+        team_id=team.id, email=user2.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -318,7 +318,7 @@ def test_read_invitations_team_success(client: TestClient, db: Session) -> None:
     )
 
     invitation_to_create = InvitationCreate(
-        team_slug=team.slug, email=user3.email, role=Role.member
+        team_id=team.id, email=user3.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -332,7 +332,7 @@ def test_read_invitations_team_success(client: TestClient, db: Session) -> None:
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/invitations/team/{team.slug}",
+        f"{settings.API_V1_STR}/invitations/team/{team.id}",
         headers=user_auth_headers,
     )
 
@@ -375,7 +375,7 @@ def test_read_invitations_team_filter(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team.slug, email=user2.email, role=Role.member
+        team_id=team.id, email=user2.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -385,7 +385,7 @@ def test_read_invitations_team_filter(client: TestClient, db: Session) -> None:
     )
 
     invitation_to_create = InvitationCreate(
-        team_slug=team.slug, email=user3.email, role=Role.member
+        team_id=team.id, email=user3.email, role=Role.member
     )
     pending_invitation = create_invitation(
         session=db,
@@ -399,7 +399,7 @@ def test_read_invitations_team_filter(client: TestClient, db: Session) -> None:
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/invitations/team/{team.slug}",
+        f"{settings.API_V1_STR}/invitations/team/{team.id}",
         params={"status": "pending"},
         headers=user_auth_headers,
     )
@@ -443,7 +443,7 @@ def test_read_invitations_team_empty(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team2.slug, email=user3.email, role=Role.member
+        team_id=team2.id, email=user3.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -457,7 +457,7 @@ def test_read_invitations_team_empty(client: TestClient, db: Session) -> None:
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/invitations/team/{team.slug}",
+        f"{settings.API_V1_STR}/invitations/team/{team.id}",
         headers=user_auth_headers,
     )
 
@@ -492,7 +492,7 @@ def test_read_invitations_team_not_enough_permissions(
     add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team.slug, email=user.email, role=Role.member
+        team_id=team.id, email=user.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -506,7 +506,7 @@ def test_read_invitations_team_not_enough_permissions(
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/invitations/team/{team.slug}",
+        f"{settings.API_V1_STR}/invitations/team/{team.id}",
         headers=user_auth_headers,
     )
 
@@ -532,7 +532,7 @@ def test_read_invitations_team_not_found_current_user(
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/invitations/team/{team.slug}",
+        f"{settings.API_V1_STR}/invitations/team/{team.id}",
         headers=user_auth_headers,
     )
 
@@ -570,7 +570,7 @@ def test_create_invitation_success(client: TestClient, db: Session) -> None:
         )
 
         payload = {
-            "team_slug": team1.slug,
+            "team_id": str(team1.id),
             "email": user2.email,
             "role": "member",
         }
@@ -620,7 +620,7 @@ def test_create_invitation_team_not_found_current_user(
         )
 
         payload = {
-            "team_slug": "non-existing-team",
+            "team_id": "00000000-0000-0000-0000-000000000000",
             "email": user2.email,
             "role": "member",
         }
@@ -666,7 +666,7 @@ def test_create_invitation_not_enough_permissions(
         )
 
         payload = {
-            "team_slug": team1.slug,
+            "team_id": str(team1.id),
             "email": user2.email,
             "role": "member",
         }
@@ -710,7 +710,7 @@ def test_create_invitation_already_exists(client: TestClient, db: Session) -> No
         )
 
         invitation_to_create = InvitationCreate(
-            team_slug=team1.slug,
+            team_id=team1.id,
             email=user2.email,
             role=Role.member,
         )
@@ -722,7 +722,7 @@ def test_create_invitation_already_exists(client: TestClient, db: Session) -> No
         )
 
         payload = {
-            "team_slug": team1.slug,
+            "team_id": str(team1.id),
             "email": user2.email,
             "role": "member",
         }
@@ -769,7 +769,7 @@ def test_create_invitation_user_already_in_team(
         )
 
         invitation_to_create = InvitationCreate(
-            team_slug=team1.slug,
+            team_id=team1.id,
             email=user2.email,
             role=Role.member,
         )
@@ -781,7 +781,7 @@ def test_create_invitation_user_already_in_team(
         )
 
         payload = {
-            "team_slug": team1.slug,
+            "team_id": str(team1.id),
             "email": user2.email,
             "role": "member",
         }
@@ -820,7 +820,7 @@ def test_create_invitation_user_to_invite_not_found(
         )
 
         payload = {
-            "team_slug": team1.slug,
+            "team_id": str(team1.id),
             "email": "not-found@fastapi.com",
             "role": "member",
         }
@@ -870,7 +870,7 @@ def test_create_invitation_user_already_in_team_without_invitation(
         )
 
         payload = {
-            "team_slug": team1.slug,
+            "team_id": str(team1.id),
             "email": user2.email,
             "role": "member",
         }
@@ -910,7 +910,7 @@ def test_accept_invitation_success(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -974,7 +974,7 @@ def test_accept_invitation_invalid_token(client: TestClient, db: Session) -> Non
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     create_invitation(
         session=db,
@@ -1022,7 +1022,7 @@ def test_accept_invitation_not_found(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -1073,7 +1073,7 @@ def test_accept_invitation_success_set_user_fk(client: TestClient, db: Session) 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -1128,7 +1128,7 @@ def test_accept_invitation_was_already_used(client: TestClient, db: Session) -> 
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -1182,7 +1182,7 @@ def test_accept_invitation_user_already_in_team(
     add_user_to_team(session=db, user=user2, team=team1, role=Role.member)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -1232,7 +1232,7 @@ def test_accept_invitation_expired(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -1275,7 +1275,7 @@ def test_invitation_token_verify_success(client: TestClient, db: Session) -> Non
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email="user@testing.com", role=Role.member
+        team_id=team1.id, email="user@testing.com", role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -1349,7 +1349,7 @@ def test_invitation_token_verify_expired(client: TestClient, db: Session) -> Non
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email="user@testing.com", role=Role.member
+        team_id=team1.id, email="user@testing.com", role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -1395,7 +1395,7 @@ def test_delete_invitation_success(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -1491,7 +1491,7 @@ def test_delete_invitation_already_used_cannot_be_deleted(
     add_user_to_team(session=db, user=user2, team=team1, role=Role.member)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -1542,7 +1542,7 @@ def test_delete_invitation_team_not_found_current_user(
     add_user_to_team(session=db, user=user2, team=team2, role=Role.admin)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user2.email, role=Role.member
+        team_id=team1.id, email=user2.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,
@@ -1599,7 +1599,7 @@ def test_delete_invitation_not_enough_permission(
     add_user_to_team(session=db, user=user2, team=team1, role=Role.member)
 
     invitation_to_create = InvitationCreate(
-        team_slug=team1.slug, email=user3.email, role=Role.member
+        team_id=team1.id, email=user3.email, role=Role.member
     )
     invitation1 = create_invitation(
         session=db,

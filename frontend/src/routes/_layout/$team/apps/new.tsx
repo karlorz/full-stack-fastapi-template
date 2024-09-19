@@ -21,7 +21,7 @@ import { fetchTeamBySlug, handleError } from "../../../../utils"
 
 export const Route = createFileRoute("/_layout/$team/apps/new")({
   component: NewApp,
-  loader: async ({ params }) => fetchTeamBySlug(params.team),
+  loader: ({ params }) => fetchTeamBySlug(params.team),
 })
 
 function NewApp() {
