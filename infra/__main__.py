@@ -310,6 +310,61 @@ redis_backend_deployment_customer_apps = aws.elasticache.Cluster(
     apply_immediately=True,  # Add this line to apply changes immediately
 )
 
+# Github Actions Runner
+# TODO: Refactor to split this logic in another module after moving EKS vpc to another module
+
+# Create a new key pair to access the instance by ssh
+github_actions_runner_key_pair = aws.ec2.KeyPair("github-actions-runner-key-pair",
+    key_name="github-actions-runner-key",
+    public_key=config.require("github_actions_runner_public_key")
+)
+
+# get the latest ubuntu ami
+ubuntu_latest_ami = aws.ec2.get_ami(
+    most_recent=True,
+    filters=[aws.ec2.GetAmiFilterArgs(name="name", values=["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"])],
+)
+
+github_actions_runner_security_group = aws.ec2.SecurityGroup(
+    "github-actions-runner-security-group",
+    vpc_id=eks_vpc.vpc_id,
+    description="Security group for Github Actions Runner",
+    ingress=[
+        aws.ec2.SecurityGroupIngressArgs(
+            protocol="tcp",
+            from_port=22,
+            to_port=22,
+            cidr_blocks=["0.0.0.0/0"],
+            description="Allow inbound from anywhere",
+        )
+    ],
+    egress=[
+        aws.ec2.SecurityGroupEgressArgs(
+            protocol="-1",
+            from_port=0,
+            to_port=0,
+            cidr_blocks=["0.0.0.0/0"],
+            description="Allow all outbound traffic",
+        )
+    ],
+    tags={
+        "Name": "github-actions-runner-security-group",
+    },
+)
+
+github_actions_runner_instance = aws.ec2.Instance(
+    "github-actions-runner",
+    ami=ubuntu_latest_ami.id,
+    instance_type=aws.ec2.InstanceType.T3_MEDIUM,
+    vpc_security_group_ids=[github_actions_runner_security_group.id],
+    subnet_id=eks_vpc.public_subnet_ids[0],
+    key_name=github_actions_runner_key_pair.key_name,
+    tags={
+        "Name": "github-actions-runner",
+    },
+)
+
+
 
 # TODO: Fix this
 
@@ -347,4 +402,4 @@ pulumi.export("sqs_deployment_customer_apps_arn", sqs.sqs_deployment_customer_ap
 pulumi.export("s3_deployment_customer_apps", s3.s3_deployment_customer_apps.arn)
 pulumi.export("redis_deployment_customer_apps", redis_deployment_customer_apps.cache_nodes[0].address)
 pulumi.export("redis_backend_deployment_customer_apps", redis_backend_deployment_customer_apps.cache_nodes[0].address)
-
+pulumi.export("github_actions_runner_instance", github_actions_runner_instance.public_dns)
