@@ -10,7 +10,7 @@ import {
   Image,
   Text,
   useColorModeValue,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react"
 import { FaBars, FaSignOutAlt } from "react-icons/fa"
 

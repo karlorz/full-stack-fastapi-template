@@ -1,7 +1,7 @@
 import {
-  TeamsService,
   type ApiError,
   type TeamWithUserPublic,
+  TeamsService,
   type UserPublic,
 } from "./client"
 

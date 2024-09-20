@@ -21,7 +21,7 @@ import { ErrorBoundary } from "react-error-boundary"
 import { FaCheckCircle } from "react-icons/fa"
 import { FaCircleXmark } from "react-icons/fa6"
 
-import { TeamWithUserPublic } from "../../../../client"
+import type { TeamWithUserPublic } from "../../../../client"
 import ActionsMenu from "../../../../components/Common/ActionsMenu"
 import { useCurrentUser } from "../../../../hooks/useAuth"
 import { fetchTeamBySlug, getCurrentUserRole } from "../../../../utils"

@@ -36,7 +36,12 @@ interface DeleteInput {
   confirmation: string
 }
 
-const DeleteConfirmation = ({ isOpen, onClose, appId, appSlug }: DeleteProps) => {
+const DeleteConfirmation = ({
+  isOpen,
+  onClose,
+  appId,
+  appSlug,
+}: DeleteProps) => {
   const cancelRef = useRef<HTMLButtonElement | null>(null)
   const queryClient = useQueryClient()
   const {

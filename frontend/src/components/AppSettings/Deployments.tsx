@@ -1,6 +1,6 @@
 import { Flex, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
-import Lottie from "lottie-react"
+import Lottie, { type LottieOptions } from "lottie-react"
 
 import building from "../../assets/building.json"
 import deploying from "../../assets/deploying.json"
@@ -18,9 +18,9 @@ const Deployments = ({ appId }: { appId: string }) => {
   })
 
   const getStatusAnimation = (status: DeploymentStatus) => {
-    let animationData
-    let statusText
-    let loop
+    let animationData: LottieOptions["animationData"]
+    let statusText: string
+    let loop: boolean
     switch (status) {
       case "waiting_upload":
         animationData = waiting
