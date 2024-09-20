@@ -239,6 +239,7 @@
 
 ### Internal
 
+* 👷 Add CI/CD for backend and builder. PR [#314](https://github.com/fastapilabs/cloud/pull/314) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Add EC2 instance as a self hosted github runner. PR [#295](https://github.com/fastapilabs/cloud/pull/295) by [@estebanx64](https://github.com/estebanx64).
 * ♻️  Use id instead of slug *everywhere*. PR [#294](https://github.com/fastapilabs/cloud/pull/294) by [@patrick91](https://github.com/patrick91).
 * ♻️ Pass team id instead of slug when creating apps. PR [#292](https://github.com/fastapilabs/cloud/pull/292) by [@patrick91](https://github.com/patrick91).
