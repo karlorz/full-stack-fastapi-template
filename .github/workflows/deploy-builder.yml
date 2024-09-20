@@ -1,0 +1,120 @@
+name: Deploy Builder
+
+on:
+  push:
+    branches:
+      # - master
+      - staging
+    paths:
+      - 'backend/app/api/deps.py'
+      - 'backend/app/core/config.py'
+      - 'backend/app/core/db.py'
+      - 'backend/app/models.py'
+      - 'backend/app/docker_builder.py'
+      - 'backend/Dockerfile.builder'
+      - 'backend/Dockerfile.build'
+      - 'backend/builder_entrypoint.sh'
+      - 'backend/pyproject.toml'
+      - 'backend/poetry.lock'
+      - 'infra/k8s/knative/deployment-workflow/**'
+      - '.github/workflows/deploy-builder.yml'
+
+env:
+  ECR_REGISTRY: 992382821657.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REPOSITORY: docker-builder
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.ref == 'refs/heads/master' && 'Production' || 'Staging' }}
+    runs-on: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}
+    environment: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      with:
+        mask-password: True
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}-${{ github.sha }}
+      run: |
+        docker build -f backend/Dockerfile.builder -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG backend/
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    - name: Update builder deployment
+      env:
+        IMAGE_TAG: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}-${{ github.sha }}
+      run: |
+        IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG)
+        sed -i "s|image: .*|image: $IMAGE_DIGEST|" infra/k8s/knative/deployment-workflow/dind-deployment.yaml
+
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v1
+
+    - name: Update ConfigMap and Secret
+      run: |
+        cat <<EOF > infra/k8s/knative/deployment-workflow/docker-builder-configmap.yaml
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: docker-builder-config
+        data:
+          DOMAIN: "${{ vars.DOMAIN }}"
+          FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
+          API_HOST: "${{ vars.API_HOST }}"
+          ENVIRONMENT: "${{ github.event_name == 'push' && 'production' || 'staging' }}"
+          PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
+          STACK_NAME: "${{ vars.STACK_NAME }}"
+          BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"
+          FIRST_SUPERUSER: "${{ vars.FIRST_SUPERUSER }}"
+          FIRST_SUPERUSER_FULL_NAME: "${{ vars.FIRST_SUPERUSER_FULL_NAME }}"
+          USERS_OPEN_REGISTRATION: "${{ vars.USERS_OPEN_REGISTRATION }}"
+          SMTP_HOST: "${{ vars.SMTP_HOST }}"
+          SMTP_USER: "${{ vars.SMTP_USER }}"
+          EMAILS_FROM_EMAIL: "${{ vars.EMAILS_FROM_EMAIL }}"
+          SMTP_TLS: "${{ vars.SMTP_TLS }}"
+          SMTP_SSL: "${{ vars.SMTP_SSL }}"
+          SMTP_PORT: "${{ vars.SMTP_PORT }}"
+          POSTGRES_SERVER: "${{ vars.POSTGRES_SERVER }}"
+          POSTGRES_PORT: "${{ vars.POSTGRES_PORT }}"
+          POSTGRES_DB: "${{ vars.POSTGRES_DB }}"
+          POSTGRES_USER: "${{ vars.POSTGRES_USER }}"
+          POSTGRES_SSL_ENABLED: "${{ vars.POSTGRES_SSL_ENABLED }}"
+          REDIS_SERVER: "${{ vars.REDIS_SERVER }}"
+          SENTRY_DSN: "${{ vars.SENTRY_DSN }}"
+          DOCKER_IMAGE_BACKEND: "${{ vars.DOCKER_IMAGE_BACKEND }}"
+          DOCKER_IMAGE_FRONTEND: "${{ vars.DOCKER_IMAGE_FRONTEND }}"
+          AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
+          ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
+          AWS_REGION: "${{ vars.AWS_REGION }}"
+          DOCKER_HOST: "${{ vars.DOCKER_HOST }}"
+          DOCKER_TLS_CERTDIR: ${{ vars.DOCKER_TLS_CERTDIR }}
+        ---
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: docker-builder-secrets
+        type: Opaque
+        stringData:
+          SECRET_KEY: "${{ secrets.SECRET_KEY }}"
+          FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
+          SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
+          POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
+        EOF
+
+    - name: Deploy to Kubernetes Knative
+      run: |
+        kubectl apply -f infra/k8s/knative/deployment-workflow/docker-builder-configmap.yaml
+        kubectl apply -f infra/k8s/knative/deployment-workflow/dind-deployment.yaml
