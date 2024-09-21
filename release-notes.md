@@ -239,6 +239,7 @@
 
 ### Internal
 
+* 👷 Add AWS ECR Registry fastapicloud-backend to Pulumi. PR [#317](https://github.com/fastapilabs/cloud/pull/317) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add CI/CD for backend and builder. PR [#314](https://github.com/fastapilabs/cloud/pull/314) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Add EC2 instance as a self hosted github runner. PR [#295](https://github.com/fastapilabs/cloud/pull/295) by [@estebanx64](https://github.com/estebanx64).
 * ♻️  Use id instead of slug *everywhere*. PR [#294](https://github.com/fastapilabs/cloud/pull/294) by [@patrick91](https://github.com/patrick91).
