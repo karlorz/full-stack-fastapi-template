@@ -149,37 +149,43 @@ aws.iam.PolicyAttachment(
     roles=[aws_lb_controller_role.name],
 )
 
-k8s_iam_deployment_workflow_role = aws.iam.Role("k8sDeploymentServiceAccountRole",
-    assume_role_policy=pulumi.Output.json_dumps({
-        "Version": "2012-10-17",
-        "Statement": [{
-            "Effect": "Allow",
-            "Principal": {
-                "Federated": pulumi.Output.format(
-                    "arn:aws:iam::{account_id}:oidc-provider/oidc.eks.{region}.amazonaws.com/id/{oidc_id}",
-                    account_id=account_id,
-                    region=region,
-                    oidc_id=oidc_id
-                )
-            },
-            "Action": "sts:AssumeRoleWithWebIdentity",
-            "Condition": {
-                "StringEquals": {
-                    pulumi.Output.format(
-                        "oidc.eks.{region}.amazonaws.com/id/{oidc_id}:aud",
-                        region=region,
-                        oidc_id=oidc_id
-                    ): "sts.amazonaws.com"
+k8s_iam_deployment_workflow_role = aws.iam.Role(
+    "k8sDeploymentServiceAccountRole",
+    assume_role_policy=pulumi.Output.json_dumps(
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Federated": pulumi.Output.format(
+                            "arn:aws:iam::{account_id}:oidc-provider/oidc.eks.{region}.amazonaws.com/id/{oidc_id}",
+                            account_id=account_id,
+                            region=region,
+                            oidc_id=oidc_id,
+                        )
+                    },
+                    "Action": "sts:AssumeRoleWithWebIdentity",
+                    "Condition": {
+                        "StringEquals": {
+                            pulumi.Output.format(
+                                "oidc.eks.{region}.amazonaws.com/id/{oidc_id}:aud",
+                                region=region,
+                                oidc_id=oidc_id,
+                            ): "sts.amazonaws.com"
+                        }
+                    },
                 }
-            }
-        }]
-    })
+            ],
+        }
+    ),
 )
 
 
-aws.iam.RolePolicyAttachment("eksDeploymentRolePolicyAttachment",
+aws.iam.RolePolicyAttachment(
+    "eksDeploymentRolePolicyAttachment",
     role=k8s_iam_deployment_workflow_role.name,
-    policy_arn=iam.knative_deploy_workflow_policy.arn
+    policy_arn=iam.knative_deploy_workflow_policy.arn,
 )
 
 ### Kubernetes Resources ###
@@ -200,15 +206,16 @@ aws_load_balancer_service_account = k8s.core.v1.ServiceAccount(
     opts=pulumi.ResourceOptions(provider=provider),
 )
 
-service_account = k8s.core.v1.ServiceAccount("defaultServiceAccountAnnotation",
+service_account = k8s.core.v1.ServiceAccount(
+    "defaultServiceAccountAnnotation",
     metadata=k8s.meta.v1.ObjectMetaArgs(
         name=k8s_service_acount_name,
         namespace=eks_namespace,
         annotations={
             "eks.amazonaws.com/role-arn": k8s_iam_deployment_workflow_role.arn
-        }
+        },
     ),
-    opts=pulumi.ResourceOptions(provider=provider)
+    opts=pulumi.ResourceOptions(provider=provider),
 )
 
 cluster_name = eks_cluster.core.apply(lambda x: x.cluster.name)
@@ -314,15 +321,21 @@ redis_backend_deployment_customer_apps = aws.elasticache.Cluster(
 # TODO: Refactor to split this logic in another module after moving EKS vpc to another module
 
 # Create a new key pair to access the instance by ssh
-github_actions_runner_key_pair = aws.ec2.KeyPair("github-actions-runner-key-pair",
+github_actions_runner_key_pair = aws.ec2.KeyPair(
+    "github-actions-runner-key-pair",
     key_name="github-actions-runner-key",
-    public_key=config.require("github_actions_runner_public_key")
+    public_key=config.require("github_actions_runner_public_key"),
 )
 
 # get the latest ubuntu ami
 ubuntu_latest_ami = aws.ec2.get_ami(
     most_recent=True,
-    filters=[aws.ec2.GetAmiFilterArgs(name="name", values=["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"])],
+    filters=[
+        aws.ec2.GetAmiFilterArgs(
+            name="name",
+            values=["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"],
+        )
+    ],
 )
 
 github_actions_runner_security_group = aws.ec2.SecurityGroup(
@@ -364,6 +377,14 @@ github_actions_runner_instance = aws.ec2.Instance(
     },
 )
 
+# ECR Registry
+foo = aws.ecr.Repository(
+    "repository-backend",
+    name="fastapicloud-backend",
+    image_scanning_configuration={
+        "scan_on_push": True,
+    },
+)
 
 
 # TODO: Fix this
@@ -400,6 +421,14 @@ pulumi.export("k8s_role_arn", k8s_role_arn)
 pulumi.export("aws_lb_controller_policy", aws_lb_controller_policy.arn)
 pulumi.export("sqs_deployment_customer_apps_arn", sqs.sqs_deployment_customer_apps)
 pulumi.export("s3_deployment_customer_apps", s3.s3_deployment_customer_apps.arn)
-pulumi.export("redis_deployment_customer_apps", redis_deployment_customer_apps.cache_nodes[0].address)
-pulumi.export("redis_backend_deployment_customer_apps", redis_backend_deployment_customer_apps.cache_nodes[0].address)
-pulumi.export("github_actions_runner_instance", github_actions_runner_instance.public_dns)
+pulumi.export(
+    "redis_deployment_customer_apps",
+    redis_deployment_customer_apps.cache_nodes[0].address,
+)
+pulumi.export(
+    "redis_backend_deployment_customer_apps",
+    redis_backend_deployment_customer_apps.cache_nodes[0].address,
+)
+pulumi.export(
+    "github_actions_runner_instance", github_actions_runner_instance.public_dns
+)
