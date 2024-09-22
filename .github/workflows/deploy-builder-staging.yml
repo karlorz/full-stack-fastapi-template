@@ -3,66 +3,60 @@ name: Deploy Builder
 on:
   push:
     branches:
-      # - master
-      - staging
+      - master
     paths:
-      - 'backend/app/api/deps.py'
-      - 'backend/app/core/config.py'
-      - 'backend/app/core/db.py'
-      - 'backend/app/models.py'
-      - 'backend/app/docker_builder.py'
+      - 'backend/app/*'
       - 'backend/Dockerfile.builder'
       - 'backend/Dockerfile.build'
       - 'backend/builder_entrypoint.sh'
       - 'backend/pyproject.toml'
       - 'backend/poetry.lock'
       - 'infra/k8s/knative/deployment-workflow/**'
-      - '.github/workflows/deploy-builder.yml'
+      - '.github/workflows/deploy-builder-staging.yml'
 
 env:
-  ECR_REGISTRY: 992382821657.dkr.ecr.us-east-1.amazonaws.com
-  ECR_REPOSITORY: docker-builder
+  ECR_REPOSITORY: fastapicloud-builder
+  IMAGE_TAG: staging-${{ github.sha }}
 
 jobs:
   deploy:
-    name: Deploy to ${{ github.ref == 'refs/heads/master' && 'Production' || 'Staging' }}
-    runs-on: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}
-    environment: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}
+    name: Deploy to Staging
+    runs-on: staging
+    environment: staging
 
     steps:
-    - uses: actions/checkout@v2
-
+    - uses: actions/checkout@v4
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v4
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-
+        aws-region: ${{ vars.AWS_REGION }}
     - name: Login to Amazon ECR
       with:
         mask-password: True
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Build, tag, and push image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}-${{ github.sha }}
-      run: |
-        docker build -f backend/Dockerfile.builder -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG backend/
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
+      uses: aws-actions/amazon-ecr-login@v2
+    - name: Build and push Docker images to Amazon ECR
+      uses: docker/build-push-action@v6
+      id: docker-build
+      with:
+        push: true
+        tags: |
+          ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+        context: ./backend/
     - name: Update builder deployment
       env:
-        IMAGE_TAG: ${{ github.ref == 'refs/heads/master' && 'production' || 'staging' }}-${{ github.sha }}
+        IMAGE_DIGEST: ${{ steps.docker-build.outputs.digest }}
+      # TODO: refactor this to not modify a file on the fly that is not stored in git
+      # use our own internal Python tools to deploy an app for customers
       run: |
-        IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG)
         sed -i "s|image: .*|image: $IMAGE_DIGEST|" infra/k8s/knative/deployment-workflow/dind-deployment.yaml
 
-    - name: Install kubectl
-      uses: azure/setup-kubectl@v1
-
+    # TODO: refactor this, we don't need an external configmap, it's not used by independent services
+    # or similar, we can put these configs and secrets as env vars in the Knative service
     - name: Update ConfigMap and Secret
       run: |
         cat <<EOF > infra/k8s/knative/deployment-workflow/docker-builder-configmap.yaml
