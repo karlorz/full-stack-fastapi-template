@@ -5,10 +5,10 @@
 Start the local stack with:
 
 ```bash
-docker compose up -d
+docker compose watch
 ```
 
-That starts everything, including the backend, frontend, database, mailcatcher, Redis, etc.
+That starts everything, including the backend, frontend, database, mailcatcher, Redis, etc. And it will watch for changes in the backend to synchronize the files in the Docker container.
 
 If you need to make changes, edit `compose.yml`.
 

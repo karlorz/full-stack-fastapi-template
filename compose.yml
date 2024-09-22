@@ -55,8 +55,6 @@ services:
       - POSTGRES_SERVER=db
       - REDIS_SERVER=redis
       - SMTP_HOST=mailcatcher
-    volumes:
-      - ./backend/:/app
 
   backend:
     build:
@@ -99,8 +97,19 @@ services:
       - POSTGRES_SERVER=db
       - REDIS_SERVER=redis
       - SMTP_HOST=mailcatcher
+    develop:
+      watch:
+        - path: ./backend
+          action: sync
+          target: /app
+          ignore:
+            - ./backend/.venv
+            - .venv
+        - path: ./backend/pyproject.toml
+          action: rebuild
+    # TODO: remove once coverage is done locally
     volumes:
-      - ./backend/:/app
+      - ./backend/htmlcov:/app/htmlcov
 
   frontend:
     build:
