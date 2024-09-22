@@ -117,6 +117,7 @@
 
 ### Refactors
 
+* ♻️ Include `FRONTEND_HOST` in CORS by default. PR [#309](https://github.com/fastapilabs/cloud/pull/309) by [@tiangolo](https://github.com/tiangolo).
 * 🎨 Lint. PR [#315](https://github.com/fastapilabs/cloud/pull/315) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor apps URLs. PR [#289](https://github.com/fastapilabs/cloud/pull/289) by [@patrick91](https://github.com/patrick91).
 * ♻️ Update logo, animated icons, and responsiveness tweaks. PR [#291](https://github.com/fastapilabs/cloud/pull/291) by [@alejsdev](https://github.com/alejsdev).
