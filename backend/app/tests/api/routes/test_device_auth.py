@@ -46,8 +46,8 @@ def test_get_device_code(client: TestClient, redis: "Redis[Any]") -> None:
     assert device_authorization_data.access_token is None
     assert device_authorization_data.status == "pending"
     assert device_authorization_data.created_at == get_datetime_utc()
-    # the test client doesn't send a host, so the request_ip is None
-    assert device_authorization_data.request_ip is None
+    # the test client sends a "testclient" host, so that's the request_ip stored
+    assert device_authorization_data.request_ip == "testclient"
 
 
 @time_machine.travel("2021-01-01 00:00:00", tick=False)
