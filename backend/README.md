@@ -142,7 +142,7 @@ If your stack is already up and you just want to run the tests, you can:
 * Run the DB migrations:
 
 ```bash
-docker compose run backend bash /app/scripts/setup-db.sh
+docker compose run backend bash scripts/prestart.sh
 ```
 
 Then run the tests:

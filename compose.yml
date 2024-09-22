@@ -1,6 +1,12 @@
 services:
   db:
     image: postgres:12
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
     ports:
       - "5432:5432"
     volumes:
@@ -32,29 +38,17 @@ services:
       - "1080:1080"
       - "1025:1025"
 
-  backend:
+  prestart:
     build:
       context: ./backend
       args:
         INSTALL_DEV: ${INSTALL_DEV-true}
     # command: sleep infinity  # Infinite loop to keep container alive doing nothing
-    ports:
-      - "8000:80"
     depends_on:
-      - db
-      - redis
-      - mailcatcher
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-f",
-          "http://localhost/api/v1/utils/health-check/",
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      db:
+        condition: service_healthy
+        restart: true
+    command: bash scripts/prestart.sh
     env_file:
       - .env
     environment:
@@ -63,8 +57,50 @@ services:
       - SMTP_HOST=mailcatcher
     volumes:
       - ./backend/:/app
+
+  backend:
+    build:
+      context: ./backend
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-true}
     # command: sleep infinity  # Infinite loop to keep container alive doing nothing
-    command: /start-reload.sh
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+      prestart:
+        condition: service_completed_successfully
+      redis:
+        condition: service_started
+      mailcatcher:
+        condition: service_started
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://localhost:8000/api/v1/utils/health-check/",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    # command: sleep infinity  # Infinite loop to keep container alive doing nothing
+    command:
+      - fastapi
+      - run
+      - --reload
+      - "app/main.py"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_SERVER=db
+      - REDIS_SERVER=redis
+      - SMTP_HOST=mailcatcher
+    volumes:
+      - ./backend/:/app
 
   frontend:
     build:
