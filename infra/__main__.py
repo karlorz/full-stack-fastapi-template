@@ -378,9 +378,17 @@ github_actions_runner_instance = aws.ec2.Instance(
 )
 
 # ECR Registry
-foo = aws.ecr.Repository(
+repository_backend = aws.ecr.Repository(
     "repository-backend",
     name="fastapicloud-backend",
+    image_scanning_configuration={
+        "scan_on_push": True,
+    },
+)
+
+repository_docker_builder = aws.ecr.Repository(
+    "repository-builder",
+    name="fastapicloud-builder",
     image_scanning_configuration={
         "scan_on_push": True,
     },
