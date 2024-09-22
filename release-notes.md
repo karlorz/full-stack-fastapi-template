@@ -239,6 +239,7 @@
 
 ### Internal
 
+* ♻️ Refactor CI to deploy to staging on `master`, tweak workflows and simplify code. PR [#316](https://github.com/fastapilabs/cloud/pull/316) by [@tiangolo](https://github.com/tiangolo).
 * 🧱 Add Pulumi for repository-builder. PR [#318](https://github.com/fastapilabs/cloud/pull/318) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add AWS ECR Registry fastapicloud-backend to Pulumi. PR [#317](https://github.com/fastapilabs/cloud/pull/317) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add CI/CD for backend and builder. PR [#314](https://github.com/fastapilabs/cloud/pull/314) by [@estebanx64](https://github.com/estebanx64).
