@@ -23,7 +23,6 @@ jobs:
     name: Deploy to Staging
     runs-on: staging
     environment: staging
-
     steps:
     - uses: actions/checkout@v4
     - name: Install kubectl
@@ -54,7 +53,6 @@ jobs:
       # use our own internal Python tools to deploy an app for customers
       run: |
         sed -i "s|image: .*|image: $IMAGE_DIGEST|" infra/k8s/knative/deployment-workflow/dind-deployment.yaml
-
     # TODO: refactor this, we don't need an external configmap, it's not used by independent services
     # or similar, we can put these configs and secrets as env vars in the Knative service
     - name: Update ConfigMap and Secret
@@ -107,7 +105,6 @@ jobs:
           SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
           POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
         EOF
-
     - name: Deploy to Kubernetes Knative
       run: |
         kubectl apply -f infra/k8s/knative/deployment-workflow/docker-builder-configmap.yaml
