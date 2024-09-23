@@ -1,4 +1,4 @@
-name: Test
+name: Test Backend
 
 on:
   push:
@@ -16,54 +16,46 @@ on:
         default: "false"
 
 jobs:
-  lint:
+  test-backend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-      - run: docker compose build backend
-      - run: docker compose down -v --remove-orphans
-      - run: docker compose run -T backend bash /app/scripts/lint.sh
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
         with:
-          python-version: "3.10"
+          version: "0.4.15"
       # Allow debugging with tmate
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
         with:
           limit-access-to-actor: true
-      - run: docker compose build backend
       - run: docker compose down -v --remove-orphans
-      - run: docker compose up -d db
+      - run: docker compose up -d db redis mailcatcher
+      - name: Migrate DB
+        run: uv run bash scripts/prestart.sh
+        working-directory: backend
       - name: Run tests
-        run: docker compose run -T backend bash scripts/tests-start.sh "Coverage for ${{ github.sha }}"
+        run: uv run bash scripts/tests-start.sh "Coverage for ${{ github.sha }}"
+        working-directory: backend
       - run: docker compose down -v --remove-orphans
       - name: Store coverage files
         uses: actions/upload-artifact@v4
         with:
           name: coverage-html
           path: backend/htmlcov
+          include-hidden-files: true
 
   # https://github.com/marketplace/actions/alls-green#why
   alls-green: # This job does nothing and is only used for the branch protection
     if: always()
     needs:
-      - test
-      - lint
+      - test-backend
     runs-on: ubuntu-latest
     steps:
       - name: Decide whether the needed jobs succeeded or failed
