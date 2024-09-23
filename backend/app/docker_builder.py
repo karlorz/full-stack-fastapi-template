@@ -49,6 +49,48 @@ sentry_sdk.init(
 app = FastAPI()
 
 
+def create_or_patch_custom_object(
+    group: str,
+    version: str,
+    namespace: str,
+    plural: str,
+    name: str,
+    body: dict[str, Any],
+) -> None:
+    api_instance = k8s.CustomObjectsApi()
+
+    try:
+        # Try to get the custom object
+        api_instance.get_namespaced_custom_object(  # type: ignore
+            group=group, version=version, namespace=namespace, plural=plural, name=name
+        )
+
+        # Object exists, so patch it
+        api_response = api_instance.patch_namespaced_custom_object(  # type: ignore
+            group=group,
+            version=version,
+            namespace=namespace,
+            plural=plural,
+            name=name,
+            body=body,
+        )
+        print(f"Custom object patched. Status='{api_response}'")
+
+    except k8s.rest.ApiException as e:
+        if e.status == 404:  # Not Found
+            # Object doesn't exist, so create it
+            api_response = api_instance.create_namespaced_custom_object(  # type: ignore
+                group=group,
+                version=version,
+                namespace=namespace,
+                plural=plural,
+                body=body,
+            )
+            print(f"Custom object created. Status='{api_response}'")
+        else:
+            raise e
+
+
 def deploy_to_kubernetes(
     service_name: str, image_url: str, image_sha256_hash: str
 ) -> None:
@@ -71,19 +113,17 @@ def deploy_to_kubernetes(
         },
     }
 
-    # Create the Knative Service
-    api_instance = k8s.CustomObjectsApi()
-    # TODO: add a namespace per customer
     namespace = "default"  # Replace with your namespace if needed
-    api_response = api_instance.create_namespaced_custom_object(  # type: ignore
+    # Todo: add a namespace per customer
+
+    create_or_patch_custom_object(
         group="serving.knative.dev",
         version="v1",
         namespace=namespace,
         plural="services",
+        name=service_name,
         body=knative_service,
     )
-
-    print(f"Knative Service created. Status='{api_response}'")
 
 
 def docker_login(registry_url: str) -> None:
