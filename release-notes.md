@@ -244,6 +244,7 @@
 
 ### Internal
 
+* 👷 Add lint GitHub Action workflow independent of tests. PR [#337](https://github.com/fastapilabs/cloud/pull/337) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Fix knative serving revisions with the same name. PR [#334](https://github.com/fastapilabs/cloud/pull/334) by [@estebanx64](https://github.com/estebanx64).
 * ♻️ Migrate from Poetry to uv. PR [#332](https://github.com/fastapilabs/cloud/pull/332) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove `INSTALL_DEV`, we don't use it. PR [#331](https://github.com/fastapilabs/cloud/pull/331) by [@tiangolo](https://github.com/tiangolo).
