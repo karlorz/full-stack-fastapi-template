@@ -117,6 +117,7 @@
 
 ### Refactors
 
+* ♻️ Refactor `generate-client.sh` to error out on failures and make settings use top level `.env`. PR [#343](https://github.com/fastapilabs/cloud/pull/343) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Use official Python Docker image as base. PR [#312](https://github.com/fastapilabs/cloud/pull/312) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor prestart (migrations) into its own container. PR [#310](https://github.com/fastapilabs/cloud/pull/310) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Include `FRONTEND_HOST` in CORS by default. PR [#309](https://github.com/fastapilabs/cloud/pull/309) by [@tiangolo](https://github.com/tiangolo).
