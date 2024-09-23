@@ -245,6 +245,7 @@
 
 ### Internal
 
+* 👷 Refactor CI to generate client to use Python uv venv. PR [#345](https://github.com/fastapilabs/cloud/pull/345) by [@tiangolo](https://github.com/tiangolo).
 * 🔒️ Fix tar files extraction in a safe way. PR [#338](https://github.com/fastapilabs/cloud/pull/338) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Run tests using Python env, setup with uv, and add tests to check Docker Compose works. PR [#344](https://github.com/fastapilabs/cloud/pull/344) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Format generated client automatically. PR [#342](https://github.com/fastapilabs/cloud/pull/342) by [@tiangolo](https://github.com/tiangolo).
