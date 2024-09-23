@@ -245,6 +245,7 @@
 
 ### Internal
 
+* 👷 Update CI workflows format, remove alls-green from worfkows without multiple steps or matrix. PR [#346](https://github.com/fastapilabs/cloud/pull/346) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Refactor CI to generate client to use Python uv venv. PR [#345](https://github.com/fastapilabs/cloud/pull/345) by [@tiangolo](https://github.com/tiangolo).
 * 🔒️ Fix tar files extraction in a safe way. PR [#338](https://github.com/fastapilabs/cloud/pull/338) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Run tests using Python env, setup with uv, and add tests to check Docker Compose works. PR [#344](https://github.com/fastapilabs/cloud/pull/344) by [@tiangolo](https://github.com/tiangolo).
