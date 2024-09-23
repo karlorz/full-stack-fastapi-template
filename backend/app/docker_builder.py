@@ -2,6 +2,7 @@ import base64
 import os
 import shutil
 import tarfile
+from pathlib import Path
 from typing import Any
 
 import boto3
@@ -172,12 +173,24 @@ def create_ecr_repository(repository_name: str) -> dict[str, Any]:
 
 
 def download_and_extract_tar(
-    bucket_name: str, object_key: str, object_id: str, extract_to: str = "."
+    bucket_name: str, object_key: str, object_id: str, extract_to: str
 ) -> None:
     tar_path = f"/tmp/{object_id}/code.tar"
     s3.download_file(bucket_name, object_key, tar_path)
+
+    extract_to_path = Path(extract_to).resolve()
+
     with tarfile.open(tar_path, "r") as tar_ref:
-        tar_ref.extractall(extract_to)
+        for member in tar_ref.getmembers():
+            member_path = extract_to_path.joinpath(member.name).resolve()
+            if extract_to_path in member_path.parents:
+                tar_ref.extract(member, extract_to, filter="data")
+            else:
+                raise RuntimeError(
+                    f"Attempted to extract file outside of target directory: {member.name}",
+                    f"From bucket: {bucket_name}, object: {object_key}",
+                )
+
     os.remove(tar_path)
 
 
@@ -231,9 +244,6 @@ def process_message(event: dict[str, Any], session: SessionDep) -> None:
         shutil.rmtree(build_context)
     os.makedirs(build_context)
 
-    # Copy Dockerfile to build context
-    shutil.copy("/app/Dockerfile", build_context)
-
     # Update status to building
     smt = select(Deployment).where(Deployment.id == object_id)
     deployment = session.exec(smt).first()
@@ -252,6 +262,9 @@ def process_message(event: dict[str, Any], session: SessionDep) -> None:
 
     # Create ECR repository if it doesn't exist
     create_ecr_repository(image_tag)
+
+    # Copy Dockerfile to build context
+    shutil.copy("/app/Dockerfile", build_context)
 
     # Build and push Docker image
     sha256 = build_and_push_docker_image(image_tag, build_context, registry_url)
