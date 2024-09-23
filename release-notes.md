@@ -244,6 +244,7 @@
 
 ### Internal
 
+* 🔧 Format generated client automatically. PR [#342](https://github.com/fastapilabs/cloud/pull/342) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add lint GitHub Action workflow independent of tests. PR [#337](https://github.com/fastapilabs/cloud/pull/337) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Fix knative serving revisions with the same name. PR [#334](https://github.com/fastapilabs/cloud/pull/334) by [@estebanx64](https://github.com/estebanx64).
 * ♻️ Migrate from Poetry to uv. PR [#332](https://github.com/fastapilabs/cloud/pull/332) by [@tiangolo](https://github.com/tiangolo).
