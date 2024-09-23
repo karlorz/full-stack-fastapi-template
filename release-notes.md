@@ -244,6 +244,7 @@
 
 ### Internal
 
+* ♻️ Migrate from Poetry to uv. PR [#332](https://github.com/fastapilabs/cloud/pull/332) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove `INSTALL_DEV`, we don't use it. PR [#331](https://github.com/fastapilabs/cloud/pull/331) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Add Docker Compose watch instead of mount. PR [#327](https://github.com/fastapilabs/cloud/pull/327) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor CI to deploy to staging on `master`, tweak workflows and simplify code. PR [#316](https://github.com/fastapilabs/cloud/pull/316) by [@tiangolo](https://github.com/tiangolo).
