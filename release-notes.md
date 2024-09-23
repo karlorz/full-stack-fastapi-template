@@ -245,6 +245,7 @@
 
 ### Internal
 
+* 👷 Run tests using Python env, setup with uv, and add tests to check Docker Compose works. PR [#344](https://github.com/fastapilabs/cloud/pull/344) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Format generated client automatically. PR [#342](https://github.com/fastapilabs/cloud/pull/342) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add lint GitHub Action workflow independent of tests. PR [#337](https://github.com/fastapilabs/cloud/pull/337) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Fix knative serving revisions with the same name. PR [#334](https://github.com/fastapilabs/cloud/pull/334) by [@estebanx64](https://github.com/estebanx64).
