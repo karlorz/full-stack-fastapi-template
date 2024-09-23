@@ -1,34 +1,50 @@
 FROM docker:27-dind
 
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /app/
 
-ENV PYTHONUNBUFFERED=1
-ENV VIRTUALENV=/app/.venv
-ENV PATH="$VIRTUALENV/bin:$PATH"
+RUN apk add --no-cache python3
 
-RUN apk add --no-cache python3 py3-pip
+# Install uv
+# Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
+COPY --from=ghcr.io/astral-sh/uv:0.4.15-alpine /usr/local/bin/uv /bin/uv
 
-RUN python3 -m venv $VIRTUALENV
+# Place executables in the environment at the front of the path
+# Ref: https://docs.astral.sh/uv/guides/integration/docker/#using-the-environment
+ENV PATH="/app/.venv/bin:$PATH"
 
-# install poetry
-RUN pip install poetry
+# Compile bytecode
+# Ref: https://docs.astral.sh/uv/guides/integration/docker/#compiling-bytecode
+ENV UV_COMPILE_BYTECODE=1
 
-# Copy poetry.lock* in case it doesn't exist in the repo
-COPY ./pyproject.toml ./poetry.lock* /app/
+# uv Cache
+# Ref: https://docs.astral.sh/uv/guides/integration/docker/#caching
+ENV UV_LINK_MODE=copy
 
-# Export the dependencies to a requirements.txt
-RUN poetry export --without-hashes --format=requirements.txt > /tmp/requirements.txt
+# Install dependencies
+# Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --no-install-project
 
 ENV PYTHONPATH=/app
 
-# Install the dependencies
-RUN pip install -r /tmp/requirements.txt
+COPY ./scripts /app/scripts
+
+COPY ./pyproject.toml ./uv.lock ./alembic.ini /app/
 
 COPY Dockerfile.build /app/Dockerfile
 COPY builder_entrypoint.sh /app/builder_entrypoint.sh
 RUN chmod +x /app/builder_entrypoint.sh
 
 COPY ./app /app/app
+
+# Sync the project
+# Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync
 
 EXPOSE 8080
 ENTRYPOINT ["/app/builder_entrypoint.sh"]

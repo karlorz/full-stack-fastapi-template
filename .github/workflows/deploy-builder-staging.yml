@@ -10,7 +10,7 @@ on:
       - 'backend/Dockerfile.build'
       - 'backend/builder_entrypoint.sh'
       - 'backend/pyproject.toml'
-      - 'backend/poetry.lock'
+      - 'backend/uv.lock'
       - 'infra/k8s/knative/deployment-workflow/**'
       - '.github/workflows/deploy-builder-staging.yml'
 
