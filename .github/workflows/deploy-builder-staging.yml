@@ -49,12 +49,9 @@ jobs:
     - name: Update builder deployment
       env:
         IMAGE_DIGEST: ${{ steps.docker-build.outputs.digest }}
-      # TODO: refactor this to not modify a file on the fly that is not stored in git
-      # use our own internal Python tools to deploy an app for customers
+      # TODO: investigate if we can do this without modifying a file live that doesn't end up stored in git
       run: |
         sed -i "s|image: .*|image: $IMAGE_DIGEST|" infra/k8s/knative/deployment-workflow/dind-deployment.yaml
-    # TODO: refactor this, we don't need an external configmap, it's not used by independent services
-    # or similar, we can put these configs and secrets as env vars in the Knative service
     - name: Update ConfigMap and Secret
       run: |
         cat <<EOF > infra/k8s/knative/deployment-workflow/docker-builder-configmap.yaml
@@ -66,7 +63,7 @@ jobs:
           DOMAIN: "${{ vars.DOMAIN }}"
           FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
           API_HOST: "${{ vars.API_HOST }}"
-          ENVIRONMENT: "${{ github.event_name == 'push' && 'production' || 'staging' }}"
+          ENVIRONMENT: "staging"
           PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
           STACK_NAME: "${{ vars.STACK_NAME }}"
           BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"

@@ -31,8 +31,11 @@ ecr = boto3.client("ecr", region_name=aws_region)
 docker_client = docker.from_env()
 
 # Kubernetes client
-config.load_incluster_config()
-# config.load_kube_config()
+if os.getenv("CI"):
+    config.load_kube_config()
+else:
+    config.load_incluster_config()
+
 
 # Sentry
 sentry_sdk.init(
@@ -92,9 +95,26 @@ def create_or_patch_custom_object(
             raise e
 
 
-def deploy_to_kubernetes(
-    service_name: str, image_url: str, image_sha256_hash: str
+def deploy_cloud(
+    service_name: str, image_url: str, image_sha256_hash: str, min_scale: int = 0
 ) -> None:
+    env_data = settings.model_dump(
+        mode="json", exclude_unset=True, exclude={"all_cors_origins"}
+    )
+    env_strs = {k: str(v) for k, v in env_data.items()}
+    deploy_to_kubernetes(
+        service_name, image_url, image_sha256_hash, min_scale=min_scale, env=env_strs
+    )
+
+
+def deploy_to_kubernetes(
+    service_name: str,
+    image_url: str,
+    image_sha256_hash: str,
+    min_scale: int = 0,
+    env: dict[str, str] | None = None,
+) -> None:
+    use_env = env or {}
     knative_service = {
         "apiVersion": "serving.knative.dev/v1",
         "kind": "Service",
@@ -103,20 +123,28 @@ def deploy_to_kubernetes(
         },
         "spec": {
             "template": {
+                "metadata": {
+                    "annotations": {
+                        "autoscaling.knative.dev/minScale": str(min_scale),
+                    },
+                },
                 "spec": {
                     "containers": [
                         {
                             "image": f"{image_url}@{image_sha256_hash}",
+                            "env": [
+                                {"name": str(k), "value": str(v)}
+                                for k, v in use_env.items()
+                            ],
                         }
                     ],
-                }
+                },
             }
         },
     }
 
     namespace = "default"  # Replace with your namespace if needed
-    # Todo: add a namespace per customer
-
+    # TODO: add a namespace per customer
     create_or_patch_custom_object(
         group="serving.knative.dev",
         version="v1",

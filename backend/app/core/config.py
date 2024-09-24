@@ -6,6 +6,7 @@ from pydantic import (
     AnyUrl,
     BeforeValidator,
     HttpUrl,
+    PlainSerializer,
     PostgresDsn,
     computed_field,
     model_validator,
@@ -21,6 +22,10 @@ def parse_cors(v: Any) -> list[str] | str:
     elif isinstance(v, list | str):
         return v
     raise ValueError(v)
+
+
+def serialize_cors(v: list[AnyUrl]) -> str:
+    return ",".join([str(i) for i in v])
 
 
 class Settings(BaseSettings):
@@ -43,7 +48,9 @@ class Settings(BaseSettings):
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
     BACKEND_CORS_ORIGINS: Annotated[
-        list[AnyUrl] | str, BeforeValidator(parse_cors)
+        list[AnyUrl] | str,
+        BeforeValidator(parse_cors),
+        PlainSerializer(serialize_cors, when_used="json"),
     ] = []
 
     @computed_field  # type: ignore[prop-decorator]
