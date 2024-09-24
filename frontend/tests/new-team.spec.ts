@@ -21,10 +21,7 @@ test("User can create a new team with a valid name successfully", async ({
 
   await page.getByPlaceholder("Team Name").fill(teamName)
   await page.getByRole("button", { name: "Create Team" }).click()
-
-  // The new team should be visible in the list of teams
-  await page.goto("/teams/all?orderBy=created_at&order=desc")
-  await page.locator("a").filter({ hasText: teamName }).click()
+  await expect(page.getByText("Team created")).toBeVisible()
 })
 
 test("Validation messages are displayed for missing team name", async ({

@@ -56,12 +56,7 @@ export async function createTeam(page: Page, name: string) {
 
   await page.getByPlaceholder("Name").fill(name)
   await page.getByRole("button", { name: "Create Team" }).click()
-  await page.goto("/teams/all?orderBy=created_at&order=desc")
-  await page
-    .getByTestId("teams-table")
-    .locator("a")
-    .filter({ hasText: name })
-    .click()
+  await expect(page.getByText("Team created")).toBeVisible()
 }
 
 export async function logOutUser(page: Page, name: string) {

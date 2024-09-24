@@ -1,58 +1,86 @@
 import { expect, test } from "@playwright/test"
-import { randomTeamName, slugify } from "./utils/random"
-import { createTeam } from "./utils/userUtils"
+import { randomEmail, randomTeamName, slugify } from "./utils/random"
+import { createTeam, logInUser, signUpNewUser } from "./utils/userUtils"
 
-test("Each user has its own personal team which is the default team", async ({
-  page,
-}) => {
-  await page.goto("/")
-  await expect(
-    page.getByRole("button", { name: "fastapi admin" }),
-  ).toBeVisible()
-  await page.getByRole("button", { name: "fastapi admin" }).click()
-  await page.getByRole("menuitem", { name: "View all teams" }).click()
-  await expect(page.getByRole("link", { name: "fastapi admin" })).toBeVisible()
-})
+test.describe("Select and change team successfully", () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
 
-test("User can successfully change the current team from the user menu", async ({
-  page,
-}) => {
-  const teamName = randomTeamName()
-  const teamSlug = slugify(teamName)
-  await createTeam(page, teamName)
+  test("Each user has its own personal team which is the default team", async ({
+    page,
+    request,
+  }) => {
+    const fullName = "Test User"
+    const email = randomEmail()
+    const password = "password"
 
-  await page.goto(`/${teamSlug}`)
-  await expect(page.getByRole("button", { name: teamName })).toBeVisible()
-  await page.getByRole("button", { name: teamName }).click()
-  await page.waitForSelector('role=menuitem[name="fastapi admin"]')
-  await page.getByRole("menuitem", { name: "fastapi admin" }).click()
-  await expect(
-    page.getByRole("button", { name: "fastapi admin" }),
-  ).toBeVisible()
-})
+    // Sign up a new user
+    await signUpNewUser(page, fullName, email, password, request)
 
-test("User can successfully change the current team from the user's list of teams", async ({
-  page,
-}) => {
-  const teamName = randomTeamName()
-  const teamSlug = slugify(teamName)
-  await createTeam(page, teamName)
+    // Log in the user
+    await logInUser(page, email, password)
 
-  await page.goto("/teams/all?orderBy=created_at&order=desc")
-  await page.waitForSelector(`a:has-text("${teamName}")`)
-  await page.locator("a").filter({ hasText: teamName }).first().click()
-  await page.waitForSelector(`button:has-text("${teamName}")`)
-  await page.goto(`/${teamSlug}`)
-  await expect(page.getByRole("button", { name: teamName })).toBeVisible()
-})
+    await page.goto("/")
+    await expect(page.getByRole("button", { name: fullName })).toBeVisible()
+    await page.getByRole("button", { name: fullName }).click()
+    await page.getByRole("menuitem", { name: "View all teams" }).click()
+    await expect(page.getByRole("link", { name: fullName })).toBeVisible()
+  })
 
-test("Selected team is reflected in team settings", async ({ page }) => {
-  const teamName = randomTeamName()
-  const teamSlug = slugify(teamName)
-  await createTeam(page, teamName)
+  test("Change the current team from the user menu", async ({
+    page,
+    request,
+  }) => {
+    const fullName = "Test User"
+    const email = randomEmail()
+    const password = "password"
 
-  await page.goto(`/${teamSlug}/settings`)
-  await page.getByLabel("Team", { exact: true }).getByText(teamName).click()
+    // Sign up a new user
+    await signUpNewUser(page, fullName, email, password, request)
+
+    // Log in the user
+    await logInUser(page, email, password)
+
+    const teamName = randomTeamName()
+    const teamSlug = slugify(teamName)
+    await createTeam(page, teamName)
+
+    await page.goto(`/${teamSlug}`)
+    await expect(page.getByRole("button", { name: teamName })).toBeVisible()
+    await page.getByRole("button", { name: teamName }).click()
+    await page.getByRole("menuitem", { name: fullName }).click()
+    await expect(page.getByRole("button", { name: fullName })).toBeVisible()
+
+    // Check if the team is visible in the team settings
+
+    await page.goto(`/${teamSlug}/settings`)
+    await page.getByLabel("Team", { exact: true }).getByText(teamName).click()
+  })
+
+  test("Change the current team from the user's list of teams", async ({
+    page,
+    request,
+  }) => {
+    const fullName = "Test User"
+    const email = randomEmail()
+    const password = "password"
+
+    // Sign up a new user
+    await signUpNewUser(page, fullName, email, password, request)
+
+    // Log in the user
+    await logInUser(page, email, password)
+
+    const teamName = randomTeamName()
+    const teamSlug = slugify(teamName)
+    await createTeam(page, teamName)
+    await page.goto("/teams/all?orderBy=created_at&order=desc")
+    await page.getByRole("link", { name: teamName }).click()
+    await expect(page.getByRole("button", { name: teamName })).toBeVisible()
+
+    // Check if the team is visible in the team settings
+    await page.goto(`/${teamSlug}/settings`)
+    await page.getByLabel("Team", { exact: true }).getByText(teamName).click()
+  })
 })
 
 test.describe("User with admin role can update team information", () => {
