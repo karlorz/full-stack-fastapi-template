@@ -76,7 +76,7 @@ const UserInformation = () => {
             Connect
           </Button>
         </CustomCard>
-        <CustomCard title="Danger Zone">
+        <CustomCard>
           <DeleteAccount />
         </CustomCard>
       </Container>

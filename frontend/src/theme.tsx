@@ -13,7 +13,7 @@ const theme = extendTheme({
   colors: {
     ui: {
       main: "#009688",
-      danger: "#F56565",
+      danger: "#FC4D4D",
       success: "#48BB78",
       lightBg: "#fdfdfd",
       darkBg: "#191919",
@@ -119,10 +119,11 @@ const theme = extendTheme({
           color: props.colorMode === "dark" ? "ui.light" : "ui.defaultText",
         }),
         danger: (props: any) => ({
-          backgroundColor: props.colorMode === "dark" ? "red.700" : "red.600",
+          backgroundColor: props.colorMode === "dark" ? "#DA4444" : "ui.danger",
           color: "ui.lightText",
           _hover: {
-            backgroundColor: props.colorMode === "dark" ? "red.600" : "red.500",
+            backgroundColor: props.colorMode === "dark" ? "#C33C3C" : "#E04343",
+            boxShadow: "0 6px 8px rgba(0, 0, 0, 0.1)",
           },
         }),
       },

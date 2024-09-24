@@ -62,7 +62,7 @@ function AppDetail() {
             <CustomCard title="Deployments">
               <Deployments appId={app.id} />
             </CustomCard>
-            <CustomCard title="Danger Zone">
+            <CustomCard>
               <DeleteApp appSlug={app.slug} appId={app.id} />
             </CustomCard>
           </Box>

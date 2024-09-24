@@ -63,7 +63,7 @@ const TeamInformation = () => {
             <TransferTeam />
           </CustomCard>
 
-          <CustomCard title="Danger Zone">
+          <CustomCard>
             <DeleteTeam teamId={team.id} />
           </CustomCard>
         </>

@@ -20,14 +20,12 @@ const CustomCard = ({ title, children, ...props }: CustomCardProps) => {
       border={`1px solid ${borderColor}`}
       borderRadius="md"
       px={8}
-      py={4}
+      py={8}
       mb={8}
       {...props}
     >
-      <Text fontWeight="bold" mb={4}>
-        {title}
-      </Text>
-      {title && <Divider mb={4} />}
+      <Text fontWeight="bold">{title}</Text>
+      {title && <Divider my={4} />}
       {children}
     </Box>
   )
