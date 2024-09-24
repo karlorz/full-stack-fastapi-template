@@ -247,6 +247,7 @@
 
 ### Internal
 
+* 🧱 Add knative backend to autoscale min 1. PR [#350](https://github.com/fastapilabs/cloud/pull/350) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Update CI workflows format, remove alls-green from worfkows without multiple steps or matrix. PR [#346](https://github.com/fastapilabs/cloud/pull/346) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Refactor CI to generate client to use Python uv venv. PR [#345](https://github.com/fastapilabs/cloud/pull/345) by [@tiangolo](https://github.com/tiangolo).
 * 🔒️ Fix tar files extraction in a safe way. PR [#338](https://github.com/fastapilabs/cloud/pull/338) by [@estebanx64](https://github.com/estebanx64).
