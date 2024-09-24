@@ -5,10 +5,11 @@ test("New team is visible", async ({ page }) => {
   await page.goto("/teams/new")
   await expect(page.getByRole("heading", { name: "New Team" })).toBeVisible()
   await expect(page.locator("p").filter({ hasText: "Name" })).toBeVisible()
-  await expect(page.getByText("Pricing Plan")).toBeVisible()
-  await expect(page.getByText("Payment")).toBeVisible()
   await expect(page.getByPlaceholder("Team Name")).toBeVisible()
-  await expect(page.getByRole("button", { name: "Add card" })).toBeVisible()
+  // TODO: Uncomment these lines when billing is implemented
+  // await expect(page.getByText("Pricing Plan")).toBeVisible()
+  // await expect(page.getByText("Payment")).toBeVisible()
+  // await expect(page.getByRole("button", { name: "Add card" })).toBeVisible()
   await expect(page.getByRole("button", { name: "Create Team" })).toBeVisible()
 })
 

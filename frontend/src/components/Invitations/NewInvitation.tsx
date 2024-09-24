@@ -1,5 +1,6 @@
 import {
   Button,
+  Center,
   FormControl,
   FormLabel,
   Input,
@@ -14,7 +15,6 @@ import {
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import Lottie from "lottie-react"
-import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
 import emailSent from "../../assets/email.json"
@@ -33,9 +33,6 @@ interface NewInvitationProps {
 }
 
 const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle")
   const queryClient = useQueryClient()
   const {
     register,
@@ -51,11 +48,10 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
     mutationFn: (data: InvitationCreate) =>
       InvitationsService.createInvitation({ requestBody: data }),
     onSuccess: () => {
-      setStatus("success")
       reset()
     },
     onError: () => {
-      setStatus("error")
+      reset()
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["invitations"] })
@@ -63,7 +59,6 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
   })
 
   const onSubmit: SubmitHandler<InvitationCreate> = (data) => {
-    setStatus("loading")
     const updatedData: InvitationCreate = {
       ...data,
       role: "member",
@@ -73,7 +68,7 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
   }
 
   const handleClose = () => {
-    setStatus("idle")
+    mutation.reset()
     onClose()
   }
 
@@ -90,12 +85,14 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
         onSubmit={handleSubmit(onSubmit)}
         data-testid="new-invitation"
       >
-        {status === "idle" || status === "loading" ? (
+        {mutation.isPending || mutation.isIdle ? (
           <>
             <ModalHeader>Team Invitation</ModalHeader>
             <ModalCloseButton aria-label="Close invitation modal" />
             <ModalBody>
-              <Text mb={4}>Invite someone to your team</Text>
+              <Text mb={4}>
+                Fill in the email address to invite someone to your team.
+              </Text>
               <FormControl isRequired isInvalid={!!errors.email}>
                 <FormLabel htmlFor="email" hidden>
                   Email address
@@ -107,7 +104,7 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
                     pattern: emailPattern,
                   })}
                   placeholder="Email address"
-                  type="text"
+                  type="email"
                   data-testid="invitation-email"
                 />
                 {errors.email && (
@@ -121,26 +118,32 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
               <Button
                 variant="primary"
                 type="submit"
-                isLoading={isSubmitting}
+                isLoading={isSubmitting || mutation.isPending}
                 mt={4}
               >
                 Send invitation
               </Button>
             </ModalFooter>
           </>
-        ) : status === "success" ? (
+        ) : mutation.isSuccess ? (
           <>
-            <ModalHeader>Success!</ModalHeader>
+            <ModalHeader>Invitation Sent!</ModalHeader>
             <ModalCloseButton aria-label="Close invitation modal" />
             <ModalBody>
-              <Lottie
-                animationData={emailSent}
-                loop={false}
-                style={{ width: 75, height: 75 }}
-              />
+              <Center>
+                <Lottie
+                  animationData={emailSent}
+                  loop={false}
+                  style={{ width: 75, height: 75 }}
+                />
+              </Center>
               <Text my={4}>
-                The invitation has been sent to <b>{mutation.data?.email}</b>{" "}
-                successfully. Now they just need to accept it.
+                The invitation has been sent to <b>{mutation.data?.email}</b>.
+                They just need to accept it to join your team.
+              </Text>
+              <Text mt={2}>
+                You can manage the invitation from your team dashboard or send
+                another one.
               </Text>
             </ModalBody>
             <ModalFooter>
@@ -151,21 +154,32 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
           </>
         ) : (
           <>
-            <ModalHeader>Error</ModalHeader>
+            <ModalHeader>Invitation Failed</ModalHeader>
             <ModalCloseButton aria-label="Close invitation modal" />
             <ModalBody>
-              <Lottie
-                animationData={warning}
-                loop={false}
-                style={{ width: 75, height: 75 }}
-              />
+              <Center>
+                <Lottie
+                  animationData={warning}
+                  loop={false}
+                  style={{ width: 75, height: 75 }}
+                />
+              </Center>
+              {mutation.error && (
+                <Text
+                  color="red.500"
+                  fontWeight="bold"
+                  textAlign="center"
+                  mt={4}
+                >
+                  {extractErrorMessage(mutation.error as ApiError)}
+                </Text>
+              )}
               <Text my={4}>
-                An error occurred while sending the invitation. Please try
-                again.
+                Oops! Something went wrong while sending the invitation. Please
+                try again, or double-check the information you've entered.
               </Text>
-
-              <Text color="red.500">
-                {extractErrorMessage(mutation.error as ApiError)}
+              <Text mt={2}>
+                If the problem continues, please contact our support team.
               </Text>
             </ModalBody>
             <ModalFooter>

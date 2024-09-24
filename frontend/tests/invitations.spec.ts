@@ -22,7 +22,7 @@ test.describe("User with role admin can manage team invitations", () => {
     await sendInvitation(page, teamSlug, email)
 
     await expect(
-      page.getByText(`The invitation has been sent to ${email} successfully`),
+      page.getByText(`The invitation has been sent to ${email}`),
     ).toBeVisible()
   })
 

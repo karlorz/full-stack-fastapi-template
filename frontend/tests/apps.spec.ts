@@ -52,9 +52,9 @@ test.describe("User can manage apps succesfully", () => {
     await createTeam(page, team)
 
     await page.goto(`/${teamSlug}/apps/new`)
-    await page.getByPlaceholder("Name").fill(appName)
+    await page.getByPlaceholder("App Name").fill(appName)
     await page.getByRole("button", { name: "Create App" }).click()
-    await expect(page.getByText("App created successfully")).toBeVisible()
+    await expect(page.getByText("App created")).toBeVisible()
   })
 
   test("User can read all apps", async ({ page, request }) => {
@@ -62,15 +62,22 @@ test.describe("User can manage apps succesfully", () => {
     const team = randomTeamName()
     const teamSlug = slugify(team)
 
-    const appName = randomAppName()
+    const appNames = [randomAppName(), randomAppName(), randomAppName()]
     await signUpNewUser(page, fullName, email, password, request)
     await logInUser(page, email, password)
     await createTeam(page, team)
 
-    await page.goto(`/${teamSlug}/apps/new`)
-    await page.getByPlaceholder("Name").fill(appName)
-    await page.getByRole("button", { name: "Create App" }).click()
-    await expect(page).toHaveURL(`/${teamSlug}/apps`)
-    await expect(page.getByRole("cell", { name: appName })).toBeVisible()
+    for (const appName of appNames) {
+      await page.goto(`/${teamSlug}/apps/new`)
+      await page.getByPlaceholder("App Name").fill(appName)
+      await page.getByRole("button", { name: "Create App" }).click()
+      await expect(page.getByTestId("app-created-success")).toBeVisible()
+      await page.getByRole("button", { name: "Ok" }).click()
+      await expect(page).toHaveURL(`/${teamSlug}/apps`)
+    }
+
+    for (const appName of appNames) {
+      await expect(page.getByRole("cell", { name: appName })).toBeVisible()
+    }
   })
 })
