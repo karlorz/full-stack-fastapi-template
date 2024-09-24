@@ -247,6 +247,7 @@
 
 ### Internal
 
+* 👷 Implement sharding for Playwright tests. PR [#336](https://github.com/fastapilabs/cloud/pull/336) by [@alejsdev](https://github.com/alejsdev).
 * 🧱 Add knative backend to autoscale min 1. PR [#350](https://github.com/fastapilabs/cloud/pull/350) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Update CI workflows format, remove alls-green from worfkows without multiple steps or matrix. PR [#346](https://github.com/fastapilabs/cloud/pull/346) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Refactor CI to generate client to use Python uv venv. PR [#345](https://github.com/fastapilabs/cloud/pull/345) by [@tiangolo](https://github.com/tiangolo).
