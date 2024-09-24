@@ -117,6 +117,7 @@
 
 ### Refactors
 
+* ♻️ Use modals for primary actions. PR [#313](https://github.com/fastapilabs/cloud/pull/313) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor UI in delete components. PR [#330](https://github.com/fastapilabs/cloud/pull/330) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor `generate-client.sh` to error out on failures and make settings use top level `.env`. PR [#343](https://github.com/fastapilabs/cloud/pull/343) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Use official Python Docker image as base. PR [#312](https://github.com/fastapilabs/cloud/pull/312) by [@tiangolo](https://github.com/tiangolo).
