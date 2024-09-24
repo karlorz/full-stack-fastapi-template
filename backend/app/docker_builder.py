@@ -251,9 +251,7 @@ def build_and_push_docker_image(
     return sha256  # type: ignore
 
 
-def process_message(event: dict[str, Any], session: SessionDep) -> None:
-    message = event["Records"][0].get("s3", {})
-
+def process_message(message: dict[str, Any], session: SessionDep) -> None:
     bucket = message.get("bucket", {})
     _object = message.get("object", {})
 
@@ -266,20 +264,20 @@ def process_message(event: dict[str, Any], session: SessionDep) -> None:
     object_name = object_key.split("/")[-1]
     object_id = object_name.split(".")[0]
 
+    smt = select(Deployment).where(Deployment.id == object_id)
+    deployment = session.exec(smt).first()
+    if deployment is None:
+        raise HTTPException(status_code=404, detail="Deployment not found")
+
     # Create a temporary directory for the build context
     build_context = f"/tmp/{object_id}/build_context"
     if os.path.exists(build_context):
         shutil.rmtree(build_context)
     os.makedirs(build_context)
 
-    # Update status to building
-    smt = select(Deployment).where(Deployment.id == object_id)
-    deployment = session.exec(smt).first()
-    if deployment is None:
-        raise HTTPException(status_code=404, detail="Deployment not found")
-
     app_name = deployment.slug
 
+    # Update status to building
     deployment.status = DeploymentStatus.building
     session.commit()
 
@@ -314,5 +312,19 @@ def process_message(event: dict[str, Any], session: SessionDep) -> None:
 
 @app.post("/apps")
 def event_service_handler(event: dict[str, Any], session: SessionDep) -> Any:
-    process_message(event["Body"], session)
+    message = event["Body"]["Records"][0].get("s3", {})
+    try:
+        process_message(message, session)
+    except Exception as e:
+        object_id = message.get("object", {}).get("key").split("/")[-1].split(".")[0]
+        smt = select(Deployment).where(Deployment.id == object_id)
+        deployment = session.exec(smt).first()
+        if deployment is None:
+            raise RuntimeError("Deployment not found")
+
+        deployment.status = DeploymentStatus.failed
+        session.commit()
+        sentry_sdk.capture_exception(e)
+        raise e
+
     return {"message": "OK"}
