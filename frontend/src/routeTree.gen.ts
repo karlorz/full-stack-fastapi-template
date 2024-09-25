@@ -29,7 +29,8 @@ import { Route as LayoutTeamSettingsImport } from './routes/_layout/$team/settin
 import { Route as LayoutTeamsTeamSlugIndexImport } from './routes/_layout/teams/$teamSlug/index'
 import { Route as LayoutTeamAppsIndexImport } from './routes/_layout/$team/apps/index'
 import { Route as LayoutTeamAppsNewImport } from './routes/_layout/$team/apps/new'
-import { Route as LayoutTeamAppsAppSlugImport } from './routes/_layout/$team/apps/$appSlug'
+import { Route as LayoutTeamAppsAppSlugIndexImport } from './routes/_layout/$team/apps/$appSlug/index'
+import { Route as LayoutTeamAppsAppSlugDeploymentsDeploymentIdImport } from './routes/_layout/$team/apps/$appSlug/deployments/$deploymentId'
 
 // Create/Update Routes
 
@@ -123,10 +124,18 @@ const LayoutTeamAppsNewRoute = LayoutTeamAppsNewImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutTeamAppsAppSlugRoute = LayoutTeamAppsAppSlugImport.update({
-  path: '/$team/apps/$appSlug',
-  getParentRoute: () => LayoutRoute,
-} as any)
+const LayoutTeamAppsAppSlugIndexRoute = LayoutTeamAppsAppSlugIndexImport.update(
+  {
+    path: '/$team/apps/$appSlug/',
+    getParentRoute: () => LayoutRoute,
+  } as any,
+)
+
+const LayoutTeamAppsAppSlugDeploymentsDeploymentIdRoute =
+  LayoutTeamAppsAppSlugDeploymentsDeploymentIdImport.update({
+    path: '/$team/apps/$appSlug/deployments/$deploymentId',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -192,10 +201,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutTeamIndexImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/$team/apps/$appSlug': {
-      preLoaderRoute: typeof LayoutTeamAppsAppSlugImport
-      parentRoute: typeof LayoutImport
-    }
     '/_layout/$team/apps/new': {
       preLoaderRoute: typeof LayoutTeamAppsNewImport
       parentRoute: typeof LayoutImport
@@ -206,6 +211,14 @@ declare module '@tanstack/react-router' {
     }
     '/_layout/teams/$teamSlug/': {
       preLoaderRoute: typeof LayoutTeamsTeamSlugIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/$team/apps/$appSlug/': {
+      preLoaderRoute: typeof LayoutTeamAppsAppSlugIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/$team/apps/$appSlug/deployments/$deploymentId': {
+      preLoaderRoute: typeof LayoutTeamAppsAppSlugDeploymentsDeploymentIdImport
       parentRoute: typeof LayoutImport
     }
   }
@@ -222,10 +235,11 @@ export const routeTree = rootRoute.addChildren([
     LayoutTeamsAllRoute,
     LayoutTeamsNewRoute,
     LayoutTeamIndexRoute,
-    LayoutTeamAppsAppSlugRoute,
     LayoutTeamAppsNewRoute,
     LayoutTeamAppsIndexRoute,
     LayoutTeamsTeamSlugIndexRoute,
+    LayoutTeamAppsAppSlugIndexRoute,
+    LayoutTeamAppsAppSlugDeploymentsDeploymentIdRoute,
   ]),
   LoginRoute,
   RecoverPasswordRoute,

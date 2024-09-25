@@ -93,6 +93,7 @@ services:
       - POSTGRES_SERVER=db
       - REDIS_SERVER=redis
       - SMTP_HOST=mailcatcher
+      - ENABLE_PRIVATE_API=${ENABLE_PRIVATE_API}
     develop:
       watch:
         - path: ./backend
