@@ -338,6 +338,14 @@ ubuntu_latest_ami = aws.ec2.get_ami(
     ],
 )
 
+github_runner_ebs = aws.ebs.Volume(
+    "github-runner-ebs",
+    size=50,
+    iops=2500,
+    type="io2",
+    availability_zone=f"{region}a",
+)
+
 github_actions_runner_security_group = aws.ec2.SecurityGroup(
     "github-actions-runner-security-group",
     vpc_id=eks_vpc.vpc_id,
@@ -375,6 +383,15 @@ github_actions_runner_instance = aws.ec2.Instance(
     tags={
         "Name": "github-actions-runner",
     },
+    availability_zone=f"{region}a",
+)
+
+# Attach the EBS volume to the instance
+ebs_attachment = aws.ec2.VolumeAttachment(
+    "github-runner-ebs-attachment",
+    device_name="/dev/sde",
+    volume_id=github_runner_ebs.id,
+    instance_id=github_actions_runner_instance.id,
 )
 
 # ECR Registry
