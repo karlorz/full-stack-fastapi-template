@@ -247,6 +247,7 @@
 
 ### Internal
 
+* ✨ Add initial private API. PR [#358](https://github.com/fastapilabs/cloud/pull/358) by [@patrick91](https://github.com/patrick91).
 * 🧱 Add failed status for docker builder when it fails. PR [#353](https://github.com/fastapilabs/cloud/pull/353) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Run migrations in CI and deploy backend with our internal utils. PR [#351](https://github.com/fastapilabs/cloud/pull/351) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Implement sharding for Playwright tests. PR [#336](https://github.com/fastapilabs/cloud/pull/336) by [@alejsdev](https://github.com/alejsdev).
