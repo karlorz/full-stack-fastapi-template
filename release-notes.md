@@ -250,6 +250,7 @@
 
 ### Internal
 
+* ⬆ Bump astral-sh/setup-uv from 2 to 3. PR [#347](https://github.com/fastapilabs/cloud/pull/347) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 👷🏻‍♀️ Add format frontend workflow. PR [#365](https://github.com/fastapilabs/cloud/pull/365) by [@alejsdev](https://github.com/alejsdev).
 * 🧱 Add ebs volume for ec2 github runner instance. PR [#366](https://github.com/fastapilabs/cloud/pull/366) by [@estebanx64](https://github.com/estebanx64).
 * 🔨 Fix `DEPLOY_ENVIRONMENT` env var in `deploy-kubectl.sh` script and GitHub Action. PR [#362](https://github.com/fastapilabs/cloud/pull/362) by [@tiangolo](https://github.com/tiangolo).
