@@ -250,6 +250,7 @@
 
 ### Internal
 
+* 🧱 Add ebs volume for ec2 github runner instance. PR [#366](https://github.com/fastapilabs/cloud/pull/366) by [@estebanx64](https://github.com/estebanx64).
 * 🔨 Fix `DEPLOY_ENVIRONMENT` env var in `deploy-kubectl.sh` script and GitHub Action. PR [#362](https://github.com/fastapilabs/cloud/pull/362) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Use paths in both vite and tsconfig to make imports nicer. PR [#360](https://github.com/fastapilabs/cloud/pull/360) by [@patrick91](https://github.com/patrick91).
 * 🧱 Add support for uv on builder. PR [#359](https://github.com/fastapilabs/cloud/pull/359) by [@estebanx64](https://github.com/estebanx64).
