@@ -290,7 +290,11 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
     create_ecr_repository(image_tag)
 
     # Copy Dockerfile to build context
-    shutil.copy("/app/Dockerfile", build_context)
+    build_files = os.listdir(build_context)
+    if "requirements.txt" in build_files:
+        shutil.copy("/app/Dockerfile.requirements", f"{build_context}/Dockerfile")
+    else:
+        shutil.copy("/app/Dockerfile.standard", f"{build_context}/Dockerfile")
 
     # Build and push Docker image
     sha256 = build_and_push_docker_image(image_tag, build_context, registry_url)

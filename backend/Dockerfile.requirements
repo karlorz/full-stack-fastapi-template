@@ -1,0 +1,31 @@
+# Dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install uv
+# Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
+COPY --from=ghcr.io/astral-sh/uv:0.4.15-alpine /usr/local/bin/uv /bin/uv
+
+# Using uv as pip interface
+# Ref: https://docs.astral.sh/uv/guides/integration/docker/#using-the-pip-interface
+ENV UV_SYSTEM_PYTHON=1
+
+# Compile bytecode
+# Ref: https://docs.astral.sh/uv/guides/integration/docker/#compiling-bytecode
+ENV UV_COMPILE_BYTECODE=1
+
+# uv Cache
+# Ref: https://docs.astral.sh/uv/guides/integration/docker/#caching
+ENV UV_LINK_MODE=copy
+
+COPY requirements.txt .
+
+# Install dependencies
+RUN uv pip install -r requirements.txt
+
+ENV PYTHONPATH=/app
+
+COPY . .
+
+CMD ["sh", "-c", "fastapi run --host 0.0.0.0 --port ${PORT:-8000}"]

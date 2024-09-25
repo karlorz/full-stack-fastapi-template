@@ -35,7 +35,9 @@ COPY ./scripts /app/scripts
 
 COPY ./pyproject.toml ./uv.lock ./alembic.ini /app/
 
-COPY Dockerfile.build /app/Dockerfile
+COPY Dockerfile.standard /app/Dockerfile.standard
+COPY Dockerfile.requirements /app/Dockerfile.requirements
+
 COPY builder_entrypoint.sh /app/builder_entrypoint.sh
 RUN chmod +x /app/builder_entrypoint.sh
 
