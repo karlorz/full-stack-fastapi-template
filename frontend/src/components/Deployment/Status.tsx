@@ -1,6 +1,4 @@
 import { Flex, Text } from "@chakra-ui/react"
-import { type DeploymentStatus } from "@/client"
-
 import Lottie, { type LottieOptions } from "lottie-react"
 
 import building from "@/assets/building.json"
@@ -8,8 +6,9 @@ import deploying from "@/assets/deploying.json"
 import failed from "@/assets/failed.json"
 import success from "@/assets/success.json"
 import waiting from "@/assets/waiting.json"
+import type { DeploymentStatus } from "@/client"
 
-export function DeploymentStatus({
+export function Status({
   deployment: { status },
 }: { deployment: { status: DeploymentStatus } }) {
   let animationData: LottieOptions["animationData"]

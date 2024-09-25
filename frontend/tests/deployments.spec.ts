@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test"
-import { randomEmail, randomTeamName, slugify } from "./utils/random"
-import { logInUser } from "./utils/userUtils"
 import {
-  createUser,
-  createTeam,
   createApp,
   createDeployment,
+  createTeam,
+  createUser,
 } from "./utils/privateApi"
+import { randomEmail, randomTeamName, slugify } from "./utils/random"
+import { logInUser } from "./utils/userUtils"
 
 test.use({ storageState: { cookies: [], origins: [] } })
 

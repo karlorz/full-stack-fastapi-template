@@ -1,0 +1,36 @@
+name: Format Frontend
+
+on:
+  pull_request:
+    types:
+    - opened
+    - synchronize
+
+jobs:
+  format-frontend:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref }}
+        token: ${{ secrets.FASTAPI_CLOUD_TOKEN }}
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+      working-directory: frontend
+    - name: Format frontend
+      run: |
+        npm run biome-check
+        npm run biome-format
+      working-directory: frontend
+    - name: Commit changes
+      run: |
+        git config --local user.email "github-actions@github.com"
+        git config --local user.name "github-actions"
+        git add frontend
+        git diff --staged --quiet || git commit -m "🎨 Format frontend code"
+        git push

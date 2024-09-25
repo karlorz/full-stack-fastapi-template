@@ -1,6 +1,6 @@
+import EmptyBox from "@/assets/empty-box.svg"
 import { Button, Heading, Image, Text } from "@chakra-ui/react"
 import { Link as RouterLink } from "@tanstack/react-router"
-import EmptyBox from "@/assets/empty-box.svg"
 import CustomCard from "./CustomCard"
 
 interface EmptyStateProps {

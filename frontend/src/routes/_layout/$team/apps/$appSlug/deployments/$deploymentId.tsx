@@ -1,16 +1,9 @@
-import {
-  Box,
-  Container,
-  Flex,
-  Heading,
-  Skeleton,
-  Text,
-} from "@chakra-ui/react"
+import { Box, Container, Flex, Heading, Skeleton, Text } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { AppsService, DeploymentsService } from "../../../../../../client"
-import { fetchTeamBySlug } from "../../../../../../utils"
-import { DeploymentStatus } from "../../../../../../components/Deployment/Status"
+import { AppsService, DeploymentsService } from "@/client"
+import { Status } from "@/components/Deployment/Status"
+import { fetchTeamBySlug } from "@/utils"
 
 export const Route = createFileRoute(
   "/_layout/$team/apps/$appSlug/deployments/$deploymentId",
@@ -57,7 +50,7 @@ function DeploymentDetail() {
         </Text>
         <Flex as={Text}>
           Status:
-          <DeploymentStatus deployment={deployment} />
+          <Status deployment={deployment} />
         </Flex>
       </Box>
     </Container>

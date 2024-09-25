@@ -1,8 +1,9 @@
 import { Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { DeploymentsService } from "@/client"
 import { Link } from "@tanstack/react-router"
-import { DeploymentStatus } from "@/components/Deployment/Status"
+
+import { DeploymentsService } from "@/client"
+import { Status } from "@/components/Deployment/Status"
 
 const Deployments = ({ appId }: { appId: string }) => {
   const headers = ["Deployment ID", "Status", "Created At"]
@@ -34,7 +35,7 @@ const Deployments = ({ appId }: { appId: string }) => {
                   </Link>
                 </Td>
                 <Td>
-                  <DeploymentStatus deployment={deployment} />
+                  <Status deployment={deployment} />
                 </Td>
                 <Td>{new Date(deployment.created_at).toLocaleString()}</Td>
               </Tr>

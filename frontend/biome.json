@@ -22,7 +22,8 @@
       "style": {
         "noNonNullAssertion": "off"
       }
-    }
+    },
+    "ignore": ["src/client"]
   },
   "formatter": {
     "indentStyle": "space"

@@ -101,7 +101,7 @@ function Apps() {
         }),
       )
     }
-  }, [page, queryClient, hasNextPage])
+  }, [page, queryClient, hasNextPage, order, orderBy, team.id])
 
   return (
     <Container maxW="full">

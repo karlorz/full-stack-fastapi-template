@@ -20,7 +20,6 @@ import { useEffect, useState } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
 import { InvitationsService } from "@/client/services"
-import { Route } from "@/routes/_layout/$team"
 import CancelInvitation from "./CancelInvitation"
 import NewInvitation from "./NewInvitation"
 
@@ -41,7 +40,6 @@ const getInvitationsQueryOptions = ({
 })
 
 function InvitationsTable({ teamId }: { teamId: string }) {
-  const { team } = Route.useParams()
   const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
 
@@ -49,7 +47,7 @@ function InvitationsTable({ teamId }: { teamId: string }) {
     queryClient.prefetchQuery(
       getInvitationsQueryOptions({ teamId, page: page + 1 }),
     )
-  }, [page, queryClient, getInvitationsQueryOptions, team])
+  }, [page, queryClient, getInvitationsQueryOptions, teamId])
 
   const {
     data: invitations,
