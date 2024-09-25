@@ -1,7 +1,7 @@
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import { type ReactNode, useEffect, useState } from "react"
 
-import Logo from "../../assets/logo-text-white.svg"
+import Logo from "@/assets/logo-text-white.svg"
 
 const words = ["simplest", "smartest", "fastest"]
 

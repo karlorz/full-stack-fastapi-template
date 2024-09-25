@@ -25,9 +25,9 @@ import {
   FaUsers,
 } from "react-icons/fa"
 
-import { TeamsService } from "../../client"
-import useAuth, { useCurrentUser } from "../../hooks/useAuth"
-import { Route } from "../../routes/_layout/$team"
+import { TeamsService } from "@/client"
+import useAuth, { useCurrentUser } from "@/hooks/useAuth"
+import { Route } from "@/routes/_layout/$team"
 
 interface MenuItemLinkProps {
   to: string

@@ -10,11 +10,11 @@ import {
 } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { AppsService } from "../../../../../client"
-import DeleteApp from "../../../../../components/AppSettings/DeleteApp"
-import Deployments from "../../../../../components/AppSettings/Deployments"
-import CustomCard from "../../../../../components/Common/CustomCard"
-import { fetchTeamBySlug } from "../../../../../utils"
+import { AppsService } from "@/client"
+import DeleteApp from "@/components/AppSettings/DeleteApp"
+import Deployments from "@/components/AppSettings/Deployments"
+import CustomCard from "@/components/Common/CustomCard"
+import { fetchTeamBySlug } from "@/utils"
 
 export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
   component: AppDetail,

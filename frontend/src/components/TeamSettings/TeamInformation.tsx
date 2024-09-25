@@ -5,16 +5,16 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query"
 
-import { type TeamUpdate, TeamsService } from "../../client"
-import { useCurrentUser } from "../../hooks/useAuth"
-import useCustomToast from "../../hooks/useCustomToast"
-import { Route } from "../../routes/_layout/$team"
+import { type TeamUpdate, TeamsService } from "@/client"
+import { useCurrentUser } from "@/hooks/useAuth"
+import useCustomToast from "@/hooks/useCustomToast"
+import { Route } from "@/routes/_layout/$team"
 import {
   fetchTeamBySlug,
   getCurrentUserRole,
   handleError,
   nameRules,
-} from "../../utils"
+} from "@/utils"
 import CustomCard from "../Common/CustomCard"
 import EditableField from "../Common/EditableField"
 import Invitations from "../Invitations/Invitations"

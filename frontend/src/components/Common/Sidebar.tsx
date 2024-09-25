@@ -14,9 +14,9 @@ import {
 } from "@chakra-ui/react"
 import { FaBars, FaSignOutAlt } from "react-icons/fa"
 
-import LogoLight from "../../assets/logo-mosaic-white.svg"
-import LogoDark from "../../assets/logo-mosaic.svg"
-import useAuth from "../../hooks/useAuth"
+import LogoLight from "@/assets/logo-mosaic-white.svg"
+import LogoDark from "@/assets/logo-mosaic.svg"
+import useAuth from "@/hooks/useAuth"
 import SidebarItems from "./SidebarItems"
 
 const Sidebar = () => {

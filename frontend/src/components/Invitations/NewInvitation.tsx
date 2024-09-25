@@ -17,14 +17,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import Lottie from "lottie-react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import emailSent from "../../assets/email.json"
-import warning from "../../assets/failed.json"
+import emailSent from "@/assets/email.json"
+import warning from "@/assets/failed.json"
 import {
   type ApiError,
   type InvitationCreate,
   InvitationsService,
-} from "../../client"
-import { emailPattern, extractErrorMessage } from "../../utils"
+} from "@/client"
+import { emailPattern, extractErrorMessage } from "@/utils"
 
 interface NewInvitationProps {
   teamId: string

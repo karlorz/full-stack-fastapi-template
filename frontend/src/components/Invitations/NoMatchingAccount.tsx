@@ -13,8 +13,8 @@ import {
 } from "@chakra-ui/react"
 
 import { useNavigate } from "@tanstack/react-router"
-import type { InvitationPublic, UserPublic } from "../../client"
-import useAuth from "../../hooks/useAuth"
+import type { InvitationPublic, UserPublic } from "@/client"
+import useAuth from "@/hooks/useAuth"
 
 interface NoMatchingAccountProps {
   isOpen: boolean

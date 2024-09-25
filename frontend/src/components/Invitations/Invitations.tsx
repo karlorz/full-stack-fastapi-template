@@ -19,8 +19,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
-import { InvitationsService } from "../../client/services"
-import { Route } from "../../routes/_layout/$team"
+import { InvitationsService } from "@/client/services"
+import { Route } from "@/routes/_layout/$team"
 import CancelInvitation from "./CancelInvitation"
 import NewInvitation from "./NewInvitation"
 

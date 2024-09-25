@@ -1,7 +1,7 @@
 import { Box, Container, Text } from "@chakra-ui/react"
 import Lottie from "lottie-react"
 
-import emailSent from "../../assets/email.json"
+import emailSent from "@/assets/email.json"
 
 const EmailSent = ({ email }: { email: string }) => {
   return (

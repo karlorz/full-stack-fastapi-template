@@ -21,10 +21,10 @@ import { useNavigate } from "@tanstack/react-router"
 import { useRef } from "react"
 import { useForm } from "react-hook-form"
 
-import { TeamsService } from "../../client"
-import useCustomToast from "../../hooks/useCustomToast"
-import { Route } from "../../routes/_layout/$team"
-import { handleError } from "../../utils"
+import { TeamsService } from "@/client"
+import useCustomToast from "@/hooks/useCustomToast"
+import { Route } from "@/routes/_layout/$team"
+import { handleError } from "@/utils"
 
 interface DeleteProps {
   teamId: string

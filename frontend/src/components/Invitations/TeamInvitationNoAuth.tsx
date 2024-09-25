@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react"
 import { useNavigate } from "@tanstack/react-router"
 
-import type { InvitationPublic } from "../../client"
+import type { InvitationPublic } from "@/client"
 
 interface AcceptInvitationProps {
   isOpen: boolean

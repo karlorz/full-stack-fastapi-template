@@ -1,8 +1,8 @@
 import { Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { DeploymentsService } from "../../client"
+import { DeploymentsService } from "@/client"
 import { Link } from "@tanstack/react-router"
-import { DeploymentStatus } from "../Deployment/Status"
+import { DeploymentStatus } from "@/components/Deployment/Status"
 
 const Deployments = ({ appId }: { appId: string }) => {
   const headers = ["Deployment ID", "Status", "Created At"]

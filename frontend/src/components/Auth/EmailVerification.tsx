@@ -4,8 +4,8 @@ import { Link as RouterLink } from "@tanstack/react-router"
 import Lottie from "lottie-react"
 import { useEffect } from "react"
 
-import warning from "../../assets/failed.json"
-import { UsersService } from "../../client"
+import warning from "@/assets/failed.json"
+import { UsersService } from "@/client"
 
 const EmailVerification = () => {
   const token = new URLSearchParams(window.location.search).get("token")

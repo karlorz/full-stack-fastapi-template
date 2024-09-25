@@ -18,8 +18,8 @@ import {
 import { CgOrganisation } from "react-icons/cg"
 import { FaCog, FaHome, FaLayerGroup } from "react-icons/fa"
 
-import { useCurrentUser } from "../../hooks/useAuth"
-import { Route } from "../../routes/_layout/$team"
+import { useCurrentUser } from "@/hooks/useAuth"
+import { Route } from "@/routes/_layout/$team"
 
 // https://github.com/TanStack/router/issues/1194#issuecomment-1956736102
 export function link<

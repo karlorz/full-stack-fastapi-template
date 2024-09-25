@@ -21,9 +21,9 @@ import { useNavigate } from "@tanstack/react-router"
 import { useRef } from "react"
 import { useForm } from "react-hook-form"
 
-import { AppsService } from "../../client"
-import useCustomToast from "../../hooks/useCustomToast"
-import { handleError } from "../../utils"
+import { AppsService } from "@/client"
+import useCustomToast from "@/hooks/useCustomToast"
+import { handleError } from "@/utils"
 
 interface DeleteProps {
   isOpen: boolean

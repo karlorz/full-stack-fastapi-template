@@ -9,7 +9,7 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { FaEdit, FaExchangeAlt, FaTrash } from "react-icons/fa"
 
-import type { TeamPublic, UserPublic } from "../../client"
+import type { TeamPublic, UserPublic } from "@/client"
 import ChangeRole from "../Teams/ChangeRole"
 import RemoveUser from "./RemoveUser"
 
