@@ -39,6 +39,10 @@ import type {
   DeploymentPublic,
   DeploymentsPublic,
   DeploymentUploadOut,
+  CreateApp,
+  CreateDeployment,
+  CreateTeam,
+  CreateUser,
 } from "./models"
 
 export type LoginData = {
@@ -203,6 +207,21 @@ export type DeploymentsData = {
   }
   UploadDeploymentArtifact: {
     deploymentId: string
+  }
+}
+
+export type PrivateData = {
+  CreateUser: {
+    requestBody: CreateUser
+  }
+  CreateTeam: {
+    requestBody: CreateTeam
+  }
+  CreateApp: {
+    requestBody: CreateApp
+  }
+  CreateDeployment: {
+    requestBody: CreateDeployment
   }
 }
 
@@ -1164,6 +1183,92 @@ export class DeploymentsService {
       path: {
         deployment_id: deploymentId,
       },
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+}
+
+export class PrivateService {
+  /**
+   * Create User
+   * Create a new user.
+   * @returns UserPublic Successful Response
+   * @throws ApiError
+   */
+  public static createUser(
+    data: PrivateData["CreateUser"],
+  ): CancelablePromise<UserPublic> {
+    const { requestBody } = data
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/private/users/",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+
+  /**
+   * Create Team
+   * Create a new team.
+   * @returns TeamPublic Successful Response
+   * @throws ApiError
+   */
+  public static createTeam(
+    data: PrivateData["CreateTeam"],
+  ): CancelablePromise<TeamPublic> {
+    const { requestBody } = data
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/private/teams/",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+
+  /**
+   * Create App
+   * Create a new app.
+   * @returns AppPublic Successful Response
+   * @throws ApiError
+   */
+  public static createApp(
+    data: PrivateData["CreateApp"],
+  ): CancelablePromise<AppPublic> {
+    const { requestBody } = data
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/private/apps/",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+
+  /**
+   * Create Deployment
+   * Create a new deployment.
+   * @returns DeploymentPublic Successful Response
+   * @throws ApiError
+   */
+  public static createDeployment(
+    data: PrivateData["CreateDeployment"],
+  ): CancelablePromise<DeploymentPublic> {
+    const { requestBody } = data
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/private/deployments/",
+      body: requestBody,
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },

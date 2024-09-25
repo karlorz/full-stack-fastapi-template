@@ -173,6 +173,76 @@ export const $Body_login_login_token = {
   },
 } as const
 
+export const $CreateApp = {
+  properties: {
+    name: {
+      type: "string",
+      isRequired: true,
+    },
+    team_id: {
+      type: "string",
+      isRequired: true,
+      format: "uuid",
+    },
+  },
+} as const
+
+export const $CreateDeployment = {
+  properties: {
+    app_id: {
+      type: "string",
+      isRequired: true,
+      format: "uuid",
+    },
+    status: {
+      type: "any-of",
+      contains: [
+        {
+          type: "DeploymentStatus",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+  },
+} as const
+
+export const $CreateTeam = {
+  properties: {
+    name: {
+      type: "string",
+      isRequired: true,
+    },
+    owner_id: {
+      type: "string",
+      isRequired: true,
+      format: "uuid",
+    },
+  },
+} as const
+
+export const $CreateUser = {
+  properties: {
+    email: {
+      type: "string",
+      isRequired: true,
+    },
+    password: {
+      type: "string",
+      isRequired: true,
+    },
+    full_name: {
+      type: "string",
+      isRequired: true,
+    },
+    is_verified: {
+      type: "boolean",
+      default: false,
+    },
+  },
+} as const
+
 export const $DeploymentPublic = {
   properties: {
     id: {

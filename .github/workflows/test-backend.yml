@@ -43,6 +43,8 @@ jobs:
       - name: Run tests
         run: uv run bash scripts/tests-start.sh "Coverage for ${{ github.sha }}"
         working-directory: backend
+        env:
+          ENABLE_PRIVATE_API: true
       - run: docker compose down -v --remove-orphans
       - name: Store coverage files
         uses: actions/upload-artifact@v4

@@ -1,6 +1,16 @@
 from fastapi import APIRouter
 
-from app.api.routes import apps, deployments, invitations, login, teams, users, utils
+from app.api.routes import (
+    apps,
+    deployments,
+    invitations,
+    login,
+    private,
+    teams,
+    users,
+    utils,
+)
+from app.core.config import settings
 
 api_router = APIRouter()
 api_router.include_router(login.router, tags=["login"])
@@ -12,3 +22,6 @@ api_router.include_router(
 )
 api_router.include_router(apps.router, prefix="/apps", tags=["apps"])
 api_router.include_router(deployments.router, tags=["deployments"])
+
+if settings.ENABLE_PRIVATE_API:
+    api_router.include_router(private.router, prefix="/private", tags=["private"])

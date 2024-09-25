@@ -134,6 +134,8 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_FULL_NAME: str
     USERS_OPEN_REGISTRATION: bool = False
 
+    ENABLE_PRIVATE_API: bool = False
+
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
             message = (

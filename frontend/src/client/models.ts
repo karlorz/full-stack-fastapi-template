@@ -47,6 +47,28 @@ export type Body_login_login_token = {
   grant_type: "urn:ietf:params:oauth:grant-type:device_code"
 }
 
+export type CreateApp = {
+  name: string
+  team_id: string
+}
+
+export type CreateDeployment = {
+  app_id: string
+  status?: DeploymentStatus | null
+}
+
+export type CreateTeam = {
+  name: string
+  owner_id: string
+}
+
+export type CreateUser = {
+  email: string
+  password: string
+  full_name: string
+  is_verified?: boolean
+}
+
 export type DeploymentPublic = {
   id: string
   app_id: string
