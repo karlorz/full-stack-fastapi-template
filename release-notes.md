@@ -238,6 +238,7 @@
 
 ### Docs
 
+* 📝 Update docs about creating a new environment to deploy. PR [#361](https://github.com/fastapilabs/cloud/pull/361) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update README about scripts location. PR [#326](https://github.com/fastapilabs/cloud/pull/326) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update instructions to clone for a private repo, including updates. PR [#1127](https://github.com/tiangolo/full-stack-fastapi-template/pull/1127) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Add docs about CI keys, LATEST_CHANGES and SMOKESHOW_AUTH_KEY. PR [#1126](https://github.com/tiangolo/full-stack-fastapi-template/pull/1126) by [@tiangolo](https://github.com/tiangolo).
