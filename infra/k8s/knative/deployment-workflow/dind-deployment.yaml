@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: docker
-        image: 992382821657.dkr.ecr.us-east-1.amazonaws.com/docker-builder@sha256:0ff1c8a10df3c1f21404a956bb19a4e9524c63af69281598f977cc97c45c7746
+        image: this-is-replaced-on-ci
         ports:
         - containerPort: 8080
         securityContext:
