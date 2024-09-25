@@ -249,6 +249,7 @@
 
 ### Internal
 
+* ♻️ Use paths in both vite and tsconfig to make imports nicer. PR [#360](https://github.com/fastapilabs/cloud/pull/360) by [@patrick91](https://github.com/patrick91).
 * 🧱 Add support for uv on builder. PR [#359](https://github.com/fastapilabs/cloud/pull/359) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add initial private API. PR [#358](https://github.com/fastapilabs/cloud/pull/358) by [@patrick91](https://github.com/patrick91).
 * 🧱 Add failed status for docker builder when it fails. PR [#353](https://github.com/fastapilabs/cloud/pull/353) by [@estebanx64](https://github.com/estebanx64).
