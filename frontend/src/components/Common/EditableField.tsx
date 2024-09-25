@@ -8,7 +8,11 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { useState } from "react"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import {
+  type RegisterOptions,
+  type SubmitHandler,
+  useForm,
+} from "react-hook-form"
 import { AiFillEdit, AiFillSave } from "react-icons/ai"
 
 interface EditableFieldProps {
@@ -16,6 +20,7 @@ interface EditableFieldProps {
   value: string
   onSubmit: (newValue: string) => void
   canEdit: boolean
+  rules?: RegisterOptions
 }
 
 const EditableField = ({
@@ -23,6 +28,7 @@ const EditableField = ({
   value,
   onSubmit,
   canEdit,
+  rules,
 }: EditableFieldProps) => {
   const [editMode, setEditMode] = useState(false)
   const {
@@ -47,7 +53,6 @@ const EditableField = ({
     data,
   ) => {
     onSubmit(data[type])
-
     setEditMode(false)
   }
 
@@ -63,7 +68,7 @@ const EditableField = ({
           <FormControl id={type} isInvalid={!!errors[type]} w="250px">
             <Input
               id={type}
-              {...register(type, { required: "This field is required" })}
+              {...register(type, rules)}
               type={type}
               isInvalid={!!errors[type]}
             />

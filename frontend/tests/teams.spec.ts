@@ -111,7 +111,7 @@ test.describe("User with admin role can update team information", () => {
     await page.getByRole("button", { name: "Edit" }).click()
     await page.locator("#name").click()
     await page.locator("#name").fill("")
-    await expect(page.getByText("This field is required")).toBeVisible()
+    await expect(page.getByText("Name is required")).toBeVisible()
   })
 
   test("User can delete a team", async ({ page }) => {

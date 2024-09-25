@@ -107,7 +107,7 @@ test.describe("Edit user full name and email with invalid data", () => {
     await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(0).click()
     await page.locator("#full_name").fill("")
-    await expect(page.getByText("This field is required")).toBeVisible()
+    await expect(page.getByText("Name is required")).toBeVisible()
   })
 
   test("Edit user email with an invalid email", async ({ page }) => {
@@ -118,7 +118,7 @@ test.describe("Edit user full name and email with invalid data", () => {
     await page.getByRole("button", { name: "Edit" }).nth(1).click()
     await page.locator("#email").fill(invalidEmail)
     await page.locator("body").click()
-    await expect(page.getByText("This field is required")).toBeVisible()
+    await expect(page.getByText("Email is required")).toBeVisible()
   })
 
   test("Cancel edit action restores original name", async ({ page }) => {

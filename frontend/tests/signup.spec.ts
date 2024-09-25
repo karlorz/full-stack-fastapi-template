@@ -173,7 +173,7 @@ test("Sign up with missing full name", async ({ page }) => {
   await fillForm(page, "", email, "changethis", "changethis")
   await page.getByRole("button", { name: "Sign Up" }).click()
 
-  await expect(page.getByText("Full Name is required")).toBeVisible()
+  await expect(page.getByText("Name is required")).toBeVisible()
 })
 
 test("Sign up with missing email", async ({ page }) => {

@@ -9,7 +9,12 @@ import { type TeamUpdate, TeamsService } from "../../client"
 import { useCurrentUser } from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
 import { Route } from "../../routes/_layout/$team"
-import { fetchTeamBySlug, getCurrentUserRole, handleError } from "../../utils"
+import {
+  fetchTeamBySlug,
+  getCurrentUserRole,
+  handleError,
+  nameRules,
+} from "../../utils"
 import CustomCard from "../Common/CustomCard"
 import EditableField from "../Common/EditableField"
 import Invitations from "../Invitations/Invitations"
@@ -48,6 +53,7 @@ const TeamInformation = () => {
           value={team.name}
           onSubmit={(newName) => mutation.mutate({ name: newName })}
           canEdit={currentUserRole === "admin"}
+          rules={nameRules()}
         />
       </CustomCard>
       <CustomCard title="Team Members" data-testid="team-members">

@@ -64,7 +64,7 @@ class UserUpdateEmailMe(SQLModel):
 
 
 class UserUpdateMe(SQLModel):
-    full_name: str = Field(max_length=255, min_length=1)
+    full_name: str = Field(max_length=255, min_length=3)
 
 
 class UpdatePassword(SQLModel):
@@ -175,7 +175,7 @@ class TeamCreate(TeamBase):
 
 
 class TeamUpdate(SQLModel):
-    name: str | None = Field(default=None, max_length=255)
+    name: str | None = Field(default=None, max_length=255, min_length=3)
     description: str | None = Field(default=None, max_length=255)
 
 

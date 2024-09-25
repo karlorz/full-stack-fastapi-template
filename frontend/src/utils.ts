@@ -1,3 +1,4 @@
+import type { RegisterOptions } from "react-hook-form"
 import {
   type ApiError,
   type TeamWithUserPublic,
@@ -10,25 +11,24 @@ export const emailPattern = {
   message: "Invalid email address",
 }
 
-export const namePattern = {
-  value: /^[A-Za-z\s\u00C0-\u017F]{1,30}$/,
-  message: "Invalid name",
-}
-
 export const nameRules = () => {
-  const rules: any = {
+  const rules: RegisterOptions = {
     maxLength: {
       value: 255,
-      message: "Full Name cannot be more than 255 characters",
+      message: "Name cannot be more than 255 characters",
     },
-    required: "Full Name is required",
+    minLength: {
+      value: 3,
+      message: "Name must be at least 3 characters",
+    },
+    required: "Name is required",
   }
 
   return rules
 }
 
 export const passwordRules = (isRequired = true) => {
-  const rules: any = {
+  const rules: RegisterOptions = {
     minLength: {
       value: 8,
       message: "Password must be at least 8 characters",
@@ -47,10 +47,10 @@ export const passwordRules = (isRequired = true) => {
 }
 
 export const confirmPasswordRules = (
-  getValues: () => any,
+  getValues: () => { password?: string; new_password?: string },
   isRequired = true,
 ) => {
-  const rules: any = {
+  const rules: RegisterOptions = {
     validate: (value: string) => {
       const password = getValues().password || getValues().new_password
       return value === password ? true : "Passwords do not match"

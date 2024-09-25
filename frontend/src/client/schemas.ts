@@ -596,6 +596,7 @@ export const $TeamUpdate = {
         {
           type: "string",
           maxLength: 255,
+          minLength: 3,
         },
         {
           type: "null",
@@ -847,7 +848,7 @@ export const $UserUpdateMe = {
       type: "string",
       isRequired: true,
       maxLength: 255,
-      minLength: 1,
+      minLength: 3,
     },
   },
 } as const

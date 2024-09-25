@@ -6,7 +6,7 @@ import { FaGithub } from "react-icons/fa"
 import { UsersService } from "../../client"
 import { useCurrentUser } from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
-import { handleError } from "../../utils"
+import { handleError, nameRules } from "../../utils"
 import CustomCard from "../Common/CustomCard"
 import EditableField from "../Common/EditableField"
 import UpdateEmailVerification from "../Common/UpdateEmailVerification"
@@ -58,6 +58,7 @@ const UserInformation = () => {
             value={currentUser?.full_name ?? ""}
             onSubmit={(newFullName) => fullNameMutation.mutate(newFullName)}
             canEdit={true}
+            rules={nameRules()}
           />
         </CustomCard>
         <CustomCard title="Email">
@@ -66,6 +67,7 @@ const UserInformation = () => {
             value={currentUser?.email ?? ""}
             onSubmit={(newEmail) => emailMutation.mutate(newEmail)}
             canEdit={true}
+            rules={{ required: "Email is required" }}
           />
         </CustomCard>
         <CustomCard title="Password">
