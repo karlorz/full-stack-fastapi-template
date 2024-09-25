@@ -59,4 +59,4 @@ jobs:
           CLUSTER_NAME: ${{ steps.pulumi.outputs.cluster_name }}
           KUBECONFIG_CONTENT: ${{ steps.pulumi.outputs.kubeconfig }}
           CLOUDFLARE_API_TOKEN_DNS: ${{ secrets.CLOUDFLARE_API_TOKEN_DNS }}
-          DEPLOYMENT_ENV: ${{ github.event_name == 'release' && 'production' || 'staging' }}
+          DEPLOYMENT_ENVIRONMENT: ${{ github.event_name == 'release' && 'production' || 'staging' }}

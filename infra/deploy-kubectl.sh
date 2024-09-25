@@ -3,7 +3,7 @@
 set -e
 
 CLOUDFLARE_API_TOKEN_DNS=${CLOUDFLARE_API_TOKEN_DNS:?}
-DEPLOY_ENVIRONMENT=${DEPLOY_ENVIRONMENT:-staging}
+DEPLOY_ENVIRONMENT=${DEPLOY_ENVIRONMENT:-development}
 
 echo "Configure Kubeconfig"
 echo "${KUBECONFIG_CONTENT}" > kubeconfig.json
