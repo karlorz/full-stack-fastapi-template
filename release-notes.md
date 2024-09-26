@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✨ Add team selector. PR [#335](https://github.com/fastapilabs/cloud/pull/335) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add single deployment page. PR [#349](https://github.com/fastapilabs/cloud/pull/349) by [@patrick91](https://github.com/patrick91).
 * ✨ Add docker builder script. PR [#254](https://github.com/fastapilabs/cloud/pull/254) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add url on deployment. PR [#264](https://github.com/fastapilabs/cloud/pull/264) by [@patrick91](https://github.com/patrick91).
