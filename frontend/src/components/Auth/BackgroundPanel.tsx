@@ -31,7 +31,7 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
         justify="center"
         alignItems="center"
         h="100vh"
-        bg="linear-gradient(90deg, #008080 0%, #4e2a9c  100%)"
+        bg="ui.gradient"
         position="relative"
       >
         <Box

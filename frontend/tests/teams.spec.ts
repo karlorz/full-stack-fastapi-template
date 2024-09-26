@@ -20,13 +20,12 @@ test.describe("Select and change team successfully", () => {
     await logInUser(page, email, password)
 
     await page.goto("/")
-    await expect(page.getByRole("button", { name: fullName })).toBeVisible()
-    await page.getByRole("button", { name: fullName }).click()
-    await page.getByRole("menuitem", { name: "View all teams" }).click()
-    await expect(page.getByRole("link", { name: fullName })).toBeVisible()
+    await expect(page.getByTestId("team-selector")).toContainText(
+      "Personal Team",
+    )
   })
 
-  test("Change the current team from the user menu", async ({
+  test("Change the current team from the team selector", async ({
     page,
     request,
   }) => {
@@ -45,8 +44,7 @@ test.describe("Select and change team successfully", () => {
     await createTeam(page, teamName)
 
     await page.goto(`/${teamSlug}`)
-    await expect(page.getByRole("button", { name: teamName })).toBeVisible()
-    await page.getByRole("button", { name: teamName }).click()
+    await page.getByTestId("team-selector").click()
     await page.getByRole("menuitem", { name: fullName }).click()
     await expect(page.getByRole("button", { name: fullName })).toBeVisible()
 

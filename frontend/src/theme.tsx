@@ -12,6 +12,7 @@ const theme = extendTheme({
   },
   colors: {
     ui: {
+      gradient: "linear-gradient(90deg, #008080 0%, #4e2a9c 100%)",
       main: "#009688",
       danger: "#FC4D4D",
       success: "#48BB78",

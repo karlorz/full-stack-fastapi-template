@@ -60,7 +60,7 @@ export async function createTeam(page: Page, name: string) {
 }
 
 export async function logOutUser(page: Page, name: string) {
-  await page.getByRole("button", { name: name }).click()
+  await page.getByTestId("user-menu").click()
   await page.getByRole("menuitem", { name: "Log out" }).click()
   await page.goto("/login")
 }

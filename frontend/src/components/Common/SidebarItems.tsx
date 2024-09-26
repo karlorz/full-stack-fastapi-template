@@ -15,11 +15,12 @@ import {
   type ToOptions,
   type UseLinkPropsOptions,
 } from "@tanstack/react-router"
-import { CgOrganisation } from "react-icons/cg"
 import { FaCog, FaHome, FaLayerGroup } from "react-icons/fa"
 
 import { useCurrentUser } from "@/hooks/useAuth"
 import { Route } from "@/routes/_layout/$team"
+import type { ElementType } from "react"
+import TeamSelector from "./TeamSelector"
 
 // https://github.com/TanStack/router/issues/1194#issuecomment-1956736102
 export function link<
@@ -33,7 +34,7 @@ export function link<
 }
 
 type Item = {
-  icon: React.ElementType
+  icon: ElementType
   title: string
 } & ToOptions
 
@@ -61,13 +62,6 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
       ...link({
         to: "/$team/settings",
         params: { team },
-      }),
-    },
-    {
-      icon: CgOrganisation,
-      title: "Teams",
-      ...link({
-        to: "/teams/all",
       }),
     },
   ]
@@ -115,19 +109,13 @@ const SidebarItems = ({ onClose }: SidebarItemsProps) => {
     </FlexLink>
   ))
 
-  const menu = listItems.slice(0, 3)
-  const others = listItems.slice(3)
-
   return (
     <>
+      <TeamSelector />
       <Text fontSize="xs" px={4} py={2} fontWeight="bold">
         Menu
       </Text>
-      <Box>{menu}</Box>
-      <Text fontSize="xs" px={4} py={2} fontWeight="bold">
-        Others
-      </Text>
-      <Box>{others}</Box>
+      <Box>{listItems}</Box>
     </>
   )
 }

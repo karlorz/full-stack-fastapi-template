@@ -13,32 +13,17 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react"
-import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
-import { Suspense } from "react"
-import {
-  FaCog,
-  FaList,
-  FaPlus,
-  FaSignOutAlt,
-  FaUser,
-  FaUsers,
-} from "react-icons/fa"
+import { type ElementType, Suspense } from "react"
+import { FaCog, FaSignOutAlt } from "react-icons/fa"
 
-import { TeamsService } from "@/client"
 import useAuth, { useCurrentUser } from "@/hooks/useAuth"
-import { Route } from "@/routes/_layout/$team"
 
 interface MenuItemLinkProps {
   to: string
-  icon: React.ElementType
+  icon: ElementType
   label: string
   onClick?: () => void
-}
-
-const CurrentUser = () => {
-  const currentUser = useCurrentUser()
-  return currentUser?.full_name || ""
 }
 
 const MenuItemLink = ({ to, icon, label, onClick }: MenuItemLinkProps) => {
@@ -63,16 +48,14 @@ const MenuItemLink = ({ to, icon, label, onClick }: MenuItemLinkProps) => {
   )
 }
 
+const CurrentUserEmail = () => {
+  const currentUser = useCurrentUser()
+  return currentUser?.email || ""
+}
+
 const UserMenu = () => {
   const bg = useColorModeValue("white", "ui.darkBg")
-  const { team } = Route.useParams()
   const { logout } = useAuth()
-  const { data: teams } = useQuery({
-    queryKey: ["teams"],
-    queryFn: () => TeamsService.readTeams({}),
-  })
-
-  const currentTeam = teams?.data.find((t) => t.slug === team)
 
   const handleLogout = async () => {
     logout()
@@ -92,13 +75,12 @@ const UserMenu = () => {
           >
             <Flex justify="space-between">
               <Box display="flex" alignItems="center">
-                <Icon as={FaUser} />
-                <Text mx={2} as="div">
+                <Text as="div">
                   <Suspense
                     fallback={<SkeletonText noOfLines={1} width={100} />}
                   >
-                    <Box isTruncated maxWidth="150px">
-                      {currentTeam?.name || <CurrentUser />}
+                    <Box isTruncated maxWidth="100px" data-testid="user-menu">
+                      My Account
                     </Box>
                   </Suspense>
                 </Text>
@@ -107,25 +89,14 @@ const UserMenu = () => {
             </Flex>
           </MenuButton>
           <MenuList p={4} bg={bg}>
-            {/* Teams */}
-            {teams?.data.slice(0, 3).map((team, index) => (
-              <MenuItemLink
-                key={team.id}
-                to={`/${team.slug}/`}
-                icon={index === 0 ? FaUser : FaUsers}
-                label={team.name}
-              />
-            ))}
-            <MenuItemLink
-              to="/teams/all"
-              icon={FaList}
-              label="View all teams"
-            />
-            <MenuItemLink
-              to="/teams/new"
-              icon={FaPlus}
-              label="Create a new team"
-            />
+            <Text px={4} color="gray.500">
+              Logged in as:
+            </Text>
+            <Suspense fallback={<SkeletonText noOfLines={1} width={100} />}>
+              <Text isTruncated maxWidth="200px" px={4} py={2}>
+                <CurrentUserEmail />
+              </Text>
+            </Suspense>
             <Divider />
             <MenuItemLink to="/settings" icon={FaCog} label="User Settings" />
             <Divider />

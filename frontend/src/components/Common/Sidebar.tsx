@@ -1,5 +1,6 @@
 import {
   Box,
+  Center,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -43,7 +44,7 @@ const Sidebar = () => {
       />
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent maxW="250px">
+        <DrawerContent maxW="280px">
           <DrawerCloseButton />
           <DrawerBody py={8}>
             <Flex flexDir="column" justify="space-between">
@@ -72,13 +73,15 @@ const Sidebar = () => {
         position="sticky"
         display={{ base: "none", md: "flex" }}
         borderRight={`1px solid ${borderColor}`}
-        minW="250px"
+        minW="280px"
         h="100vh"
         top="0"
         p={6}
       >
-        <Box justifyContent="center" w="100%">
-          <Image src={logo} alt="Logo" p={6} />
+        <Box w="100%">
+          <Center>
+            <Image src={logo} alt="Logo" p={4} width={180} />
+          </Center>
           <SidebarItems />
         </Box>
       </Box>

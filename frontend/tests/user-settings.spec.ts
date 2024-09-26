@@ -37,7 +37,7 @@ test.describe("Edit user full name and email successfully", () => {
     await logInUser(page, email, password)
 
     await page.goto("/settings")
-    await page.getByRole("button", { name: fullName }).click()
+    await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(0).click()
     await page.locator("#full_name").fill(updatedName)
@@ -67,7 +67,7 @@ test.describe("Edit user full name and email successfully", () => {
 
     // Request email update
     await page.goto("/settings")
-    await page.getByRole("button", { name: fullName }).click()
+    await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(1).click()
     await page.locator("#email").fill(updatedEmail)
@@ -103,7 +103,7 @@ test.describe("Edit user full name and email successfully", () => {
 test.describe("Edit user full name and email with invalid data", () => {
   test("Edit user name with a invalid name", async ({ page }) => {
     await page.goto("/settings")
-    await page.getByRole("button", { name: "fastapi admin" }).click()
+    await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(0).click()
     await page.locator("#full_name").fill("")
@@ -113,7 +113,7 @@ test.describe("Edit user full name and email with invalid data", () => {
   test("Edit user email with an invalid email", async ({ page }) => {
     const invalidEmail = ""
     await page.goto("/settings")
-    await page.getByRole("button", { name: "fastapi admin" }).click()
+    await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(1).click()
     await page.locator("#email").fill(invalidEmail)
@@ -124,7 +124,7 @@ test.describe("Edit user full name and email with invalid data", () => {
   test("Cancel edit action restores original name", async ({ page }) => {
     const updatedName = "Test User"
     await page.goto("/settings")
-    await page.getByRole("button", { name: "fastapi admin" }).click()
+    await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(0).click()
     await page.locator("#full_name").fill(updatedName)
@@ -137,7 +137,7 @@ test.describe("Edit user full name and email with invalid data", () => {
   test("Cancel edit action restores original email", async ({ page }) => {
     const updatedEmail = randomEmail()
     await page.goto("/settings")
-    await page.getByRole("button", { name: "fastapi admin" }).click()
+    await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByRole("button", { name: "Edit" }).nth(1).click()
     await page.locator("#email").fill(updatedEmail)
@@ -166,7 +166,7 @@ test.describe("Change password successfully", () => {
     await logInUser(page, email, password)
 
     await page.goto("/settings")
-    await page.getByRole("button", { name: fullName }).click()
+    await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
     await page.getByPlaceholder("Current password").fill(password)
     await page.getByPlaceholder("New Password").fill(NewPassword)
@@ -236,7 +236,7 @@ test.describe("Delete account successfully", () => {
     // Log in the user
     await logInUser(page, email, password)
 
-    await page.getByRole("button", { name: fullName }).click()
+    await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "Settings" }).click()
     await page.getByRole("button", { name: "Delete" }).click()
     await expect(page.getByTestId("delete-confirmation-user")).toBeVisible()

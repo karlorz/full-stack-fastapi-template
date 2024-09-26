@@ -1,6 +1,6 @@
 import { type Page, expect, test } from "@playwright/test"
 
-const links = ["Dashboard", "Apps", "Settings"]
+const links = ["Dashboard", "Apps", "Team Settings"]
 
 const navigateAndCheck = async (page: Page, link: string, text: string) => {
   await page.getByRole("link", { name: link }).click()
@@ -22,7 +22,7 @@ test("Sidebar links navigate to correct pages", async ({ page }) => {
   await page.goto("/")
   await navigateAndCheck(page, "Dashboard", "Welcome back, nice to see you")
   await navigateAndCheck(page, "Apps", "Apps")
-  await navigateAndCheck(page, "Settings", "Settings")
+  await navigateAndCheck(page, "Settings", "Team Settings")
 })
 
 test("Active link is highlighted", async ({ page }) => {
