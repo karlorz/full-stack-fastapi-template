@@ -69,11 +69,10 @@ function AuthorizeDevice() {
   const mutation = useMutation({
     mutationFn: async () => {
       try {
-        const response = await LoginService.authorizeDevice({
+        await LoginService.authorizeDevice({
           requestBody: { user_code: code },
         })
 
-        console.log(response)
         setSuccess(true)
       } catch (err) {
         setError((err as any).body.detail)

@@ -2,6 +2,7 @@ import { Box, Flex } from "@chakra-ui/react"
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 import { Suspense } from "react"
 
+import { TeamsService } from "@/client"
 import Footer from "../components/Common/Footer"
 import Sidebar from "../components/Common/Sidebar"
 import UserMenu from "../components/Common/UserMenu"
@@ -19,9 +20,19 @@ export const Route = createFileRoute("/_layout")({
       })
     }
   },
+  loader: async ({ context }) => {
+    const teams = await context.queryClient.ensureQueryData({
+      queryFn: () => TeamsService.readTeams({}),
+      queryKey: ["teams"],
+    })
+
+    return { teams }
+  },
 })
 
 function Layout() {
+  const { teams } = Route.useLoaderData()
+
   return (
     <>
       <Flex minHeight="100vh" flexDirection="column">
@@ -36,7 +47,7 @@ function Layout() {
             zIndex="3"
           >
             <Suspense>
-              <Sidebar />
+              <Sidebar teams={teams} />
             </Suspense>
           </Box>
           <Flex flexDir="column" flex="1" ml={{ base: 0, md: "250px" }}>

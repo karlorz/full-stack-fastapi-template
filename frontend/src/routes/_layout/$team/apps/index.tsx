@@ -1,11 +1,9 @@
 import {
-  Box,
   Button,
   Container,
   Flex,
   Heading,
   Link,
-  Skeleton,
   Table,
   TableContainer,
   Tbody,
@@ -15,16 +13,15 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Link as RouterLink,
   createFileRoute,
   useNavigate,
 } from "@tanstack/react-router"
-import { useEffect } from "react"
-import { ErrorBoundary } from "react-error-boundary"
 import { z } from "zod"
 
+import { useQueryClient } from "@tanstack/react-query"
+import { useEffect } from "react"
 import { AppsService } from "../../../../client"
 import EmptyState from "../../../../components/Common/EmptyState"
 import QuickStart from "../../../../components/Common/QuickStart"
@@ -34,12 +31,6 @@ const appsSearchSchema = z.object({
   page: z.number().catch(1).optional(),
   orderBy: z.enum(["created_at"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
-})
-
-export const Route = createFileRoute("/_layout/$team/apps/")({
-  component: Apps,
-  validateSearch: (search) => appsSearchSchema.parse(search),
-  loader: ({ params }) => fetchTeamBySlug(params.team),
 })
 
 const PER_PAGE = 5
@@ -59,7 +50,8 @@ function getAppsQueryOptions({
     queryFn: () =>
       AppsService.readApps({
         skip: (page - 1) * PER_PAGE,
-        limit: PER_PAGE,
+        // Fetching one extra to determine if there's a next page
+        limit: PER_PAGE + 1,
         orderBy,
         order,
         teamId,
@@ -68,26 +60,50 @@ function getAppsQueryOptions({
   }
 }
 
+export const Route = createFileRoute("/_layout/$team/apps/")({
+  component: Apps,
+  validateSearch: (search) => appsSearchSchema.parse(search),
+  loaderDeps: ({ search: { page, orderBy, order } }) => ({
+    page,
+    orderBy,
+    order,
+  }),
+  loader: async ({ context, params, deps }) => {
+    // TODO: make a function to get the query options for this
+    const team = await context.queryClient.ensureQueryData({
+      queryFn: () => fetchTeamBySlug(params.team),
+      queryKey: ["team", { slug: params.team }],
+    })
+
+    const apps = await context.queryClient.ensureQueryData(
+      getAppsQueryOptions({
+        teamId: team.id,
+        page: deps.page || 1,
+        orderBy: deps.orderBy,
+        order: deps.order,
+      }),
+    )
+
+    return { team, apps }
+  },
+})
+
 function Apps() {
   const headers = ["name", "slug", "created at"]
-  const queryClient = useQueryClient()
-  const { page = 1, orderBy, order } = Route.useSearch()
+  const { page = 1, order, orderBy } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
     navigate({ search: (prev: any) => ({ ...prev, page }) })
-
-  const team = Route.useLoaderData()
+  const queryClient = useQueryClient()
 
   const {
-    data: apps,
-    isPending,
-    isPlaceholderData,
-  } = useQuery({
-    ...getAppsQueryOptions({ page, orderBy, order, teamId: team.id }),
-    placeholderData: (prevData) => prevData,
-  })
+    apps: { data },
+    team,
+  } = Route.useLoaderData()
 
-  const hasNextPage = !isPlaceholderData && apps?.data.length === PER_PAGE
+  const hasNextPage = data.length === PER_PAGE + 1
+  const apps = data.slice(0, PER_PAGE)
+
   const hasPreviousPage = page > 1
 
   useEffect(() => {
@@ -109,19 +125,15 @@ function Apps() {
         Apps
       </Heading>
       <Text>View and manage apps related to your team.</Text>
-      {(apps?.data?.length ?? 0) > 0 && (
+      {(apps?.length ?? 0) > 0 && (
         <Flex justifyContent="end">
           <Button variant="primary" as={RouterLink} to="/$team/apps/new" mb={4}>
             Create App
           </Button>
         </Flex>
       )}
-      <ErrorBoundary
-        fallbackRender={({ error }) => (
-          <Box>Something went wrong: {error.message}</Box>
-        )}
-      >
-        {isPending ? (
+      {apps?.length > 0 ? (
+        <>
           <TableContainer>
             <Table size={{ base: "sm", md: "md" }} variant="unstyled">
               <Thead>
@@ -134,84 +146,54 @@ function Apps() {
                 </Tr>
               </Thead>
               <Tbody>
-                {new Array(3).fill(null).map((_, index) => (
-                  <Tr key={index}>
+                {apps.map((app) => (
+                  <Tr key={app.id}>
                     <Td>
-                      <Box width="50%">
-                        <Skeleton height="20px" />
-                      </Box>
+                      <Link
+                        as={RouterLink}
+                        to={`/$team/apps/${app.slug}/`}
+                        _hover={{
+                          color: "ui.main",
+                          textDecoration: "underline",
+                        }}
+                        display="inline-block"
+                        minW="20%"
+                      >
+                        {app.name}
+                      </Link>
                     </Td>
+                    <Td>{app.slug}</Td>
+                    <Td>{new Date(app.created_at).toLocaleString()}</Td>
                   </Tr>
                 ))}
               </Tbody>
             </Table>
           </TableContainer>
-        ) : apps?.data?.length ? (
-          <>
-            <TableContainer>
-              <Table size={{ base: "sm", md: "md" }} variant="unstyled">
-                <Thead>
-                  <Tr>
-                    {headers.map((header) => (
-                      <Th key={header} textTransform="capitalize">
-                        {header}
-                      </Th>
-                    ))}
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {apps?.data.map((app) => (
-                    <Tr key={app.id} opacity={isPlaceholderData ? 0.5 : 1}>
-                      <Td>
-                        <Link
-                          as={RouterLink}
-                          to={`/$team/apps/${app.slug}/`}
-                          _hover={{
-                            color: "ui.main",
-                            textDecoration: "underline",
-                          }}
-                          display="inline-block"
-                          minW="20%"
-                        >
-                          {app.name}
-                        </Link>
-                      </Td>
-                      <Td>{app.slug}</Td>
-                      <Td>{new Date(app.created_at).toLocaleString()}</Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
-            <Flex
-              gap={4}
-              alignItems="center"
-              mt={4}
-              direction="row"
-              justifyContent="flex-end"
+          <Flex
+            gap={4}
+            alignItems="center"
+            mt={4}
+            direction="row"
+            justifyContent="flex-end"
+          >
+            <Button
+              onClick={() => setPage(page - 1)}
+              isDisabled={!hasPreviousPage}
             >
-              <Button
-                onClick={() => setPage(page - 1)}
-                isDisabled={!hasPreviousPage}
-              >
-                Previous
-              </Button>
-              <span>Page {page}</span>
-              <Button
-                isDisabled={!hasNextPage}
-                onClick={() => setPage(page + 1)}
-              >
-                Next
-              </Button>
-            </Flex>
-          </>
-        ) : (
-          <Flex gap={4} pt={10} flexDir={{ base: "column", md: "row" }}>
-            <EmptyState type="app" />
-            <QuickStart />
+              Previous
+            </Button>
+            <span>Page {page}</span>
+            <Button isDisabled={!hasNextPage} onClick={() => setPage(page + 1)}>
+              Next
+            </Button>
           </Flex>
-        )}
-      </ErrorBoundary>
+        </>
+      ) : (
+        <Flex gap={4} pt={10} flexDir={{ base: "column", md: "row" }}>
+          <EmptyState type="app" />
+          <QuickStart />
+        </Flex>
+      )}
     </Container>
   )
 }

@@ -1,6 +1,7 @@
-import { Outlet, createRootRoute } from "@tanstack/react-router"
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router"
 import React, { Suspense } from "react"
 
+import type { QueryClient } from "@tanstack/react-query"
 import NotFound from "../components/Common/NotFound"
 
 const TanStackRouterDevtools =
@@ -12,7 +13,9 @@ const TanStackRouterDevtools =
         })),
       )
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient
+}>()({
   component: () => (
     <>
       <Outlet />

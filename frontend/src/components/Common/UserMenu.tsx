@@ -20,19 +20,26 @@ import { FaCog, FaSignOutAlt } from "react-icons/fa"
 import useAuth, { useCurrentUser } from "@/hooks/useAuth"
 
 interface MenuItemLinkProps {
-  to: string
+  to?: string
   icon: ElementType
   label: string
   onClick?: () => void
+  as?: ElementType
 }
 
-const MenuItemLink = ({ to, icon, label, onClick }: MenuItemLinkProps) => {
+const MenuItemLink = ({
+  to,
+  icon,
+  label,
+  onClick,
+  as = Link,
+}: MenuItemLinkProps) => {
   const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
   const bgMenu = useColorModeValue("white", "ui.darkBg")
 
   return (
     <MenuItem
-      as={Link}
+      as={as}
       to={to}
       gap={2}
       py={2}
@@ -101,7 +108,7 @@ const UserMenu = () => {
             <MenuItemLink to="/settings" icon={FaCog} label="User Settings" />
             <Divider />
             <MenuItemLink
-              to="#"
+              as="button"
               icon={FaSignOutAlt}
               label="Log out"
               onClick={handleLogout}

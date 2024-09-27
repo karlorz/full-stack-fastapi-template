@@ -17,10 +17,11 @@ import { FaBars, FaSignOutAlt } from "react-icons/fa"
 
 import LogoLight from "@/assets/logo-mosaic-white.svg"
 import LogoDark from "@/assets/logo-mosaic.svg"
+import type { TeamsPublic } from "@/client"
 import useAuth from "@/hooks/useAuth"
 import SidebarItems from "./SidebarItems"
 
-const Sidebar = () => {
+const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { logout } = useAuth()
   const borderColor = useColorModeValue("#e4e5eb", "#2a2a2a")
@@ -50,7 +51,7 @@ const Sidebar = () => {
             <Flex flexDir="column" justify="space-between">
               <Box>
                 <Image src={logo} alt="Logo" p={6} />
-                <SidebarItems onClose={onClose} />
+                <SidebarItems onClose={onClose} teams={teams} />
                 <Flex
                   as="button"
                   onClick={handleLogout}
@@ -82,7 +83,7 @@ const Sidebar = () => {
           <Center>
             <Image src={logo} alt="Logo" p={4} width={180} />
           </Center>
-          <SidebarItems />
+          <SidebarItems teams={teams} />
         </Box>
       </Box>
     </>

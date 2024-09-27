@@ -9,17 +9,15 @@ import {
   MenuGroup,
   MenuItem,
   MenuList,
-  SkeletonText,
   Text,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react"
-import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import type { ElementType } from "react"
 import { FaPlus, FaUsers } from "react-icons/fa"
 
-import { TeamsService } from "@/client"
+import type { TeamsPublic } from "@/client"
 import { Route } from "@/routes/_layout/$team"
 import { getInitials } from "@/utils"
 import TeamIcon from "./TeamIcon"
@@ -62,14 +60,10 @@ const MenuItemLink = ({
   )
 }
 
-const TeamSelector = () => {
+const TeamSelector = ({ teams }: { teams: TeamsPublic }) => {
   const bg = useColorModeValue("white", "ui.darkBg")
   const color = useColorModeValue("ui.defaultText", "ui.lightText")
   const { team } = Route.useParams()
-  const { data: teams, isLoading } = useQuery({
-    queryKey: ["teams"],
-    queryFn: () => TeamsService.readTeams({}),
-  })
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const currentTeam = teams?.data.find((t) => t.slug === team)
@@ -102,19 +96,13 @@ const TeamSelector = () => {
                   }
                 />
                 <Box mx={2} textAlign="left">
-                  {isLoading ? (
-                    <SkeletonText noOfLines={1} width={100} />
-                  ) : (
-                    <>
-                      <Text isTruncated maxWidth="150px" color={color}>
-                        {currentTeam?.name}
-                      </Text>
-                      {currentTeam === personalTeam && (
-                        <Text fontSize="sm" color="gray.500">
-                          Personal Team
-                        </Text>
-                      )}
-                    </>
+                  <Text isTruncated maxWidth="150px" color={color}>
+                    {currentTeam?.name}
+                  </Text>
+                  {currentTeam === personalTeam && (
+                    <Text fontSize="sm" color="gray.500">
+                      Personal Team
+                    </Text>
                   )}
                 </Box>
               </Box>

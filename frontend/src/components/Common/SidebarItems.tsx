@@ -17,6 +17,7 @@ import {
 } from "@tanstack/react-router"
 import { FaCog, FaHome, FaLayerGroup } from "react-icons/fa"
 
+import type { TeamsPublic } from "@/client"
 import { useCurrentUser } from "@/hooks/useAuth"
 import { Route } from "@/routes/_layout/$team"
 import type { ElementType } from "react"
@@ -69,6 +70,7 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
 
 interface SidebarItemsProps {
   onClose?: () => void
+  teams: TeamsPublic
 }
 
 // Looks like `as` doesn't do full type inference, so we created a new component
@@ -78,7 +80,7 @@ const FlexLink = (props: LinkProps & Omit<FlexProps, "as">) => (
   <Flex as={Link} {...props} />
 )
 
-const SidebarItems = ({ onClose }: SidebarItemsProps) => {
+const SidebarItems = ({ onClose, teams }: SidebarItemsProps) => {
   const { team } = Route.useParams()
   const user = useCurrentUser()
   const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
@@ -111,7 +113,7 @@ const SidebarItems = ({ onClose }: SidebarItemsProps) => {
 
   return (
     <>
-      <TeamSelector />
+      <TeamSelector teams={teams} />
       <Text fontSize="xs" px={4} py={2} fontWeight="bold">
         Menu
       </Text>

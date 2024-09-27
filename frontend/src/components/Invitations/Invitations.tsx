@@ -58,6 +58,7 @@ function InvitationsTable({ teamId }: { teamId: string }) {
     placeholderData: (previous) => previous,
   })
 
+  // TODO: fix pagination
   const hasNextPage =
     !isPlaceholderData && invitations?.data.length === PER_PAGE
   const hasPreviousPage = page > 1
