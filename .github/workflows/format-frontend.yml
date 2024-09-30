@@ -12,7 +12,11 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
+    # For PRs from forks and bots
     - uses: actions/checkout@v4
+    # For PRs from the same repo
+    - uses: actions/checkout@v4
+      if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
       with:
         ref: ${{ github.head_ref }}
         token: ${{ secrets.FASTAPI_CLOUD_TOKEN }}
@@ -27,10 +31,19 @@ jobs:
         npm run biome-check
         npm run biome-format
       working-directory: frontend
-    - name: Commit changes
+    - name: Add changes to git
       run: |
         git config --local user.email "github-actions@github.com"
         git config --local user.name "github-actions"
         git add frontend
+    # Same repo PRs
+    - name: Push changes
+      if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
+      run: |
         git diff --staged --quiet || git commit -m "🎨 Format frontend code"
         git push
+    # Fork and bot PRs
+    - name: Check changes
+      if: ( github.event_name == 'pull_request' && github.secret_source != 'Actions' )
+      run: |
+        git diff --staged --quiet || (echo "Changes detected in, run npm run biome-check and npm run biome-format and commit the changes" && exit 1)

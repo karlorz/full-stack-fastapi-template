@@ -17,6 +17,7 @@ permissions:
 
 jobs:
   build-and-deploy-ui:
+    if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
