@@ -99,6 +99,7 @@
 
 ### Fixes
 
+* 🐛 Fix stale data when creating and loading apps. PR [#383](https://github.com/fastapilabs/cloud/pull/383) by [@patrick91](https://github.com/patrick91).
 * 🐛 Update `min_length` in UserUpdateMe and TeamUpdate models and update frontend validations. PR [#356](https://github.com/fastapilabs/cloud/pull/356) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix TODOs. PR [#283](https://github.com/fastapilabs/cloud/pull/283) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix email validation in EditableField. PR [#195](https://github.com/fastapilabs/cloud/pull/195) by [@patrick91](https://github.com/patrick91).
