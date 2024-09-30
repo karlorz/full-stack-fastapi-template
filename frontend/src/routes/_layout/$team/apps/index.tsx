@@ -70,12 +70,12 @@ export const Route = createFileRoute("/_layout/$team/apps/")({
   }),
   loader: async ({ context, params, deps }) => {
     // TODO: make a function to get the query options for this
-    const team = await context.queryClient.ensureQueryData({
+    const team = await context.queryClient.fetchQuery({
       queryFn: () => fetchTeamBySlug(params.team),
       queryKey: ["team", { slug: params.team }],
     })
 
-    const apps = await context.queryClient.ensureQueryData(
+    const apps = await context.queryClient.fetchQuery(
       getAppsQueryOptions({
         teamId: team.id,
         page: deps.page || 1,
