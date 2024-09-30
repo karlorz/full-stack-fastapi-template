@@ -7,8 +7,8 @@ const theme = extendTheme({
     useSystemColorMode: false,
   },
   fonts: {
-    heading: "Ubuntu, sans-serif",
-    body: "Ubuntu, sans-serif",
+    heading: "Raleway Bold, sans-serif",
+    body: "Open Sans, sans-serif",
   },
   colors: {
     ui: {
