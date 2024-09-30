@@ -1,9 +1,13 @@
-import { Box, Container, Text } from "@chakra-ui/react"
+import { Box, Button, Container, Text } from "@chakra-ui/react"
 import Lottie from "lottie-react"
 
 import emailSent from "@/assets/email.json"
+import { useRouter } from "@tanstack/react-router"
 
 const EmailSent = ({ email }: { email: string }) => {
+  const router = useRouter()
+  const handleOkClick = () => router.history.push("/")
+
   return (
     <>
       <Container
@@ -35,6 +39,9 @@ const EmailSent = ({ email }: { email: string }) => {
             instructions. Check your spam folder if you don't see it in your
             inbox.
           </Text>
+          <Button mt={4} onClick={handleOkClick}>
+            Ok
+          </Button>
         </Box>
       </Container>
     </>

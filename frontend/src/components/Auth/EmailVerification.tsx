@@ -1,6 +1,6 @@
-import { Box, Container, Link, Text } from "@chakra-ui/react"
+import { Box, Button, Container, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
-import { Link as RouterLink } from "@tanstack/react-router"
+import { useRouter } from "@tanstack/react-router"
 import Lottie from "lottie-react"
 import { useEffect } from "react"
 
@@ -8,6 +8,8 @@ import warning from "@/assets/failed.json"
 import { UsersService } from "@/client"
 
 const EmailVerification = () => {
+  const router = useRouter()
+  const handleOkClick = () => router.history.push("/")
   const token = new URLSearchParams(window.location.search).get("token")
 
   const verifyEmail = async (token: string) => {
@@ -65,9 +67,9 @@ const EmailVerification = () => {
             <Text>
               Your email has been verified. You can now login to your account.
             </Text>
-            <Link as={RouterLink} to="/" color="ui.main">
-              Login
-            </Link>
+            <Button mt={4} onClick={handleOkClick}>
+              Ok
+            </Button>
           </Box>
         )}
 
@@ -87,6 +89,9 @@ const EmailVerification = () => {
             <Text color="red.500">
               Error detail: {(mutation.error as any).body?.detail}
             </Text>
+            <Button mt={4} onClick={handleOkClick}>
+              Ok
+            </Button>
           </Box>
         )}
       </Container>
