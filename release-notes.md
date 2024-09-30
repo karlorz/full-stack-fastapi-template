@@ -120,6 +120,7 @@
 
 ### Refactors
 
+* 🔧 Update Dockerfiles to include ENV PYTHONUNBUFFERED=1. PR [#377](https://github.com/fastapilabs/cloud/pull/377) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Use loader and query client together. PR [#364](https://github.com/fastapilabs/cloud/pull/364) by [@patrick91](https://github.com/patrick91).
 * ♻️ Use modals for primary actions. PR [#313](https://github.com/fastapilabs/cloud/pull/313) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor UI in delete components. PR [#330](https://github.com/fastapilabs/cloud/pull/330) by [@alejsdev](https://github.com/alejsdev).
