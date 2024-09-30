@@ -4,6 +4,10 @@ This is the infra for FastAPI Cloud. This document contains a short tour.
 
 It will evolve over time. There's a chance that when you read this some things have changed and we forgot to update the README. Sorry. 🙈
 
+![architecture](./architecture.drawio.svg)
+
+**Note**: you can edit this diagram file with draw.io, directly in VS Code.
+
 ## AWS Environments
 
 There are **3 AWS accounts**, **development**, for **staging**, and **production**.
@@ -119,6 +123,11 @@ We need to update the DNS records in Cloudflare to use it (with a `CNAME`). This
 * `fastapicloud.com` points to production at the Ingress Nginx.
 * `fastapicloud.work` points to staging at the Ingress Nginx.
 * `fastapicloud.me` points to development at the Ingress Nginx.
+
+### Cloudflare DNS
+
+* Add a `CNAME` record in Cloudflare to point the domain to the AWS Load Balancer for the star subdomain, e.g. `*.fastapicloud.work`.
+* Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
 
 ### Kubernetes Manifests
 
