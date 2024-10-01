@@ -121,6 +121,7 @@
 
 ### Refactors
 
+* 💄 Add new colors and other tweaks. PR [#379](https://github.com/fastapilabs/cloud/pull/379) by [@alejsdev](https://github.com/alejsdev).
 * 🚸 Add option to go back in email verification and email sent views. PR [#381](https://github.com/fastapilabs/cloud/pull/381) by [@alejsdev](https://github.com/alejsdev).
 * 💄 Add new fonts. PR [#378](https://github.com/fastapilabs/cloud/pull/378) by [@alejsdev](https://github.com/alejsdev).
 * 🔧 Update Dockerfiles to include ENV PYTHONUNBUFFERED=1. PR [#377](https://github.com/fastapilabs/cloud/pull/377) by [@tiangolo](https://github.com/tiangolo).
