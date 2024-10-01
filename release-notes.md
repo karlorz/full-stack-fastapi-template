@@ -246,6 +246,7 @@
 
 ### Docs
 
+* 📝 Update infra README. PR [#386](https://github.com/fastapilabs/cloud/pull/386) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Add infra diagram. PR [#370](https://github.com/fastapilabs/cloud/pull/370) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update docs about creating a new environment to deploy. PR [#361](https://github.com/fastapilabs/cloud/pull/361) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update README about scripts location. PR [#326](https://github.com/fastapilabs/cloud/pull/326) by [@tiangolo](https://github.com/tiangolo).
