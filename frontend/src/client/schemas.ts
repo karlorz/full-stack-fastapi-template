@@ -380,6 +380,67 @@ export const $EmailVerificationToken = {
   },
 } as const
 
+export const $EnvironmentVariableCreate = {
+  properties: {
+    name: {
+      type: "string",
+      isRequired: true,
+    },
+    value: {
+      type: "string",
+      isRequired: true,
+    },
+  },
+} as const
+
+export const $EnvironmentVariablePublic = {
+  properties: {
+    name: {
+      type: "string",
+      isRequired: true,
+    },
+    value: {
+      type: "string",
+      isRequired: true,
+    },
+    created_at: {
+      type: "string",
+      isRequired: true,
+      format: "date-time",
+    },
+    updated_at: {
+      type: "string",
+      isRequired: true,
+      format: "date-time",
+    },
+  },
+} as const
+
+export const $EnvironmentVariableUpdate = {
+  properties: {
+    value: {
+      type: "string",
+      isRequired: true,
+    },
+  },
+} as const
+
+export const $EnvironmentVariablesPublic = {
+  properties: {
+    data: {
+      type: "array",
+      contains: {
+        type: "EnvironmentVariablePublic",
+      },
+      isRequired: true,
+    },
+    count: {
+      type: "number",
+      isRequired: true,
+    },
+  },
+} as const
+
 export const $HTTPValidationError = {
   properties: {
     detail: {

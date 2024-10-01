@@ -36,6 +36,10 @@ import type {
   AppCreate,
   AppPublic,
   AppsPublic,
+  EnvironmentVariableCreate,
+  EnvironmentVariablePublic,
+  EnvironmentVariablesPublic,
+  EnvironmentVariableUpdate,
   DeploymentPublic,
   DeploymentsPublic,
   DeploymentUploadOut,
@@ -171,6 +175,22 @@ export type InvitationsData = {
 }
 
 export type AppsData = {
+  ReadEnvironmentVariables: {
+    appId: string
+  }
+  CreateEnvironmentVariable: {
+    appId: string
+    requestBody: EnvironmentVariableCreate
+  }
+  DeleteEnvironmentVariable: {
+    appId: string
+    environmentVariableName: string
+  }
+  UpdateEnvironmentVariable: {
+    appId: string
+    environmentVariableName: string
+    requestBody: EnvironmentVariableUpdate
+  }
   ReadApps: {
     limit?: number
     order?: "asc" | "desc"
@@ -1000,6 +1020,100 @@ export class InvitationsService {
 }
 
 export class AppsService {
+  /**
+   * Read Environment Variables
+   * Retrieve a list of environment variables for the provided app.
+   * @returns EnvironmentVariablesPublic Successful Response
+   * @throws ApiError
+   */
+  public static readEnvironmentVariables(
+    data: AppsData["ReadEnvironmentVariables"],
+  ): CancelablePromise<EnvironmentVariablesPublic> {
+    const { appId } = data
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/apps/{app_id}/environment-variables/",
+      path: {
+        app_id: appId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+
+  /**
+   * Create Environment Variable
+   * Create a new environment variable for the provided app.
+   * @returns EnvironmentVariablePublic Successful Response
+   * @throws ApiError
+   */
+  public static createEnvironmentVariable(
+    data: AppsData["CreateEnvironmentVariable"],
+  ): CancelablePromise<EnvironmentVariablePublic> {
+    const { appId, requestBody } = data
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/apps/{app_id}/environment-variables/",
+      path: {
+        app_id: appId,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+
+  /**
+   * Delete Environment Variable
+   * Delete the provided environment variable.
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+  public static deleteEnvironmentVariable(
+    data: AppsData["DeleteEnvironmentVariable"],
+  ): CancelablePromise<Message> {
+    const { appId, environmentVariableName } = data
+    return __request(OpenAPI, {
+      method: "DELETE",
+      url: "/api/v1/apps/{app_id}/environment-variables/{environment_variable_name}",
+      path: {
+        app_id: appId,
+        environment_variable_name: environmentVariableName,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+
+  /**
+   * Update Environment Variable
+   * Update the provided environment variable.
+   * @returns EnvironmentVariablePublic Successful Response
+   * @throws ApiError
+   */
+  public static updateEnvironmentVariable(
+    data: AppsData["UpdateEnvironmentVariable"],
+  ): CancelablePromise<EnvironmentVariablePublic> {
+    const { appId, environmentVariableName, requestBody } = data
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/apps/{app_id}/environment-variables/{environment_variable_name}",
+      path: {
+        app_id: appId,
+        environment_variable_name: environmentVariableName,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+
   /**
    * Read Apps
    * Retrieve a list of apps for the provided team.

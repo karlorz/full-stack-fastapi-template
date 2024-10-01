@@ -15,7 +15,10 @@ from app.models import (
     Message,
 )
 
+from .environment_variables import router as environment_variables_router
+
 router = APIRouter()
+router.include_router(environment_variables_router)
 
 
 @router.get("/", response_model=AppsPublic)

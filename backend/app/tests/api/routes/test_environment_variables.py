@@ -1,0 +1,531 @@
+import pytest
+from fastapi.testclient import TestClient
+from sqlmodel import Session, select
+
+from app.core.config import settings
+from app.crud import add_user_to_team
+from app.models import EnvironmentVariable, Role
+from app.tests.utils.apps import create_environment_variable, create_random_app
+from app.tests.utils.team import create_random_team
+from app.tests.utils.user import create_user, user_authentication_headers
+from app.tests.utils.utils import random_email
+
+
+def test_read_environment_variables_for_app(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+    env = create_environment_variable(db, app=app, name="name", value="value")
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["count"] == 1
+
+    assert data["data"][0]["name"] == env.name
+    assert data["data"][0]["value"] == env.value
+
+
+def test_read_environment_variables_for_app_not_found(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/70a83fd6-000e-46da-a7b0-e1bbc260f5b4/environment-variables",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
+
+
+def test_read_enviroment_variables_for_app_different_team(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+
+    app = create_random_app(db, team=team)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+
+    assert data["detail"] == "Team not found for the current user"
+
+
+def test_create_environment_variable_for_app(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    data = {
+        "name": "name",
+        "value": "value",
+    }
+
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables",
+        headers=user_auth_headers,
+        json=data,
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+
+    assert data["name"] == "name"
+    assert data["value"] == "value"
+
+    env = db.exec(
+        select(EnvironmentVariable).where(
+            EnvironmentVariable.name == "name", EnvironmentVariable.app_id == app.id
+        )
+    ).first()
+
+    assert env
+    assert env.name == "name"
+    assert env.value == "value"
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["", "1_INVALID_KEY", "name with spaces", "name-with-dashes"],
+)
+def test_create_environment_variable_invalid_name(
+    client: TestClient, db: Session, name: str
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    data = {
+        "name": name,
+        "value": "value",
+    }
+
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables",
+        headers=user_auth_headers,
+        json=data,
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "ctx": {"error": {}},
+                "input": name,
+                "loc": ["body", "name"],
+                "msg": "Value error, Invalid environment variable name",
+                "type": "value_error",
+            }
+        ]
+    }
+
+
+def test_create_environment_variable_for_app_duplicate_name(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+
+    env = create_environment_variable(db, app=app, name="name", value="value")
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    data = {
+        "name": env.name,
+        "value": "value",
+    }
+
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables",
+        headers=user_auth_headers,
+        json=data,
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "An environment variable with the provided name already exists"
+    }
+
+
+def test_create_environment_variable_for_app_not_found(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    data = {
+        "name": "name",
+        "value": "value",
+    }
+
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/70a83fd6-000e-46da-a7b0-e1bbc260f5b4/environment-variables",
+        headers=user_auth_headers,
+        json=data,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
+
+
+def test_create_environment_variable_for_app_different_team(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+
+    app = create_random_app(db, team=team)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    data = {
+        "name": "name",
+        "value": "value",
+    }
+
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables",
+        headers=user_auth_headers,
+        json=data,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+
+    assert data["detail"] == "Team not found for the current user"
+
+
+def test_delete_environment_variable_for_app(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+    env = create_environment_variable(db, app=app, name="name", value="value")
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.delete(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables/{env.name}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["message"] == "Environment variable deleted"
+
+    assert (
+        db.exec(
+            select(EnvironmentVariable).where(
+                EnvironmentVariable.name == env.name,
+                EnvironmentVariable.app_id == app.id,
+            )
+        ).first()
+        is None
+    )
+
+
+def test_delete_environment_variable_for_app_not_found(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.delete(
+        f"{settings.API_V1_STR}/apps/70a83fd6-000e-46da-a7b0-e1bbc260f5b4/environment-variables/70a83fd6-000e-46da-a7b0-e1bbc260f5b4",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
+
+
+def test_delete_environment_variable_for_app_different_team(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+
+    team = create_random_team(db, owner_id=user.id)
+
+    app = create_random_app(db, team=team)
+
+    env = create_environment_variable(db, app=app, name="name", value="value")
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.delete(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables/{env.name}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+
+    assert data["detail"] == "Team not found for the current user"
+
+
+def test_edit_environment_variable_for_app(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+
+    team = create_random_team(db, owner_id=user.id)
+
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+    env = create_environment_variable(
+        db, app=app, name="initial_name", value="initial_value"
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    data = {"value": "updated_value"}
+
+    response = client.put(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables/{env.name}",
+        headers=user_auth_headers,
+        json=data,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["name"] == "initial_name"
+    assert data["value"] == "updated_value"
+
+    db.refresh(env)
+
+    assert env.name == "initial_name"
+    assert env.value == "updated_value"
+
+
+def test_edit_environment_variable_for_app_not_found(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    data = {
+        "name": "updated_name",
+        "value": "updated_value",
+    }
+
+    response = client.put(
+        f"{settings.API_V1_STR}/apps/70a83fd6-000e-46da-a7b0-e1bbc260f5b4/environment-variables/70a83fd6-000e-46da-a7b0-e1bbc260f5b4",
+        headers=user_auth_headers,
+        json=data,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
+
+
+def test_edit_environment_variable_for_app_different_team(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+
+    team = create_random_team(db, owner_id=user.id)
+
+    app = create_random_app(db, team=team)
+
+    env = create_environment_variable(
+        db, app=app, name="initial_name", value="initial_value"
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    data = {
+        "name": "updated_name",
+        "value": "updated_value",
+    }
+
+    response = client.put(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables/{env.name}",
+        headers=user_auth_headers,
+        json=data,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+
+    assert data["detail"] == "Team not found for the current user"

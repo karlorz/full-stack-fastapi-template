@@ -115,6 +115,27 @@ export type EmailVerificationToken = {
   token: string
 }
 
+export type EnvironmentVariableCreate = {
+  name: string
+  value: string
+}
+
+export type EnvironmentVariablePublic = {
+  name: string
+  value: string
+  created_at: string
+  updated_at: string
+}
+
+export type EnvironmentVariableUpdate = {
+  value: string
+}
+
+export type EnvironmentVariablesPublic = {
+  data: Array<EnvironmentVariablePublic>
+  count: number
+}
+
 export type HTTPValidationError = {
   detail?: Array<ValidationError>
 }

@@ -1,9 +1,9 @@
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Any
+from typing import Annotated, Any
 
-from pydantic import EmailStr, computed_field
+from pydantic import AfterValidator, EmailStr, computed_field
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -336,3 +336,44 @@ class DeploymentsPublic(SQLModel):
 class DeploymentUploadOut(SQLModel):
     url: str
     fields: dict[str, Any]
+
+
+def valid_environment_variable_name(name: str) -> str:
+    if not name.isidentifier():
+        raise ValueError("Invalid environment variable name")
+
+    return name
+
+
+class EnvironmentVariable(SQLModel, table=True):
+    app_id: uuid.UUID = Field(
+        foreign_key="app.id", ondelete="CASCADE", primary_key=True
+    )
+    name: Annotated[str, AfterValidator(valid_environment_variable_name)] = Field(
+        max_length=255,
+        primary_key=True,
+    )
+    value: str = Field(min_length=1)
+    created_at: datetime = Field(default_factory=get_datetime_utc)
+    updated_at: datetime = Field(default_factory=get_datetime_utc)
+
+
+class EnvironmentVariablePublic(SQLModel):
+    name: str
+    value: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class EnvironmentVariablesPublic(SQLModel):
+    data: list[EnvironmentVariablePublic]
+    count: int
+
+
+class EnvironmentVariableCreate(SQLModel):
+    name: Annotated[str, AfterValidator(valid_environment_variable_name)]
+    value: str
+
+
+class EnvironmentVariableUpdate(SQLModel):
+    value: str

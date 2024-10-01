@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlmodel import Session
 
-from app.models import App, Deployment, Team
+from app.models import App, Deployment, EnvironmentVariable, Team
 from app.tests.utils.utils import random_lower_string
 
 
@@ -38,3 +38,17 @@ def create_deployment_for_app(
     db.commit()
     db.refresh(deployment)
     return deployment
+
+
+def create_environment_variable(
+    db: Session, app: App, name: str, value: str
+) -> EnvironmentVariable:
+    environment_variable = EnvironmentVariable(
+        app_id=app.id,
+        name=name,
+        value=value,
+    )
+    db.add(environment_variable)
+    db.commit()
+    db.refresh(environment_variable)
+    return environment_variable
