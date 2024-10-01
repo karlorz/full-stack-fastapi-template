@@ -140,7 +140,7 @@ const DeleteConfirmation = ({
               >
                 Cancel
               </Button>
-              <Button variant="danger" type="submit">
+              <Button variant="primary" type="submit">
                 Confirm
               </Button>
             </AlertDialogFooter>

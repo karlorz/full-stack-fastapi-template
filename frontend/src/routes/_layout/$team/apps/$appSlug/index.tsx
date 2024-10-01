@@ -41,16 +41,16 @@ function AppDetail() {
   const app = Route.useLoaderData()
 
   return (
-    <Container maxW="full">
+    <Container maxW="full" p={0}>
       <Flex alignItems="center">
-        <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
+        <Heading size="lg" textAlign={{ base: "center", md: "left" }} pb={2}>
           {app?.name}
         </Heading>
       </Flex>
       <Box>
         <Box pb={10}>
           {app.url && (
-            <Link href={app.url} isExternal color="ui.main">
+            <Link href={app.url} isExternal color="ui.main" fontWeight="bold">
               {app.url}
               <ExternalLinkIcon mx="2px" />
             </Link>

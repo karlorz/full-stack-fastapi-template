@@ -22,6 +22,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import { Link as RouterLink, useNavigate } from "@tanstack/react-router"
 
 import { TeamsService, UsersService } from "@/client"
+import CustomCard from "@/components/Common/CustomCard"
 import { isLoggedIn } from "@/hooks/useAuth"
 import { useEffect } from "react"
 
@@ -110,7 +111,7 @@ function AllTeams() {
   }, [page, queryClient, hasNextPage, orderBy, order])
 
   return (
-    <Container maxW="full">
+    <Container maxW="full" p={0}>
       <Box mb={10}>
         <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
           Teams
@@ -119,56 +120,61 @@ function AllTeams() {
         <Text>View all your teams</Text>
       </Box>
 
-      <TableContainer data-testid="teams-table">
-        <Table size={{ base: "sm", md: "md" }} variant="unstyled">
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {teams.map((team) => (
-              <Tr key={team.id}>
-                <Td>
-                  <Link
-                    as={RouterLink}
-                    to={`/${team.slug}/`}
-                    _hover={{ color: "ui.main", textDecoration: "underline" }}
-                    display="inline-block"
-                    minW="20%"
-                  >
-                    {team.name}
-                  </Link>
-                  {team.is_personal_team ? (
-                    <Badge ml={2}>Personal</Badge>
-                  ) : team.owner_id === currentUser?.id ? (
-                    <Badge ml={2} colorScheme="purple">
-                      Owner
-                    </Badge>
-                  ) : (
-                    <Badge ml={2}>Member</Badge>
-                  )}
-                </Td>
+      <CustomCard>
+        <TableContainer data-testid="teams-table">
+          <Table size={{ base: "sm", md: "md" }} variant="unstyled">
+            <Thead>
+              <Tr>
+                <Th textTransform="capitalize">Name</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      <Flex
-        gap={4}
-        alignItems="center"
-        mt={4}
-        direction="row"
-        justifyContent="flex-end"
-      >
-        <Button onClick={() => setPage(page - 1)} isDisabled={!hasPreviousPage}>
-          Previous
-        </Button>
-        <span>Page {page}</span>
-        <Button isDisabled={!hasNextPage} onClick={() => setPage(page + 1)}>
-          Next
-        </Button>
-      </Flex>
+            </Thead>
+            <Tbody>
+              {teams.map((team) => (
+                <Tr key={team.id}>
+                  <Td>
+                    <Link
+                      as={RouterLink}
+                      to={`/${team.slug}/`}
+                      _hover={{ color: "ui.main", textDecoration: "underline" }}
+                      display="inline-block"
+                      minW="20%"
+                    >
+                      {team.name}
+                    </Link>
+                    {team.is_personal_team ? (
+                      <Badge ml={2}>Personal</Badge>
+                    ) : team.owner_id === currentUser?.id ? (
+                      <Badge ml={2} colorScheme="purple">
+                        Owner
+                      </Badge>
+                    ) : (
+                      <Badge ml={2}>Member</Badge>
+                    )}
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+        <Flex
+          gap={4}
+          alignItems="center"
+          mt={4}
+          direction="row"
+          justifyContent="flex-end"
+        >
+          <Button
+            onClick={() => setPage(page - 1)}
+            isDisabled={!hasPreviousPage}
+          >
+            Previous
+          </Button>
+          <span>Page {page}</span>
+          <Button isDisabled={!hasNextPage} onClick={() => setPage(page + 1)}>
+            Next
+          </Button>
+        </Flex>
+      </CustomCard>
     </Container>
   )
 }

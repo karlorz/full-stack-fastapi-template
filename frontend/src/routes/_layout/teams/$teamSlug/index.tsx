@@ -80,7 +80,7 @@ function TeamTableBody({ team }: { team: TeamWithUserPublic }) {
 function TeamTable({ team }: { team: TeamWithUserPublic }) {
   return (
     <TableContainer>
-      <Table size={{ base: "sm", md: "md" }}>
+      <Table size={{ base: "sm", md: "md" }} variant="unstyled">
         <Thead>
           <Tr>
             <Th>Full name</Th>

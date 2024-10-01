@@ -8,10 +8,12 @@ const Appearance = () => {
     <>
       <Center>
         <IconButton
+          bg="whiteAlpha.200"
+          color="whiteAlpha.900"
+          _hover={{ bg: "whiteAlpha.300" }}
           aria-label="Toggle dark mode"
           icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
           onClick={toggleColorMode}
-          variant="outline"
         />
       </Center>
     </>

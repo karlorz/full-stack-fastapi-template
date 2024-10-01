@@ -74,11 +74,10 @@ const TeamSelector = ({ teams }: { teams: TeamsPublic }) => {
 
   return (
     <>
-      <Flex py={2} justify="center">
+      <Flex py={6} justify="center">
         <Menu matchWidth={true} isOpen={isOpen} onClose={onClose}>
           <MenuButton
             as={Button}
-            fontWeight="light"
             py={6}
             w="100%"
             onClick={onOpen}
@@ -132,7 +131,7 @@ const TeamSelector = ({ teams }: { teams: TeamsPublic }) => {
                     <Text fontWeight="bold" mx={4} my={2}>
                       Teams
                     </Text>
-                    {otherTeams?.length >= 3 && (
+                    {otherTeams?.length > 3 && (
                       <Box textAlign="end" my={2}>
                         <Button
                           variant="link"
@@ -164,7 +163,7 @@ const TeamSelector = ({ teams }: { teams: TeamsPublic }) => {
               to="/teams/new"
               icon={FaPlus}
               label="Add new team"
-              bg="#80CBC4"
+              bg="#4D99AE"
             />
           </MenuList>
         </Menu>

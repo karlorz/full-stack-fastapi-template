@@ -1,4 +1,3 @@
-import { ChevronDownIcon } from "@chakra-ui/icons"
 import {
   Box,
   Button,
@@ -74,26 +73,17 @@ const UserMenu = () => {
       <Flex>
         <Menu>
           <MenuButton
+            bg="whiteAlpha.200"
+            color="whiteAlpha.900"
+            _hover={{ bg: "whiteAlpha.300" }}
+            _expanded={{ bg: "whiteAlpha.300" }}
             as={Button}
-            fontWeight="light"
-            variant="outline"
+            className="navbar-button"
+            w="100%"
             px={4}
-            w="180px"
+            data-testid="user-menu"
           >
-            <Flex justify="space-between">
-              <Box display="flex" alignItems="center">
-                <Text as="div">
-                  <Suspense
-                    fallback={<SkeletonText noOfLines={1} width={100} />}
-                  >
-                    <Box isTruncated maxWidth="100px" data-testid="user-menu">
-                      My Account
-                    </Box>
-                  </Suspense>
-                </Text>
-              </Box>
-              <ChevronDownIcon alignSelf="center" />
-            </Flex>
+            My Account
           </MenuButton>
           <MenuList p={4} bg={bg}>
             <Text px={4} color="gray.500">

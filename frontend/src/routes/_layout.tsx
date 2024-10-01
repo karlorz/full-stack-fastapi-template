@@ -1,7 +1,8 @@
-import { Box, Flex } from "@chakra-ui/react"
+import { Box, Center, Flex, Image } from "@chakra-ui/react"
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 import { Suspense } from "react"
 
+import logo from "@/assets/logo-text-white.svg"
 import { TeamsService } from "@/client"
 import Footer from "../components/Common/Footer"
 import Sidebar from "../components/Common/Sidebar"
@@ -53,23 +54,28 @@ function Layout() {
           <Flex flexDir="column" flex="1" ml={{ base: 0, md: "250px" }}>
             {/* Navbar */}
             <Box
+              bg="ui.gradient"
               id="navbar"
               display={{ base: "none", md: "flex" }}
-              justifyContent="flex-end"
+              justifyContent="space-between"
               position="fixed"
               top="0"
               right="0"
-              left={{ base: 0, md: "250px" }}
-              height="64px"
+              w="100%"
+              h="64px"
               zIndex="2"
               p={4}
-              gap="2"
             >
-              <Appearance />
-              <UserMenu />
+              <Center>
+                <Image src={logo} alt="Logo" p={4} width={180} />
+              </Center>
+              <Flex gap={2}>
+                <Appearance />
+                <UserMenu />
+              </Flex>
             </Box>
             {/* Main Content */}
-            <Box w="80%" p={10} mt="64px" mx="auto">
+            <Box w="80%" p={{ base: 0, md: 10 }} mt="64px" mx="auto">
               <Outlet />
             </Box>
           </Flex>

@@ -120,7 +120,7 @@ function AuthorizeDevice() {
               Authorize
             </Button>
 
-            {error && <Text color="red.500">{error}</Text>}
+            {error && <Text color="ui.danger">{error}</Text>}
           </Container>
         ) : (
           <Container

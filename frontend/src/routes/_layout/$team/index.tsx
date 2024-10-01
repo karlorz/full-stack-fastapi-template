@@ -29,7 +29,7 @@ const CurrentUser = () => {
 
 function Dashboard() {
   return (
-    <Container maxW="full">
+    <Container maxW="full" p={0}>
       <CustomCard data-testid="result">
         <Box fontSize="2xl" isTruncated maxWidth="250px">
           Hi,{" "}
@@ -48,8 +48,13 @@ function Dashboard() {
         </CustomCard>
 
         {/* TODO: Finalize once real data is available */}
+
         <CustomCard title="Statistics" w={{ base: "100%", md: "45%" }}>
-          <StatGroup mt={2}>
+          <StatGroup
+            mt={2}
+            display="flex"
+            flexDir={{ base: "column", md: "row" }}
+          >
             <Stat>
               <StatLabel>Deployments</StatLabel>
               <StatNumber>34</StatNumber>

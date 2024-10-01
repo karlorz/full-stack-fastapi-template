@@ -20,6 +20,7 @@ import {
 } from "@tanstack/react-router"
 import { z } from "zod"
 
+import CustomCard from "@/components/Common/CustomCard"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { AppsService } from "../../../../client"
@@ -120,8 +121,8 @@ function Apps() {
   }, [page, queryClient, hasNextPage, order, orderBy, team.id])
 
   return (
-    <Container maxW="full">
-      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
+    <Container maxW="full" p={0}>
+      <Heading size="lg" textAlign={{ base: "center", md: "left" }} pb={2}>
         Apps
       </Heading>
       <Text>View and manage apps related to your team.</Text>
@@ -134,59 +135,64 @@ function Apps() {
       )}
       {apps?.length > 0 ? (
         <>
-          <TableContainer>
-            <Table size={{ base: "sm", md: "md" }} variant="unstyled">
-              <Thead>
-                <Tr>
-                  {headers.map((header) => (
-                    <Th key={header} textTransform="capitalize">
-                      {header}
-                    </Th>
-                  ))}
-                </Tr>
-              </Thead>
-              <Tbody>
-                {apps.map((app) => (
-                  <Tr key={app.id}>
-                    <Td>
-                      <Link
-                        as={RouterLink}
-                        to={`/$team/apps/${app.slug}/`}
-                        _hover={{
-                          color: "ui.main",
-                          textDecoration: "underline",
-                        }}
-                        display="inline-block"
-                        minW="20%"
-                      >
-                        {app.name}
-                      </Link>
-                    </Td>
-                    <Td>{app.slug}</Td>
-                    <Td>{new Date(app.created_at).toLocaleString()}</Td>
+          <CustomCard>
+            <TableContainer>
+              <Table size={{ base: "sm", md: "md" }} variant="unstyled">
+                <Thead>
+                  <Tr>
+                    {headers.map((header) => (
+                      <Th key={header} textTransform="capitalize">
+                        {header}
+                      </Th>
+                    ))}
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
-          <Flex
-            gap={4}
-            alignItems="center"
-            mt={4}
-            direction="row"
-            justifyContent="flex-end"
-          >
-            <Button
-              onClick={() => setPage(page - 1)}
-              isDisabled={!hasPreviousPage}
+                </Thead>
+                <Tbody>
+                  {apps.map((app) => (
+                    <Tr key={app.id}>
+                      <Td>
+                        <Link
+                          as={RouterLink}
+                          to={`/$team/apps/${app.slug}/`}
+                          _hover={{
+                            color: "ui.main",
+                            textDecoration: "underline",
+                          }}
+                          display="inline-block"
+                          minW="20%"
+                        >
+                          {app.name}
+                        </Link>
+                      </Td>
+                      <Td>{app.slug}</Td>
+                      <Td>{new Date(app.created_at).toLocaleString()}</Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+            <Flex
+              gap={4}
+              alignItems="center"
+              mt={4}
+              direction="row"
+              justifyContent="flex-end"
             >
-              Previous
-            </Button>
-            <span>Page {page}</span>
-            <Button isDisabled={!hasNextPage} onClick={() => setPage(page + 1)}>
-              Next
-            </Button>
-          </Flex>
+              <Button
+                onClick={() => setPage(page - 1)}
+                isDisabled={!hasPreviousPage}
+              >
+                Previous
+              </Button>
+              <span>Page {page}</span>
+              <Button
+                isDisabled={!hasNextPage}
+                onClick={() => setPage(page + 1)}
+              >
+                Next
+              </Button>
+            </Flex>
+          </CustomCard>
         </>
       ) : (
         <Flex gap={4} pt={10} flexDir={{ base: "column", md: "row" }}>

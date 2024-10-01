@@ -4,7 +4,7 @@ import { randomTeamName } from "./utils/random"
 test("New team is visible", async ({ page }) => {
   await page.goto("/teams/new")
   await expect(page.getByRole("heading", { name: "New Team" })).toBeVisible()
-  await expect(page.locator("p").filter({ hasText: "Name" })).toBeVisible()
+  await expect(page.getByRole("heading", { name: "Name" })).toBeVisible()
   await expect(page.getByPlaceholder("Team Name")).toBeVisible()
   // TODO: Uncomment these lines when billing is implemented
   // await expect(page.getByText("Pricing Plan")).toBeVisible()

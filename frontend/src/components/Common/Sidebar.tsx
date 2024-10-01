@@ -1,6 +1,5 @@
 import {
   Box,
-  Center,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -8,15 +7,11 @@ import {
   DrawerOverlay,
   Flex,
   IconButton,
-  Image,
   Text,
-  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react"
 import { FaBars, FaSignOutAlt } from "react-icons/fa"
 
-import LogoLight from "@/assets/logo-mosaic-white.svg"
-import LogoDark from "@/assets/logo-mosaic.svg"
 import type { TeamsPublic } from "@/client"
 import useAuth from "@/hooks/useAuth"
 import SidebarItems from "./SidebarItems"
@@ -24,8 +19,6 @@ import SidebarItems from "./SidebarItems"
 const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { logout } = useAuth()
-  const borderColor = useColorModeValue("#e4e5eb", "#2a2a2a")
-  const logo = useColorModeValue(LogoDark, LogoLight)
 
   const handleLogout = () => {
     logout()
@@ -50,7 +43,6 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
           <DrawerBody py={8}>
             <Flex flexDir="column" justify="space-between">
               <Box>
-                <Image src={logo} alt="Logo" p={6} />
                 <SidebarItems onClose={onClose} teams={teams} />
                 <Flex
                   as="button"
@@ -71,18 +63,16 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
 
       {/* Desktop */}
       <Box
+        id="sidebar"
+        borderRadius="md"
         position="sticky"
         display={{ base: "none", md: "flex" }}
-        borderRight={`1px solid ${borderColor}`}
         minW="280px"
         h="100vh"
-        top="0"
+        mt="64px"
         p={6}
       >
         <Box w="100%">
-          <Center>
-            <Image src={logo} alt="Logo" p={4} width={180} />
-          </Center>
           <SidebarItems teams={teams} />
         </Box>
       </Box>

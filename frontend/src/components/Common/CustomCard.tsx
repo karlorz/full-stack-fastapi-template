@@ -1,10 +1,4 @@
-import {
-  Box,
-  type BoxProps,
-  Divider,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react"
+import { Box, type BoxProps, Heading } from "@chakra-ui/react"
 import type React from "react"
 
 interface CustomCardProps extends BoxProps {
@@ -13,19 +7,11 @@ interface CustomCardProps extends BoxProps {
 }
 
 const CustomCard = ({ title, children, ...props }: CustomCardProps) => {
-  const borderColor = useColorModeValue("#e4e5eb", "#2a2a2a")
-
   return (
-    <Box
-      border={`1px solid ${borderColor}`}
-      borderRadius="md"
-      px={8}
-      py={8}
-      mb={8}
-      {...props}
-    >
-      <Text fontWeight="bold">{title}</Text>
-      {title && <Divider my={4} />}
+    <Box id="card" borderRadius="md" px={8} py={8} mb={8} {...props} gap={2}>
+      <Heading size="sm" fontWeight="bold" mb={4}>
+        {title}
+      </Heading>
       {children}
     </Box>
   )

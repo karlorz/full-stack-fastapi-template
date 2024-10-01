@@ -68,7 +68,7 @@ function NewTeam() {
   }
 
   return (
-    <Container maxW="full">
+    <Container maxW="full" p={0}>
       <Heading size="md" textAlign={{ base: "center", md: "left" }}>
         New Team
       </Heading>
@@ -149,7 +149,7 @@ function NewTeam() {
                 </Center>
                 {mutation.error && (
                   <Text
-                    color="red.500"
+                    color="ui.danger"
                     fontWeight="bold"
                     textAlign="center"
                     mt={4}

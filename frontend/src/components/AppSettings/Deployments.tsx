@@ -16,7 +16,7 @@ const Deployments = ({ appId }: { appId: string }) => {
   return (
     <>
       {deployments && deployments.data.length > 0 ? (
-        <Table variant="simple" mt="4">
+        <Table variant="unstyled" mt="4">
           <Thead>
             <Tr>
               {headers.map((header) => (

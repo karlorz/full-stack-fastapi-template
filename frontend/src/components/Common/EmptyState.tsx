@@ -15,7 +15,6 @@ const EmptyState = ({ type }: EmptyStateProps) => {
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
-      gap="4"
     >
       <Image src={EmptyBox} alt="Empty box" w="50px" />
       <Heading size="sm" textAlign="center">

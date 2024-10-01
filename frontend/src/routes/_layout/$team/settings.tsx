@@ -25,8 +25,8 @@ export const Route = createFileRoute("/_layout/$team/settings")({
 
 function TeamSettings() {
   return (
-    <Container maxW="full">
-      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
+    <Container maxW="full" p={0}>
+      <Heading size="lg" textAlign={{ base: "center", md: "left" }} pb={2}>
         Team Settings
       </Heading>
       <Text>View and manage settings related to your team.</Text>
