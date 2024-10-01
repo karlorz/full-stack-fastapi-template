@@ -24,6 +24,42 @@ Then it runs the Pulumi deployment (covered below).
 
 It will also run on "workflow dispatch", which means, run manually from the GitHub Actions UI. When it's run that way, there's an option to run it with debug enabled. When that is done, at the end, it starts a Tmate session that can be used to manually deploy the rest of the Kubernetes components (covered below).
 
+## AWS CLI
+
+Configure the AWS CLI with SSO (single sign-on). Use the tutorial tabs for for "IAM Identity Center": https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html#cli-configure-sso-configure
+
+It will guide you to run:
+
+```bash
+aws configure sso
+```
+
+It could ask you for the SSO URL, the region, and the account ID. You can get those from the AWS login for the company: https://fastapilabs.awsapps.com/start/
+
+Then it will ask you for the role name.
+
+Use the role `FastAPILabsPowerUserK8s`.
+
+Use a short profile name instead of the default one so that you can use it later. For example:
+
+* `development`
+* `staging`
+* `production`
+
+Later, you can configure it again and set the profile name to `default` to use it by default.
+
+### Configure `kubectl` with AWS
+
+Follow: https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
+
+It will guide you to run:
+
+```bash
+aws eks --region region update-kubeconfig --name cluster_name
+```
+
+You can get the cluster name from the Pulumi output, or by going to the AWS web console, going to Elastic Kubernetes Service, and copying the name of the cluster.
+
 ## Pulumi
 
 `infra/__main__.py` has the main Pulumi code.
@@ -258,12 +294,21 @@ There should be some Multi-account "permission sets" already configured, this st
 
 ### Add Kustomize files
 
-A new environment would need its own versions of some files:
+A new environment would need its own versions of some files.
+
+#### CertManager
+
+A new environment would need:
 
 * Its own certmanager domain config `k8s/cert-manager/wildcard-cert-${DEPLOY_ENVIRONMENT}.yaml`
 * Its own certmanager domain config for Knative Serving `k8s/cert-manager/wildcard-cert-serving-${DEPLOY_ENVIRONMENT}.yaml`
+
+**Note**: Let's encrypt has a concept of `staging` and `production`, this is different from our staging and production environments. Their concept refers to debugging the setup to acquire certificates in *their* staging environment and getting the actual real certificates from their production environment. The files refer to `letsencrypt-production`, leave it as is, even for our development environment. This `letsencrypt-production` refers to Let's Encrypt creating real HTTPS certificates for our real domain name (that points to one of our environments).
+
+#### Knative Serving
+
 * Kustomize files in `infra/k8s/knative/overlays/` to configure the domains for Knative.
-* It's own S3 with SQS config `infra/k8s/knative/deployment-workflow/s3-source.yaml`
+* Set up S3 with SQS config `infra/k8s/knative/deployment-workflow/s3-source.yaml`
 
 ### Add Pulumi stack files
 
