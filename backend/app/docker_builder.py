@@ -2,6 +2,7 @@ import base64
 import os
 import shutil
 import tarfile
+import uuid
 from pathlib import Path
 from typing import Any
 
@@ -16,7 +17,7 @@ from sqlmodel import select
 
 from app.api.deps import SessionDep
 from app.core.config import settings
-from app.models import Deployment, DeploymentStatus
+from app.models import Deployment, DeploymentStatus, EnvironmentVariable
 
 # aws vars
 aws_region = os.getenv("AWS_REGION")
@@ -251,6 +252,12 @@ def build_and_push_docker_image(
     return sha256  # type: ignore
 
 
+def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
+    smt = select(EnvironmentVariable).where(EnvironmentVariable.app_id == app_id)
+    env_vars = session.exec(smt).all()
+    return {env_var.name: env_var.value for env_var in env_vars}
+
+
 def process_message(message: dict[str, Any], session: SessionDep) -> None:
     bucket = message.get("bucket", {})
     _object = message.get("object", {})
@@ -303,8 +310,15 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
     deployment.status = DeploymentStatus.deploying
     session.commit()
 
+    env_vars = get_env_vars(deployment.app_id, session)
+
     # Deploy to Kubernetes
-    deploy_to_kubernetes(app_name, f"{registry_url}/{image_tag}", sha256)
+    deploy_to_kubernetes(
+        service_name=app_name,
+        image_url=f"{registry_url}/{image_tag}",
+        image_sha256_hash=sha256,
+        env=env_vars,
+    )
 
     # Clean up the build context
     shutil.rmtree(build_context)
