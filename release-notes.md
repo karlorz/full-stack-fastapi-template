@@ -122,6 +122,7 @@
 
 ### Refactors
 
+* ♻️ Replace icons. PR [#385](https://github.com/fastapilabs/cloud/pull/385) by [@alejsdev](https://github.com/alejsdev).
 * 💄 Add new colors and other tweaks. PR [#379](https://github.com/fastapilabs/cloud/pull/379) by [@alejsdev](https://github.com/alejsdev).
 * 🚸 Add option to go back in email verification and email sent views. PR [#381](https://github.com/fastapilabs/cloud/pull/381) by [@alejsdev](https://github.com/alejsdev).
 * 💄 Add new fonts. PR [#378](https://github.com/fastapilabs/cloud/pull/378) by [@alejsdev](https://github.com/alejsdev).
