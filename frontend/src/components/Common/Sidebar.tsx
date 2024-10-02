@@ -10,8 +10,9 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-import { FaBars, FaSignOutAlt } from "react-icons/fa"
+import { FaBars } from "react-icons/fa"
 
+import { LogOut } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
 import useAuth from "@/hooks/useAuth"
 import SidebarItems from "./SidebarItems"
@@ -52,8 +53,8 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
                   px={4}
                   py={2}
                 >
-                  <FaSignOutAlt fontSize="18px" />
-                  <Text>Log out</Text>
+                  <LogOut />
+                  <Text>Log Out</Text>
                 </Flex>
               </Box>
             </Flex>

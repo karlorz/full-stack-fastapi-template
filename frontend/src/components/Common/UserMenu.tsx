@@ -14,8 +14,8 @@ import {
 } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 import { type ElementType, Suspense } from "react"
-import { FaCog, FaSignOutAlt } from "react-icons/fa"
 
+import { LogOut, Settings } from "@/assets/icons.tsx"
 import useAuth, { useCurrentUser } from "@/hooks/useAuth"
 
 interface MenuItemLinkProps {
@@ -95,12 +95,16 @@ const UserMenu = () => {
               </Text>
             </Suspense>
             <Divider />
-            <MenuItemLink to="/settings" icon={FaCog} label="User Settings" />
+            <MenuItemLink
+              to="/settings"
+              icon={Settings}
+              label="User Settings"
+            />
             <Divider />
             <MenuItemLink
               as="button"
-              icon={FaSignOutAlt}
-              label="Log out"
+              icon={LogOut}
+              label="Log Out"
               onClick={handleLogout}
             />
           </MenuList>

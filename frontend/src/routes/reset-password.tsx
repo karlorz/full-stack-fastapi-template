@@ -1,24 +1,10 @@
-import {
-  Button,
-  Container,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  Icon,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-  Text,
-  useBoolean,
-} from "@chakra-ui/react"
+import { Button, Container, Heading, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
-import { FaKey } from "react-icons/fa"
+import { Lock } from "@/assets/icons.tsx"
+import PasswordField from "@/components/Common/PasswordField"
 import { LoginService, type NewPassword } from "../client"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import { isLoggedIn } from "../hooks/useAuth"
@@ -54,7 +40,6 @@ function ResetPassword() {
       new_password: "",
     },
   })
-  const [show, setShow] = useBoolean()
   const showToast = useCustomToast()
   const navigate = useNavigate()
 
@@ -102,76 +87,22 @@ function ResetPassword() {
         <Text>
           Please enter your new password and confirm it to reset your password.
         </Text>
-        <FormControl id="password" isInvalid={!!errors.new_password}>
-          <FormLabel htmlFor="password" srOnly>
-            Password
-          </FormLabel>
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <Icon as={FaKey} color="ui.dim" />
-            </InputLeftElement>
-            <Input
-              {...register("new_password", passwordRules())}
-              type={show ? "text" : "password"}
-              placeholder="New Password"
-              required
-              variant="outline"
-            />
-            <InputRightElement
-              color="ui.dim"
-              _hover={{
-                cursor: "pointer",
-              }}
-            >
-              <Icon
-                onClick={setShow.toggle}
-                aria-label={show ? "Hide password" : "Show password"}
-                color="ui.dim"
-              >
-                {show ? <ViewOffIcon /> : <ViewIcon />}
-              </Icon>
-            </InputRightElement>
-          </InputGroup>
-          {errors.new_password && (
-            <FormErrorMessage>{errors.new_password.message}</FormErrorMessage>
-          )}
-        </FormControl>
-
-        <FormControl id="password" isInvalid={!!errors.confirm_password}>
-          <FormLabel htmlFor="password" srOnly>
-            Password
-          </FormLabel>
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <Icon as={FaKey} color="ui.dim" />
-            </InputLeftElement>
-            <Input
-              id="confirm_password"
-              {...register("confirm_password", confirmPasswordRules(getValues))}
-              type={show ? "text" : "password"}
-              placeholder="Confirm Password"
-              required
-              variant="outline"
-            />
-            <InputRightElement
-              color="ui.dim"
-              _hover={{
-                cursor: "pointer",
-              }}
-            >
-              <Icon
-                onClick={setShow.toggle}
-                aria-label={show ? "Hide password" : "Show password"}
-                color="ui.dim"
-              >
-                {show ? <ViewOffIcon /> : <ViewIcon />}
-              </Icon>
-            </InputRightElement>
-          </InputGroup>
-          {errors.new_password && (
-            <FormErrorMessage>{errors.new_password.message}</FormErrorMessage>
-          )}
-        </FormControl>
+        <PasswordField
+          password="new_password"
+          errors={errors}
+          register={register}
+          options={passwordRules()}
+          placeholder="New Password"
+          icon={Lock}
+        />
+        <PasswordField
+          password="confirm_password"
+          errors={errors}
+          register={register}
+          options={confirmPasswordRules(getValues)}
+          placeholder="Confirm Password"
+          icon={Lock}
+        />
         <Button variant="primary" type="submit" size="md">
           Reset Password
         </Button>

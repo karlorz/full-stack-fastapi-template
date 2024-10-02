@@ -31,7 +31,6 @@ const useCurrentUser = () => {
 }
 
 const useAuth = () => {
-  const [error, setError] = useState<string | null>(null)
   const [emailSent, setEmailSent] = useState(false)
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
@@ -76,8 +75,13 @@ const useAuth = () => {
       navigate({ to: redirect || "/" })
     },
     onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail
-      setError(errDetail)
+      let errDetail = (err.body as any)?.detail
+
+      if (err instanceof AxiosError) {
+        errDetail = err.message
+      }
+
+      showToast("Something went wrong.", `${errDetail}`, "error")
     },
   })
 
@@ -94,8 +98,6 @@ const useAuth = () => {
     signUpMutation,
     loginMutation,
     logout,
-    error,
-    resetError: () => setError(null),
   }
 }
 

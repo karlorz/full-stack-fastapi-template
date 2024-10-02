@@ -1,4 +1,4 @@
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
+import { Eye, EyeCrossed } from "@/assets/icons.tsx"
 import {
   FormControl,
   FormErrorMessage,
@@ -6,16 +6,19 @@ import {
   Icon,
   Input,
   InputGroup,
+  InputLeftElement,
   InputRightElement,
   useBoolean,
 } from "@chakra-ui/react"
+import type { RegisterOptions, UseFormRegister } from "react-hook-form"
 
 interface PasswordFieldProps {
   password: string
   errors: any
-  register: any
-  options?: any
+  register: UseFormRegister<any>
+  options?: RegisterOptions
   placeholder: string
+  icon?: any
 }
 
 const PasswordField = ({
@@ -24,15 +27,21 @@ const PasswordField = ({
   register,
   options,
   placeholder,
+  icon,
 }: PasswordFieldProps) => {
   const [show, setShow] = useBoolean()
 
   return (
-    <FormControl id={password} isInvalid={!!errors[password]} my={4}>
+    <FormControl id={password} isInvalid={!!errors[password]}>
       <FormLabel htmlFor={password} srOnly>
         Password
       </FormLabel>
       <InputGroup>
+        {icon && (
+          <InputLeftElement pointerEvents="none">
+            <Icon as={icon} color="ui.dim" />
+          </InputLeftElement>
+        )}
         <Input
           {...register(password, options)}
           type={show ? "text" : "password"}
@@ -49,7 +58,7 @@ const PasswordField = ({
             onClick={setShow.toggle}
             aria-label={show ? "Hide password" : "Show password"}
           >
-            {show ? <ViewOffIcon /> : <ViewIcon />}
+            {show ? <EyeCrossed /> : <Eye />}
           </Icon>
         </InputRightElement>
       </InputGroup>

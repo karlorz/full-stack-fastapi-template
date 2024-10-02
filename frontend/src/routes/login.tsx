@@ -1,4 +1,3 @@
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
 import {
   Box,
   Button,
@@ -11,10 +10,8 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  InputRightElement,
   Link,
   Text,
-  useBoolean,
 } from "@chakra-ui/react"
 import {
   Link as RouterLink,
@@ -22,14 +19,15 @@ import {
   redirect,
 } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
-import { FaEnvelope, FaKey } from "react-icons/fa"
 
+import { Email, Lock } from "@/assets/icons.tsx"
+import PasswordField from "@/components/Common/PasswordField"
 import type { Body_login_login_access_token as AccessToken } from "../client"
 import AuthOptions from "../components/Auth/AuthOptions"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
-import { emailPattern } from "../utils"
+import { emailPattern, passwordRules } from "../utils"
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -47,8 +45,7 @@ function Login() {
   const redirectRaw = searchParams.get("redirect")
   const redirectDecoded = redirectRaw ? decodeURIComponent(redirectRaw) : "/"
   const redirectUrl = redirectDecoded.startsWith("/") ? redirectDecoded : "/"
-  const [show, setShow] = useBoolean()
-  const { loginMutation, error, resetError } = useAuth()
+  const { loginMutation } = useAuth()
   const {
     register,
     handleSubmit,
@@ -64,8 +61,6 @@ function Login() {
 
   const onSubmit: SubmitHandler<AccessToken> = async (data) => {
     if (isSubmitting) return
-
-    resetError()
 
     try {
       await loginMutation.mutateAsync({ redirect: redirectUrl, formData: data })
@@ -98,13 +93,13 @@ function Login() {
             <Heading size="md">Welcome!</Heading>
             <Text>Sign in to your account</Text>
           </Box>
-          <FormControl id="username" isInvalid={!!errors.username || !!error}>
+          <FormControl id="username" isInvalid={!!errors.username}>
             <FormLabel htmlFor="username" srOnly>
               Email
             </FormLabel>
             <InputGroup>
               <InputLeftElement pointerEvents="none">
-                <Icon as={FaEnvelope} color="ui.dim" />
+                <Icon as={Email} color="ui.dim" />
               </InputLeftElement>
               <Input
                 id="username"
@@ -121,44 +116,21 @@ function Login() {
               <FormErrorMessage>{errors.username.message}</FormErrorMessage>
             )}
           </FormControl>
-          <FormControl id="password" isInvalid={!!error}>
-            <FormLabel htmlFor="password" srOnly>
-              Password
-            </FormLabel>
-            <InputGroup>
-              <InputLeftElement pointerEvents="none">
-                <Icon as={FaKey} color="ui.dim" />
-              </InputLeftElement>
-              <Input
-                {...register("password")}
-                type={show ? "text" : "password"}
-                placeholder="Password"
-                required
-              />
-              <InputRightElement
-                color="ui.dim"
-                _hover={{
-                  cursor: "pointer",
-                }}
-              >
-                <Icon
-                  onClick={setShow.toggle}
-                  aria-label={show ? "Hide password" : "Show password"}
-                  color="ui.dim"
-                >
-                  {show ? <ViewOffIcon /> : <ViewIcon />}
-                </Icon>
-              </InputRightElement>
-            </InputGroup>
-            {error && <FormErrorMessage>{error}</FormErrorMessage>}
-          </FormControl>
+          <PasswordField
+            password="password"
+            errors={errors}
+            register={register}
+            options={passwordRules()}
+            placeholder="Password"
+            icon={Lock}
+          />
           <Link
             as={RouterLink}
             to="/recover-password"
             color="ui.main"
             fontWeight="bolder"
           >
-            Forgot password?
+            Forgot Password?
           </Link>
           <Button
             variant="primary"

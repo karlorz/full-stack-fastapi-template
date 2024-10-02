@@ -1,3 +1,4 @@
+import { Comment, Document, Help } from "@/assets/icons.tsx"
 import {
   Box,
   Button,
@@ -16,7 +17,6 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react"
-import { FaCommentDots, FaFileAlt, FaQuestionCircle } from "react-icons/fa"
 
 const Footer = () => {
   return (
@@ -26,7 +26,7 @@ const Footer = () => {
         <Popover>
           <PopoverTrigger>
             <Link mx={2} display="flex" alignItems="center" cursor="pointer">
-              <FaCommentDots />{" "}
+              <Comment />
               <Box as="span" ml={1}>
                 Feedback
               </Box>
@@ -53,13 +53,13 @@ const Footer = () => {
           </PopoverContent>
         </Popover>
         <Link mx={2} display="flex" alignItems="center">
-          <FaQuestionCircle />{" "}
+          <Help />
           <Box as="span" ml={1}>
             Help
           </Box>
         </Link>
         <Link mx={2} display="flex" alignItems="center">
-          <FaFileAlt />{" "}
+          <Document />
           <Box as="span" ml={1}>
             Docs
           </Box>

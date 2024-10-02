@@ -15,8 +15,9 @@ import {
 } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 import type { ElementType } from "react"
-import { FaPlus, FaUsers } from "react-icons/fa"
+import { FaPlus } from "react-icons/fa"
 
+import { Users } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
 import { Route } from "@/routes/_layout/$team"
 import { getInitials } from "@/utils"
@@ -87,7 +88,7 @@ const TeamSelector = ({ teams }: { teams: TeamsPublic }) => {
               <Box display="flex" alignItems="center" gap={2}>
                 <TeamIcon
                   bg={currentTeam?.is_personal_team ? "ui.gradient" : "ui.main"}
-                  icon={currentTeam?.is_personal_team ? undefined : FaUsers}
+                  icon={currentTeam?.is_personal_team ? undefined : Users}
                   initials={
                     currentTeam?.is_personal_team
                       ? getInitials(currentTeam.name)
@@ -150,7 +151,7 @@ const TeamSelector = ({ teams }: { teams: TeamsPublic }) => {
                     <MenuItemLink
                       key={team.id}
                       to={`/${team.slug}/`}
-                      icon={FaUsers}
+                      icon={Users}
                       label={team.name}
                       bg="ui.main"
                     />

@@ -7,8 +7,9 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 import { BsThreeDotsVertical } from "react-icons/bs"
-import { FaEdit, FaExchangeAlt, FaTrash } from "react-icons/fa"
+import { FaEdit, FaExchangeAlt } from "react-icons/fa"
 
+import { Trash } from "@/assets/icons.tsx"
 import type { TeamPublic, UserPublic } from "@/client"
 import ChangeRole from "../Teams/ChangeRole"
 import RemoveUser from "./RemoveUser"
@@ -62,7 +63,7 @@ const ActionsMenu = ({
             onClick={
               type === "User" ? removeUserModal.onOpen : deleteTeamModal.onOpen
             }
-            icon={<FaTrash fontSize="16px" />}
+            icon={<Trash fontSize="16px" />}
             color="ui.danger"
           >
             {type === "User" ? "Remove" : "Delete"} {type}

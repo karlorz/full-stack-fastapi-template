@@ -1,5 +1,5 @@
-import EmptyBox from "@/assets/empty-box.svg"
-import { Button, Heading, Image, Text } from "@chakra-ui/react"
+import { EmptyBox } from "@/assets/icons.tsx"
+import { Button, Heading, Icon, Text } from "@chakra-ui/react"
 import { Link as RouterLink } from "@tanstack/react-router"
 import CustomCard from "./CustomCard"
 
@@ -16,7 +16,7 @@ const EmptyState = ({ type }: EmptyStateProps) => {
       justifyContent="center"
       flexDirection="column"
     >
-      <Image src={EmptyBox} alt="Empty box" w="50px" />
+      <Icon as={EmptyBox} boxSize={12} />
       <Heading size="sm" textAlign="center">
         You don't have any {type} yet
       </Heading>

@@ -21,8 +21,9 @@ import {
 } from "@tanstack/react-router"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
-import { FaEnvelope, FaKey, FaUser } from "react-icons/fa"
 
+import { Email, Lock, User } from "@/assets/icons.tsx"
+import PasswordField from "@/components/Common/PasswordField"
 import type { UserRegister } from "../client"
 import AuthOptions from "../components/Auth/AuthOptions"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
@@ -108,7 +109,7 @@ function SignUp() {
                 </FormLabel>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
-                    <Icon as={FaUser} color="ui.dim" />
+                    <Icon as={User} color="ui.dim" />
                   </InputLeftElement>
                   <Input
                     id="full_name"
@@ -131,7 +132,7 @@ function SignUp() {
                 </FormLabel>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
-                    <Icon as={FaEnvelope} color="ui.dim" />
+                    <Icon as={Email} color="ui.dim" />
                   </InputLeftElement>
                   <Input
                     id="email"
@@ -148,55 +149,22 @@ function SignUp() {
                   <FormErrorMessage>{errors.email.message}</FormErrorMessage>
                 )}
               </FormControl>
-              <FormControl id="password" isInvalid={!!errors.password}>
-                <FormLabel htmlFor="password" srOnly>
-                  Password
-                </FormLabel>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none">
-                    <Icon as={FaKey} color="ui.dim" />
-                  </InputLeftElement>
-                  <Input
-                    id="password"
-                    {...register("password", passwordRules())}
-                    placeholder="Password"
-                    type="password"
-                    variant="outline"
-                  />
-                </InputGroup>
-                {errors.password && (
-                  <FormErrorMessage>{errors.password.message}</FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl
-                id="confirm_password"
-                isInvalid={!!errors.confirm_password}
-              >
-                <FormLabel htmlFor="confirm_password" srOnly>
-                  Confirm Password
-                </FormLabel>
-
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none">
-                    <Icon as={FaKey} color="ui.dim" />
-                  </InputLeftElement>
-                  <Input
-                    id="confirm_password"
-                    {...register(
-                      "confirm_password",
-                      confirmPasswordRules(getValues),
-                    )}
-                    placeholder="Repeat Password"
-                    type="password"
-                    variant="outline"
-                  />
-                </InputGroup>
-                {errors.confirm_password && (
-                  <FormErrorMessage>
-                    {errors.confirm_password.message}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
+              <PasswordField
+                password="password"
+                errors={errors}
+                register={register}
+                options={passwordRules()}
+                placeholder="Password"
+                icon={Lock}
+              />
+              <PasswordField
+                password="confirm_password"
+                errors={errors}
+                register={register}
+                options={confirmPasswordRules(getValues)}
+                placeholder="Repeat Password"
+                icon={Lock}
+              />
               <Tooltip label="By agreeing, you're entering the Matrix (legally).">
                 <Text>
                   {"By signing up, you agree to our "}

@@ -15,8 +15,8 @@ import {
   type ToOptions,
   type UseLinkPropsOptions,
 } from "@tanstack/react-router"
-import { FaCog, FaHome, FaLayerGroup } from "react-icons/fa"
 
+import { Apps, Home, Settings } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
 import { useCurrentUser } from "@/hooks/useAuth"
 import { Route } from "@/routes/_layout/$team"
@@ -42,7 +42,7 @@ type Item = {
 const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
   return [
     {
-      icon: FaHome,
+      icon: Home,
       title: "Dashboard",
       ...link({
         to: "/$team/",
@@ -50,7 +50,7 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
       }),
     },
     {
-      icon: FaLayerGroup,
+      icon: Apps,
       title: "Apps",
       ...link({
         to: "/$team/apps",
@@ -58,7 +58,7 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
       }),
     },
     {
-      icon: FaCog,
+      icon: Settings,
       title: "Team Settings",
       ...link({
         to: "/$team/settings",
@@ -105,8 +105,9 @@ const SidebarItems = ({ onClose, teams }: SidebarItemsProps) => {
         },
       }}
       onClick={onClose}
+      alignItems="center"
     >
-      <Icon as={icon} alignSelf="center" />
+      <Icon as={icon} boxSize={4} />
       {title}
     </FlexLink>
   ))

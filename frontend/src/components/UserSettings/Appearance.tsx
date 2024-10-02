@@ -1,5 +1,6 @@
 import { Center, IconButton, useColorMode } from "@chakra-ui/react"
-import { FaMoon, FaSun } from "react-icons/fa"
+
+import { Moon, Sun } from "@/assets/icons.tsx"
 
 const Appearance = () => {
   const { colorMode, toggleColorMode } = useColorMode()
@@ -12,7 +13,7 @@ const Appearance = () => {
           color="whiteAlpha.900"
           _hover={{ bg: "whiteAlpha.300" }}
           aria-label="Toggle dark mode"
-          icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
+          icon={colorMode === "light" ? <Moon /> : <Sun />}
           onClick={toggleColorMode}
         />
       </Center>
