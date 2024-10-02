@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     DEVICE_AUTH_POLL_INTERVAL_SECONDS: int = 5
 
     FRONTEND_HOST: str = "http://localhost:5173"
-    ENVIRONMENT: Literal["local", "staging", "production"] = "local"
+    ENVIRONMENT: Literal["local", "development", "staging", "production"] = "local"
 
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str,
