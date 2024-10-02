@@ -261,6 +261,7 @@
 
 ### Internal
 
+* ♻️ Set Sentry environment from config. PR [#389](https://github.com/fastapilabs/cloud/pull/389) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Bump pulumi/actions from 5 to 6. PR [#380](https://github.com/fastapilabs/cloud/pull/380) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 👷 Update CI to enable Dependabot without secrets. PR [#382](https://github.com/fastapilabs/cloud/pull/382) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Bump astral-sh/setup-uv from 2 to 3. PR [#347](https://github.com/fastapilabs/cloud/pull/347) by [@dependabot[bot]](https://github.com/apps/dependabot).
