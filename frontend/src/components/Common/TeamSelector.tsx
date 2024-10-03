@@ -19,7 +19,6 @@ import { FaPlus } from "react-icons/fa"
 
 import { Users } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
-import { Route } from "@/routes/_layout/$team"
 import { getInitials } from "@/utils"
 import TeamIcon from "./TeamIcon"
 
@@ -61,16 +60,18 @@ const MenuItemLink = ({
   )
 }
 
-const TeamSelector = ({ teams }: { teams: TeamsPublic }) => {
+const TeamSelector = ({
+  teams,
+  currentTeamSlug,
+}: { teams: TeamsPublic; currentTeamSlug: string }) => {
   const bg = useColorModeValue("white", "ui.darkBg")
   const color = useColorModeValue("ui.defaultText", "ui.lightText")
-  const { team } = Route.useParams()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const currentTeam = teams?.data.find((t) => t.slug === team)
-  const personalTeam = teams?.data.find((t) => t.is_personal_team === true)
+  const personalTeam = teams?.data.find((t) => t.is_personal_team)
+  const selectedTeam = teams?.data.find((t) => t.slug === currentTeamSlug)
   const otherTeams = teams?.data.filter(
-    (t) => t.is_personal_team === false && t.name !== currentTeam?.name,
+    (t) => !t.is_personal_team && t.name !== selectedTeam?.name,
   )
 
   return (
@@ -87,19 +88,21 @@ const TeamSelector = ({ teams }: { teams: TeamsPublic }) => {
             <Flex justify="space-between">
               <Box display="flex" alignItems="center" gap={2}>
                 <TeamIcon
-                  bg={currentTeam?.is_personal_team ? "ui.gradient" : "ui.main"}
-                  icon={currentTeam?.is_personal_team ? undefined : Users}
+                  bg={
+                    selectedTeam?.is_personal_team ? "ui.gradient" : "ui.main"
+                  }
+                  icon={selectedTeam?.is_personal_team ? undefined : Users}
                   initials={
-                    currentTeam?.is_personal_team
-                      ? getInitials(currentTeam.name)
+                    selectedTeam?.is_personal_team
+                      ? getInitials(selectedTeam.name)
                       : undefined
                   }
                 />
                 <Box mx={2} textAlign="left">
                   <Text isTruncated maxWidth="150px" color={color}>
-                    {currentTeam?.name}
+                    {selectedTeam?.name}
                   </Text>
-                  {currentTeam === personalTeam && (
+                  {selectedTeam === personalTeam && (
                     <Text fontSize="sm" color="gray.500">
                       Personal Team
                     </Text>
@@ -110,7 +113,7 @@ const TeamSelector = ({ teams }: { teams: TeamsPublic }) => {
             </Flex>
           </MenuButton>
           <MenuList p={4} bg={bg} w="100%">
-            {currentTeam !== personalTeam && (
+            {selectedTeam !== personalTeam && (
               <>
                 <MenuGroup title="Personal Team">
                   <MenuItemLink

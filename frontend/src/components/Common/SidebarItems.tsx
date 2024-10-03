@@ -18,8 +18,6 @@ import {
 
 import { Apps, Home, Settings } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
-import { useCurrentUser } from "@/hooks/useAuth"
-import { Route } from "@/routes/_layout/$team"
 import type { ElementType } from "react"
 import TeamSelector from "./TeamSelector"
 
@@ -71,6 +69,7 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
 interface SidebarItemsProps {
   onClose?: () => void
   teams: TeamsPublic
+  currentTeamSlug: string
 }
 
 // Looks like `as` doesn't do full type inference, so we created a new component
@@ -80,12 +79,14 @@ const FlexLink = (props: LinkProps & Omit<FlexProps, "as">) => (
   <Flex as={Link} {...props} />
 )
 
-const SidebarItems = ({ onClose, teams }: SidebarItemsProps) => {
-  const { team } = Route.useParams()
-  const user = useCurrentUser()
+const SidebarItems = ({
+  onClose,
+  teams,
+  currentTeamSlug,
+}: SidebarItemsProps) => {
   const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
 
-  const items = getSidebarItems({ team: team || user!.personal_team_slug })
+  const items = getSidebarItems({ team: currentTeamSlug })
 
   const listItems = items.map(({ icon, title, to, params }) => (
     <FlexLink
@@ -114,7 +115,7 @@ const SidebarItems = ({ onClose, teams }: SidebarItemsProps) => {
 
   return (
     <>
-      <TeamSelector teams={teams} />
+      <TeamSelector teams={teams} currentTeamSlug={currentTeamSlug} />
       <Text fontSize="xs" px={4} py={2} fontWeight="bold">
         Menu
       </Text>

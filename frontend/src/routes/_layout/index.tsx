@@ -22,7 +22,11 @@ function Index() {
   return (
     <Navigate
       to="/$team/"
-      params={{ team: currentUser!.personal_team_slug }}
+      params={{
+        team:
+          localStorage.getItem("current_team") ||
+          currentUser!.personal_team_slug,
+      }}
       search={routerState.location.search}
     />
   )

@@ -15,11 +15,24 @@ import { FaBars } from "react-icons/fa"
 import { LogOut } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
 import useAuth from "@/hooks/useAuth"
+import { Route } from "@/routes/_layout/$team"
+import { useEffect } from "react"
 import SidebarItems from "./SidebarItems"
 
 const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
+  const { team } = Route.useParams()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { logout } = useAuth()
+
+  const personalTeam = teams?.data.find((t) => t.is_personal_team)
+  const currentTeamSlug =
+    team || localStorage.getItem("current_team") || personalTeam?.slug || ""
+
+  useEffect(() => {
+    if (currentTeamSlug) {
+      localStorage.setItem("current_team", currentTeamSlug)
+    }
+  }, [currentTeamSlug])
 
   const handleLogout = () => {
     logout()
@@ -44,7 +57,11 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
           <DrawerBody py={8}>
             <Flex flexDir="column" justify="space-between">
               <Box>
-                <SidebarItems onClose={onClose} teams={teams} />
+                <SidebarItems
+                  onClose={onClose}
+                  teams={teams}
+                  currentTeamSlug={currentTeamSlug}
+                />
                 <Flex
                   as="button"
                   onClick={handleLogout}
@@ -74,7 +91,7 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
         p={6}
       >
         <Box w="100%">
-          <SidebarItems teams={teams} />
+          <SidebarItems teams={teams} currentTeamSlug={currentTeamSlug} />
         </Box>
       </Box>
     </>
