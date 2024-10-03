@@ -1,6 +1,7 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons"
 import {
   Box,
+  Button,
   Container,
   Flex,
   Heading,
@@ -8,17 +9,58 @@ import {
   Skeleton,
   Text,
 } from "@chakra-ui/react"
-import { createFileRoute } from "@tanstack/react-router"
+import { useQueryClient } from "@tanstack/react-query"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useEffect } from "react"
+import { z } from "zod"
 
-import { AppsService } from "@/client"
+import { AppsService, DeploymentsService } from "@/client"
 import DeleteApp from "@/components/AppSettings/DeleteApp"
 import Deployments from "@/components/AppSettings/Deployments"
 import CustomCard from "@/components/Common/CustomCard"
 import { fetchTeamBySlug } from "@/utils"
 
+const deploymentsSearchSchema = z.object({
+  page: z.number().catch(1).optional(),
+  orderBy: z.enum(["created_at"]).optional(),
+  order: z.enum(["asc", "desc"]).optional(),
+})
+
+const PER_PAGE = 5
+
+function getDeploymentsQueryOptions({
+  page,
+  orderBy = "created_at",
+  order = "desc",
+  appId,
+}: {
+  page: number
+  orderBy?: "created_at"
+  order?: "asc" | "desc"
+  appId: string
+}) {
+  return {
+    queryFn: () =>
+      DeploymentsService.readDeployments({
+        skip: (page - 1) * PER_PAGE,
+        limit: PER_PAGE + 1,
+        orderBy,
+        order,
+        appId,
+      }),
+    queryKey: ["deployments", { page, orderBy, order, appId }],
+  }
+}
+
 export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
   component: AppDetail,
-  loader: async ({ params }) => {
+  validateSearch: (search) => deploymentsSearchSchema.parse(search),
+  loaderDeps: ({ search: { page, orderBy, order } }) => ({
+    page,
+    orderBy,
+    order,
+  }),
+  loader: async ({ context, params, deps }) => {
     const team = await fetchTeamBySlug(params.team)
 
     const apps = await AppsService.readApps({
@@ -26,7 +68,16 @@ export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
       slug: params.appSlug,
     })
 
-    return apps.data[0]
+    const deployments = await context.queryClient.fetchQuery(
+      getDeploymentsQueryOptions({
+        appId: apps.data[0].id,
+        page: deps.page || 1,
+        orderBy: deps.orderBy,
+        order: deps.order,
+      }),
+    )
+
+    return { app: apps.data[0], deployments }
   },
   pendingComponent: () => (
     <Box>
@@ -38,34 +89,78 @@ export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
 })
 
 function AppDetail() {
-  const app = Route.useLoaderData()
+  const { page = 1, order, orderBy } = Route.useSearch()
+  const navigate = useNavigate({ from: Route.fullPath })
+  const setPage = (page: number) =>
+    navigate({ search: (prev: any) => ({ ...prev, page }) })
+  const queryClient = useQueryClient()
+
+  const {
+    app,
+    deployments: { data },
+  } = Route.useLoaderData()
+
+  const hasNextPage = data.length === PER_PAGE + 1
+  const deployments = data.slice(0, PER_PAGE)
+
+  const hasPreviousPage = page > 1
+
+  useEffect(() => {
+    if (hasNextPage) {
+      queryClient.prefetchQuery(
+        getDeploymentsQueryOptions({
+          page: page + 1,
+          orderBy,
+          order,
+          appId: app.id,
+        }),
+      )
+    }
+  }, [page, queryClient, hasNextPage, order, orderBy, app.id])
 
   return (
     <Container maxW="full" p={0}>
-      <Flex alignItems="center">
-        <Heading size="lg" textAlign={{ base: "center", md: "left" }} pb={2}>
-          {app?.name}
-        </Heading>
-      </Flex>
-      <Box>
-        <Box pb={10}>
-          {app.url && (
-            <Link href={app.url} isExternal color="ui.main" fontWeight="bold">
-              {app.url}
-              <ExternalLinkIcon mx="2px" />
-            </Link>
-          )}
-          <Text>
-            Last Updated: {new Date(app?.updated_at).toLocaleString()}
-          </Text>
-          <Box pt={10}>
-            <CustomCard title="Deployments">
-              <Deployments appId={app.id} />
-            </CustomCard>
-            <CustomCard>
-              <DeleteApp appSlug={app.slug} appId={app.id} />
-            </CustomCard>
-          </Box>
+      <Heading size="lg" pb={2}>
+        {app?.name}
+      </Heading>
+      <Box pb={10}>
+        {app.url && (
+          <Link href={app.url} isExternal color="ui.main" fontWeight="bold">
+            {app.url}
+            <ExternalLinkIcon mx="2px" />
+          </Link>
+        )}
+        <Text>Last Updated: {new Date(app?.updated_at).toLocaleString()}</Text>
+        <Box pt={10}>
+          <CustomCard title="Deployments">
+            <Deployments deployments={deployments} />
+            {(hasPreviousPage || hasNextPage) && (
+              <Flex
+                gap={4}
+                alignItems="center"
+                mt={4}
+                direction="row"
+                justifyContent="flex-end"
+              >
+                <Button
+                  onClick={() => setPage(page - 1)}
+                  isDisabled={!hasPreviousPage}
+                >
+                  Previous
+                </Button>
+                <span>Page {page}</span>
+                <Button
+                  isDisabled={!hasNextPage}
+                  onClick={() => setPage(page + 1)}
+                >
+                  Next
+                </Button>
+              </Flex>
+            )}
+          </CustomCard>
+          <CustomCard>
+            <DeleteApp appSlug={app.slug} appId={app.id} />
+          </CustomCard>
         </Box>
       </Box>
     </Container>

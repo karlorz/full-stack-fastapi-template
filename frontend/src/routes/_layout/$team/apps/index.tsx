@@ -38,8 +38,8 @@ const PER_PAGE = 5
 
 function getAppsQueryOptions({
   page,
-  orderBy,
-  order,
+  orderBy = "created_at",
+  order = "desc",
   teamId,
 }: {
   page: number
@@ -141,7 +141,7 @@ function Apps() {
                 <Thead>
                   <Tr>
                     {headers.map((header) => (
-                      <Th key={header} textTransform="capitalize">
+                      <Th key={header} textTransform="capitalize" w="33%">
                         {header}
                       </Th>
                     ))}

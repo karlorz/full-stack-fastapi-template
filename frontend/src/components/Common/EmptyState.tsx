@@ -20,12 +20,16 @@ const EmptyState = ({ type }: EmptyStateProps) => {
       <Heading size="sm" textAlign="center">
         You don't have any {type} yet
       </Heading>
-      <Text>
-        Create your first {type} to get started and deploy it to the cloud.
-      </Text>
-      <Button as={RouterLink} to="/$team/apps/new" variant="primary">
-        Create {`${type[0].toLocaleUpperCase()}${type.slice(1)}`}
-      </Button>
+      {type === "app" && (
+        <>
+          <Text>
+            Create your first {type} to get started and deploy it to the cloud.
+          </Text>
+          <Button as={RouterLink} to="/$team/apps/new" variant="primary">
+            Create {`${type[0].toLocaleUpperCase()}${type.slice(1)}`}
+          </Button>
+        </>
+      )}
     </CustomCard>
   )
 }

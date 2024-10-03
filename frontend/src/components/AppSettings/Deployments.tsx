@@ -1,49 +1,61 @@
-import { Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
-import { useSuspenseQuery } from "@tanstack/react-query"
+import {
+  Center,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 
-import { DeploymentsService } from "@/client"
+import type { DeploymentPublic } from "@/client"
 import { Status } from "@/components/Deployment/Status"
+import EmptyState from "../Common/EmptyState"
 
-const Deployments = ({ appId }: { appId: string }) => {
+const Deployments = ({
+  deployments,
+}: { deployments: Array<DeploymentPublic> }) => {
   const headers = ["Deployment ID", "Status", "Created At"]
-
-  const { data: deployments } = useSuspenseQuery({
-    queryKey: ["deployments", appId],
-    queryFn: () => DeploymentsService.readDeployments({ appId }),
-  })
 
   return (
     <>
-      {deployments && deployments.data.length > 0 ? (
-        <Table variant="unstyled" mt="4">
-          <Thead>
-            <Tr>
-              {headers.map((header) => (
-                <Th key={header} textTransform="capitalize">
-                  {header}
-                </Th>
-              ))}
-            </Tr>
-          </Thead>
-          <Tbody>
-            {deployments.data.map((deployment) => (
-              <Tr key={deployment.id}>
-                <Td>
-                  <Link to={`./deployments/${deployment.id}`}>
-                    {deployment.id}
-                  </Link>
-                </Td>
-                <Td>
-                  <Status deployment={deployment} />
-                </Td>
-                <Td>{new Date(deployment.created_at).toLocaleString()}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
+      {deployments?.length > 0 ? (
+        <>
+          <TableContainer>
+            <Table variant="unstyled" mt="4">
+              <Thead>
+                <Tr>
+                  {headers.map((header) => (
+                    <Th key={header} textTransform="capitalize" w="33%">
+                      {header}
+                    </Th>
+                  ))}
+                </Tr>
+              </Thead>
+              <Tbody>
+                {deployments.map((deployment: any) => (
+                  <Tr key={deployment.id}>
+                    <Td>
+                      <Link to={`./deployments/${deployment.id}`}>
+                        {deployment.id}
+                      </Link>
+                    </Td>
+                    <Td>
+                      <Status deployment={deployment} />
+                    </Td>
+                    <Td>{new Date(deployment.created_at).toLocaleString()}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </TableContainer>
+        </>
       ) : (
-        <Text>No deployments available</Text>
+        <Center w="full">
+          <EmptyState type="deployments" />
+        </Center>
       )}
     </>
   )

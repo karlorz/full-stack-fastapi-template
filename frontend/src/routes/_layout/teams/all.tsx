@@ -30,8 +30,8 @@ const PER_PAGE = 5
 
 function getTeamsQueryOptions({
   page,
-  orderBy,
-  order,
+  orderBy = "created_at",
+  order = "desc",
 }: {
   page: number
   orderBy?: "created_at"
@@ -71,7 +71,7 @@ export const Route = createFileRoute("/_layout/teams/all")({
         })
       : new Promise<null>((resolve) => resolve(null))
 
-    const teamsPromise = context.queryClient.ensureQueryData(
+    const teamsPromise = context.queryClient.fetchQuery(
       getTeamsQueryOptions({
         page: deps.page || 1,
         orderBy: deps.orderBy,
