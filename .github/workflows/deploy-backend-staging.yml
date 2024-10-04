@@ -14,10 +14,15 @@ env:
   IMAGE_TAG: staging-${{ github.sha }}
 
 jobs:
-  deploy:
-    name: Deploy to Staging
-    runs-on: staging
-    environment: staging
+  deploy-backend:
+    name: Deploy Backend
+    strategy:
+      matrix:
+        environment:
+          - staging
+          - development
+    runs-on: ${{ matrix.environment }}
+    environment: ${{ matrix.environment }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
