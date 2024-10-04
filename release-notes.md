@@ -265,6 +265,7 @@
 
 ### Internal
 
+* 👷 Add CI for frontend in development environment (after setting up secrets and vars). PR [#392](https://github.com/fastapilabs/cloud/pull/392) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Add private API for environment variables. PR [#391](https://github.com/fastapilabs/cloud/pull/391) by [@patrick91](https://github.com/patrick91).
 * ✨ Add support for env vars in builder. PR [#388](https://github.com/fastapilabs/cloud/pull/388) by [@estebanx64](https://github.com/estebanx64).
 * ♻️ Set Sentry environment from config. PR [#389](https://github.com/fastapilabs/cloud/pull/389) by [@tiangolo](https://github.com/tiangolo).
