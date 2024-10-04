@@ -208,6 +208,24 @@ export const $CreateDeployment = {
   },
 } as const
 
+export const $CreateEnvironmentVariable = {
+  properties: {
+    name: {
+      type: "string",
+      isRequired: true,
+    },
+    value: {
+      type: "string",
+      isRequired: true,
+    },
+    app_id: {
+      type: "string",
+      isRequired: true,
+      format: "uuid",
+    },
+  },
+} as const
+
 export const $CreateTeam = {
   properties: {
     name: {
@@ -376,6 +394,34 @@ export const $EmailVerificationToken = {
     token: {
       type: "string",
       isRequired: true,
+    },
+  },
+} as const
+
+export const $EnvironmentVariable = {
+  properties: {
+    app_id: {
+      type: "string",
+      isRequired: true,
+      format: "uuid",
+    },
+    name: {
+      type: "string",
+      isRequired: true,
+      maxLength: 255,
+    },
+    value: {
+      type: "string",
+      isRequired: true,
+      minLength: 1,
+    },
+    created_at: {
+      type: "string",
+      format: "date-time",
+    },
+    updated_at: {
+      type: "string",
+      format: "date-time",
     },
   },
 } as const

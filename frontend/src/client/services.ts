@@ -45,8 +45,10 @@ import type {
   DeploymentUploadOut,
   CreateApp,
   CreateDeployment,
+  CreateEnvironmentVariable,
   CreateTeam,
   CreateUser,
+  EnvironmentVariable,
 } from "./models"
 
 export type LoginData = {
@@ -246,6 +248,9 @@ export type PrivateData = {
   }
   CreateDeployment: {
     requestBody: CreateDeployment
+  }
+  CreateEnvironmentVariable: {
+    requestBody: CreateEnvironmentVariable
   }
 }
 
@@ -1409,6 +1414,27 @@ export class PrivateService {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/v1/private/deployments/",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+
+  /**
+   * Create Environment Variable
+   * Create a new environment variable.
+   * @returns EnvironmentVariable Successful Response
+   * @throws ApiError
+   */
+  public static createEnvironmentVariable(
+    data: PrivateData["CreateEnvironmentVariable"],
+  ): CancelablePromise<EnvironmentVariable> {
+    const { requestBody } = data
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/private/environment-variables/",
       body: requestBody,
       mediaType: "application/json",
       errors: {

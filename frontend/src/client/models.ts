@@ -57,6 +57,12 @@ export type CreateDeployment = {
   status?: DeploymentStatus | null
 }
 
+export type CreateEnvironmentVariable = {
+  name: string
+  value: string
+  app_id: string
+}
+
 export type CreateTeam = {
   name: string
   owner_id: string
@@ -113,6 +119,14 @@ export type DeviceAuthorizationResponse = {
 
 export type EmailVerificationToken = {
   token: string
+}
+
+export type EnvironmentVariable = {
+  app_id: string
+  name: string
+  value: string
+  created_at?: string
+  updated_at?: string
 }
 
 export type EnvironmentVariableCreate = {

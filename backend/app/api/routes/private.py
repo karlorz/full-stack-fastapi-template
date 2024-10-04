@@ -12,6 +12,7 @@ from app.models import (
     Deployment,
     DeploymentPublic,
     DeploymentStatus,
+    EnvironmentVariable,
     Role,
     Team,
     TeamPublic,
@@ -126,3 +127,29 @@ def create_deployment(deployment_in: CreateDeployment, session: SessionDep) -> A
     session.commit()
 
     return deployment
+
+
+class CreateEnvironmentVariable(BaseModel):
+    name: str
+    value: str
+    app_id: uuid.UUID
+
+
+@router.post("/environment-variables/", response_model=EnvironmentVariable)
+def create_environment_variable(
+    env_var_in: CreateEnvironmentVariable, session: SessionDep
+) -> Any:
+    """
+    Create a new environment variable.
+    """
+
+    env_var = EnvironmentVariable(
+        name=env_var_in.name,
+        value=env_var_in.value,
+        app_id=env_var_in.app_id,
+    )
+
+    session.add(env_var)
+    session.commit()
+
+    return env_var
