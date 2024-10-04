@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✨ API to batch update environment variables. PR [#384](https://github.com/fastapilabs/cloud/pull/384) by [@patrick91](https://github.com/patrick91).
 * ✨Add API for environment variables. PR [#374](https://github.com/fastapilabs/cloud/pull/374) by [@patrick91](https://github.com/patrick91).
 * ✨ Add team selector. PR [#335](https://github.com/fastapilabs/cloud/pull/335) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add single deployment page. PR [#349](https://github.com/fastapilabs/cloud/pull/349) by [@patrick91](https://github.com/patrick91).
