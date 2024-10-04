@@ -265,6 +265,7 @@
 
 ### Internal
 
+* 👷 Rename Pulumi workflows to clarify their scope. PR [#394](https://github.com/fastapilabs/cloud/pull/394) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add CI for frontend in development environment (after setting up secrets and vars). PR [#392](https://github.com/fastapilabs/cloud/pull/392) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Add private API for environment variables. PR [#391](https://github.com/fastapilabs/cloud/pull/391) by [@patrick91](https://github.com/patrick91).
 * ✨ Add support for env vars in builder. PR [#388](https://github.com/fastapilabs/cloud/pull/388) by [@estebanx64](https://github.com/estebanx64).
