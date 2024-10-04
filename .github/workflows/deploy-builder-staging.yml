@@ -69,7 +69,6 @@ jobs:
           BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"
           FIRST_SUPERUSER: "${{ vars.FIRST_SUPERUSER }}"
           FIRST_SUPERUSER_FULL_NAME: "${{ vars.FIRST_SUPERUSER_FULL_NAME }}"
-          USERS_OPEN_REGISTRATION: "${{ vars.USERS_OPEN_REGISTRATION }}"
           SMTP_HOST: "${{ vars.SMTP_HOST }}"
           SMTP_USER: "${{ vars.SMTP_USER }}"
           EMAILS_FROM_EMAIL: "${{ vars.EMAILS_FROM_EMAIL }}"

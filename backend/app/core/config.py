@@ -132,7 +132,6 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER: str
     FIRST_SUPERUSER_PASSWORD: str
     FIRST_SUPERUSER_FULL_NAME: str
-    USERS_OPEN_REGISTRATION: bool = False
 
     ENABLE_PRIVATE_API: bool = False
 
