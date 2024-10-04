@@ -265,6 +265,7 @@
 
 ### Internal
 
+* 👷 Deploy Pulumi using GitHub environments. PR [#396](https://github.com/fastapilabs/cloud/pull/396) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Deploy backend to staging and development environments. PR [#395](https://github.com/fastapilabs/cloud/pull/395) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Rename Pulumi workflows to clarify their scope. PR [#394](https://github.com/fastapilabs/cloud/pull/394) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add CI for frontend in development environment (after setting up secrets and vars). PR [#392](https://github.com/fastapilabs/cloud/pull/392) by [@tiangolo](https://github.com/tiangolo).
