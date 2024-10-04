@@ -1,4 +1,4 @@
-name: Deploy
+name: Pulumi Deploy
 on:
   push:
     branches:
@@ -14,7 +14,7 @@ on:
         default: 'false'
 
 jobs:
-  deploy:
+  pulumi-deploy:
     name: Pulumi Deploy
     runs-on: ubuntu-latest
     steps:

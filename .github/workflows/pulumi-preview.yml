@@ -1,4 +1,4 @@
-name: Pulumi
+name: Pulumi Preview
 on:
   pull_request:
     types:
@@ -6,7 +6,7 @@ on:
       - synchronize
 
 jobs:
-  preview-pulumi:
+  pulumi-preview:
     if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
     name: Pulumi Preview
     runs-on: ubuntu-latest
