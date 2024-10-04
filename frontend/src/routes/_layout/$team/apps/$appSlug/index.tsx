@@ -9,7 +9,7 @@ import {
   Skeleton,
   Text,
 } from "@chakra-ui/react"
-import { useQueryClient } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { z } from "zod"
@@ -17,6 +17,7 @@ import { z } from "zod"
 import { AppsService, DeploymentsService } from "@/client"
 import DeleteApp from "@/components/AppSettings/DeleteApp"
 import Deployments from "@/components/AppSettings/Deployments"
+import EnvironmentVariables from "@/components/AppSettings/EnvironmentVariables"
 import CustomCard from "@/components/Common/CustomCard"
 import { fetchTeamBySlug } from "@/utils"
 
@@ -77,7 +78,14 @@ export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
       }),
     )
 
-    return { app: apps.data[0], deployments }
+    const app = apps.data[0]
+
+    await context.queryClient.ensureQueryData({
+      queryKey: ["apps", app.id, "environmentVariables"],
+      queryFn: () => AppsService.readEnvironmentVariables({ appId: app.id }),
+    })
+
+    return { app, deployments }
   },
   pendingComponent: () => (
     <Box>
@@ -117,6 +125,11 @@ function AppDetail() {
       )
     }
   }, [page, queryClient, hasNextPage, order, orderBy, app.id])
+
+  const { data: environmentVariables } = useQuery({
+    queryKey: ["apps", app.id, "environmentVariables"],
+    queryFn: () => AppsService.readEnvironmentVariables({ appId: app.id }),
+  })
 
   return (
     <Container maxW="full" p={0}>
@@ -158,6 +171,14 @@ function AppDetail() {
               </Flex>
             )}
           </CustomCard>
+
+          <CustomCard title="Environment Variables">
+            <EnvironmentVariables
+              environmentVariables={environmentVariables?.data || []}
+              appId={app.id}
+            />
+          </CustomCard>
+
           <CustomCard>
             <DeleteApp appSlug={app.slug} appId={app.id} />
           </CustomCard>

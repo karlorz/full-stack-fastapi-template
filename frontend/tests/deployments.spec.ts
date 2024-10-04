@@ -5,7 +5,7 @@ import {
   createTeam,
   createUser,
 } from "./utils/privateApi"
-import { randomEmail, randomTeamName, slugify } from "./utils/random"
+import { randomEmail } from "./utils/random"
 import { logInUser } from "./utils/userUtils"
 
 test.use({ storageState: { cookies: [], origins: [] } })

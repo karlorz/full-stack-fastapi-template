@@ -49,3 +49,17 @@ export const createDeployment = async ({ appId }: { appId: string }) => {
     },
   })
 }
+
+export const createEnvironmentVariable = async ({
+  appId,
+  name,
+  value,
+}: { appId: string; name: string; value: string }) => {
+  return PrivateService.createEnvironmentVariable({
+    requestBody: {
+      app_id: appId,
+      name,
+      value,
+    },
+  })
+}
