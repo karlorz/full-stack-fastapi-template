@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     deploy_url: str | None = None
     commit_sha: str
     pr_number: int | None = None
+    environment: str = "local"
 
 
 def main():
@@ -25,7 +26,7 @@ def main():
     if not use_pr:
         logging.error(f"No PR found for hash: {settings.commit_sha}")
         return
-    message = f"🎨 Dashboard UI preview for commit {settings.commit_sha} at: {settings.deploy_url}"
+    message = f"🎨 Dashboard UI preview in environment `{settings.environment}` for commit {settings.commit_sha} at: {settings.deploy_url}"
 
     print(message)
     use_pr.as_issue().create_comment(message)

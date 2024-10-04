@@ -18,6 +18,12 @@ permissions:
 jobs:
   build-and-deploy-ui:
     if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
+    strategy:
+      matrix:
+        environment:
+          - staging
+          - development
+    environment: ${{ matrix.environment }}
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
@@ -33,37 +39,48 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.4.15"
       - run: npm ci
         working-directory: frontend
       - run: npm run build
         env:
-          VITE_API_URL: ${{ vars.API_URL_STAGING }}
+          VITE_API_URL: ${{ vars.API_HOST }}
         working-directory: frontend
       - name: Deploy to Cloudflare Pages
         # hashFiles returns an empty string if there are no files
         if: hashFiles('./frontend/dist/*')
         id: deploy
-        uses: cloudflare/pages-action@v1
+        env:
+          PROJECT_NAME: ${{ matrix.environment == 'staging' && 'dashboard-fastapicloud-work' || matrix.environment == 'development' && 'dashboard-fastapicloud-space' }}
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: dashboard-fastapicloud-work
-          directory: './frontend/dist'
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          # Deploy to main if the current branch is master
-          branch: ${{ ( github.ref_name == 'master' && 'main' ) || ( github.sha ) }}
-      - uses: actions/cache@v4
-        id: python-actions-cache
-        with:
-          path: ${{ env.pythonLocation }}
-          key: ${{ runner.os }}-python-github-actions-${{ env.pythonLocation }}-${{ hashFiles('requirements-github-actions.txt') }}-v01
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ./frontend/dist --project-name=${{ env.PROJECT_NAME }}
       - name: Install GitHub Actions dependencies
-        if: steps.python-actions-cache.outputs.cache-hit != 'true'
-        run: pip install -r requirements-github-actions.txt
+        run: |
+          uv venv
+          uv pip install -r requirements-github-actions.txt
       - name: Comment Deploy
-        run: python ./scripts/deploy_ui_status.py
+        run: uv run python ./scripts/deploy_ui_status.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+          DEPLOY_URL: ${{ steps.deploy.outputs.deployment-url }}
           COMMIT_SHA: ${{ github.sha }}
           PR_NUMBER: ${{ github.event.number }}
+          ENVIRONMENT: ${{ matrix.environment }}
+
+  # https://github.com/marketplace/actions/alls-green#why
+  deploy-ui-alls-green:  # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+      - build-and-deploy-ui
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
