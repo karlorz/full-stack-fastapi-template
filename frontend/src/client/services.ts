@@ -182,6 +182,10 @@ export type AppsData = {
     appId: string
     requestBody: EnvironmentVariableCreate
   }
+  UpdateEnvironmentVariables: {
+    appId: string
+    requestBody: Record<string, string | null>
+  }
   DeleteEnvironmentVariable: {
     appId: string
     environmentVariableName: string
@@ -1054,6 +1058,30 @@ export class AppsService {
     const { appId, requestBody } = data
     return __request(OpenAPI, {
       method: "POST",
+      url: "/api/v1/apps/{app_id}/environment-variables/",
+      path: {
+        app_id: appId,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+
+  /**
+   * Update Environment Variables
+   * Update the provided environment variables.
+   * @returns EnvironmentVariablesPublic Successful Response
+   * @throws ApiError
+   */
+  public static updateEnvironmentVariables(
+    data: AppsData["UpdateEnvironmentVariables"],
+  ): CancelablePromise<EnvironmentVariablesPublic> {
+    const { appId, requestBody } = data
+    return __request(OpenAPI, {
+      method: "PATCH",
       url: "/api/v1/apps/{app_id}/environment-variables/",
       path: {
         app_id: appId,

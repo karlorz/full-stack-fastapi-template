@@ -2,7 +2,7 @@ import uuid
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
-from sqlmodel import and_, col, func, select
+from sqlmodel import col, func, select
 
 from app.api.deps import CurrentUser, SessionDep
 from app.crud import get_user_team_link
@@ -47,7 +47,11 @@ def read_environment_variables(
         .where(EnvironmentVariable.app_id == app_id)
         .select_from(EnvironmentVariable)
     )
-    statement = select(EnvironmentVariable).where(EnvironmentVariable.app_id == app_id)
+    statement = (
+        select(EnvironmentVariable)
+        .where(EnvironmentVariable.app_id == app_id)
+        .order_by(EnvironmentVariable.name)
+    )
 
     environment_variables = session.exec(statement).all()
     count = session.exec(count_statement).one()
@@ -89,10 +93,8 @@ def create_environment_variable(
         select(func.count())
         .select_from(EnvironmentVariable)
         .where(
-            and_(
-                col(EnvironmentVariable.name) == environment_variable.name,
-                col(EnvironmentVariable.app_id) == app_id,
-            )
+            col(EnvironmentVariable.name) == environment_variable.name,
+            col(EnvironmentVariable.app_id) == app_id,
         )
     ).one()
 
@@ -108,6 +110,72 @@ def create_environment_variable(
     session.refresh(environment_variable)
 
     return environment_variable
+
+
+@router.patch("/", response_model=EnvironmentVariablesPublic)
+def update_environment_variables(
+    session: SessionDep,
+    current_user: CurrentUser,
+    app_id: uuid.UUID,
+    environment_variables_in: dict[str, str | None],
+) -> Any:
+    """
+    Update the provided environment variables.
+    """
+
+    app = session.exec(select(App).where(App.id == app_id)).first()
+
+    if not app:
+        raise HTTPException(status_code=404, detail="App not found")
+
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=app.team_id
+    )
+    if not user_team_link:
+        raise HTTPException(
+            status_code=404, detail="Team not found for the current user"
+        )
+
+    for name, value in environment_variables_in.items():
+        environment_variable = session.exec(
+            select(EnvironmentVariable).where(
+                EnvironmentVariable.app_id == app_id,
+                EnvironmentVariable.name == name,
+            )
+        ).first()
+
+        if value is None:
+            session.delete(environment_variable)
+
+        else:
+            if not environment_variable:
+                environment_variable = EnvironmentVariable(
+                    app_id=app_id,
+                    name=name,
+                    value=value,
+                )
+
+            environment_variable.value = value
+
+            session.add(environment_variable)
+
+    session.commit()
+
+    count_statement = (
+        select(func.count())
+        .where(EnvironmentVariable.app_id == app_id)
+        .select_from(EnvironmentVariable)
+    )
+    statement = (
+        select(EnvironmentVariable)
+        .where(EnvironmentVariable.app_id == app_id)
+        .order_by(EnvironmentVariable.name)
+    )
+
+    environment_variables = session.exec(statement).all()
+    count = session.exec(count_statement).one()
+
+    return EnvironmentVariablesPublic(data=environment_variables, count=count)
 
 
 @router.delete("/{environment_variable_name}", response_model=Message)

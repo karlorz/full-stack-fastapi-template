@@ -529,3 +529,162 @@ def test_edit_environment_variable_for_app_different_team(
     data = response.json()
 
     assert data["detail"] == "Team not found for the current user"
+
+
+def test_batch_update(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+
+    team = create_random_team(db, owner_id=user.id)
+
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+
+    create_environment_variable(db, app=app, name="initial_name", value="initial_value")
+    create_environment_variable(
+        db, app=app, name="initial_name_2", value="initial_value_2"
+    )
+    create_environment_variable(
+        db, app=app, name="initial_name_3", value="initial_value_3"
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.patch(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables",
+        headers=user_auth_headers,
+        json={
+            "initial_name": "updated_value",
+            "initial_name_2": None,
+            "new_name": "new_value",
+        },
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["count"] == 3
+    assert data["data"][0]["name"] == "initial_name"
+    assert data["data"][0]["value"] == "updated_value"
+    assert data["data"][1]["name"] == "initial_name_3"
+    assert data["data"][1]["value"] == "initial_value_3"
+    assert data["data"][2]["name"] == "new_name"
+    assert data["data"][2]["value"] == "new_value"
+
+    assert (
+        db.exec(
+            select(EnvironmentVariable).where(
+                EnvironmentVariable.name == "initial_name",
+                EnvironmentVariable.app_id == app.id,
+                EnvironmentVariable.value == "updated_value",
+            )
+        ).first()
+        is not None
+    )
+
+    assert (
+        db.exec(
+            select(EnvironmentVariable).where(
+                EnvironmentVariable.name == "initial_name_2",
+                EnvironmentVariable.app_id == app.id,
+            )
+        ).first()
+        is None
+    )
+
+    assert (
+        db.exec(
+            select(EnvironmentVariable).where(
+                EnvironmentVariable.name == "initial_name_3",
+                EnvironmentVariable.app_id == app.id,
+                EnvironmentVariable.value == "initial_value_3",
+            )
+        ).first()
+        is not None
+    )
+
+    assert (
+        db.exec(
+            select(EnvironmentVariable).where(
+                EnvironmentVariable.name == "new_name",
+                EnvironmentVariable.app_id == app.id,
+                EnvironmentVariable.value == "new_value",
+            )
+        ).first()
+        is not None
+    )
+
+
+def test_batch_update_for_app_not_found(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.patch(
+        f"{settings.API_V1_STR}/apps/70a83fd6-000e-46da-a7b0-e1bbc260f5b4/environment-variables",
+        headers=user_auth_headers,
+        json={
+            "initial_name": "updated_value",
+            "initial_name_2": None,
+            "new_name": "new_value",
+        },
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
+
+
+def test_batch_update_for_app_different_team(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+
+    team = create_random_team(db, owner_id=user.id)
+
+    app = create_random_app(db, team=team)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.patch(
+        f"{settings.API_V1_STR}/apps/{app.id}/environment-variables",
+        headers=user_auth_headers,
+        json={
+            "initial_name": "updated_value",
+            "initial_name_2": None,
+            "new_name": "new_value",
+        },
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+
+    assert data["detail"] == "Team not found for the current user"
