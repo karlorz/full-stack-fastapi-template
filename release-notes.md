@@ -265,6 +265,7 @@
 
 ### Internal
 
+* 👷 Tweak Cloudflare action to deploy to prod. PR [#398](https://github.com/fastapilabs/cloud/pull/398) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove unused config and env vars for USERS_OPEN_REGISTRATION. PR [#397](https://github.com/fastapilabs/cloud/pull/397) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Deploy Pulumi using GitHub environments. PR [#396](https://github.com/fastapilabs/cloud/pull/396) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Deploy backend to staging and development environments. PR [#395](https://github.com/fastapilabs/cloud/pull/395) by [@tiangolo](https://github.com/tiangolo).
