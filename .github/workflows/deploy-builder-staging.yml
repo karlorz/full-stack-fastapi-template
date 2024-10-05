@@ -63,6 +63,7 @@ jobs:
           DOMAIN: "${{ vars.DOMAIN }}"
           FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
           API_HOST: "${{ vars.API_HOST }}"
+          DEPLOYMENTS_DOMAIN: "${{ vars.DEPLOYMENTS_DOMAIN }}"
           ENVIRONMENT: "staging"
           PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
           STACK_NAME: "${{ vars.STACK_NAME }}"
