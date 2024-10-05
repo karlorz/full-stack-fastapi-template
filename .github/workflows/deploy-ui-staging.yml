@@ -55,11 +55,12 @@ jobs:
         id: deploy
         env:
           PROJECT_NAME: ${{ matrix.environment == 'staging' && 'dashboard-fastapicloud-work' || matrix.environment == 'development' && 'dashboard-fastapicloud-space' }}
+          BRANCH: ${{ github.event_name == 'pull_request' && 'preview' || github.event_name == 'push' && 'main' }}
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy ./frontend/dist --project-name=${{ env.PROJECT_NAME }}
+          command: pages deploy ./frontend/dist --project-name=${{ env.PROJECT_NAME }} --branch=${{ env.BRANCH }}
       - name: Install GitHub Actions dependencies
         run: |
           uv venv
