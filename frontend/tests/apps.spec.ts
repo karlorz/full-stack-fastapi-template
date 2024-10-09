@@ -72,9 +72,9 @@ test.describe("User can manage apps succesfully", () => {
       await page.getByPlaceholder("App Name").fill(appName)
       await page.getByRole("button", { name: "Create App" }).click()
       await expect(page.getByTestId("app-created-success")).toBeVisible()
-      await page.getByRole("button", { name: "Ok" }).click()
-      await expect(page).toHaveURL(`/${teamSlug}/apps`)
     }
+
+    await page.goto(`/${teamSlug}/apps`)
 
     for (const appName of appNames) {
       await expect(page.getByRole("cell", { name: appName })).toBeVisible()

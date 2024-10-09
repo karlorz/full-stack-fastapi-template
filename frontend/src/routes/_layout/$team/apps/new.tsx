@@ -130,11 +130,14 @@ function NewApp() {
                 <Button
                   onClick={() => {
                     onClose()
-                    navigate({ to: "/$team/apps", params: { team: team.slug } })
+                    navigate({
+                      to: "/$team/apps/$app",
+                      params: { team: team.slug, app: mutation.data?.slug },
+                    })
                   }}
-                  mt={4}
+                  mt={2}
                 >
-                  Ok
+                  Go to App
                 </Button>
               </ModalFooter>
             </>

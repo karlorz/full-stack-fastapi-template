@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_layout")({
     }
   },
   loader: async ({ context }) => {
-    const teams = await context.queryClient.ensureQueryData({
+    const teams = await context.queryClient.fetchQuery({
       queryFn: () => TeamsService.readTeams({}),
       queryKey: ["teams"],
     })

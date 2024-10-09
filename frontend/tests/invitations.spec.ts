@@ -140,6 +140,7 @@ test.describe("User can accept invitations to a team", () => {
     await expect(
       page.getByText(`You are now a member of ${teamName}`),
     ).toBeVisible()
+    await page.getByRole("button", { name: "Ok" }).click()
     await logOutUser(page, user2Name)
 
     // check if user was added to the team members list

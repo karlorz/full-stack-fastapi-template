@@ -86,6 +86,7 @@ const useAuth = () => {
   })
 
   const logout = (redirect?: string) => {
+    localStorage.removeItem("current_team")
     localStorage.removeItem("access_token")
     queryClient.invalidateQueries()
     const search = redirect ? { redirect } : undefined

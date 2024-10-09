@@ -124,15 +124,18 @@ function NewTeam() {
                   collaborating together.
                 </Text>
               </ModalBody>
-              <ModalFooter>
+              <ModalFooter gap={2}>
                 <Button
                   onClick={() => {
                     onClose()
-                    navigate({ to: "/teams/all" })
+                    navigate({
+                      to: "/$team/settings",
+                      params: { team: mutation.data.slug },
+                    })
                   }}
                   mt={4}
                 >
-                  Ok
+                  Invite Members
                 </Button>
               </ModalFooter>
             </>
