@@ -266,6 +266,7 @@
 
 ### Internal
 
+* 🧱 Add infrastructure templates and update README about infra. PR [#401](https://github.com/fastapilabs/cloud/pull/401) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Don't override labels added by hand. PR [#403](https://github.com/fastapilabs/cloud/pull/403) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Add `DEPLOYMENTS_DOMAIN` env var to CI and `.env`. PR [#399](https://github.com/fastapilabs/cloud/pull/399) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Tweak Cloudflare action to deploy to prod. PR [#398](https://github.com/fastapilabs/cloud/pull/398) by [@tiangolo](https://github.com/tiangolo).
