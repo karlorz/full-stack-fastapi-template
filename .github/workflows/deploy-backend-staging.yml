@@ -63,7 +63,7 @@ jobs:
         FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
         API_HOST: "${{ vars.API_HOST }}"
         DEPLOYMENTS_DOMAIN: "${{ vars.DEPLOYMENTS_DOMAIN }}"
-        ENVIRONMENT: "staging"
+        ENVIRONMENT: ${{ matrix.environment }}
         PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
         STACK_NAME: "${{ vars.STACK_NAME }}"
         BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"
@@ -104,7 +104,7 @@ jobs:
         FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
         API_HOST: "${{ vars.API_HOST }}"
         DEPLOYMENTS_DOMAIN: "${{ vars.DEPLOYMENTS_DOMAIN }}"
-        ENVIRONMENT: "staging"
+        ENVIRONMENT: ${{ matrix.environment }}
         PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
         STACK_NAME: "${{ vars.STACK_NAME }}"
         BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"

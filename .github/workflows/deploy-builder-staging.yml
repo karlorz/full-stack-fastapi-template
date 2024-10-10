@@ -21,8 +21,13 @@ env:
 jobs:
   deploy:
     name: Deploy to Staging
-    runs-on: staging
-    environment: staging
+    strategy:
+      matrix:
+        environment:
+          - staging
+          - development
+    runs-on: ${{ matrix.environment }}
+    environment: ${{ matrix.environment }}
     steps:
     - uses: actions/checkout@v4
     - name: Install kubectl
@@ -64,7 +69,7 @@ jobs:
           FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
           API_HOST: "${{ vars.API_HOST }}"
           DEPLOYMENTS_DOMAIN: "${{ vars.DEPLOYMENTS_DOMAIN }}"
-          ENVIRONMENT: "staging"
+          ENVIRONMENT: ${{ matrix.environment }}
           PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
           STACK_NAME: "${{ vars.STACK_NAME }}"
           BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"
