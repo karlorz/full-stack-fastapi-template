@@ -267,6 +267,7 @@
 
 ### Internal
 
+* 👷 Add support for deploying backend on workflow_dispatch. PR [#406](https://github.com/fastapilabs/cloud/pull/406) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Deploy builder to staging and development on CI. PR [#404](https://github.com/fastapilabs/cloud/pull/404) by [@tiangolo](https://github.com/tiangolo).
 * 🧱 Add infrastructure templates and update README about infra. PR [#401](https://github.com/fastapilabs/cloud/pull/401) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Don't override labels added by hand. PR [#403](https://github.com/fastapilabs/cloud/pull/403) by [@tiangolo](https://github.com/tiangolo).
