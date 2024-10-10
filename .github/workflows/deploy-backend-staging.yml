@@ -18,7 +18,6 @@ on:
 env:
   ECR_REPOSITORY: fastapicloud-backend
   IMAGE_TAG: staging-${{ github.sha }}
-  DEFAULT_ENVIRONMENTS: '["staging", "development"]'
 
 jobs:
   deploy-backend:
@@ -27,8 +26,8 @@ jobs:
       matrix:
         # Two environments by default: staging and development, but can be overridden by the user in a workflow dispatch
         # TODO: uncomment this once production is stable, to disallow deploying to production from workflow_dispatch
-        # environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment != 'production' && github.event.inputs.environment || fromJson(github.env.DEFAULT_ENVIRONMENTS) }}
-        environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || fromJson(github.env.DEFAULT_ENVIRONMENTS) }}
+        # environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment != 'production' && github.event.inputs.environment || fromJson('["staging", "development"]') }}
+        environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || fromJson('["staging", "development"]') }}
     runs-on: ${{ matrix.environment }}
     environment: ${{ matrix.environment }}
     steps:
