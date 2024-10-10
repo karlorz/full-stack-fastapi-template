@@ -267,6 +267,7 @@
 
 ### Internal
 
+* 👷 Set environments JSON string in env var to make it easier to update. PR [#407](https://github.com/fastapilabs/cloud/pull/407) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add support for deploying backend on workflow_dispatch. PR [#406](https://github.com/fastapilabs/cloud/pull/406) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Deploy builder to staging and development on CI. PR [#404](https://github.com/fastapilabs/cloud/pull/404) by [@tiangolo](https://github.com/tiangolo).
 * 🧱 Add infrastructure templates and update README about infra. PR [#401](https://github.com/fastapilabs/cloud/pull/401) by [@estebanx64](https://github.com/estebanx64).
