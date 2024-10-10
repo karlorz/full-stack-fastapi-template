@@ -13,6 +13,7 @@ on:
       environment:
         description: Environment to deploy to, staging or development
         required: true
+        type: environment
         default: staging
 
 env:
@@ -25,9 +26,8 @@ jobs:
     strategy:
       matrix:
         # Two environments by default: staging and development, but can be overridden by the user in a workflow dispatch
-        # TODO: uncomment this once production is stable, to disallow deploying to production from workflow_dispatch
-        # environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment != 'production' && github.event.inputs.environment || fromJson('["staging", "development"]') }}
-        environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || fromJson('["staging", "development"]') }}
+        # TODO: once production is stable, disallow deploying to production from workflow_dispatch
+        environment: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.environment)) || fromJson('["staging", "development"]') }}
     runs-on: ${{ matrix.environment }}
     environment: ${{ matrix.environment }}
     steps:
