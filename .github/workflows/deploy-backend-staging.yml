@@ -8,6 +8,12 @@ on:
       - 'backend/**'
       - 'infra/k8s/knative/backend/**'
       - '.github/workflows/deploy-backend-staging.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to deploy to, staging or development
+        required: true
+        default: staging
 
 env:
   ECR_REPOSITORY: fastapicloud-backend
@@ -18,9 +24,10 @@ jobs:
     name: Deploy Backend
     strategy:
       matrix:
-        environment:
-          - staging
-          - development
+        # Two environments by default: staging and development, but can be overridden by the user in a workflow dispatch
+        # TODO: uncomment this once production is stable, to disallow deploying to production from workflow_dispatch
+        # environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment != 'production' && github.event.inputs.environment || fromJson('["staging", "development"]') }}
+        environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || fromJson('["staging", "development"]') }}
     runs-on: ${{ matrix.environment }}
     environment: ${{ matrix.environment }}
     steps:
