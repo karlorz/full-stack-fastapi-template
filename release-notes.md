@@ -267,6 +267,7 @@
 
 ### Internal
 
+* 👷 Add support for deploying the builder in a workflow_dispatch. PR [#410](https://github.com/fastapilabs/cloud/pull/410) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update computing value for workflow dispatch in deploy backend workflow. PR [#409](https://github.com/fastapilabs/cloud/pull/409) by [@tiangolo](https://github.com/tiangolo).
 * ⏪️ Revert default environments in an env var, GitHub Actions can't seem to handle it. PR [#408](https://github.com/fastapilabs/cloud/pull/408) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Set environments JSON string in env var to make it easier to update. PR [#407](https://github.com/fastapilabs/cloud/pull/407) by [@tiangolo](https://github.com/tiangolo).
