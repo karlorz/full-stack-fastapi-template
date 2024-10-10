@@ -28,9 +28,9 @@ spec:
             memory: 512Mi
         envFrom:
         - configMapRef:
-            name: docker-builder-config
+            name: app-backend-config
         - secretRef:
-            name: docker-builder-secrets
+            name: app-backend-secrets
         volumeMounts:
         - mountPath: /var/lib/docker
           name: docker-graph-storage

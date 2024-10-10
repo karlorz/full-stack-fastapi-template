@@ -215,9 +215,101 @@ Then it uses Kustomize to patch (update) several configs.
 
 The previous file is not really used directly.
 
-Instead, one of two Kustomize "overlays" is used, one for production and one for staging.
+Instead, one of two Kustomize "overlays" is used, one for production, one for staging, and one for development.
 
-These overlays extend the `base` Kustomize configuration and add the Knative domain used for staging (`fastapicloud.club`) or production (`fastapicloud.dev`).
+These overlays extend the `base` Kustomize configuration and add the Knative domain used for production (`fastapicloud.dev`), staging (`fastapicloud.club`), or development (`fastapicloud.site`).
+
+### Build TriggerMesh
+
+AWS S3 sends events to AWS SQS, we listen to those events with a TriggerMesh.
+
+But TriggerMesh was discontinued/abandoned, so, while we refactor and migrate that, we are building our own container images from the TriggerMesh source code: https://github.com/triggermesh/triggermesh
+
+Manually build the images and push them to our AWS ECR.
+
+Then edit the file `infra/k8s/knative/deployment-workflow/triggermesh-core.yaml` with the generated image URLs.
+
+### Install  TriggerMesh
+
+Install the TriggerMesh CRDs and core components using `kubectl apply -f` following the next order.
+
+```bash
+kubectl apply -f infra/k8s/knative/deployment-workflow/triggermesh-core-crds.yaml
+```
+
+```bash
+kubectl apply -f infra/k8s/knative/deployment-workflow/triggermesh-core.yaml
+```
+
+```bash
+kubectl apply -f infra/k8s/knative/deployment-workflow/triggermesh-crds_v2.yaml
+```
+
+```bash
+kubectl apply -f infra/k8s/knative/deployment-workflow/triggermesh_v2.yaml
+```
+
+### Apply Knative Serving Role
+
+The next role is to allow the default service account used by the builder to get, create and patch knative resources within the cluster.
+
+```bash
+kubectl apply -f infra/k8s/knative/deployment-workflow/knative-serving-role.yaml
+```
+
+### Deploy builder
+
+Send a commit to the `master` branch or the branch configured following the next file.
+
+`.github/workflows/deploy-builder-staging.yml`
+
+Remember to see the rules in the workflow to trigger the builder CI.
+
+For example make a change in `backend/app` folder or `infra/k8s/knative/deployment-workflow` folder
+
+### Deploy TriggerMesh Redis Broker
+
+```bash
+kubectl apply -f infra/k8s/knative/deployment-workflow/redis-broker.yaml
+```
+
+### Deploy TriggerMesh S3 event listener
+
+Edit the file `infra/k8s/knative/deployment-workflow/s3-source.yaml` with the right SQS arn queue to listen from the Pulumi output.
+
+Then apply it:
+
+```bash
+kubectl apply -f infra/k8s/knative/deployment-workflow/s3-source.yaml
+```
+
+### Deploy backend
+
+Send a commit to the `master` branch or the branch configured following the next file.
+
+`.github/workflows/deploy-backend-staging.yml`
+
+Remember to see the rules in the workflow to trigger the builder CI.
+
+For example make a change in `backend` folder
+
+## Github Runner k8s deployment
+
+### Install docker adding the official repositories
+
+https://docs.docker.com/engine/install/ubuntu/
+
+### Install AWS cli
+
+https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+### Setup kubeconfig
+
+Get the kubeconfig content from pulumi executing.
+
+`pulumi stack output kubeconfig`
+
+Copy the content output from pulumi under `/home/github/.kube/config`
 
 ## Create a new Environment from Scratch
 
@@ -308,7 +400,6 @@ A new environment would need:
 #### Knative Serving
 
 * Kustomize files in `infra/k8s/knative/overlays/` to configure the domains for Knative.
-* Set up S3 with SQS config `infra/k8s/knative/deployment-workflow/s3-source.yaml`
 
 ### Add Pulumi stack files
 

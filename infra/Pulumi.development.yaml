@@ -1,0 +1,11 @@
+config:
+  aws:region: us-east-1
+  k8s-cluster:aws_accountId: "961341535962"
+  k8s-cluster:aws_region: us-east-1
+  k8s-cluster:desiredClusterSize: "3"
+  k8s-cluster:eksNodeInstanceType: t3.medium
+  k8s-cluster:environment: development
+  k8s-cluster:github_actions_runner_public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJcc4/13/12ppckKUBp0z1w1cg2WYmdnbZVOgXJPkkNM esteban@legion
+  k8s-cluster:maxClusterSize: "6"
+  k8s-cluster:minClusterSize: "3"
+  k8s-cluster:vpcNetworkCidr: 10.0.0.0/16

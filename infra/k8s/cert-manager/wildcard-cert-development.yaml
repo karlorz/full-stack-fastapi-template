@@ -1,15 +1,15 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: fastapicloud-com
+  name: fastapicloud-space
   namespace: cert-manager
 
 spec:
   # Sync with ingress-nginx-external-values.yaml
   secretName: fastapicloud-tls
   dnsNames:
-    - fastapicloud.com
-    - "*.fastapicloud.com"
+    - fastapicloud.space
+    - "*.fastapicloud.space"
   issuerRef:
     name: letsencrypt-production
     kind: Issuer

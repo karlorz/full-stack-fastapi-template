@@ -58,7 +58,7 @@ jobs:
         apiVersion: v1
         kind: ConfigMap
         metadata:
-          name: docker-builder-config
+          name: app-backend-config
         data:
           DOMAIN: "${{ vars.DOMAIN }}"
           FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
@@ -94,7 +94,7 @@ jobs:
         apiVersion: v1
         kind: Secret
         metadata:
-          name: docker-builder-secrets
+          name: app-backend-secrets
         type: Opaque
         stringData:
           SECRET_KEY: "${{ secrets.SECRET_KEY }}"

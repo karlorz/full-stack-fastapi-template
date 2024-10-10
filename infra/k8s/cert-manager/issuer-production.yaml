@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: letsencrypt-prod
+  name: letsencrypt-production
   namespace: cert-manager
 spec:
   acme:
@@ -11,7 +11,7 @@ spec:
     email: certs@fastapilabs.com
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
-      name: letsencrypt-prod
+      name: letsencrypt-production
     # Enable the DNS-01 challenge provider with Cloudflare API token
     solvers:
     - dns01:

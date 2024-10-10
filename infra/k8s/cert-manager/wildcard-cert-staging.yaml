@@ -11,6 +11,6 @@ spec:
     - fastapicloud.work
     - "*.fastapicloud.work"
   issuerRef:
-    name: letsencrypt-prod
+    name: letsencrypt-production
     kind: Issuer
     group: cert-manager.io
