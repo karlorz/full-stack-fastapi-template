@@ -91,10 +91,12 @@ If you are developing the frontend, you might want to start the backend, databas
 You can start a single Docker Compose service with its name, for example, to only start the `backend` (not the `frontend`), you can do:
 
 ```bash
-docker compose up -d backend
+docker compose up --watch backend
 ```
 
 As the `backend` depends on `db`, `redis` and `mailcatcher`, Docker Compose will start them automatically.
+
+The `--watch` CLI option will make Docker Compose watch for changes in the backend files and synchronize them with the Docker container.
 
 Then you can run the frontend development server with:
 

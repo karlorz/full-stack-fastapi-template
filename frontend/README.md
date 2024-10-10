@@ -101,7 +101,7 @@ Then, when you run the frontend, it will use that URL as the base URL for the AP
 You can start the Docker Compose stack including only the backend, database, etc. (omitting the frontend), to then use the frontend local development server and communicate with that backend:
 
 ```bash
-docker compose up -d backend
+docker compose up --watch backend
 ```
 
 ## Code Structure
