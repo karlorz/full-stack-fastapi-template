@@ -266,6 +266,7 @@
 
 ### Internal
 
+* 👷 Don't override labels added by hand. PR [#403](https://github.com/fastapilabs/cloud/pull/403) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Add `DEPLOYMENTS_DOMAIN` env var to CI and `.env`. PR [#399](https://github.com/fastapilabs/cloud/pull/399) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Tweak Cloudflare action to deploy to prod. PR [#398](https://github.com/fastapilabs/cloud/pull/398) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove unused config and env vars for USERS_OPEN_REGISTRATION. PR [#397](https://github.com/fastapilabs/cloud/pull/397) by [@tiangolo](https://github.com/tiangolo).
