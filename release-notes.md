@@ -252,6 +252,7 @@
 
 ### Docs
 
+* 📝 Update docs for Docker Compose watch. PR [#405](https://github.com/fastapilabs/cloud/pull/405) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update infra README. PR [#386](https://github.com/fastapilabs/cloud/pull/386) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Add infra diagram. PR [#370](https://github.com/fastapilabs/cloud/pull/370) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update docs about creating a new environment to deploy. PR [#361](https://github.com/fastapilabs/cloud/pull/361) by [@tiangolo](https://github.com/tiangolo).
