@@ -54,7 +54,7 @@ jobs:
         if: hashFiles('./frontend/dist/*')
         id: deploy
         env:
-          PROJECT_NAME: ${{ matrix.environment == 'staging' && 'dashboard-fastapicloud-work' || matrix.environment == 'development' && 'dashboard-fastapicloud-space' }}
+          PROJECT_NAME: ${{ matrix.environment == 'staging' && 'dashboard-fastapicloud-work' || matrix.environment == 'development' && 'dashboard-fastapicloud-site' }}
           BRANCH: ${{ github.event_name == 'pull_request' && 'preview' || github.event_name == 'push' && 'main' }}
         uses: cloudflare/wrangler-action@v3
         with:
