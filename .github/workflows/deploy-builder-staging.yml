@@ -23,7 +23,7 @@ on:
 
 env:
   ECR_REPOSITORY: fastapicloud-builder
-  IMAGE_TAG: staging-${{ github.sha }}
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
   deploy:
@@ -60,10 +60,10 @@ jobs:
         context: ./backend/
     - name: Update builder deployment
       env:
-        IMAGE_DIGEST: ${{ steps.docker-build.outputs.digest }}
+        IMAGE: ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}:${{ steps.docker-build.outputs.digest }}
       # TODO: investigate if we can do this without modifying a file live that doesn't end up stored in git
       run: |
-        sed -i "s|image: .*|image: $IMAGE_DIGEST|" infra/k8s/knative/deployment-workflow/dind-deployment.yaml
+        sed -i "s|image: .*|image: $IMAGE|" infra/k8s/knative/deployment-workflow/dind-deployment.yaml
     - name: Update ConfigMap and Secret
       run: |
         cat <<EOF > infra/k8s/knative/deployment-workflow/docker-builder-configmap.yaml
