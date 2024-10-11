@@ -102,6 +102,7 @@
 
 ### Fixes
 
+* 🐛 Use light mode on auth pages. PR [#400](https://github.com/fastapilabs/cloud/pull/400) by [@patrick91](https://github.com/patrick91).
 * 🐛 Fix empty team after visiting a non-team/general URL. PR [#371](https://github.com/fastapilabs/cloud/pull/371) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix stale data when creating and loading apps. PR [#383](https://github.com/fastapilabs/cloud/pull/383) by [@patrick91](https://github.com/patrick91).
 * 🐛 Update `min_length` in UserUpdateMe and TeamUpdate models and update frontend validations. PR [#356](https://github.com/fastapilabs/cloud/pull/356) by [@alejsdev](https://github.com/alejsdev).
