@@ -268,6 +268,7 @@
 
 ### Internal
 
+* 👷 Fix image for builder in CI. PR [#414](https://github.com/fastapilabs/cloud/pull/414) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update CI for frontend in development. PR [#412](https://github.com/fastapilabs/cloud/pull/412) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add support for deploying the builder in a workflow_dispatch. PR [#410](https://github.com/fastapilabs/cloud/pull/410) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update computing value for workflow dispatch in deploy backend workflow. PR [#409](https://github.com/fastapilabs/cloud/pull/409) by [@tiangolo](https://github.com/tiangolo).
