@@ -1,4 +1,4 @@
-import { Button, Container, Heading, Text } from "@chakra-ui/react"
+import { Button, Container, Heading, LightMode, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
@@ -83,29 +83,32 @@ function ResetPassword() {
         gap={4}
         zIndex="4"
       >
-        <Heading size="md">Reset Password</Heading>
-        <Text>
-          Please enter your new password and confirm it to reset your password.
-        </Text>
-        <PasswordField
-          password="new_password"
-          errors={errors}
-          register={register}
-          options={passwordRules()}
-          placeholder="New Password"
-          icon={Lock}
-        />
-        <PasswordField
-          password="confirm_password"
-          errors={errors}
-          register={register}
-          options={confirmPasswordRules(getValues)}
-          placeholder="Confirm Password"
-          icon={Lock}
-        />
-        <Button variant="primary" type="submit" size="md">
-          Reset Password
-        </Button>
+        <LightMode>
+          <Heading size="md">Reset Password</Heading>
+          <Text>
+            Please enter your new password and confirm it to reset your
+            password.
+          </Text>
+          <PasswordField
+            password="new_password"
+            errors={errors}
+            register={register}
+            options={passwordRules()}
+            placeholder="New Password"
+            icon={Lock}
+          />
+          <PasswordField
+            password="confirm_password"
+            errors={errors}
+            register={register}
+            options={confirmPasswordRules(getValues)}
+            placeholder="Confirm Password"
+            icon={Lock}
+          />
+          <Button variant="primary" type="submit" size="md">
+            Reset Password
+          </Button>
+        </LightMode>
       </Container>
     </BackgroundPanel>
   )

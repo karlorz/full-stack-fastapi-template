@@ -47,6 +47,7 @@ const PasswordField = ({
           type={show ? "text" : "password"}
           placeholder={placeholder}
           required
+          variant="outline"
         />
         <InputRightElement
           color="ui.dim"

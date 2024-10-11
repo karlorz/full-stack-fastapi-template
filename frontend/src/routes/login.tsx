@@ -10,6 +10,7 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  LightMode,
   Link,
   Text,
 } from "@chakra-ui/react"
@@ -89,61 +90,63 @@ function Login() {
           gap={4}
           zIndex="4"
         >
-          <Box>
-            <Heading size="md">Welcome!</Heading>
-            <Text>Sign in to your account</Text>
-          </Box>
-          <FormControl id="username" isInvalid={!!errors.username}>
-            <FormLabel htmlFor="username" srOnly>
-              Email
-            </FormLabel>
-            <InputGroup>
-              <InputLeftElement pointerEvents="none">
-                <Icon as={Email} color="ui.dim" />
-              </InputLeftElement>
-              <Input
-                id="username"
-                {...register("username", {
-                  pattern: emailPattern,
-                })}
-                placeholder="Email"
-                type="email"
-                required
-                variant="outline"
-              />
-            </InputGroup>
-            {errors.username && (
-              <FormErrorMessage>{errors.username.message}</FormErrorMessage>
-            )}
-          </FormControl>
-          <PasswordField
-            password="password"
-            errors={errors}
-            register={register}
-            options={passwordRules()}
-            placeholder="Password"
-            icon={Lock}
-          />
-          <Link
-            as={RouterLink}
-            to="/recover-password"
-            color="ui.main"
-            fontWeight="bolder"
-          >
-            Forgot Password?
-          </Link>
-          <Button
-            variant="primary"
-            type="submit"
-            isLoading={isSubmitting}
-            size="md"
-          >
-            Log In
-          </Button>
-          <AuthOptions
-            description={"Don't have an account?"}
-            path={"/signup"}
-          />
+          <LightMode>
+            <Box>
+              <Heading size="md">Welcome!</Heading>
+              <Text>Sign in to your account</Text>
+            </Box>
+            <FormControl id="username" isInvalid={!!errors.username}>
+              <FormLabel htmlFor="username" srOnly>
+                Email
+              </FormLabel>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <Icon as={Email} color="ui.dim" />
+                </InputLeftElement>
+                <Input
+                  id="username"
+                  {...register("username", {
+                    pattern: emailPattern,
+                  })}
+                  placeholder="Email"
+                  type="email"
+                  required
+                  variant="outline"
+                />
+              </InputGroup>
+              {errors.username && (
+                <FormErrorMessage>{errors.username.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <PasswordField
+              password="password"
+              errors={errors}
+              register={register}
+              options={passwordRules()}
+              placeholder="Password"
+              icon={Lock}
+            />
+            <Link
+              as={RouterLink}
+              to="/recover-password"
+              color="ui.main"
+              fontWeight="bolder"
+            >
+              Forgot Password?
+            </Link>
+            <Button
+              variant="primary"
+              type="submit"
+              isLoading={isSubmitting}
+              size="md"
+            >
+              Log In
+            </Button>
+            <AuthOptions
+              description={"Don't have an account?"}
+              path={"/signup"}
+            />
+          </LightMode>
         </Container>
       </BackgroundPanel>
       <TeamInvitation />

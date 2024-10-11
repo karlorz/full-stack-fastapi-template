@@ -5,6 +5,7 @@ import {
   FormErrorMessage,
   Heading,
   Input,
+  LightMode,
   Link,
   Text,
   Tooltip,
@@ -105,57 +106,64 @@ function RecoverPassword() {
           bg="ui.lightBg"
           zIndex="4"
         >
-          <Heading size="md">Password Recovery</Heading>
-          <Text>
-            Don't worry! We'll help you recover your account, no need to create
-            a new one... yet.
-          </Text>
-          <Text>
-            Just enter your email address below and we'll send you a link to
-            reset your password.
-          </Text>
-          <FormControl isInvalid={!!errors.email}>
-            <Input
-              id="email"
-              {...register("email", {
-                required: "Email is required",
-                pattern: emailPattern,
-              })}
-              placeholder="Email"
-              type="email"
-              variant="outline"
-            />
-            {errors.email && (
-              <FormErrorMessage>{errors.email.message}</FormErrorMessage>
-            )}
-          </FormControl>
-          <Button
-            variant="primary"
-            type="submit"
-            isLoading={isSubmitting}
-            size="md"
-          >
-            Continue
-          </Button>
-          <Link as={RouterLink} color="ui.main" fontWeight="bolder" to="/login">
-            Back to Login
-          </Link>
-          <Text fontSize="sm" mt={4}>
-            Cannot recover your account? {""}
-            <Tooltip
-              label="Just checking... are you sure you need help? 🧐"
-              isOpen={showTooltip}
+          <LightMode>
+            <Heading size="md">Password Recovery</Heading>
+            <Text>
+              Don't worry! We'll help you recover your account, no need to
+              create a new one... yet.
+            </Text>
+            <Text>
+              Just enter your email address below and we'll send you a link to
+              reset your password.
+            </Text>
+            <FormControl isInvalid={!!errors.email}>
+              <Input
+                id="email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: emailPattern,
+                })}
+                placeholder="Email"
+                type="email"
+                variant="outline"
+              />
+              {errors.email && (
+                <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <Button
+              variant="primary"
+              type="submit"
+              isLoading={isSubmitting}
+              size="md"
             >
-              <Link
-                color="ui.main"
-                fontWeight="bolder"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
+              Continue
+            </Button>
+            <Link
+              as={RouterLink}
+              color="ui.main"
+              fontWeight="bolder"
+              to="/login"
+            >
+              Back to Login
+            </Link>
+            <Text fontSize="sm" mt={4}>
+              Cannot recover your account? {""}
+              <Tooltip
+                label="Just checking... are you sure you need help? 🧐"
+                isOpen={showTooltip}
               >
-                Contact Support
-              </Link>
-            </Tooltip>
-          </Text>
+                <Link
+                  color="ui.main"
+                  fontWeight="bolder"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  Contact Support
+                </Link>
+              </Tooltip>
+            </Text>
+          </LightMode>
         </Container>
       )}
     </BackgroundPanel>

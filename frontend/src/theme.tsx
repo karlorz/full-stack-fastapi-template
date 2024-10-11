@@ -105,18 +105,6 @@ const theme = extendTheme({
         }),
       },
     },
-    Input: {
-      variants: {
-        outline: {
-          field: {
-            _focus: {
-              borderColor: "#4D99AE",
-              boxShadow: "0 0 0 1px rgba(66, 153, 225, 0.5)",
-            },
-          },
-        },
-      },
-    },
   },
   Popover: {
     baseStyle: (props: any) => ({

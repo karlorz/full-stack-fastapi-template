@@ -10,6 +10,7 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  LightMode,
   Link,
   Text,
   Tooltip,
@@ -99,106 +100,109 @@ function SignUp() {
               zIndex="4"
               gap={4}
             >
-              <Box>
-                <Heading size="md">Sign Up</Heading>
-                <Text>Create your account</Text>
-              </Box>
-              <FormControl id="full_name" isInvalid={!!errors.full_name}>
-                <FormLabel htmlFor="full_name" srOnly>
-                  Full Name
-                </FormLabel>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none">
-                    <Icon as={User} color="ui.dim" />
-                  </InputLeftElement>
-                  <Input
-                    id="full_name"
-                    minLength={3}
-                    {...register("full_name", nameRules())}
-                    placeholder="Full Name"
-                    type="text"
-                    variant="outline"
-                  />
-                </InputGroup>
-                {errors.full_name && (
-                  <FormErrorMessage>
-                    {errors.full_name.message}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl id="email" isInvalid={!!errors.email}>
-                <FormLabel htmlFor="username" srOnly>
-                  Email
-                </FormLabel>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none">
-                    <Icon as={Email} color="ui.dim" />
-                  </InputLeftElement>
-                  <Input
-                    id="email"
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: emailPattern,
-                    })}
-                    placeholder="Email"
-                    type="email"
-                    variant="outline"
-                  />
-                </InputGroup>
-                {errors.email && (
-                  <FormErrorMessage>{errors.email.message}</FormErrorMessage>
-                )}
-              </FormControl>
-              <PasswordField
-                password="password"
-                errors={errors}
-                register={register}
-                options={passwordRules()}
-                placeholder="Password"
-                icon={Lock}
-              />
-              <PasswordField
-                password="confirm_password"
-                errors={errors}
-                register={register}
-                options={confirmPasswordRules(getValues)}
-                placeholder="Repeat Password"
-                icon={Lock}
-              />
-              <Tooltip label="By agreeing, you're entering the Matrix (legally).">
-                <Text>
-                  {"By signing up, you agree to our "}
-                  <Link
-                    as={RouterLink}
-                    to="/"
-                    color="ui.main"
-                    fontWeight="bolder"
-                  >
-                    Terms
-                  </Link>
-                  {" and "}
-                  <Link
-                    as={RouterLink}
-                    to="/"
-                    color="ui.main"
-                    fontWeight="bolder"
-                  >
-                    Privacy Policy.
-                  </Link>
-                </Text>
-              </Tooltip>
-              <Button
-                variant="primary"
-                type="submit"
-                isLoading={isSubmitting}
-                size="md"
-              >
-                Sign Up
-              </Button>
-              <AuthOptions
-                description={"Already have an account?"}
-                path={"/login"}
-              />
+              <LightMode>
+                <Box>
+                  <Heading size="md">Sign Up</Heading>
+                  <Text>Create your account</Text>
+                </Box>
+                <FormControl id="full_name" isInvalid={!!errors.full_name}>
+                  <FormLabel htmlFor="full_name" srOnly>
+                    Full Name
+                  </FormLabel>
+                  <InputGroup>
+                    <InputLeftElement pointerEvents="none">
+                      <Icon as={User} color="ui.dim" />
+                    </InputLeftElement>
+                    <Input
+                      id="full_name"
+                      minLength={3}
+                      {...register("full_name", nameRules())}
+                      placeholder="Full Name"
+                      type="text"
+                      variant="outline"
+                    />
+                  </InputGroup>
+                  {errors.full_name && (
+                    <FormErrorMessage>
+                      {errors.full_name.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+                <FormControl id="email" isInvalid={!!errors.email}>
+                  <FormLabel htmlFor="username" srOnly>
+                    Email
+                  </FormLabel>
+                  <InputGroup>
+                    <InputLeftElement pointerEvents="none">
+                      <Icon as={Email} color="ui.dim" />
+                    </InputLeftElement>
+                    <Input
+                      id="email"
+                      {...register("email", {
+                        required: "Email is required",
+                        pattern: emailPattern,
+                      })}
+                      placeholder="Email"
+                      required
+                      type="email"
+                      variant="outline"
+                    />
+                  </InputGroup>
+                  {errors.email && (
+                    <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+                  )}
+                </FormControl>
+                <PasswordField
+                  password="password"
+                  errors={errors}
+                  register={register}
+                  options={passwordRules()}
+                  placeholder="Password"
+                  icon={Lock}
+                />
+                <PasswordField
+                  password="confirm_password"
+                  errors={errors}
+                  register={register}
+                  options={confirmPasswordRules(getValues)}
+                  placeholder="Repeat Password"
+                  icon={Lock}
+                />
+                <Tooltip label="By agreeing, you're entering the Matrix (legally).">
+                  <Text>
+                    {"By signing up, you agree to our "}
+                    <Link
+                      as={RouterLink}
+                      to="/"
+                      color="ui.main"
+                      fontWeight="bolder"
+                    >
+                      Terms
+                    </Link>
+                    {" and "}
+                    <Link
+                      as={RouterLink}
+                      to="/"
+                      color="ui.main"
+                      fontWeight="bolder"
+                    >
+                      Privacy Policy.
+                    </Link>
+                  </Text>
+                </Tooltip>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  isLoading={isSubmitting}
+                  size="md"
+                >
+                  Sign Up
+                </Button>
+                <AuthOptions
+                  description={"Already have an account?"}
+                  path={"/login"}
+                />
+              </LightMode>
             </Container>
           </>
         )}
