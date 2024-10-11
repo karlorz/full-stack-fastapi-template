@@ -42,6 +42,13 @@ jobs:
           work-dir: infra
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+      - name: Set up kubeconfig
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
+        run: |
+          echo "${{ steps.pulumi.outputs.kubeconfig }}" > kubeconfig.json
+          chmod 600 kubeconfig.json
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
@@ -49,6 +56,8 @@ jobs:
           limit-access-to-actor: true
         env:
           CLUSTER_NAME: ${{ steps.pulumi.outputs.cluster_name }}
-          KUBECONFIG_CONTENT: ${{ steps.pulumi.outputs.kubeconfig }}
+          KUBECONFIG: kubeconfig.json
           CLOUDFLARE_API_TOKEN_DNS: ${{ secrets.CLOUDFLARE_API_TOKEN_DNS }}
           DEPLOYMENT_ENVIRONMENT: ${{ github.event_name == 'release' && 'production' || 'staging' }}
+      - run: rm kubeconfig.json
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}

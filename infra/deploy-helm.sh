@@ -1,20 +1,12 @@
 #!/usr/bin/env bash
 
 set -e
+set -x
 
 CLUSTER_NAME=${CLUSTER_NAME:?}
-KUBECONFIG_CONTENT=${KUBECONFIG_CONTENT:?}
 AWS_LOAD_BALANCER_CONTROLLER_VERSION="1.8.1"
 CERT_MANAGER_VERSION="1.15.1"
 INGRESS_NGINX_VERSION="4.10.1"
-
-echo "Configure Kubeconfig"
-echo "${KUBECONFIG_CONTENT}" > kubeconfig.json
-chmod 600 kubeconfig.json
-export KUBECONFIG=kubeconfig.json
-
-# Enable debugging
-set -x
 
 echo "Add Helm repo: eks, for AWS Load Balancer Controller"
 helm repo add eks https://aws.github.io/eks-charts --force-update
@@ -54,6 +46,3 @@ LOAD_BALANCER_HOSTHAME=$(kubectl -n ingress-nginx-external get service ingress-n
 
 echo "Add DNS record for Load Balancer before continuing:"
 echo "$LOAD_BALANCER_HOSTHAME"
-
-echo "Remove kubeconfig.json with by running:"
-echo "rm kubeconfig.json"

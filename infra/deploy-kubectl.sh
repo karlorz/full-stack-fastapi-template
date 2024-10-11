@@ -1,18 +1,10 @@
 #!/usr/bin/env bash
 
 set -e
+set -x
 
 CLOUDFLARE_API_TOKEN_DNS=${CLOUDFLARE_API_TOKEN_DNS:?}
 DEPLOY_ENVIRONMENT=${DEPLOY_ENVIRONMENT:-development}
-
-echo "Configure Kubeconfig"
-echo "${KUBECONFIG_CONTENT}" > kubeconfig.json
-chmod 600 kubeconfig.json
-export KUBECONFIG=kubeconfig.json
-
-# Enable debugging
-set -x
-
 KNATIVE_VERSION="1.14.1"
 
 echo "Add Cloudflare token secret"
@@ -43,6 +35,3 @@ KNATIVE_LOAD_BALANCER_HOSTHAME=$(kubectl -n kourier-system get service kourier -
 
 echo "Add DNS record for Knative Load Balancer before continuing:"
 echo "$KNATIVE_LOAD_BALANCER_HOSTHAME"
-
-echo "Remove kubeconfig.json with by running:"
-echo "rm kubeconfig.json"
