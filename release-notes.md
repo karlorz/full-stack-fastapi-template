@@ -126,6 +126,7 @@
 
 ### Refactors
 
+* 👷 Update AWS and Kubernetes deployment configs and instructions. PR [#418](https://github.com/fastapilabs/cloud/pull/418) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Add active style to Sidebar. PR [#411](https://github.com/fastapilabs/cloud/pull/411) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Use modal for accept invitation. PR [#393](https://github.com/fastapilabs/cloud/pull/393) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Set default values to orderBy and order in teams, apps and deployments. PR [#390](https://github.com/fastapilabs/cloud/pull/390) by [@alejsdev](https://github.com/alejsdev).
