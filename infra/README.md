@@ -10,21 +10,13 @@ It will evolve over time. There's a chance that when you read this some things h
 
 ## AWS Environments
 
-There are **3 AWS accounts**, **development**, for **staging**, and **production**.
+There are **3 AWS accounts**, **development**, **staging**, and **production**.
 
-It will run on **staging** when merging to `master` and on **production** when making a release. It doesn't run automatically on **development**, we run things there by hand, to test things out.
-
-## Deploy GitHub Action
-
-`.github/workflows/deploy.yml` is the GitHub Action that starts the deployment.
-
-It uses GitHub Action Secrets to configure credentials for Pulumi and AWS (staging or production).
-
-Then it runs the Pulumi deployment (covered below).
-
-It will also run on "workflow dispatch", which means, run manually from the GitHub Actions UI. When it's run that way, there's an option to run it with debug enabled. When that is done, at the end, it starts a Tmate session that can be used to manually deploy the rest of the Kubernetes components (covered below).
+Pulumi with all the AWS stuff will run on **staging** when merging to `master` and on **production** when making a release. It doesn't run automatically on **development**, we run things there by hand, to test things out.
 
 ## AWS CLI
+
+Install the AWS CLI: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 
 Configure the AWS CLI with SSO (single sign-on). Use the tutorial tabs for for "IAM Identity Center": https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html#cli-configure-sso-configure
 
@@ -48,25 +40,71 @@ Use a short profile name instead of the default one so that you can use it later
 
 Later, you can configure it again and set the profile name to `default` to use it by default.
 
+**Note**: you only need to do this once per environment.
+
+### AWS SSO Login
+
+Every few hours, you will need to login again to AWS, use the command:
+
+```bash
+aws sso login --profile profile_name
+```
+
 ### Configure `kubectl` with AWS
 
 Follow: https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
 
-It will guide you to run:
+You will need the name of the cluster, you can get it from the Pulumi output, by going to the AWS web console, going to Elastic Kubernetes Service, and copying the name of the cluster, or by running:
 
 ```bash
-aws eks --region region update-kubeconfig --name cluster_name
+aws eks --region us-east-1 list-clusters --profile staging
 ```
 
-You can get the cluster name from the Pulumi output, or by going to the AWS web console, going to Elastic Kubernetes Service, and copying the name of the cluster.
+Adjust the `--profile` to the one you configured before (probably one for `development`, one for `staging`, one for `production`).
+
+Then you can configure `kubectl` with the AWS environment:
+
+```bash
+aws eks --region us-east-1 update-kubeconfig --name cluster_name --profile staging
+```
+
+Adjust the `cluster_name` and `--profile` as needed.
+
+### Configure the kubectl context/environment
+
+After running the steps above for each AWS environment, each with have a `kubectl` "context".
+
+You can to list all the contexts with:
+
+```bash
+kubectl config get-contexts
+```
+
+Then, to use one context, you can:
+
+```bash
+kubectl config use-context context_name
+```
+
+By default the context will have the long name of the cluster, you can rename it to something shorter, for example to `development`, `staging`, `production`:
+
+```bash
+kubectl config rename-context long_name staging
+```
+
+After that, you can use that `staging` context with:
+
+```bash
+kubectl config use-context staging
+```
 
 ## Pulumi
 
-`infra/__main__.py` has the main Pulumi code.
+`infra/__main__.py` and other files have the main Pulumi code.
 
 ### AWS Resources
 
-It will create a VPC with the network tags needed by the load balancers used with Kubernetes.
+Pulumi will create a VPC with the network tags needed by the load balancers used with Kubernetes.
 
 Then it creates an EKS cluster with that VPC.
 
@@ -90,9 +128,46 @@ Next we will install some Helm Charts. And although Pulumi has (in theory) some 
 
 At the end, Pulumi exports several values from the outcome. Some can be useful during debugging, one in particular is needed for the rest of the setup, the Kubernetes "Kubeconfig".
 
+### Pulumi Deploy GitHub Action
+
+`.github/workflows/pulumi-deploy.yml` is the GitHub Action that starts the deployment automatically.
+
+It uses GitHub Action Secrets and environment variables in a GitHub Environment to configure credentials for Pulumi and AWS (staging or production).
+
+Then it runs the Pulumi deployment.
+
+It will also run on "workflow dispatch", which means, run manually from the GitHub Actions UI. When it's run that way, there's an option to run it with debug enabled. When that is done, at the end, it starts a Tmate session that can be used to manually deploy the rest of the Kubernetes components.
+
+### Pulumi Manually
+
+If you are deploying a cluster manually, for example the `development` cluster, you can do the following.
+
+Export the AWS environment variables for Pulumi for that AWS account (e.g. `development`):
+
+```bash
+export AWS_ACCESS_KEY_ID=...
+export AWS_SECRET_ACCESS_KEY=...
+```
+
+Then run Pulumi:
+
+```bash
+pulumi up
+```
+
+### Pulumi Outputs
+
+After Pulumi finishes, take note of the Pulumi outputs.
+
+Update the environment variables in the GitHub Action Secrets and environment variables for the GitHub environment:
+
+* `s3_deployment_customer_apps`: `AWS_DEPLOYMENT_BUCKET` environment variable
+* `ecr_registry_url`: `ECR_REGISTRY_URL` environment variable
+* `redis_backend`: `REDIS_SERVER` environment variable
+
 ## Tmate
 
-When the GitHub Action is run with debug enabled, after the Pulumi code is run, it starts a Tmate session.
+For staging, when the GitHub Action is run with debug enabled, after the Pulumi code is run, it starts a Tmate session.
 
 It is shown in the logs with a line that says something like:
 
@@ -129,22 +204,36 @@ Tmate will read it, terminate the SSH session and continue the GitHub Action exe
 
 ## Kubernetes Deployment
 
-Once you are in the Tmate SSH session, you can deploy the rest of the Kubernetes components.
+Once you have access to the Kubernetes cluster from `kubectl` you can deploy the rest of the Kubernetes components.
+
+If you just deployed the cluster, you need to go read above and [Configure `kubectl` with AWS](#configure-kubectl-with-aws), and [Change the `kubectl` context/environment](#configure-the-kubectl-contextenvironment).
 
 ### Helm Charts
 
-Start with `infra/deploy-helm.sh`:
+Start with `infra/deploy-helm.sh`.
+
+This script expects an environment variable `CLUSTER_NAME`. If it's run in GitHub Actions, it will be set by automatically. If you are running it locally, get it from Pulumi:
 
 ```bash
-bash ./infra/deploy-helm.sh
+export CLUSTER_NAME=$(pulumi stack output cluster_name --stack 'fastapilabs/development')
+```
+
+Set the stack accordingly.
+
+Then run:
+
+```bash
+cd infra
+bash deploy-helm.sh
 ```
 
 This script will:
 
-* Set up the `kubeconfig.json` so that `kubectl` works out of the box. This uses the Pulumi Kubeconfig output. The authentication and login works with the AWS credentials environment variables set up in the GitHub Action.
+* Expects `kubectl` to be already configured, in the GitHub Action, it's set up before starting Tmate, if you are running it locally, you need to set it up manually.
 * Use Helm to install the following Helm Charts:
     * AWS Load Balancer Controller: this creates the AWS Load Balancers allow the external world to communicate with our Kubernetes cluster. This uses the Kubernetes Service Account we created with Pulumi.
     * Cert Manager: this will manage the TLS (HTTPS) certificates obtained from Let's Encrypt. We'll configure more things later for it.
+        * It seems this needs to call the AWS Load Balancer Controller, and it might not be ready yet, so this might take a second run to install successfully.
     * Ingress Nginx Controller: this manages ingress resources we deploy manually, with Kubernetes Deployments (currently none), in contrast to doing that with Knative. This uses customization values from `infra/helm-values/ingress-nginx-external-values.yaml` to enable it to use the AWS Load Balancer Controller.
 * At the end it obtains and shows the DNS name of the load balancer.
 
@@ -152,13 +241,13 @@ We need to update the DNS records in Cloudflare to use it (with a `CNAME`). This
 
 * `fastapicloud.dev` is configured later, for production for Knative.
 * `fastapicloud.club` is configured later, for staging for Knative.
-* `fastapicloud.xyz` is configured later, for development for Knative.
+* `fastapicloud.space` is configured later, for development for Knative.
 
 **Note**: we currently don't use the following, we might want to refactor or remove them.
 
 * `fastapicloud.com` points to production at the Ingress Nginx.
 * `fastapicloud.work` points to staging at the Ingress Nginx.
-* `fastapicloud.me` points to development at the Ingress Nginx.
+* `fastapicloud.site` points to development at the Ingress Nginx.
 
 ### Cloudflare DNS
 
@@ -167,17 +256,28 @@ We need to update the DNS records in Cloudflare to use it (with a `CNAME`). This
 
 ### Kubernetes Manifests
 
-In the same Tmate SSH session, after having the Helm Charts installed, we will install other non-Helm Kubernetes resources.
+After having the Helm Charts installed, install other non-Helm Kubernetes resources.
 
-Continue with: `infra/deploy-kubectl.sh`:
+Continue with: `infra/deploy-kubectl.sh`.
+
+This script expects one environment variable `CLOUDFLARE_API_TOKEN_DNS` with the Cloudflare DNS token for Knative serving. If running on the GitHub Action, it is set automatically. If running locally, set it with:
 
 ```bash
-bash ./infra/deploy-kubectl.sh
+export CLOUDFLARE_API_TOKEN_DNS=...
+```
+
+It also expects a `DEPLOY_ENVIRONMENT` with the name of the environment, from `development`, `staging`, or `production`. By default it is set to `development`, which is what you would use when deploying locally.
+
+Then run:
+
+```bash
+cd infra
+bash deploy-kubectl.sh
 ```
 
 This script will:
 
-* Set up the Kubeconfig again (in case it was removed or not set yet).
+* Expect `kubectl` to be already configured.
 * Add the Cloudflare token, so that the Cert Manager can create the DNS records needed for TLS (HTTPS) certificates from Let's Encrypt.
 * Add the Cert Manager resources: the staging and production issuers and the wildcard certificates for the Ingress Nginx controller and Knative.
 * Install the Knative CRDs (Custom Resource Definitions for Kubernetes).
@@ -188,9 +288,9 @@ We need to update the DNS records in Cloudflare manually with this DNS name.
 
 * `fastapicloud.dev` points to production at the Knative ingress with Kourier, people's apps would have a subdomain here.
 * `fastapicloud.club` points at staging at the Knative ingress with Kourier.
-* `fastapicloud.xyz` points at development at the Knative ingress with Kourier.
+* `fastapicloud.space` points at development at the Knative ingress with Kourier.
 
-`fastapicloud.com`, `fastapicloud.work`, `fastapicloud.me` were configured previously.
+`fastapicloud.com`, `fastapicloud.work`, `fastapicloud.site` were configured previously.
 
 ### Knative Kustomize
 
@@ -225,28 +325,159 @@ AWS S3 sends events to AWS SQS, we listen to those events with a TriggerMesh.
 
 But TriggerMesh was discontinued/abandoned, so, while we refactor and migrate that, we are building our own container images from the TriggerMesh source code: https://github.com/triggermesh/triggermesh
 
-Manually build the images and push them to our AWS ECR.
+We need to manually build the images and push them to our AWS ECR.
 
-Then edit the file `infra/k8s/knative/deployment-workflow/triggermesh-core.yaml` with the generated image URLs.
+#### Clone TriggerMesh Core
+
+```bash
+git clone git@github.com:triggermesh/triggermesh.git
+git clone git@github.com:triggermesh/triggermesh-core.git
+git clone git@github.com:triggermesh/brokers.git
+
+```
+
+### Install Go
+
+https://go.dev/doc/install
+
+#### Install Ko
+
+Install ko following the guide: https://ko.build/install/
+
+Move `ko` to a location in the `PATH`, for example.
+
+#### Login to AWS ECR
+
+`ko` will use the Docker credentials to push the images to the AWS ECR.
+
+Get  the container registry ID with:
+
+```bash
+aws ecr describe-registry --profile development
+```
+
+That will output something like:
+
+```json
+{
+    "registryId": "961341535962",
+    "replicationConfiguration": {
+        "rules": []
+    }
+}
+```
+
+Set an env var with this registry ID, for example:
+
+```bash
+export REGISTRY_ID=961341535962
+```
+
+Set an env var with the full registry name:
+
+```bash
+export REGISTRY_NAME=$REGISTRY_ID.dkr.ecr.us-east-1.amazonaws.com
+```
+
+Then login to the registry:
+
+```bash
+aws ecr get-login-password --region us-east-1 --profile development | docker login --username AWS --password-stdin $REGISTRY_NAME
+```
+
+#### Set up Ko Repo
+
+Ko depends on the `KO_DOCKER_REPO` environment variable to know where to push the images.
+
+Set it with:
+
+```bash
+export KO_DOCKER_REPO=$REGISTRY_NAME
+```
+
+#### In AWS ECR, create a repository for each image
+
+* `core-controller`
+* `redis-broker`
+* `triggermesh-controller`
+* `triggermesh-webhook`
+* `awssqssource-adapter`
+
+#### Build the TriggerMesh Core Image
+
+From inside the `triggermesh-core` directory, build the image with:
+
+```bash
+ko build -t latest --base-import-paths --local ./cmd/core-controller
+```
+
+That will tag the image with `latest`, will use the plain image name `core-controller` (without a hash at the end) and will save it to the local Docker.
+
+#### Build the TriggerMesh Redis Image
+
+From inside the `brokers` directory, build the image with:
+
+```bash
+ko build -t latest --base-import-paths --local ./cmd/redis-broker
+```
+
+#### Build the TriggerMesh Controller Image
+
+From inside the `triggermesh` directory, build the images with:
+
+```bash
+ko build -t latest --base-import-paths --local ./cmd/triggermesh-controller
+ko build -t latest --base-import-paths --local ./cmd/triggermesh-webhook
+ko build -t latest --base-import-paths --local ./cmd/awssqssource-adapter
+```
+
+### Push the Images
+
+Push the images to the AWS ECR with:
+
+```bash
+docker push $REGISTRY_NAME/core-controller:latest
+docker push $REGISTRY_NAME/redis-broker:latest
+docker push $REGISTRY_NAME/triggermesh-controller:latest
+docker push $REGISTRY_NAME/triggermesh-webhook:latest
+docker push $REGISTRY_NAME/awssqssource-adapter:latest
+```
+
+### Edit the TriggerMesh Deployment
+
+Then edit the file `infra/k8s/knative/deployment-workflow/triggermesh-core.yaml` with the ECR registry ID:
+
+```yaml
+image: <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/core-controller:latest
+value: <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/redis-broker:latest
+```
+
+And also edit `infra/k8s/knative/deployment-workflow/triggermesh_v2.yaml` with the ECR registry ID:
+
+```yaml
+image: <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/triggermesh-controller:latest
+image: <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/triggermesh-webhook:latest
+value: 961341535962.dkr.ecr.us-east-1.amazonaws.com/awssqssource-adapter:latest
+```
 
 ### Install  TriggerMesh
 
-Install the TriggerMesh CRDs and core components using `kubectl apply -f` following the next order.
+From the `infra` directory, install the TriggerMesh CRDs and core components using `kubectl apply -f` following the next order.
 
 ```bash
-kubectl apply -f infra/k8s/knative/deployment-workflow/triggermesh-core-crds.yaml
+kubectl apply -f k8s/knative/deployment-workflow/triggermesh-core-crds.yaml
 ```
 
 ```bash
-kubectl apply -f infra/k8s/knative/deployment-workflow/triggermesh-core.yaml
+kubectl apply -f k8s/knative/deployment-workflow/triggermesh-core.yaml
 ```
 
 ```bash
-kubectl apply -f infra/k8s/knative/deployment-workflow/triggermesh-crds_v2.yaml
+kubectl apply -f k8s/knative/deployment-workflow/triggermesh-crds_v2.yaml
 ```
 
 ```bash
-kubectl apply -f infra/k8s/knative/deployment-workflow/triggermesh_v2.yaml
+kubectl apply -f k8s/knative/deployment-workflow/triggermesh_v2.yaml
 ```
 
 ### Apply Knative Serving Role
@@ -254,64 +485,80 @@ kubectl apply -f infra/k8s/knative/deployment-workflow/triggermesh_v2.yaml
 The next role is to allow the default service account used by the builder to get, create and patch knative resources within the cluster.
 
 ```bash
-kubectl apply -f infra/k8s/knative/deployment-workflow/knative-serving-role.yaml
+kubectl apply -f k8s/knative/deployment-workflow/knative-serving-role.yaml
 ```
 
-### Deploy builder
+### Deploy Builder
 
-Send a commit to the `master` branch or the branch configured following the next file.
-
-`.github/workflows/deploy-builder-staging.yml`
-
-Remember to see the rules in the workflow to trigger the builder CI.
-
-For example make a change in `backend/app` folder or `infra/k8s/knative/deployment-workflow` folder
+Go to GitHub Actions and "dispatch" a workflow run for the "Deploy Builder" workflow, select the environment to use.
 
 ### Deploy TriggerMesh Redis Broker
 
 ```bash
-kubectl apply -f infra/k8s/knative/deployment-workflow/redis-broker.yaml
+kubectl apply -f k8s/knative/deployment-workflow/redis-broker.yaml
 ```
 
 ### Deploy TriggerMesh S3 event listener
 
-Edit the file `infra/k8s/knative/deployment-workflow/s3-source.yaml` with the right SQS arn queue to listen from the Pulumi output.
+Get the SQS arn from the Pulumi output.
+
+```bash
+pulumi stack output s3_event_listener_queue_arn --stack 'fastapilabs/development'
+```
+
+Edit the file `k8s/knative/deployment-workflow/s3-source.yaml` with the SQS ARN.
 
 Then apply it:
 
 ```bash
-kubectl apply -f infra/k8s/knative/deployment-workflow/s3-source.yaml
+kubectl apply -f k8s/knative/deployment-workflow/s3-source.yaml
 ```
 
-### Deploy backend
-
-Send a commit to the `master` branch or the branch configured following the next file.
-
-`.github/workflows/deploy-backend-staging.yml`
-
-Remember to see the rules in the workflow to trigger the builder CI.
-
-For example make a change in `backend` folder
-
 ## Github Runner k8s deployment
+
+### Connect to the GitHub Runner
+
+Go to the AWS web Console -> EC2 -> Instances -> Select the GitHub Runner instance, click on "Connect" via the web UI.
 
 ### Install docker adding the official repositories
 
 https://docs.docker.com/engine/install/ubuntu/
 
-### Install AWS cli
+### Install AWS CLI
 
 https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 
+### Install the GitHub Runner
+
+Follow the guide on: https://github.com/fastapi/full-stack-fastapi-template/blob/master/deployment.md#install-github-actions-runner
+
 ### Setup kubeconfig
 
-Get the kubeconfig content from pulumi executing.
+Get the kubeconfig content from Pulumi, execute locally:
 
-`pulumi stack output kubeconfig`
+```bash
+pulumi stack output kubeconfig --stack 'fastapilabs/development'
+```
 
-Copy the content output from pulumi under `/home/github/.kube/config`
+Create the directory for the kubeconfig for GitHub:
+
+```bash
+mkdir -p /home/github/.kube
+```
+
+Copy the content output from pulumi under `/home/github/.kube/config`. You can open the file with:
+
+```bash
+nano /home/github/.kube/config
+```
+
+## Deploy Backend and Builder
+
+Go to GitHub Actions and "dispatch" a workflow run for the "Deploy Backend" and "Deploy Builder" workflows, select the environment to use.
 
 ## Create a new Environment from Scratch
+
+You would normally follow the steps above, this is only if there's a new environment needed (apart from the existing ones, `development`, `staging`, `production`).
 
 ### Create a new AWS Account
 
@@ -404,3 +651,29 @@ A new environment would need:
 ### Add Pulumi stack files
 
 A new environment would need its own versions of `infra/Pulumi.{environment}.yaml`.
+
+## Destroy an AWS Environment
+
+To destroy an environment in AWS do the following.
+
+* Destroy the Pulumi stack:
+
+```bash
+pulumi destroy
+```
+
+While Pulumi is destroying the cluster, some additional steps need to be done manually for it to be able to finish.
+
+* Delete the `default` service account:
+
+```bash
+kubectl delete serviceaccounts default
+```
+
+* Delete the AWS Load Balancers from the AWS Console, those were created by the AWS Load Balancer Controller.
+
+* Delete the ECR repositories from the AWS Console, those were created by our code.
+
+* Delete the S3 bucket's contents and the bucket.
+
+After that, the `pulumi destroy` command should be able to finish.

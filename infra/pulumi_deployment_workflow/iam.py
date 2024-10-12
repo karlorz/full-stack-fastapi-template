@@ -1,6 +1,6 @@
 import pulumi
 import pulumi_aws as aws
-from pulumi_deployment_workflow import s3, sqs
+from pulumi_deployment_workflow import s3, sqs, common
 
 
 config = pulumi.Config()
@@ -27,9 +27,9 @@ knative_deploy_workflow_policy = aws.iam.Policy(
                         "sqs:DeleteMessage",
                         "sqs:GetQueueAttributes",
                         "sqs:GetQueueUrl",
-                        "sqs:ListQueues"
+                        "sqs:ListQueues",
                     ],
-                    "Resource": sqs.sqs_deployment_customer_apps.arn
+                    "Resource": sqs.sqs_deployment_customer_apps.arn,
                 },
                 {
                     "Effect": "Allow",
@@ -47,16 +47,14 @@ knative_deploy_workflow_policy = aws.iam.Policy(
                         "ecr:GetRepositoryPolicy",
                         "ecr:ListImages",
                         "ecr:DeleteRepositoryPolicy",
-                        "ecr:SetRepositoryPolicy"
+                        "ecr:SetRepositoryPolicy",
                     ],
-                    "Resource": f"arn:aws:ecr:{region}:{account_id}:repository/*"
+                    "Resource": f"arn:aws:ecr:{region}:{account_id}:repository/*",
                 },
                 {
                     "Effect": "Allow",
-                    "Action": [
-                        "ecr:GetAuthorizationToken"
-                    ],
-                    "Resource": "*"
+                    "Action": ["ecr:GetAuthorizationToken"],
+                    "Resource": "*",
                 },
                 {
                     "Effect": "Allow",
@@ -64,9 +62,11 @@ knative_deploy_workflow_policy = aws.iam.Policy(
                         "s3:GetObject",
                         "s3:ListBucket",
                         "s3:PutObject",
-                        "s3:GetObjectVersion"
+                        "s3:GetObjectVersion",
                     ],
-                    "Resource": pulumi.Output.concat(s3.s3_deployment_customer_apps.arn, "/*")
+                    "Resource": pulumi.Output.concat(
+                        s3.s3_deployment_customer_apps.arn, "/*"
+                    ),
                 },
                 {
                     "Effect": "Allow",
@@ -76,12 +76,11 @@ knative_deploy_workflow_policy = aws.iam.Policy(
                         "elasticache:ListTagsForResource",
                         "elasticache:DescribeCacheSecurityGroups",
                         "elasticache:DescribeReplicationGroups",
-                        "elasticache:DescribeReservedCacheNodes"
+                        "elasticache:DescribeReservedCacheNodes",
                     ],
-                    "Resource": f"arn:aws:elasticache:{region}:{account_id}:cluster:redis-deployment-customer-apps"
-                }
-            ]
+                    "Resource": f"arn:aws:elasticache:{region}:{account_id}:cluster:{common.redis_triggermesh_name}",
+                },
+            ],
         }
-
     ),
 )

@@ -4,7 +4,7 @@ import pulumi_awsx as awsx
 import pulumi_eks as eks
 import pulumi_aws as aws
 import pulumi_kubernetes as k8s
-from pulumi_deployment_workflow import iam, sqs, s3
+from pulumi_deployment_workflow import iam, sqs, s3, common
 
 
 # Get some values from the Pulumi configuration (or use defaults)
@@ -16,6 +16,8 @@ max_cluster_size = config.get_int("maxClusterSize", 6)
 desired_cluster_size = config.get_int("desiredClusterSize", 3)
 eks_node_instance_type = config.get("eksNodeInstanceType", "t3.medium")
 vpc_network_cidr = config.get("vpcNetworkCidr", "10.0.0.0/16")
+stack = pulumi.get_stack()
+stack_name = stack.split("/")[-1]
 
 aws_load_balancer_name = "aws-load-balancer-controller"
 
@@ -48,7 +50,7 @@ eks_vpc = awsx.ec2.Vpc(
 
 # Create the EKS cluster
 eks_cluster = eks.Cluster(
-    "eks-cluster",
+    f"eks-cluster-{stack_name}",
     # Put the cluster in the new VPC created earlier
     vpc_id=eks_vpc.vpc_id,
     # Public subnets will be used for load balancers
@@ -221,16 +223,16 @@ service_account = k8s.core.v1.ServiceAccount(
 cluster_name = eks_cluster.core.apply(lambda x: x.cluster.name)
 
 
-# Redis stuff
+# Redis for TriggerMesh
 
-redis_subnet_group = aws.elasticache.SubnetGroup(
-    "redis-deployment-customer-apps-subnet-group",
+redis_triggermesh_subnet_group = aws.elasticache.SubnetGroup(
+    "redis-triggermesh-subnet-group",
     subnet_ids=eks_vpc.private_subnet_ids,
 )
 
 # Create a security group for Redis
-redis_security_group = aws.ec2.SecurityGroup(
-    "redis-security-group",
+redis_triggermesh_security_group = aws.ec2.SecurityGroup(
+    "redis-triggermesh-security-group",
     vpc_id=eks_vpc.vpc_id,
     description="Security group for Redis to communicate with EKS cluster",
     ingress=[
@@ -257,23 +259,23 @@ redis_security_group = aws.ec2.SecurityGroup(
 )
 
 # Redis cluster
-redis_deployment_customer_apps = aws.elasticache.Cluster(
-    "redis-deployment-customer-apps",
-    cluster_id="redis-deployment-customer-apps",
+redis_triggermesh = aws.elasticache.Cluster(
+    common.redis_triggermesh_name,
+    cluster_id="redis-triggermesh",
     engine="redis",
     engine_version="7.0",
     node_type="cache.t3.micro",
     num_cache_nodes=1,
     port=6379,
-    subnet_group_name=redis_subnet_group.name,
-    security_group_ids=[redis_security_group.id],
+    subnet_group_name=redis_triggermesh_subnet_group.name,
+    security_group_ids=[redis_triggermesh_security_group.id],
     apply_immediately=True,  # Add this line to apply changes immediately
 )
 
 # Redis backend stuff
 
 redis_backend_subnet_group = aws.elasticache.SubnetGroup(
-    "redis-backend-deployment-customer-apps-subnet-group",
+    "redis-backend-subnet-group",
     subnet_ids=eks_vpc.private_subnet_ids,
 )
 
@@ -304,9 +306,9 @@ redis_backend_security_group = aws.ec2.SecurityGroup(
     },
 )
 
-redis_backend_deployment_customer_apps = aws.elasticache.Cluster(
-    "redis-backend-deployment-customer-apps",
-    cluster_id="redis-backend-deployment-customer-apps",
+redis_backend = aws.elasticache.Cluster(
+    "redis-backend",
+    cluster_id="redis-backend",
     engine="redis",
     engine_version="7.0",
     node_type="cache.t3.micro",
@@ -319,13 +321,6 @@ redis_backend_deployment_customer_apps = aws.elasticache.Cluster(
 
 # Github Actions Runner
 # TODO: Refactor to split this logic in another module after moving EKS vpc to another module
-
-# Create a new key pair to access the instance by ssh
-github_actions_runner_key_pair = aws.ec2.KeyPair(
-    "github-actions-runner-key-pair",
-    key_name="github-actions-runner-key",
-    public_key=config.require("github_actions_runner_public_key"),
-)
 
 # get the latest ubuntu ami
 ubuntu_latest_ami = aws.ec2.get_ami(
@@ -350,15 +345,7 @@ github_actions_runner_security_group = aws.ec2.SecurityGroup(
     "github-actions-runner-security-group",
     vpc_id=eks_vpc.vpc_id,
     description="Security group for Github Actions Runner",
-    ingress=[
-        aws.ec2.SecurityGroupIngressArgs(
-            protocol="tcp",
-            from_port=22,
-            to_port=22,
-            cidr_blocks=["0.0.0.0/0"],
-            description="Allow inbound from anywhere",
-        )
-    ],
+    ingress=[],
     egress=[
         aws.ec2.SecurityGroupEgressArgs(
             protocol="-1",
@@ -379,7 +366,6 @@ github_actions_runner_instance = aws.ec2.Instance(
     instance_type=aws.ec2.InstanceType.T3_MEDIUM,
     vpc_security_group_ids=[github_actions_runner_security_group.id],
     subnet_id=eks_vpc.public_subnet_ids[0],
-    key_name=github_actions_runner_key_pair.key_name,
     tags={
         "Name": "github-actions-runner",
     },
@@ -444,16 +430,15 @@ pulumi.export("cluster_name", cluster_name)
 pulumi.export("vpc_id", eks_vpc.vpc_id)
 pulumi.export("k8s_role_arn", k8s_role_arn)
 pulumi.export("aws_lb_controller_policy", aws_lb_controller_policy.arn)
-pulumi.export("sqs_deployment_customer_apps_arn", sqs.sqs_deployment_customer_apps)
-pulumi.export("s3_deployment_customer_apps", s3.s3_deployment_customer_apps.arn)
+pulumi.export("sqs_deployment_customer_apps_arn", sqs.sqs_deployment_customer_apps.arn)
+pulumi.export("s3_deployment_customer_apps", s3.s3_deployment_customer_apps.bucket)
+pulumi.export("redis_triggermesh", redis_triggermesh.cache_nodes[0].address)
+pulumi.export("redis_backend", redis_backend.cache_nodes[0].address)
+pulumi.export("github_actions_runner_host", github_actions_runner_instance.public_dns)
+pulumi.export("github_actions_runner_id", github_actions_runner_instance.id)
 pulumi.export(
-    "redis_deployment_customer_apps",
-    redis_deployment_customer_apps.cache_nodes[0].address,
-)
-pulumi.export(
-    "redis_backend_deployment_customer_apps",
-    redis_backend_deployment_customer_apps.cache_nodes[0].address,
-)
-pulumi.export(
-    "github_actions_runner_instance", github_actions_runner_instance.public_dns
+    "ecr_registry_url",
+    repository_backend.registry_id.apply(
+        lambda x: f"{x}.dkr.ecr.{region}.amazonaws.com"
+    ),
 )
