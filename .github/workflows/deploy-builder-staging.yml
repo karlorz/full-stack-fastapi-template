@@ -58,6 +58,7 @@ jobs:
         tags: |
           ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
         context: ./backend/
+        file: ./backend/Dockerfile.builder
     - name: Update builder deployment
       env:
         IMAGE: ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}
