@@ -29,28 +29,28 @@ KNATIVE_TAG="knative-v${KNATIVE_VERSION}"
 kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_TAG}/serving-crds.yaml
 
 echo "Install Knative Serving and Kourier"
-kubectl apply -k "k8s/knative/overlays/${DEPLOY_ENVIRONMENT}"
+kubectl apply -k "k8s/knative/kustomize/overlays/${DEPLOY_ENVIRONMENT}"
 
 echo "Install Knative Serving Role"
-kubectl apply -f k8s/knative/deployment-workflow/knative-serving-role.yaml
+kubectl apply -f k8s/knative/knative-serving-role.yaml
 
 echo "Install TriggerMesh Core CRDs"
-kubectl apply -f k8s/knative/deployment-workflow/triggermesh-core-crds.yaml
+kubectl apply -f k8s/triggermesh/triggermesh-core-crds.yaml
 
 echo "Install TriggerMesh Core"
-envsubst < k8s/knative/deployment-workflow/triggermesh-core.yaml | kubectl apply -f -
+envsubst < k8s/triggermesh/triggermesh-core.yaml | kubectl apply -f -
 
 echo "Install TriggerMesh CRDs v2"
-kubectl apply -f k8s/knative/deployment-workflow/triggermesh-crds_v2.yaml
+kubectl apply -f k8s/triggermesh/triggermesh-crds_v2.yaml
 
 echo "Install TriggerMesh v2"
-envsubst < k8s/knative/deployment-workflow/triggermesh_v2.yaml | kubectl apply -f -
+envsubst < k8s/triggermesh/triggermesh_v2.yaml | kubectl apply -f -
 
 echo "Install TriggerMesh Redis Broker"
-kubectl apply -f k8s/knative/deployment-workflow/redis-broker.yaml
+kubectl apply -f k8s/triggermesh/redis-broker.yaml
 
 echo "Install TriggerMesh SQS S3 Source"
-envsubst < k8s/knative/deployment-workflow/s3-source.yaml | kubectl apply -f -
+envsubst < k8s/triggermesh/s3-source.yaml | kubectl apply -f -
 
 echo "Add DNS record for Knative:"
 
