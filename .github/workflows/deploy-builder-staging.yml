@@ -92,7 +92,6 @@ jobs:
         ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
         AWS_REGION: "${{ vars.AWS_REGION }}"
         DOCKER_HOST: "${{ vars.DOCKER_HOST }}"
-        DOCKER_TLS_CERTDIR: ${{ vars.DOCKER_TLS_CERTDIR }}
         SECRET_KEY: "${{ secrets.SECRET_KEY }}"
         FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
         SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
