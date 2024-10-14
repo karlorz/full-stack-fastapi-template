@@ -271,6 +271,7 @@
 
 ### Internal
 
+* 👷 Deploy the builder using envsubst to keep consistency and simplify setup. PR [#419](https://github.com/fastapilabs/cloud/pull/419) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Fix builder Dockerfile. PR [#417](https://github.com/fastapilabs/cloud/pull/417) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Refactor Kubernetes deployment scripts to make them independent of a GitHub Runner. PR [#413](https://github.com/fastapilabs/cloud/pull/413) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Fix image tag for builder. PR [#415](https://github.com/fastapilabs/cloud/pull/415) by [@tiangolo](https://github.com/tiangolo).
