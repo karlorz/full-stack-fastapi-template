@@ -1,11 +1,10 @@
 import {
-  Box,
   Button,
   Container,
+  Flex,
   FormControl,
   FormLabel,
   Input,
-  Text,
 } from "@chakra-ui/react"
 
 // TODO: Complete this when the functionality is implemented
@@ -14,25 +13,17 @@ const TransferTeam = () => {
   return (
     <>
       <Container maxW="full" p={0}>
-        <Box as="form">
-          <Text py={2} mb={2}>
-            Transfer the team ownership to other user.
-          </Text>
-          <FormControl isRequired>
+        <Flex as="form" align="center">
+          <FormControl isRequired w="250px">
             <FormLabel htmlFor="email" hidden>
               Email address
             </FormLabel>
-            <Input
-              id="email"
-              placeholder="Email address"
-              type="text"
-              w="auto"
-            />
+            <Input id="email" placeholder="Email address" type="text" />
           </FormControl>
-          <Button variant="outline" type="submit" mt={4}>
+          <Button variant="outline" type="submit" ml={4}>
             Transfer
           </Button>
-        </Box>
+        </Flex>
       </Container>
     </>
   )

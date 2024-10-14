@@ -105,26 +105,27 @@ const theme = extendTheme({
         }),
       },
     },
-  },
-  Popover: {
-    baseStyle: (props: any) => ({
-      content: {
-        bg: props.colorMode === "dark" ? "ui.darkBg" : "white",
-      },
-    }),
-  },
-  Tabs: {
-    basic: (props: any) => ({
-      tab: {
-        fontSize: "0.875rem",
-        color: props.colorMode === "dark" ? "ui.lightText" : "ui.defaultText",
-        backgroundColor: props.colorMode === "dark" ? "ui.darkBg" : "inherit",
-        _selected: {
-          bg: props.colorMode === "dark" ? "gray.700" : "gray.100",
-          borderRadius: "md",
+    Popover: {
+      baseStyle: (props: any) => ({
+        content: {
+          bg: props.colorMode === "dark" ? "ui.darkBg" : "white",
         },
+      }),
+    },
+    Tabs: {
+      variants: {
+        enclosed: (props: any) => ({
+          tab: {
+            fontSize: "0.875rem",
+            color:
+              props.colorMode === "dark" ? "ui.lightText" : "ui.defaultText",
+            _selected: {
+              color: props.colorMode === "dark" ? "ui.lightText" : "ui.main",
+            },
+          },
+        }),
       },
-    }),
+    },
   },
 })
 

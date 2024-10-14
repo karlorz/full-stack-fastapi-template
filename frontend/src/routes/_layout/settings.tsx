@@ -1,19 +1,7 @@
-import {
-  Container,
-  Heading,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-} from "@chakra-ui/react"
+import { Container, Heading, Text } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
-import { Suspense } from "react"
 
 import UserInformation from "../../components/UserSettings/UserInformation"
-
-const tabsConfig = [{ title: "My profile", component: UserInformation }]
 
 export const Route = createFileRoute("/_layout/settings")({
   component: UserSettings,
@@ -26,22 +14,7 @@ function UserSettings() {
         User Settings
       </Heading>
       <Text>View and manage settings related to your account.</Text>
-      <Tabs variant="basic" pt={10}>
-        <TabList>
-          {tabsConfig.map((tab, index) => (
-            <Tab key={index}>{tab.title}</Tab>
-          ))}
-        </TabList>
-        <TabPanels>
-          {tabsConfig.map((tab, index) => (
-            <TabPanel key={index} p={0}>
-              <Suspense>
-                <tab.component />
-              </Suspense>
-            </TabPanel>
-          ))}
-        </TabPanels>
-      </Tabs>
+      <UserInformation />
     </Container>
   )
 }

@@ -1,23 +1,13 @@
-import {
-  Container,
-  Heading,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-} from "@chakra-ui/react"
+import { Container, Heading, Text } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
-import { Suspense } from "react"
-
-import Billing from "../../../components/TeamSettings/Billing"
 import TeamInformation from "../../../components/TeamSettings/TeamInformation"
 
-const tabsConfig = [
-  { title: "Team", component: TeamInformation },
-  { title: "Billing", component: Billing },
-]
+// const tabsConfig = [
+//   { title: "Team", component: TeamInformation },
+//   { title: "Billing", component: Billing },
+// ]
+
+// TODO:Add Billing component when it's ready
 
 export const Route = createFileRoute("/_layout/$team/settings")({
   component: TeamSettings,
@@ -30,7 +20,8 @@ function TeamSettings() {
         Team Settings
       </Heading>
       <Text>View and manage settings related to your team.</Text>
-      <Tabs variant="basic" pt={10}>
+      <TeamInformation />
+      {/* <Tabs variant="basic" pt={10}>
         <TabList>
           {tabsConfig.map((tab, index) => (
             <Tab key={index}>{tab.title}</Tab>
@@ -45,7 +36,7 @@ function TeamSettings() {
             </TabPanel>
           ))}
         </TabPanels>
-      </Tabs>
+      </Tabs> */}
     </Container>
   )
 }

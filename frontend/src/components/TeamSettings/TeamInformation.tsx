@@ -1,4 +1,16 @@
-import { Container } from "@chakra-ui/react"
+import {
+  Button,
+  Container,
+  Flex,
+  Skeleton,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react"
 import {
   useMutation,
   useQueryClient,
@@ -15,14 +27,17 @@ import {
   handleError,
   nameRules,
 } from "@/utils"
+import { Suspense } from "react"
 import CustomCard from "../Common/CustomCard"
 import EditableField from "../Common/EditableField"
 import Invitations from "../Invitations/Invitations"
+import NewInvitation from "../Invitations/NewInvitation"
 import Team from "../Teams/Team"
 import DeleteTeam from "./DeleteTeam"
 import TransferTeam from "./TransferTeam"
 
-const TeamInformation = () => {
+const TeamInformationContent = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const { team: teamSlug } = Route.useParams()
@@ -31,7 +46,9 @@ const TeamInformation = () => {
     queryKey: ["team", teamSlug],
     queryFn: () => fetchTeamBySlug(teamSlug),
   })
+  const owner = team.user_links.find(({ user }) => user.id === team.owner_id)
   const currentUserRole = getCurrentUserRole(team, currentUser)
+  const isCurrentUserOwner = owner?.user.id === currentUser?.id
 
   const mutation = useMutation({
     mutationFn: (data: TeamUpdate) =>
@@ -46,7 +63,7 @@ const TeamInformation = () => {
   })
 
   return (
-    <Container maxW="full" my={4} p={0}>
+    <Container maxW="full" my={4} px={0} pt={10}>
       <CustomCard title="Team Name">
         <EditableField
           type="name"
@@ -56,25 +73,79 @@ const TeamInformation = () => {
           rules={nameRules()}
         />
       </CustomCard>
-      <CustomCard title="Team Members" data-testid="team-members">
-        <Team />
-      </CustomCard>
-      {currentUserRole === "admin" && (
+      {!team.is_personal_team && (
         <>
-          <CustomCard title="Team Invitations">
-            <Invitations teamId={team.id} />
+          <CustomCard title="Team Members" data-testid="team-members">
+            <Flex justifyContent="flex-end">
+              <Button variant="primary" onClick={onOpen}>
+                New Invitation
+              </Button>
+            </Flex>
+            <NewInvitation isOpen={isOpen} onClose={onClose} teamId={team.id} />
+            <Tabs variant="enclosed" p={0} height="30rem">
+              <TabList>
+                <Tab>Active Members</Tab>
+                {currentUserRole === "admin" && <Tab>Pending Invitations</Tab>}
+              </TabList>
+              <TabPanels>
+                <TabPanel px={0}>
+                  <Team />
+                </TabPanel>
+                {currentUserRole === "admin" && (
+                  <TabPanel px={0}>
+                    <Invitations teamId={team.id} />
+                  </TabPanel>
+                )}
+              </TabPanels>
+            </Tabs>
           </CustomCard>
-
-          <CustomCard title="Transfer Ownership">
-            <TransferTeam />
-          </CustomCard>
-
-          <CustomCard>
-            <DeleteTeam teamId={team.id} />
-          </CustomCard>
+          {isCurrentUserOwner && (
+            <Flex
+              direction={{ base: "column", md: "row" }}
+              gap={4}
+              justifyContent="space-between"
+            >
+              <CustomCard title="Transfer Ownership" width="100%">
+                <Text mb={4}>
+                  You are the current team owner. You can transfer ownership to
+                  another team member.
+                </Text>
+                <TransferTeam />
+              </CustomCard>
+            </Flex>
+          )}
+          {currentUserRole === "admin" && (
+            <CustomCard>
+              <DeleteTeam teamId={team.id} />
+            </CustomCard>
+          )}
         </>
       )}
     </Container>
+  )
+}
+
+const TeamInformation = () => {
+  return (
+    <Suspense
+      fallback={
+        <Flex
+          direction="column"
+          justify="center"
+          align="center"
+          height="80vh"
+          gap={4}
+          pt={12}
+        >
+          <Skeleton height="25%" width="100%" />
+          <Skeleton height="25%" width="100%" />
+          <Skeleton height="25%" width="100%" />
+          <Skeleton height="25%" width="100%" />
+        </Flex>
+      }
+    >
+      <TeamInformationContent />
+    </Suspense>
   )
 }
 

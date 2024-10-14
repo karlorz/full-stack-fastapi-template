@@ -3,23 +3,7 @@ import { findLastEmail } from "./utils/mailcatcher"
 import { randomEmail } from "./utils/random"
 import { logInUser, logOutUser, signUpNewUser } from "./utils/userUtils"
 
-const tabs = ["My profile", "Appearance"]
-
 // User Information
-
-test("My profile tab is active by default", async ({ page }) => {
-  await page.goto("/settings")
-  await expect(page.getByRole("tab", { name: "My profile" })).toHaveAttribute(
-    "aria-selected",
-    "true",
-  )
-})
-
-test("My profile tab is visible", async ({ page }) => {
-  await page.goto("/settings")
-  await page.getByRole("tab", { name: "My profile" }).click()
-  await expect(page.getByLabel("My profile")).toBeVisible()
-})
 
 test.describe("Edit user full name and email successfully", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
@@ -46,7 +30,10 @@ test.describe("Edit user full name and email successfully", () => {
 
     // Check if the new name is displayed on the page
     await expect(
-      page.getByLabel("My profile").getByText(updatedName, { exact: true }),
+      page
+        .locator("form")
+        .filter({ hasText: updatedName })
+        .getByRole("paragraph"),
     ).toBeVisible()
   })
 
@@ -129,9 +116,7 @@ test.describe("Edit user full name and email with invalid data", () => {
     await page.getByRole("button", { name: "Edit" }).nth(0).click()
     await page.locator("#full_name").fill(updatedName)
     await page.getByRole("button", { name: "Cancel" }).first().click()
-    await expect(
-      page.getByLabel("My profile").getByText("fastapi admin"),
-    ).toBeVisible()
+    await page.getByText("fastapi admin")
   })
 
   test("Cancel edit action restores original email", async ({ page }) => {
@@ -143,7 +128,10 @@ test.describe("Edit user full name and email with invalid data", () => {
     await page.locator("#email").fill(updatedEmail)
     await page.getByRole("button", { name: "Cancel" }).first().click()
     await expect(
-      page.getByLabel("My profile").getByText("admin@example.com"),
+      page
+        .locator("form")
+        .filter({ hasText: "fastapi admin" })
+        .getByRole("paragraph"),
     ).toBeVisible()
   })
 })

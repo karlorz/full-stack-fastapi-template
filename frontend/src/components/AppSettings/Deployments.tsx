@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 
+import { EmptyBox } from "@/assets/icons"
 import type { DeploymentPublic } from "@/client"
 import { Status } from "@/components/Deployment/Status"
 import EmptyState from "../Common/EmptyState"
@@ -54,7 +55,10 @@ const Deployments = ({
         </>
       ) : (
         <Center w="full">
-          <EmptyState type="deployments" />
+          <EmptyState
+            title="You don't have any deployments yet"
+            icon={EmptyBox}
+          />
         </Center>
       )}
     </>

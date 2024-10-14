@@ -36,7 +36,7 @@ test.describe("User with role admin can manage team invitations", () => {
     await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
     await page.getByRole("button", { name: "Ok" }).click()
-
+    await page.getByRole("tab", { name: "Pending Invitations" }).click()
     await expect(page.getByRole("cell", { name: email })).toBeVisible()
     await expect(page.getByRole("cell", { name: "pending" })).toBeVisible()
   })
@@ -49,7 +49,7 @@ test.describe("User with role admin can manage team invitations", () => {
     await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
     await page.getByRole("button", { name: "Ok" }).click()
-
+    await page.getByRole("tab", { name: "Pending Invitations" }).click()
     await page.getByTestId("cancel-invitation").click()
     await expect(page.getByText("The invitation was cancelled")).toBeVisible()
   })
@@ -146,7 +146,7 @@ test.describe("User can accept invitations to a team", () => {
     // check if user was added to the team members list
     await logInUser(page, user1Email, "password")
     await page.goto(`${teamSlug}/settings`)
-
+    await page.getByRole("tab", { name: "Active Members" }).click()
     expect(await page.getByTestId("team-members").innerText()).toContain(
       user2Email,
     )

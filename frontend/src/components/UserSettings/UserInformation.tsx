@@ -1,7 +1,6 @@
-import { Button, Container, useDisclosure } from "@chakra-ui/react"
+import { Container, Flex, Skeleton, useDisclosure } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import { FaGithub } from "react-icons/fa"
+import { Suspense, useState } from "react"
 
 import { UsersService } from "@/client"
 import { useCurrentUser } from "@/hooks/useAuth"
@@ -13,7 +12,7 @@ import UpdateEmailVerification from "../Common/UpdateEmailVerification"
 import ChangePassword from "./ChangePassword"
 import DeleteAccount from "./DeleteAccount"
 
-const UserInformation = () => {
+const UserInformationContent = () => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const currentUser = useCurrentUser()
@@ -51,7 +50,7 @@ const UserInformation = () => {
 
   return (
     <>
-      <Container maxW="full" my={4} p={0}>
+      <Container maxW="full" my={4} px={0} pt={10}>
         <CustomCard title="Full Name">
           <EditableField
             type="full_name"
@@ -73,11 +72,12 @@ const UserInformation = () => {
         <CustomCard title="Password">
           <ChangePassword />
         </CustomCard>
-        <CustomCard title="Connect with Github">
+        {/* TODO: Complete this when GitHub integration it's ready */}
+        {/* <CustomCard title="Connect with Github">
           <Button variant="outline" colorScheme="gray" leftIcon={<FaGithub />}>
             Connect
           </Button>
-        </CustomCard>
+        </CustomCard> */}
         <CustomCard>
           <DeleteAccount />
         </CustomCard>
@@ -86,6 +86,30 @@ const UserInformation = () => {
         <UpdateEmailVerification isOpen={isOpen} onClose={onClose} />
       )}
     </>
+  )
+}
+
+const UserInformation = () => {
+  return (
+    <Suspense
+      fallback={
+        <Flex
+          direction="column"
+          justify="center"
+          align="center"
+          height="80vh"
+          gap={4}
+          pt={12}
+        >
+          <Skeleton height="25%" width="100%" />
+          <Skeleton height="25%" width="100%" />
+          <Skeleton height="25%" width="100%" />
+          <Skeleton height="25%" width="100%" />
+        </Flex>
+      }
+    >
+      <UserInformationContent />
+    </Suspense>
   )
 }
 

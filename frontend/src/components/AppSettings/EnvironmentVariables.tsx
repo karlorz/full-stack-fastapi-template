@@ -17,6 +17,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Fragment, useEffect, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 
+import { EmptyBox } from "@/assets/icons"
 import { z } from "zod"
 import EmptyState from "../Common/EmptyState"
 
@@ -301,7 +302,10 @@ const EnvironmentVariables = ({
         </>
       ) : (
         <GridItem colSpan={4} display="flex" justifyContent="center">
-          <EmptyState type="environment variables" />
+          <EmptyState
+            title="You don't have any environment variables yet"
+            icon={EmptyBox}
+          />
         </GridItem>
       )}
 

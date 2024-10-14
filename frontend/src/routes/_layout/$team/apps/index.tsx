@@ -23,10 +23,12 @@ import { z } from "zod"
 import CustomCard from "@/components/Common/CustomCard"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
-import { AppsService } from "../../../../client"
-import EmptyState from "../../../../components/Common/EmptyState"
-import QuickStart from "../../../../components/Common/QuickStart"
-import { fetchTeamBySlug } from "../../../../utils"
+
+import { EmptyBox } from "@/assets/icons"
+import { AppsService } from "@/client"
+import EmptyState from "@/components/Common/EmptyState"
+import QuickStart from "@/components/Common/QuickStart"
+import { fetchTeamBySlug } from "@/utils"
 
 const appsSearchSchema = z.object({
   page: z.number().catch(1).optional(),
@@ -126,13 +128,11 @@ function Apps() {
         Apps
       </Heading>
       <Text>View and manage apps related to your team.</Text>
-      {(apps?.length ?? 0) > 0 && (
-        <Flex justifyContent="end">
-          <Button variant="primary" as={RouterLink} to="/$team/apps/new" mb={4}>
-            Create App
-          </Button>
-        </Flex>
-      )}
+      <Flex justifyContent="end">
+        <Button variant="primary" as={RouterLink} to="/$team/apps/new" mb={4}>
+          Create App
+        </Button>
+      </Flex>
       {apps?.length > 0 ? (
         <>
           <CustomCard>
@@ -171,32 +171,38 @@ function Apps() {
                 </Tbody>
               </Table>
             </TableContainer>
-            <Flex
-              gap={4}
-              alignItems="center"
-              mt={4}
-              direction="row"
-              justifyContent="flex-end"
-            >
-              <Button
-                onClick={() => setPage(page - 1)}
-                isDisabled={!hasPreviousPage}
+            {(hasPreviousPage || hasNextPage) && (
+              <Flex
+                gap={4}
+                alignItems="center"
+                mt={4}
+                direction="row"
+                justifyContent="flex-end"
               >
-                Previous
-              </Button>
-              <span>Page {page}</span>
-              <Button
-                isDisabled={!hasNextPage}
-                onClick={() => setPage(page + 1)}
-              >
-                Next
-              </Button>
-            </Flex>
+                <Button
+                  onClick={() => setPage(page - 1)}
+                  isDisabled={!hasPreviousPage}
+                >
+                  Previous
+                </Button>
+                <span>Page {page}</span>
+                <Button
+                  isDisabled={!hasNextPage}
+                  onClick={() => setPage(page + 1)}
+                >
+                  Next
+                </Button>
+              </Flex>
+            )}
           </CustomCard>
         </>
       ) : (
         <Flex gap={4} pt={10} flexDir={{ base: "column", md: "row" }}>
-          <EmptyState type="app" />
+          <EmptyState
+            title="You don't have any app yet"
+            description="Create your first app to get started and deploy it to the cloud."
+            icon={EmptyBox}
+          />
           <QuickStart />
         </Flex>
       )}

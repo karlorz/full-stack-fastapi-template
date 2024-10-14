@@ -1,13 +1,17 @@
-import { EmptyBox } from "@/assets/icons.tsx"
-import { Button, Heading, Icon, Text } from "@chakra-ui/react"
-import { Link as RouterLink } from "@tanstack/react-router"
+import { Heading, Icon, type IconProps, Text } from "@chakra-ui/react"
+import type { FC } from "react"
+
 import CustomCard from "./CustomCard"
 
 interface EmptyStateProps {
-  type: string
+  title: string
+  description?: string
+  buttonText?: string
+  buttonLink?: string
+  icon: FC<IconProps>
 }
 
-const EmptyState = ({ type }: EmptyStateProps) => {
+const EmptyState = ({ title, description, icon }: EmptyStateProps) => {
   return (
     <CustomCard
       w={{ base: "100%", md: "60%" }}
@@ -16,20 +20,11 @@ const EmptyState = ({ type }: EmptyStateProps) => {
       justifyContent="center"
       flexDirection="column"
     >
-      <Icon as={EmptyBox} boxSize={12} />
+      <Icon as={icon} boxSize={icon.name === "EmptyBox" ? 10 : 6} />
       <Heading size="sm" textAlign="center">
-        You don't have any {type} yet
+        {title}
       </Heading>
-      {type === "app" && (
-        <>
-          <Text>
-            Create your first {type} to get started and deploy it to the cloud.
-          </Text>
-          <Button as={RouterLink} to="/$team/apps/new" variant="primary">
-            Create {`${type[0].toLocaleUpperCase()}${type.slice(1)}`}
-          </Button>
-        </>
-      )}
+      <Text>{description}</Text>
     </CustomCard>
   )
 }

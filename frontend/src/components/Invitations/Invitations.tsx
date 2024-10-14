@@ -2,8 +2,8 @@ import {
   Badge,
   Box,
   Button,
+  Center,
   Container,
-  Divider,
   Flex,
   Skeleton,
   Table,
@@ -13,15 +13,15 @@ import {
   Th,
   Thead,
   Tr,
-  useDisclosure,
 } from "@chakra-ui/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
+import { EmailPending } from "@/assets/icons"
 import { InvitationsService } from "@/client/services"
+import EmptyState from "../Common/EmptyState"
 import CancelInvitation from "./CancelInvitation"
-import NewInvitation from "./NewInvitation"
 
 const PER_PAGE = 5
 
@@ -35,132 +35,132 @@ const getInvitationsQueryOptions = ({
       status: "pending",
       teamId: teamId,
       skip: (page - 1) * PER_PAGE,
-      limit: PER_PAGE,
+      limit: PER_PAGE + 1,
     }),
 })
 
-function InvitationsTable({ teamId }: { teamId: string }) {
+function Invitations({ teamId }: { teamId: string }) {
   const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
-
-  useEffect(() => {
-    queryClient.prefetchQuery(
-      getInvitationsQueryOptions({ teamId, page: page + 1 }),
-    )
-  }, [page, queryClient, getInvitationsQueryOptions, teamId])
-
   const {
     data: invitations,
-    isPending,
+    isLoading,
     isPlaceholderData,
   } = useQuery({
     ...getInvitationsQueryOptions({ teamId, page }),
     placeholderData: (previous) => previous,
   })
 
-  // TODO: fix pagination
-  const hasNextPage =
-    !isPlaceholderData && invitations?.data.length === PER_PAGE
+  const hasNextPage = invitations?.data.length === PER_PAGE + 1
+  const invitationsData = invitations?.data.slice(0, PER_PAGE)
   const hasPreviousPage = page > 1
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies(a): getInvitationsQueryOptions does not need to be included in the dependencies
+  useEffect(() => {
+    if (hasNextPage) {
+      queryClient.prefetchQuery(
+        getInvitationsQueryOptions({ teamId, page: page + 1 }),
+      )
+    }
+  }, [page, queryClient, hasNextPage, teamId])
 
   const headers = ["Email", "Status", "Actions"]
 
   return (
     <>
-      <TableContainer>
-        <Table size={{ base: "sm", md: "md" }} variant="unstyled">
-          <Thead>
-            <Tr>
-              {headers.map((header) => (
-                <Th
-                  key={header}
-                  textTransform="capitalize"
-                  width={header === "Actions" ? "20%" : "40%"}
-                >
-                  {header}
-                </Th>
-              ))}
-            </Tr>
-          </Thead>
-          <ErrorBoundary
-            fallbackRender={({ error }) => (
-              <Tbody>
+      <Flex justifyContent="flex-end" mb={4} />
+      {(invitationsData?.length ?? 0) > 0 ? (
+        <Container maxW="full" p={0}>
+          <TableContainer>
+            <Table size={{ base: "sm", md: "md" }} variant="unstyled">
+              <Thead>
                 <Tr>
-                  <Td colSpan={4}>Something went wrong: {error.message}</Td>
-                </Tr>
-              </Tbody>
-            )}
-          >
-            <Tbody>
-              {isPending ? (
-                <>
-                  {new Array(3).fill(null).map((_, index) => (
-                    <Tr key={index}>
-                      <Td colSpan={5}>
-                        <Box width="100%">
-                          <Skeleton height="20px" />
-                        </Box>
-                      </Td>
-                    </Tr>
+                  {headers.map((header) => (
+                    <Th
+                      key={header}
+                      textTransform="capitalize"
+                      width={header === "Actions" ? "20%" : "40%"}
+                    >
+                      {header}
+                    </Th>
                   ))}
-                </>
-              ) : (invitations?.data.length ?? 0) > 0 ? (
-                invitations?.data.map(({ id, status, email }) => (
-                  <Tr key={id} opacity={isPlaceholderData ? 0.5 : 1}>
-                    <Td isTruncated maxWidth="200px">
-                      {email}
-                    </Td>
-                    <Td textTransform="capitalize">
-                      <Badge colorScheme="orange">{status}</Badge>
-                    </Td>
-                    <Td>
-                      <CancelInvitation id={id} />
-                    </Td>
-                  </Tr>
-                ))
-              ) : (
-                <Tr>
-                  <Td>No pending invitations</Td>
                 </Tr>
-              )}
-            </Tbody>
-          </ErrorBoundary>
-        </Table>
-      </TableContainer>
-      <Flex
-        gap={4}
-        alignItems="center"
-        mt={4}
-        direction="row"
-        justifyContent="flex-end"
-      >
-        <Button
-          onClick={() => setPage((p) => p - 1)}
-          isDisabled={!hasPreviousPage}
-        >
-          Previous
-        </Button>
-        <span>Page {page}</span>
-        <Button isDisabled={!hasNextPage} onClick={() => setPage((p) => p + 1)}>
-          Next
-        </Button>
-      </Flex>
+              </Thead>
+              <ErrorBoundary
+                fallbackRender={({ error }) => (
+                  <Tbody>
+                    <Tr>
+                      <Td colSpan={4}>Something went wrong: {error.message}</Td>
+                    </Tr>
+                  </Tbody>
+                )}
+              >
+                <Tbody>
+                  {isLoading ? (
+                    <>
+                      {new Array(3).fill(null).map((_, index) => (
+                        <Tr key={index}>
+                          <Td colSpan={5}>
+                            <Box width="100%">
+                              <Skeleton height="20px" />
+                            </Box>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </>
+                  ) : (
+                    invitationsData?.map(({ id, status, email }) => (
+                      <Tr key={id} opacity={isPlaceholderData ? 0.5 : 1}>
+                        <Td isTruncated maxWidth="200px">
+                          {email}
+                        </Td>
+                        <Td textTransform="capitalize">
+                          <Badge colorScheme="orange">{status}</Badge>
+                        </Td>
+                        <Td>
+                          <CancelInvitation id={id} />
+                        </Td>
+                      </Tr>
+                    ))
+                  )}
+                </Tbody>
+              </ErrorBoundary>
+            </Table>
+          </TableContainer>
+          {(hasPreviousPage || hasNextPage) && (
+            <Flex
+              gap={4}
+              alignItems="center"
+              mt={4}
+              direction="row"
+              justifyContent="flex-end"
+            >
+              <Button
+                onClick={() => setPage((p) => p - 1)}
+                isDisabled={!hasPreviousPage}
+              >
+                Previous
+              </Button>
+              <span>Page {page}</span>
+              <Button
+                isDisabled={!hasNextPage}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next
+              </Button>
+            </Flex>
+          )}
+        </Container>
+      ) : (
+        <Center w="full">
+          <EmptyState
+            title="No invitations sent yet"
+            description="Send invites to add members to your team and start collaborating."
+            icon={EmailPending}
+          />
+        </Center>
+      )}
     </>
-  )
-}
-
-function Invitations({ teamId }: { teamId: string }) {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-
-  return (
-    <Container maxW="full" p={0}>
-      <InvitationsTable teamId={teamId} />
-      <Divider my={4} />
-      <Button variant="primary" onClick={onOpen} mb={4}>
-        New Invitation
-      </Button>
-      <NewInvitation isOpen={isOpen} onClose={onClose} teamId={teamId} />
-    </Container>
   )
 }
 

@@ -84,8 +84,9 @@ const SidebarItems = ({
   teams,
   currentTeamSlug,
 }: SidebarItemsProps) => {
-  const bgHover = useColorModeValue("#F9F9FA", "#5A6578")
+  const bgHover = useColorModeValue("#F7F7F7", "#5A6578")
   const bgActive = useColorModeValue("#F3F3F3", "#4A5568")
+  const fontColor = useColorModeValue("#00667A", "#FAFAFA")
 
   const items = getSidebarItems({ team: currentTeamSlug })
 
@@ -99,16 +100,11 @@ const SidebarItems = ({
       py={2}
       _hover={{
         background: bgHover,
-        color: "#338A96",
-        borderRadius: "sm",
-        boxShadow: "inset 5px 0 0 0 #338A96",
-        transition: "background-color 0.2s ease, color 0.2s ease",
       }}
       activeProps={{
         style: {
           background: bgActive,
-          color: "#00667A",
-          borderRadius: "sm",
+          color: `${fontColor}`,
           boxShadow: "inset 5px 0 0 0 #00667A",
         },
       }}

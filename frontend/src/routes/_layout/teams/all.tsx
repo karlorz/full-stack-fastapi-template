@@ -156,24 +156,26 @@ function AllTeams() {
             </Tbody>
           </Table>
         </TableContainer>
-        <Flex
-          gap={4}
-          alignItems="center"
-          mt={4}
-          direction="row"
-          justifyContent="flex-end"
-        >
-          <Button
-            onClick={() => setPage(page - 1)}
-            isDisabled={!hasPreviousPage}
+        {(hasPreviousPage || hasNextPage) && (
+          <Flex
+            gap={4}
+            alignItems="center"
+            mt={4}
+            direction="row"
+            justifyContent="flex-end"
           >
-            Previous
-          </Button>
-          <span>Page {page}</span>
-          <Button isDisabled={!hasNextPage} onClick={() => setPage(page + 1)}>
-            Next
-          </Button>
-        </Flex>
+            <Button
+              onClick={() => setPage(page - 1)}
+              isDisabled={!hasPreviousPage}
+            >
+              Previous
+            </Button>
+            <span>Page {page}</span>
+            <Button isDisabled={!hasNextPage} onClick={() => setPage(page + 1)}>
+              Next
+            </Button>
+          </Flex>
+        )}
       </CustomCard>
     </Container>
   )

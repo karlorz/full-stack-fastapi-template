@@ -51,7 +51,9 @@ test.describe("Select and change team successfully", () => {
     // Check if the team is visible in the team settings
 
     await page.goto(`/${teamSlug}/settings`)
-    await page.getByLabel("Team", { exact: true }).getByText(teamName).click()
+    await expect(
+      page.locator("form").filter({ hasText: teamName }).getByRole("paragraph"),
+    ).toBeVisible()
   })
 
   test("Change the current team from the user's list of teams", async ({
@@ -77,7 +79,9 @@ test.describe("Select and change team successfully", () => {
 
     // Check if the team is visible in the team settings
     await page.goto(`/${teamSlug}/settings`)
-    await page.getByLabel("Team", { exact: true }).getByText(teamName).click()
+    await expect(
+      page.locator("form").filter({ hasText: teamName }).getByRole("paragraph"),
+    ).toBeVisible()
   })
 })
 
@@ -94,7 +98,10 @@ test.describe("User with admin role can update team information", () => {
     await page.locator("#name").fill(newTeamName)
     await page.getByRole("button", { name: "Save" }).click()
     await expect(
-      page.getByLabel("Team", { exact: true }).getByText(newTeamName),
+      page
+        .locator("form")
+        .filter({ hasText: newTeamName })
+        .getByRole("paragraph"),
     ).toBeVisible()
   })
 
