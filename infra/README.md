@@ -208,117 +208,6 @@ Once you have access to the Kubernetes cluster from `kubectl` you can deploy the
 
 If you just deployed the cluster, you need to go read above and [Configure `kubectl` with AWS](#configure-kubectl-with-aws), and [Change the `kubectl` context/environment](#configure-the-kubectl-contextenvironment).
 
-### Helm Charts
-
-Start with `infra/deploy-helm.sh`.
-
-This script expects an environment variable `CLUSTER_NAME`. If it's run in GitHub Actions, it will be set by automatically. If you are running it locally, get it from Pulumi:
-
-```bash
-export CLUSTER_NAME=$(pulumi stack output cluster_name --stack 'fastapilabs/development')
-```
-
-Set the stack accordingly.
-
-Then run:
-
-```bash
-cd infra
-bash deploy-helm.sh
-```
-
-This script will:
-
-* Expects `kubectl` to be already configured, in the GitHub Action, it's set up before starting Tmate, if you are running it locally, you need to set it up manually.
-* Use Helm to install the following Helm Charts:
-    * AWS Load Balancer Controller: this creates the AWS Load Balancers allow the external world to communicate with our Kubernetes cluster. This uses the Kubernetes Service Account we created with Pulumi.
-    * Cert Manager: this will manage the TLS (HTTPS) certificates obtained from Let's Encrypt. We'll configure more things later for it.
-        * It seems this needs to call the AWS Load Balancer Controller, and it might not be ready yet, so this might take a second run to install successfully.
-    * Ingress Nginx Controller: this manages ingress resources we deploy manually, with Kubernetes Deployments (currently none), in contrast to doing that with Knative. This uses customization values from `infra/helm-values/ingress-nginx-external-values.yaml` to enable it to use the AWS Load Balancer Controller.
-* At the end it obtains and shows the DNS name of the load balancer.
-
-We need to update the DNS records in Cloudflare to use it (with a `CNAME`). This is normally done once by hand (by Sebastián) and left configured. Later we might want to set up ExternalDNS to do it automatically. (To be reviewed and updated).
-
-* `fastapicloud.dev` is configured later, for production for Knative.
-* `fastapicloud.club` is configured later, for staging for Knative.
-* `fastapicloud.space` is configured later, for development for Knative.
-
-**Note**: we currently don't use the following, we might want to refactor or remove them.
-
-* `fastapicloud.com` points to production at the Ingress Nginx.
-* `fastapicloud.work` points to staging at the Ingress Nginx.
-* `fastapicloud.site` points to development at the Ingress Nginx.
-
-### Cloudflare DNS
-
-* Add a `CNAME` record in Cloudflare to point the domain to the AWS Load Balancer for the star subdomain, e.g. `*.fastapicloud.work`.
-* Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
-
-### Kubernetes Manifests
-
-After having the Helm Charts installed, install other non-Helm Kubernetes resources.
-
-Continue with: `infra/deploy-kubectl.sh`.
-
-This script expects one environment variable `CLOUDFLARE_API_TOKEN_DNS` with the Cloudflare DNS token for Knative serving. If running on the GitHub Action, it is set automatically. If running locally, set it with:
-
-```bash
-export CLOUDFLARE_API_TOKEN_DNS=...
-```
-
-It also expects a `DEPLOY_ENVIRONMENT` with the name of the environment, from `development`, `staging`, or `production`. By default it is set to `development`, which is what you would use when deploying locally.
-
-Then run:
-
-```bash
-cd infra
-bash deploy-kubectl.sh
-```
-
-This script will:
-
-* Expect `kubectl` to be already configured.
-* Add the Cloudflare token, so that the Cert Manager can create the DNS records needed for TLS (HTTPS) certificates from Let's Encrypt.
-* Add the Cert Manager resources: the staging and production issuers and the wildcard certificates for the Ingress Nginx controller and Knative.
-* Install the Knative CRDs (Custom Resource Definitions for Kubernetes).
-* Install Knative Serving and Kourier as the Knative network layer. This uses Kustomize with the files and directories in `infra/k8s/knative` (described below).
-* Show the DNS of the Knative AWS Load Balancer to update the DNS records in Cloudflare (with a `CNAME`). This is done by hand by Sebastián.
-
-We need to update the DNS records in Cloudflare manually with this DNS name.
-
-* `fastapicloud.dev` points to production at the Knative ingress with Kourier, people's apps would have a subdomain here.
-* `fastapicloud.club` points at staging at the Knative ingress with Kourier.
-* `fastapicloud.space` points at development at the Knative ingress with Kourier.
-
-`fastapicloud.com`, `fastapicloud.work`, `fastapicloud.site` were configured previously.
-
-### Knative Kustomize
-
-Knative uses Kourier for the network. Kourier is in charge of handling the network traffic from the outside world into Knative, through Kubernetes.
-
-Kourier uses the AWS Load Balancer Controller to create an AWS Load Balancer.
-
-To explore the Knative Kustomize installation start with `infra/k8s/knative/base/kustomization.yaml`.
-
-It uses the Knative and Kourier releases from GitHub (as described in the Knative and Kourier installation instructions).
-
-Then it uses Kustomize to patch (update) several configs.
-
-* It patches Knative to make it use Kourier.
-* It patches Knative to update the default domain name for apps, to make them top-level sub-domains (e.g. of `fastapicloud.dev` or `fastapicloud.club`).
-  * That way the final customer app is something like `my-awesome-app-12acs.fastapicloud.dev`, otherwise, it would include the Kubernetes namespace by default, like `my-awesome-app-12acs.team-avengers.fastapicloud.dev`.
-  * But second level sub-domains are not allowed by Let's Encrypt for wildcard certificates, only one level of wildcard certs. Having a single wildcard certificate allows us to start serving an app right after it's deployed, without waiting for the potentially slow dance to acquire certs from Let's Encrypt.
-* It patches Kourier to make it use the AWS Load Balancer Controller so that it creates an AWS Load Balancer to communicate with the external world.
-* It patches Kourier to use the custom certificate for the Knative domain created before.
-
-### Knative Kustomize Overlay
-
-The previous file is not really used directly.
-
-Instead, one of two Kustomize "overlays" is used, one for production, one for staging, and one for development.
-
-These overlays extend the `base` Kustomize configuration and add the Knative domain used for production (`fastapicloud.dev`), staging (`fastapicloud.club`), or development (`fastapicloud.site`).
-
 ### Build TriggerMesh
 
 AWS S3 sends events to AWS SQS, we listen to those events with a TriggerMesh.
@@ -336,7 +225,7 @@ git clone git@github.com:triggermesh/brokers.git
 
 ```
 
-### Install Go
+#### Install Go
 
 https://go.dev/doc/install
 
@@ -443,76 +332,136 @@ docker push $REGISTRY_NAME/triggermesh-webhook:latest
 docker push $REGISTRY_NAME/awssqssource-adapter:latest
 ```
 
-### Edit the TriggerMesh Deployment
+---
 
-Then edit the file `infra/k8s/knative/deployment-workflow/triggermesh-core.yaml` with the ECR registry ID:
+Now you can continue with the rest of the scripts that will use these images.
 
-```yaml
-image: <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/core-controller:latest
-value: <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/redis-broker:latest
-```
+### Helm Charts
 
-And also edit `infra/k8s/knative/deployment-workflow/triggermesh_v2.yaml` with the ECR registry ID:
+Start with `infra/deploy-helm.sh`.
 
-```yaml
-image: <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/triggermesh-controller:latest
-image: <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/triggermesh-webhook:latest
-value: 961341535962.dkr.ecr.us-east-1.amazonaws.com/awssqssource-adapter:latest
-```
-
-### Install  TriggerMesh
-
-From the `infra` directory, install the TriggerMesh CRDs and core components using `kubectl apply -f` following the next order.
+This script expects an environment variable `CLUSTER_NAME`. If it's run in GitHub Actions, it will be set by automatically. If you are running it locally, get it from Pulumi:
 
 ```bash
-kubectl apply -f k8s/knative/deployment-workflow/triggermesh-core-crds.yaml
+export CLUSTER_NAME=$(pulumi stack output cluster_name --stack 'fastapilabs/development')
 ```
+
+Set the stack accordingly.
+
+Then run:
 
 ```bash
-kubectl apply -f k8s/knative/deployment-workflow/triggermesh-core.yaml
+cd infra
+bash deploy-helm.sh
 ```
+
+This script will:
+
+* Expects `kubectl` to be already configured, in the GitHub Action, it's set up before starting Tmate, if you are running it locally, you need to set it up manually.
+* Use Helm to install the following Helm Charts:
+    * AWS Load Balancer Controller: this creates the AWS Load Balancers allow the external world to communicate with our Kubernetes cluster. This uses the Kubernetes Service Account we created with Pulumi.
+    * Cert Manager: this will manage the TLS (HTTPS) certificates obtained from Let's Encrypt. We'll configure more things later for it.
+        * It seems this needs to call the AWS Load Balancer Controller, and it might not be ready yet, so this might take a second run to install successfully.
+    * Ingress Nginx Controller: this manages ingress resources we deploy manually, with Kubernetes Deployments (currently none), in contrast to doing that with Knative. This uses customization values from `infra/helm-values/ingress-nginx-external-values.yaml` to enable it to use the AWS Load Balancer Controller.
+* At the end it obtains and shows the DNS name of the load balancer.
+
+We need to update the DNS records in Cloudflare to use it (with a `CNAME`). This is normally done once by hand (by Sebastián) and left configured. Later we might want to set up ExternalDNS to do it automatically. (To be reviewed and updated).
+
+* `fastapicloud.dev` is configured later, for production for Knative.
+* `fastapicloud.club` is configured later, for staging for Knative.
+* `fastapicloud.space` is configured later, for development for Knative.
+
+**Note**: we currently don't use the following, we might want to refactor or remove them.
+
+* `fastapicloud.com` points to production at the Ingress Nginx.
+* `fastapicloud.work` points to staging at the Ingress Nginx.
+* `fastapicloud.site` points to development at the Ingress Nginx.
+
+### Cloudflare DNS
+
+* Add a `CNAME` record in Cloudflare to point the domain to the AWS Load Balancer for the star subdomain, e.g. `*.fastapicloud.work`.
+* Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
+
+### Kubernetes Manifests
+
+After having the Helm Charts installed, install other non-Helm Kubernetes resources.
+
+Continue with: `infra/deploy-kubectl.sh`.
+
+This script expects some environment variables to be set. If running on the GitHub Action, they are set automatically. If running locally, set them manually.
+
+* `CLOUDFLARE_API_TOKEN_DNS` with the Cloudflare DNS token for Knative serving:
 
 ```bash
-kubectl apply -f k8s/knative/deployment-workflow/triggermesh-crds_v2.yaml
+export CLOUDFLARE_API_TOKEN_DNS=...
 ```
+
+* `SQS_SOURCE_ARN` with the ARN of the SQS queue that will be used by the S3 event listener, you can read it from the Pulumi output:
 
 ```bash
-kubectl apply -f k8s/knative/deployment-workflow/triggermesh_v2.yaml
+export SQS_SOURCE_ARN=$(pulumi stack output sqs_deployment_customer_apps_arn --stack 'fastapilabs/development')
 ```
 
-### Apply Knative Serving Role
-
-The next role is to allow the default service account used by the builder to get, create and patch knative resources within the cluster.
+* `REGISTRY_ID` with the AWS ECR registry ID, you can get it from [Login to AWS ECR](#login-to-aws-ecr):
 
 ```bash
-kubectl apply -f k8s/knative/deployment-workflow/knative-serving-role.yaml
+export REGISTRY_ID=961341535962...
 ```
 
-### Deploy Builder
+It also expects a `DEPLOY_ENVIRONMENT` with the name of the environment, from `development`, `staging`, or `production`. By default it is set to `development`, which is what you would use when deploying locally.
 
-Go to GitHub Actions and "dispatch" a workflow run for the "Deploy Builder" workflow, select the environment to use.
-
-### Deploy TriggerMesh Redis Broker
+Then run:
 
 ```bash
-kubectl apply -f k8s/knative/deployment-workflow/redis-broker.yaml
+cd infra
+bash deploy-kubectl.sh
 ```
 
-### Deploy TriggerMesh S3 event listener
+This script will:
 
-Get the SQS arn from the Pulumi output.
+* Expect `kubectl` to be already configured.
+* Add the Cloudflare token, so that the Cert Manager can create the DNS records needed for TLS (HTTPS) certificates from Let's Encrypt.
+* Add the Cert Manager resources: the staging and production issuers and the wildcard certificates for the Ingress Nginx controller and Knative.
+* Install the Knative CRDs (Custom Resource Definitions for Kubernetes).
+* Install Knative Serving and Kourier as the Knative network layer. This uses Kustomize with the files and directories in `infra/k8s/knative` (described below).
+* Install the Knative role to allow it to create Knative services.
+* Install the TriggerMesh components.
+* Show the DNS of the Knative AWS Load Balancer to update the DNS records in Cloudflare (with a `CNAME`). This is done by hand by Sebastián.
 
-```bash
-pulumi stack output s3_event_listener_queue_arn --stack 'fastapilabs/development'
-```
+We need to update the DNS records in Cloudflare manually with this DNS name.
 
-Edit the file `k8s/knative/deployment-workflow/s3-source.yaml` with the SQS ARN.
+* `fastapicloud.dev` points to production at the Knative ingress with Kourier, people's apps would have a subdomain here.
+* `fastapicloud.club` points at staging at the Knative ingress with Kourier.
+* `fastapicloud.space` points at development at the Knative ingress with Kourier.
 
-Then apply it:
+`fastapicloud.com`, `fastapicloud.work`, `fastapicloud.site` were configured previously.
 
-```bash
-kubectl apply -f k8s/knative/deployment-workflow/s3-source.yaml
-```
+### Knative Kustomize
+
+Knative uses Kourier for the network. Kourier is in charge of handling the network traffic from the outside world into Knative, through Kubernetes.
+
+Kourier uses the AWS Load Balancer Controller to create an AWS Load Balancer.
+
+To explore the Knative Kustomize installation start with `infra/k8s/knative/base/kustomization.yaml`.
+
+It uses the Knative and Kourier releases from GitHub (as described in the Knative and Kourier installation instructions).
+
+Then it uses Kustomize to patch (update) several configs.
+
+* It patches Knative to make it use Kourier.
+* It patches Knative to update the default domain name for apps, to make them top-level sub-domains (e.g. of `fastapicloud.dev` or `fastapicloud.club`).
+  * That way the final customer app is something like `my-awesome-app-12acs.fastapicloud.dev`, otherwise, it would include the Kubernetes namespace by default, like `my-awesome-app-12acs.team-avengers.fastapicloud.dev`.
+  * But second level sub-domains are not allowed by Let's Encrypt for wildcard certificates, only one level of wildcard certs. Having a single wildcard certificate allows us to start serving an app right after it's deployed, without waiting for the potentially slow dance to acquire certs from Let's Encrypt.
+* It patches Kourier to make it use the AWS Load Balancer Controller so that it creates an AWS Load Balancer to communicate with the external world.
+* It patches Kourier to use the custom certificate for the Knative domain created before.
+
+### Knative Kustomize Overlay
+
+The previous file is not really used directly.
+
+Instead, one of two Kustomize "overlays" is used, one for production, one for staging, and one for development.
+
+These overlays extend the `base` Kustomize configuration and add the Knative domain used for production (`fastapicloud.dev`), staging (`fastapicloud.club`), or development (`fastapicloud.site`).
 
 ## Github Runner k8s deployment
 

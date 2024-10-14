@@ -1218,7 +1218,7 @@ spec:
       containers:
         - name: controller
           terminationMessagePolicy: FallbackToLogsOnError
-          image: <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/triggermesh-controller:latest
+          image: ${REGISTRY_ID}.dkr.ecr.us-east-1.amazonaws.com/triggermesh-controller:latest
           resources:
             requests:
               cpu: 50m
@@ -1258,7 +1258,7 @@ spec:
             - name: AWSSNSSOURCE_IMAGE
               value: gcr.io/triggermesh/awssnssource-adapter:v1.27.0
             - name: AWSSQSSOURCE_IMAGE
-              value: <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/awssqssource-adapter:latest
+              value: ${REGISTRY_ID}.dkr.ecr.us-east-1.amazonaws.com/awssqssource-adapter:latest
             - name: AZUREEVENTHUBSSOURCE_IMAGE
               value: gcr.io/triggermesh/azureeventhubssource-adapter:v1.27.0
             - name: AZUREIOTHUBSOURCE_IMAGE
@@ -1464,7 +1464,7 @@ spec:
       containers:
         - name: webhook
           terminationMessagePolicy: FallbackToLogsOnError
-          image: <aws-account-id>.dkr.ecr.us-east-1.amazonaws.com/triggermesh-webhook:latest
+          image: ${REGISTRY_ID}.dkr.ecr.us-east-1.amazonaws.com/triggermesh-webhook:latest
           env:
             - name: SYSTEM_NAMESPACE
               valueFrom:

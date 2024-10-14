@@ -4,7 +4,7 @@ kind: AWSSQSSource
 metadata:
   name: sqs-guide
 spec:
-  arn: arn:aws:sqs:us-east-1:992382821657:sqs-deployment-customer-apps
+  arn: ${SQS_SOURCE_ARN}
   receiveOptions:
     visibilityTimeout: 30m
   auth:
