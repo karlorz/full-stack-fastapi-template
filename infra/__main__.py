@@ -4,7 +4,7 @@ import pulumi_awsx as awsx
 import pulumi_eks as eks
 import pulumi_aws as aws
 import pulumi_kubernetes as k8s
-from pulumi_deployment_workflow import iam, sqs, s3, common
+from pulumi_deployment_workflow import iam, sqs, s3
 
 
 # Get some values from the Pulumi configuration (or use defaults)
@@ -222,57 +222,7 @@ service_account = k8s.core.v1.ServiceAccount(
 
 cluster_name = eks_cluster.core.apply(lambda x: x.cluster.name)
 
-
-# Redis for TriggerMesh
-
-redis_triggermesh_subnet_group = aws.elasticache.SubnetGroup(
-    "redis-triggermesh-subnet-group",
-    subnet_ids=eks_vpc.private_subnet_ids,
-)
-
-# Create a security group for Redis
-redis_triggermesh_security_group = aws.ec2.SecurityGroup(
-    "redis-triggermesh-security-group",
-    vpc_id=eks_vpc.vpc_id,
-    description="Security group for Redis to communicate with EKS cluster",
-    ingress=[
-        aws.ec2.SecurityGroupIngressArgs(
-            protocol="tcp",
-            from_port=6379,
-            to_port=6379,
-            cidr_blocks=[vpc_network_cidr],
-            description="Allow inbound from EKS cluster",
-        )
-    ],
-    egress=[
-        aws.ec2.SecurityGroupEgressArgs(
-            protocol="-1",
-            from_port=0,
-            to_port=0,
-            cidr_blocks=["0.0.0.0/0"],
-            description="Allow all outbound traffic",
-        )
-    ],
-    tags={
-        "Name": "redis-security-group",
-    },
-)
-
-# Redis cluster
-redis_triggermesh = aws.elasticache.Cluster(
-    common.redis_triggermesh_name,
-    cluster_id="redis-triggermesh",
-    engine="redis",
-    engine_version="7.0",
-    node_type="cache.t3.micro",
-    num_cache_nodes=1,
-    port=6379,
-    subnet_group_name=redis_triggermesh_subnet_group.name,
-    security_group_ids=[redis_triggermesh_security_group.id],
-    apply_immediately=True,  # Add this line to apply changes immediately
-)
-
-# Redis backend stuff
+# Redis backend
 
 redis_backend_subnet_group = aws.elasticache.SubnetGroup(
     "redis-backend-subnet-group",
@@ -432,7 +382,6 @@ pulumi.export("k8s_role_arn", k8s_role_arn)
 pulumi.export("aws_lb_controller_policy", aws_lb_controller_policy.arn)
 pulumi.export("sqs_deployment_customer_apps_arn", sqs.sqs_deployment_customer_apps.arn)
 pulumi.export("s3_deployment_customer_apps", s3.s3_deployment_customer_apps.bucket)
-pulumi.export("redis_triggermesh", redis_triggermesh.cache_nodes[0].address)
 pulumi.export("redis_backend", redis_backend.cache_nodes[0].address)
 pulumi.export("github_actions_runner_host", github_actions_runner_instance.public_dns)
 pulumi.export("github_actions_runner_id", github_actions_runner_instance.id)

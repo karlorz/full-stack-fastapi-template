@@ -1,6 +1,6 @@
 import pulumi
 import pulumi_aws as aws
-from pulumi_deployment_workflow import s3, sqs, common
+from pulumi_deployment_workflow import s3, sqs
 
 
 config = pulumi.Config()
@@ -67,18 +67,6 @@ knative_deploy_workflow_policy = aws.iam.Policy(
                     "Resource": pulumi.Output.concat(
                         s3.s3_deployment_customer_apps.arn, "/*"
                     ),
-                },
-                {
-                    "Effect": "Allow",
-                    "Action": [
-                        "elasticache:DescribeCacheClusters",
-                        "elasticache:DescribeCacheSubnetGroups",
-                        "elasticache:ListTagsForResource",
-                        "elasticache:DescribeCacheSecurityGroups",
-                        "elasticache:DescribeReplicationGroups",
-                        "elasticache:DescribeReservedCacheNodes",
-                    ],
-                    "Resource": f"arn:aws:elasticache:{region}:{account_id}:cluster:{common.redis_triggermesh_name}",
                 },
             ],
         }
