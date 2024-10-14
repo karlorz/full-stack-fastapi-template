@@ -60,62 +60,40 @@ jobs:
         context: ./backend/
         file: ./backend/Dockerfile.builder
     - name: Update builder deployment
+      run: envsubst < infra/k8s/builder/builder.yaml | kubectl apply -f -
       env:
         IMAGE: ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}
-      # TODO: investigate if we can do this without modifying a file live that doesn't end up stored in git
-      run: |
-        sed -i "s|image: .*|image: $IMAGE|" infra/k8s/knative/deployment-workflow/dind-deployment.yaml
-    - name: Update ConfigMap and Secret
-      run: |
-        cat <<EOF > infra/k8s/knative/deployment-workflow/docker-builder-configmap.yaml
-        apiVersion: v1
-        kind: ConfigMap
-        metadata:
-          name: app-backend-config
-        data:
-          DOMAIN: "${{ vars.DOMAIN }}"
-          FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
-          API_HOST: "${{ vars.API_HOST }}"
-          DEPLOYMENTS_DOMAIN: "${{ vars.DEPLOYMENTS_DOMAIN }}"
-          ENVIRONMENT: ${{ matrix.environment }}
-          PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
-          STACK_NAME: "${{ vars.STACK_NAME }}"
-          BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"
-          FIRST_SUPERUSER: "${{ vars.FIRST_SUPERUSER }}"
-          FIRST_SUPERUSER_FULL_NAME: "${{ vars.FIRST_SUPERUSER_FULL_NAME }}"
-          SMTP_HOST: "${{ vars.SMTP_HOST }}"
-          SMTP_USER: "${{ vars.SMTP_USER }}"
-          EMAILS_FROM_EMAIL: "${{ vars.EMAILS_FROM_EMAIL }}"
-          SMTP_TLS: "${{ vars.SMTP_TLS }}"
-          SMTP_SSL: "${{ vars.SMTP_SSL }}"
-          SMTP_PORT: "${{ vars.SMTP_PORT }}"
-          POSTGRES_SERVER: "${{ vars.POSTGRES_SERVER }}"
-          POSTGRES_PORT: "${{ vars.POSTGRES_PORT }}"
-          POSTGRES_DB: "${{ vars.POSTGRES_DB }}"
-          POSTGRES_USER: "${{ vars.POSTGRES_USER }}"
-          POSTGRES_SSL_ENABLED: "${{ vars.POSTGRES_SSL_ENABLED }}"
-          REDIS_SERVER: "${{ vars.REDIS_SERVER }}"
-          SENTRY_DSN: "${{ vars.SENTRY_DSN }}"
-          DOCKER_IMAGE_BACKEND: "${{ vars.DOCKER_IMAGE_BACKEND }}"
-          DOCKER_IMAGE_FRONTEND: "${{ vars.DOCKER_IMAGE_FRONTEND }}"
-          AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
-          ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
-          AWS_REGION: "${{ vars.AWS_REGION }}"
-          DOCKER_HOST: "${{ vars.DOCKER_HOST }}"
-          DOCKER_TLS_CERTDIR: ${{ vars.DOCKER_TLS_CERTDIR }}
-        ---
-        apiVersion: v1
-        kind: Secret
-        metadata:
-          name: app-backend-secrets
-        type: Opaque
-        stringData:
-          SECRET_KEY: "${{ secrets.SECRET_KEY }}"
-          FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
-          SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
-          POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
-        EOF
-    - name: Deploy to Kubernetes Knative
-      run: |
-        kubectl apply -f infra/k8s/knative/deployment-workflow/docker-builder-configmap.yaml
-        kubectl apply -f infra/k8s/knative/deployment-workflow/dind-deployment.yaml
+        DOMAIN: "${{ vars.DOMAIN }}"
+        FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
+        API_HOST: "${{ vars.API_HOST }}"
+        DEPLOYMENTS_DOMAIN: "${{ vars.DEPLOYMENTS_DOMAIN }}"
+        ENVIRONMENT: ${{ matrix.environment }}
+        PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
+        STACK_NAME: "${{ vars.STACK_NAME }}"
+        BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"
+        FIRST_SUPERUSER: "${{ vars.FIRST_SUPERUSER }}"
+        FIRST_SUPERUSER_FULL_NAME: "${{ vars.FIRST_SUPERUSER_FULL_NAME }}"
+        SMTP_HOST: "${{ vars.SMTP_HOST }}"
+        SMTP_USER: "${{ vars.SMTP_USER }}"
+        EMAILS_FROM_EMAIL: "${{ vars.EMAILS_FROM_EMAIL }}"
+        SMTP_TLS: "${{ vars.SMTP_TLS }}"
+        SMTP_SSL: "${{ vars.SMTP_SSL }}"
+        SMTP_PORT: "${{ vars.SMTP_PORT }}"
+        POSTGRES_SERVER: "${{ vars.POSTGRES_SERVER }}"
+        POSTGRES_PORT: "${{ vars.POSTGRES_PORT }}"
+        POSTGRES_DB: "${{ vars.POSTGRES_DB }}"
+        POSTGRES_USER: "${{ vars.POSTGRES_USER }}"
+        POSTGRES_SSL_ENABLED: "${{ vars.POSTGRES_SSL_ENABLED }}"
+        REDIS_SERVER: "${{ vars.REDIS_SERVER }}"
+        SENTRY_DSN: "${{ vars.SENTRY_DSN }}"
+        DOCKER_IMAGE_BACKEND: "${{ vars.DOCKER_IMAGE_BACKEND }}"
+        DOCKER_IMAGE_FRONTEND: "${{ vars.DOCKER_IMAGE_FRONTEND }}"
+        AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
+        ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
+        AWS_REGION: "${{ vars.AWS_REGION }}"
+        DOCKER_HOST: "${{ vars.DOCKER_HOST }}"
+        DOCKER_TLS_CERTDIR: ${{ vars.DOCKER_TLS_CERTDIR }}
+        SECRET_KEY: "${{ secrets.SECRET_KEY }}"
+        FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
+        SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
+        POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
