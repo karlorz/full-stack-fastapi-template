@@ -275,7 +275,7 @@ ubuntu_latest_ami = aws.ec2.get_ami(
     filters=[
         {
             "name": "name",
-            "values": ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"],
+            "values": ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"],
         },
     ],
 )
@@ -292,7 +292,15 @@ github_actions_runner_security_group = aws.ec2.SecurityGroup(
     "github-actions-runner-security-group",
     vpc_id=eks_vpc.vpc_id,
     description="Security group for Github Actions Runner",
-    ingress=[],
+    ingress=[
+        {
+            "protocol": "tcp",
+            "from_port": 22,
+            "to_port": 22,
+            "cidr_blocks": ["0.0.0.0/0"],
+            "description": "Allow SSH access",
+        }
+    ],
     egress=[
         {
             "protocol": "-1",
