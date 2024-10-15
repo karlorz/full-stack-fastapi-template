@@ -93,11 +93,6 @@ spec:
             value: "${SMTP_PASSWORD}"
           - name: POSTGRES_PASSWORD
             value: "${POSTGRES_PASSWORD}"
-        envFrom:
-        - configMapRef:
-            name: app-backend-config
-        - secretRef:
-            name: app-backend-secrets
         volumeMounts:
         - mountPath: /var/lib/docker
           name: docker-graph-storage
