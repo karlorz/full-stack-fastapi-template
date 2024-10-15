@@ -91,7 +91,6 @@ jobs:
         AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
         ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
         AWS_REGION: "${{ vars.AWS_REGION }}"
-        DOCKER_HOST: "${{ vars.DOCKER_HOST }}"
         SECRET_KEY: "${{ secrets.SECRET_KEY }}"
         FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
         SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"

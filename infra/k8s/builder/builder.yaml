@@ -83,8 +83,6 @@ spec:
             value: "${ECR_REGISTRY_URL}"
           - name: AWS_REGION
             value: "${AWS_REGION}"
-          - name: DOCKER_HOST
-            value: "${DOCKER_HOST}"
           - name: SECRET_KEY
             value: "${SECRET_KEY}"
           - name: FIRST_SUPERUSER_PASSWORD
