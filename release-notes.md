@@ -272,6 +272,7 @@
 
 ### Internal
 
+* 👷 Remove unneeded variable for Docker in Docker. PR [#431](https://github.com/fastapilabs/cloud/pull/431) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Update builder manifest config file, remove no longer used config map and secrets. PR [#430](https://github.com/fastapilabs/cloud/pull/430) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Update creation of ECR repos for TriggerMesh. PR [#429](https://github.com/fastapilabs/cloud/pull/429) by [@tiangolo](https://github.com/tiangolo).
 * 🚚 Move infra files for consistency and hierarchy. PR [#424](https://github.com/fastapilabs/cloud/pull/424) by [@tiangolo](https://github.com/tiangolo).
