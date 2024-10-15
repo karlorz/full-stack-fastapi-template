@@ -1,11 +1,8 @@
 import pulumi
 import pulumi_aws as aws
 from pulumi_deployment_workflow import s3, sqs
+from pulumi_deployment_workflow.config import account_id, region
 
-
-config = pulumi.Config()
-account_id = config.get("aws_accountId")
-region = config.get("aws_region")
 
 # TODO: replace redis arn with variable
 # Reference: https://www.pulumi.com/registry/packages/aws-iam/

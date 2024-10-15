@@ -1,11 +1,7 @@
 import pulumi_aws as aws
 from pulumi_deployment_workflow import s3
-import pulumi
+from pulumi_deployment_workflow.config import sqs_deployment_customer_apps_name
 
-
-stack = pulumi.get_stack()
-stack_name = stack.split("/")[-1]
-sqs_deployment_customer_apps_name = f"sqs-deployment-customer-apps-{stack_name}"
 
 # Reference: https://www.pulumi.com/registry/packages/aws/api-docs/sqs/queue/
 sqs_deployment_customer_apps_policy = aws.iam.get_policy_document_output(

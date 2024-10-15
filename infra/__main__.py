@@ -5,21 +5,18 @@ import pulumi_eks as eks
 import pulumi_aws as aws
 import pulumi_kubernetes as k8s
 from pulumi_deployment_workflow import iam, sqs, s3
+from pulumi_deployment_workflow.config import (
+    account_id,
+    region,
+    min_cluster_size,
+    max_cluster_size,
+    desired_cluster_size,
+    eks_node_instance_type,
+    vpc_network_cidr,
+    stack_name,
+    aws_load_balancer_name,
+)
 
-
-# Get some values from the Pulumi configuration (or use defaults)
-config = pulumi.Config()
-account_id = config.get("aws_accountId")
-region = config.get("aws_region")
-min_cluster_size = config.get_int("minClusterSize", 3)
-max_cluster_size = config.get_int("maxClusterSize", 6)
-desired_cluster_size = config.get_int("desiredClusterSize", 3)
-eks_node_instance_type = config.get("eksNodeInstanceType", "t3.medium")
-vpc_network_cidr = config.get("vpcNetworkCidr", "10.0.0.0/16")
-stack = pulumi.get_stack()
-stack_name = stack.split("/")[-1]
-
-aws_load_balancer_name = "aws-load-balancer-controller"
 
 ### AWS Resources ###
 
@@ -37,14 +34,14 @@ eks_vpc = awsx.ec2.Vpc(
     # Add tags
     # Ref: https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html
     subnet_specs=[
-        awsx.ec2.vpc.SubnetSpecArgs(
-            type=awsx.ec2.vpc.SubnetType.PRIVATE,
-            tags={"kubernetes.io/role/internal-elb": "1"},
-        ),
-        awsx.ec2.vpc.SubnetSpecArgs(
-            type=awsx.ec2.vpc.SubnetType.PUBLIC,
-            tags={"kubernetes.io/role/elb": "1"},
-        ),
+        {
+            "type": awsx.ec2.vpc.SubnetType.PRIVATE,
+            "tags": {"kubernetes.io/role/internal-elb": "1"},
+        },
+        {
+            "type": awsx.ec2.vpc.SubnetType.PUBLIC,
+            "tags": {"kubernetes.io/role/elb": "1"},
+        },
     ],
 )
 
@@ -210,13 +207,13 @@ aws_load_balancer_service_account = k8s.core.v1.ServiceAccount(
 
 service_account = k8s.core.v1.ServiceAccount(
     "defaultServiceAccountAnnotation",
-    metadata=k8s.meta.v1.ObjectMetaArgs(
-        name=k8s_service_acount_name,
-        namespace=eks_namespace,
-        annotations={
+    metadata={
+        "name": k8s_service_acount_name,
+        "namespace": eks_namespace,
+        "annotations": {
             "eks.amazonaws.com/role-arn": k8s_iam_deployment_workflow_role.arn
         },
-    ),
+    },
     opts=pulumi.ResourceOptions(provider=provider),
 )
 
@@ -234,22 +231,22 @@ redis_backend_security_group = aws.ec2.SecurityGroup(
     vpc_id=eks_vpc.vpc_id,
     description="Security group for Redis backend to communicate with EKS cluster",
     ingress=[
-        aws.ec2.SecurityGroupIngressArgs(
-            protocol="tcp",
-            from_port=6379,
-            to_port=6379,
-            cidr_blocks=[vpc_network_cidr],
-            description="Allow inbound from EKS cluster",
-        )
+        {
+            "protocol": "tcp",
+            "from_port": 6379,
+            "to_port": 6379,
+            "cidr_blocks": [vpc_network_cidr],
+            "description": "Allow inbound from EKS cluster",
+        },
     ],
     egress=[
-        aws.ec2.SecurityGroupEgressArgs(
-            protocol="-1",
-            from_port=0,
-            to_port=0,
-            cidr_blocks=["0.0.0.0/0"],
-            description="Allow all outbound traffic",
-        )
+        {
+            "protocol": "-1",
+            "from_port": 0,
+            "to_port": 0,
+            "cidr_blocks": ["0.0.0.0/0"],
+            "description": "Allow all outbound traffic",
+        },
     ],
     tags={
         "Name": "redis-backend-security-group",
@@ -276,10 +273,10 @@ redis_backend = aws.elasticache.Cluster(
 ubuntu_latest_ami = aws.ec2.get_ami(
     most_recent=True,
     filters=[
-        aws.ec2.GetAmiFilterArgs(
-            name="name",
-            values=["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"],
-        )
+        {
+            "name": "name",
+            "values": ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"],
+        },
     ],
 )
 
@@ -297,13 +294,13 @@ github_actions_runner_security_group = aws.ec2.SecurityGroup(
     description="Security group for Github Actions Runner",
     ingress=[],
     egress=[
-        aws.ec2.SecurityGroupEgressArgs(
-            protocol="-1",
-            from_port=0,
-            to_port=0,
-            cidr_blocks=["0.0.0.0/0"],
-            description="Allow all outbound traffic",
-        )
+        {
+            "protocol": "-1",
+            "from_port": 0,
+            "to_port": 0,
+            "cidr_blocks": ["0.0.0.0/0"],
+            "description": "Allow all outbound traffic",
+        },
     ],
     tags={
         "Name": "github-actions-runner-security-group",
@@ -346,33 +343,6 @@ repository_docker_builder = aws.ecr.Repository(
         "scan_on_push": True,
     },
 )
-
-
-# TODO: Fix this
-
-# error: 1 error occurred:
-#         * Helm release "kube-system/aws-load-balancer-controller-bf4de232" was created, but failed to initialize completely. Use Helm CLI to investigate: failed to become available within allocated timeout. Error: Helm Release kube-system/aws-load-balancer-controller-bf4de232: client rate limiter Wait returned an error: context deadline exceeded
-
-# aws_load_balancer_controller = k8s.helm.v3.Release(
-#     aws_load_balancer_name,
-#     k8s.helm.v3.ReleaseArgs(
-#         chart="aws-load-balancer-controller",
-#         version="1.8.1",
-#         repository_opts=k8s.helm.v3.RepositoryOptsArgs(
-#             repo="https://aws.github.io/eks-charts"
-#         ),
-#         namespace="kube-system",
-#         values={
-#             "clusterName": cluster_name,
-#             "serviceAccount": {
-#                 "create": False,
-#                 "name": aws_load_balancer_service_account.metadata["name"],
-#             },
-#         },
-#     ),
-#     opts=pulumi.ResourceOptions(provider=provider),
-# )
-
 
 # Export values to use elsewhere
 pulumi.export("kubeconfig", eks_cluster.kubeconfig)
