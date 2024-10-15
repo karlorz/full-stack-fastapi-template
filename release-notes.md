@@ -126,6 +126,7 @@
 
 ### Refactors
 
+* ♻️ Refactor and simplify Pulumi code. PR [#425](https://github.com/fastapilabs/cloud/pull/425) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor Team Settings. PR [#402](https://github.com/fastapilabs/cloud/pull/402) by [@alejsdev](https://github.com/alejsdev).
 * 👷 Update AWS and Kubernetes deployment configs and instructions. PR [#418](https://github.com/fastapilabs/cloud/pull/418) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Add active style to Sidebar. PR [#411](https://github.com/fastapilabs/cloud/pull/411) by [@alejsdev](https://github.com/alejsdev).
