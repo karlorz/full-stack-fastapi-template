@@ -57,7 +57,7 @@ Follow: https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
 You will need the name of the cluster, you can get it from the Pulumi output, by going to the AWS web console, going to Elastic Kubernetes Service, and copying the name of the cluster, or by running:
 
 ```bash
-aws eks --region us-east-1 list-clusters --profile staging
+aws eks --region us-east-1 list-clusters --profile development
 ```
 
 Adjust the `--profile` to the one you configured before (probably one for `development`, one for `staging`, one for `production`).
@@ -65,7 +65,7 @@ Adjust the `--profile` to the one you configured before (probably one for `devel
 Then you can configure `kubectl` with the AWS environment:
 
 ```bash
-aws eks --region us-east-1 update-kubeconfig --name cluster_name --profile staging
+aws eks --region us-east-1 update-kubeconfig --name cluster_name --profile development
 ```
 
 Adjust the `cluster_name` and `--profile` as needed.
@@ -89,13 +89,13 @@ kubectl config use-context context_name
 By default the context will have the long name of the cluster, you can rename it to something shorter, for example to `development`, `staging`, `production`:
 
 ```bash
-kubectl config rename-context long_name staging
+kubectl config rename-context long_name development
 ```
 
-After that, you can use that `staging` context with:
+After that, you can use that `development` context with:
 
 ```bash
-kubectl config use-context staging
+kubectl config use-context development
 ```
 
 ## Pulumi
@@ -154,6 +154,10 @@ Then run Pulumi:
 ```bash
 pulumi up
 ```
+
+Check on the web UI the diagnostics, you might need to subscribe to an Ubuntu license and run it again.
+
+After it, create a new terminal so that any commands you run don't use the same environment variables, for example, communicating with Kubernetes using `kubectl`.
 
 ### Pulumi Outputs
 
@@ -283,14 +287,6 @@ Set it with:
 ```bash
 export KO_DOCKER_REPO=$REGISTRY_NAME
 ```
-
-#### In AWS ECR, create a repository for each image
-
-* `core-controller`
-* `redis-broker`
-* `triggermesh-controller`
-* `triggermesh-webhook`
-* `awssqssource-adapter`
 
 #### Build the TriggerMesh Core Image
 
@@ -619,7 +615,7 @@ While Pulumi is destroying the cluster, some additional steps need to be done ma
 kubectl delete serviceaccounts default
 ```
 
-* Delete the AWS Load Balancers from the AWS Console, those were created by the AWS Load Balancer Controller.
+* Delete the AWS Load Balancers from the AWS Console, those were created by the AWS Load Balancer Controller. The VPC could hang deleting if there are dependencies.
 
 * Delete the ECR repositories from the AWS Console, those were created by our code.
 

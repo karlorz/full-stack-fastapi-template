@@ -344,6 +344,50 @@ repository_docker_builder = aws.ecr.Repository(
     },
 )
 
+# TriggerMesh
+
+repository_core_controller = aws.ecr.Repository(
+    "repository-triggermesh-core-controller",
+    name="core-controller",
+    image_scanning_configuration={
+        "scan_on_push": True,
+    },
+)
+
+repository_redis_broker = aws.ecr.Repository(
+    "repository-triggermesh-redis-broker",
+    name="redis-broker",
+    image_scanning_configuration={
+        "scan_on_push": True,
+    },
+)
+
+repository_triggermesh_controller = aws.ecr.Repository(
+    "repository-triggermesh-controller",
+    name="triggermesh-controller",
+    image_scanning_configuration={
+        "scan_on_push": True,
+    },
+)
+
+repository_triggermesh_webhook = aws.ecr.Repository(
+    "repository-triggermesh-webhook",
+    name="triggermesh-webhook",
+    image_scanning_configuration={
+        "scan_on_push": True,
+    },
+)
+
+repository_awssqssource_adapter = aws.ecr.Repository(
+    "repository-triggermesh-awssqssource-adapter",
+    name="awssqssource-adapter",
+    image_scanning_configuration={
+        "scan_on_push": True,
+    },
+)
+
+# TriggerMesh End
+
 # Export values to use elsewhere
 pulumi.export("kubeconfig", eks_cluster.kubeconfig)
 pulumi.export("cluster_name", cluster_name)
