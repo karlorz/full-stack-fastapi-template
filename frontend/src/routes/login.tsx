@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Container,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -26,6 +25,7 @@ import PasswordField from "@/components/Common/PasswordField"
 import type { Body_login_login_access_token as AccessToken } from "../client"
 import AuthOptions from "../components/Auth/AuthOptions"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
+import CustomAuthContainer from "../components/Auth/CustomContainer"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import { emailPattern, passwordRules } from "../utils"
@@ -73,23 +73,7 @@ function Login() {
   return (
     <>
       <BackgroundPanel>
-        <Container
-          as="form"
-          onSubmit={handleSubmit(onSubmit)}
-          maxW={{ base: "md", md: "lg" }}
-          p={{ base: 4, md: 12 }}
-          color="ui.defaultText"
-          h="70%"
-          flexDir="column"
-          alignItems="stretch"
-          justifyContent="center"
-          centerContent
-          borderRadius="md"
-          boxShadow="md"
-          bg="ui.lightBg"
-          gap={4}
-          zIndex="4"
-        >
+        <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
           <LightMode>
             <Box>
               <Heading size="md">Welcome!</Heading>
@@ -147,7 +131,7 @@ function Login() {
               path={"/signup"}
             />
           </LightMode>
-        </Container>
+        </CustomAuthContainer>
       </BackgroundPanel>
       <TeamInvitation />
     </>

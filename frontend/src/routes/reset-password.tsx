@@ -1,9 +1,10 @@
-import { Button, Container, Heading, LightMode, Text } from "@chakra-ui/react"
+import { Button, Heading, LightMode, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
 import { Lock } from "@/assets/icons.tsx"
+import CustomAuthContainer from "@/components/Auth/CustomContainer"
 import PasswordField from "@/components/Common/PasswordField"
 import { LoginService, type NewPassword } from "../client"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
@@ -67,22 +68,7 @@ function ResetPassword() {
 
   return (
     <BackgroundPanel>
-      <Container
-        as="form"
-        onSubmit={handleSubmit(onSubmit)}
-        maxW={{ base: "md", md: "lg" }}
-        p={{ base: 4, md: 12 }}
-        color="ui.defaultText"
-        h="70%"
-        alignItems="stretch"
-        justifyContent="center"
-        centerContent
-        borderRadius="md"
-        boxShadow="md"
-        bg="ui.lightBg"
-        gap={4}
-        zIndex="4"
-      >
+      <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
         <LightMode>
           <Heading size="md">Reset Password</Heading>
           <Text>
@@ -109,7 +95,7 @@ function ResetPassword() {
             Reset Password
           </Button>
         </LightMode>
-      </Container>
+      </CustomAuthContainer>
     </BackgroundPanel>
   )
 }

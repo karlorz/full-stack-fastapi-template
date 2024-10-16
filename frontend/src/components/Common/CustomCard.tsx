@@ -1,9 +1,9 @@
 import { Box, type BoxProps, Heading } from "@chakra-ui/react"
-import type React from "react"
+import type { ReactNode } from "react"
 
 interface CustomCardProps extends BoxProps {
   title?: string
-  children: React.ReactNode
+  children: ReactNode
 }
 
 const CustomCard = ({ title, children, ...props }: CustomCardProps) => {

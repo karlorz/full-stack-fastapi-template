@@ -1,4 +1,4 @@
-import { Box, Button, Container, Text } from "@chakra-ui/react"
+import { Box, Button, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "@tanstack/react-router"
 import Lottie from "lottie-react"
@@ -6,6 +6,7 @@ import { useEffect } from "react"
 
 import warning from "@/assets/failed.json"
 import { UsersService } from "@/client"
+import CustomAuthContainer from "./CustomContainer"
 
 const EmailVerification = () => {
   const router = useRouter()
@@ -37,20 +38,7 @@ const EmailVerification = () => {
 
   return (
     <>
-      <Container
-        maxW={{ base: "md", md: "lg" }}
-        p={{ base: 4, md: 12 }}
-        color="ui.defaultText"
-        h="70%"
-        flexDir="column"
-        alignItems="stretch"
-        justifyContent="center"
-        centerContent
-        borderRadius="md"
-        boxShadow="md"
-        bg="ui.lightBg"
-        zIndex="4"
-      >
+      <CustomAuthContainer>
         {loading && (
           <Box>
             <Text fontWeight="bolder" fontSize="2xl">
@@ -94,7 +82,7 @@ const EmailVerification = () => {
             </Button>
           </Box>
         )}
-      </Container>
+      </CustomAuthContainer>
     </>
   )
 }

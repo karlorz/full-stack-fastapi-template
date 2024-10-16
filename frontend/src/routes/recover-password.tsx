@@ -1,6 +1,5 @@
 import {
   Button,
-  Container,
   FormControl,
   FormErrorMessage,
   Heading,
@@ -19,6 +18,7 @@ import {
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
+import CustomAuthContainer from "@/components/Auth/CustomContainer"
 import { LoginService } from "../client"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import EmailSent from "../components/Common/EmailSent"
@@ -90,22 +90,7 @@ function RecoverPassword() {
       {emailSent ? (
         <EmailSent email={userEmail} />
       ) : (
-        <Container
-          as="form"
-          onSubmit={handleSubmit(onSubmit)}
-          maxW={{ base: "md", md: "lg" }}
-          p={{ base: 4, md: 12 }}
-          color="ui.defaultText"
-          h="70%"
-          alignItems="stretch"
-          justifyContent="center"
-          gap={4}
-          centerContent
-          borderRadius="md"
-          data-testid="recover-password"
-          bg="ui.lightBg"
-          zIndex="4"
-        >
+        <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
           <LightMode>
             <Heading size="md">Password Recovery</Heading>
             <Text>
@@ -164,7 +149,7 @@ function RecoverPassword() {
               </Tooltip>
             </Text>
           </LightMode>
-        </Container>
+        </CustomAuthContainer>
       )}
     </BackgroundPanel>
   )

@@ -27,12 +27,14 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
   return (
     <>
       <Flex
-        flexDir={{ base: "column", md: "row" }}
+        flexDir={{ base: "column", lg: "row" }}
         justify="center"
         alignItems="center"
         h="100vh"
         bg="ui.gradient"
         position="relative"
+        px={8}
+        gap={4}
       >
         <Box
           as="svg"
@@ -61,16 +63,15 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
         <Box w={{ base: "100%", md: "55%" }}>
           <Flex
             flexDir="column"
-            align={{ base: "center", md: "flex-start" }}
+            align={{ base: "center", lg: "flex-start" }}
             color="ui.lightText"
             p={{ base: 4, md: 8 }}
-            textAlign={{ base: "center", md: "left" }}
+            textAlign={{ base: "center", lg: "left" }}
             width="100%"
-            ml={{ base: 0, md: 8 }}
             gap={10}
           >
-            <Image src={Logo} alt="Logo" w={{ base: "50%", md: "35%" }} />
-            <Text fontSize={{ base: "4xl", md: "6xl" }} fontWeight="bold">
+            <Image src={Logo} alt="Logo" w="xs" />
+            <Text fontSize={{ base: "3xl", lg: "6xl" }} fontWeight="bold">
               The{" "}
               <Text as="span" color="purple.200">
                 {currentWord}

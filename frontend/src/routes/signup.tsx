@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Container,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -24,6 +23,7 @@ import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
 import { Email, Lock, User } from "@/assets/icons.tsx"
+import CustomAuthContainer from "@/components/Auth/CustomContainer"
 import PasswordField from "@/components/Common/PasswordField"
 import type { UserRegister } from "../client"
 import AuthOptions from "../components/Auth/AuthOptions"
@@ -83,23 +83,7 @@ function SignUp() {
           <EmailSent email={userEmail} />
         ) : (
           <>
-            <Container
-              as="form"
-              onSubmit={handleSubmit(onSubmit)}
-              maxW={{ base: "md", md: "lg" }}
-              p={{ base: 4, md: 12 }}
-              color="ui.defaultText"
-              h="70%"
-              flexDir="column"
-              alignItems="stretch"
-              justifyContent="center"
-              centerContent
-              boxShadow="md"
-              borderRadius="md"
-              bg="ui.lightBg"
-              zIndex="4"
-              gap={4}
-            >
+            <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
               <LightMode>
                 <Box>
                   <Heading size="md">Sign Up</Heading>
@@ -203,7 +187,7 @@ function SignUp() {
                   path={"/login"}
                 />
               </LightMode>
-            </Container>
+            </CustomAuthContainer>
           </>
         )}
       </BackgroundPanel>
