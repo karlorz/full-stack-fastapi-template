@@ -24,3 +24,8 @@ patches:
     kind: Deployment
     name: net-kourier-controller
     namespace: knative-serving
+- path: patch-knative-security-context.yaml
+  target:
+    kind: ConfigMap
+    name: config-features
+    namespace: knative-serving
