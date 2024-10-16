@@ -126,6 +126,7 @@
 
 ### Refactors
 
+* 💄 Add icons to environment variables . PR [#421](https://github.com/fastapilabs/cloud/pull/421) by [@alejsdev](https://github.com/alejsdev).
 * 📱 Improve responsiveness in auth pages. PR [#432](https://github.com/fastapilabs/cloud/pull/432) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor and simplify Pulumi code. PR [#425](https://github.com/fastapilabs/cloud/pull/425) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor Team Settings. PR [#402](https://github.com/fastapilabs/cloud/pull/402) by [@alejsdev](https://github.com/alejsdev).
