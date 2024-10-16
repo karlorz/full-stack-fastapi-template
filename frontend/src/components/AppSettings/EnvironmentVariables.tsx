@@ -10,14 +10,20 @@ import {
   FormLabel,
   Grid,
   GridItem,
+  Icon,
+  IconButton,
   Input,
+  InputGroup,
+  InputRightElement,
+  Tooltip,
+  useBoolean,
 } from "@chakra-ui/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Fragment, useEffect, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 
-import { EmptyBox } from "@/assets/icons"
+import { EmptyBox, Eye, EyeCrossed, Restore, Trash } from "@/assets/icons"
 import { z } from "zod"
 import EmptyState from "../Common/EmptyState"
 
@@ -40,6 +46,7 @@ const EnvironmentVariableFields = ({
   onDelete: () => void
   disabled: boolean
 }) => {
+  const [show, setShow] = useBoolean()
   let [color, backgroundColor] = ["", ""]
 
   if (deleted) {
@@ -80,28 +87,49 @@ const EnvironmentVariableFields = ({
         <FormLabel srOnly htmlFor={`${item.id}-value`}>
           Value
         </FormLabel>
-        <Input
-          {...register(`environmentVariables.${index}.value`)}
-          id={`${item.id}-value`}
-          textDecoration={deleted ? "line-through" : ""}
-          backgroundColor={backgroundColor}
-          color={color}
-          disabled={disabled}
-          type="password"
-          autoComplete="off"
-          spellCheck="false"
-          placeholder="value"
-          data-1p-ignore
-        />
+        <InputGroup>
+          <Input
+            {...register(`environmentVariables.${index}.value`)}
+            id={`${item.id}-value`}
+            textDecoration={deleted ? "line-through" : ""}
+            backgroundColor={backgroundColor}
+            color={color}
+            disabled={disabled}
+            type={show ? "text" : "password"}
+            autoComplete="off"
+            spellCheck="false"
+            placeholder="My secret value"
+            data-1p-ignore
+          />
+          {!disabled && (
+            <InputRightElement
+              color={deleted ? "white" : "ui.dim"}
+              _hover={{
+                cursor: "pointer",
+              }}
+            >
+              <Icon
+                onClick={setShow.toggle}
+                aria-label={show ? "Hide password" : "Show password"}
+              >
+                {show ? <EyeCrossed /> : <Eye />}
+              </Icon>
+            </InputRightElement>
+          )}
+        </InputGroup>
         {error?.value ? (
           <FormErrorMessage>{error?.value.message}</FormErrorMessage>
         ) : null}
       </FormControl>
-      <Flex gap={2}>
+      <Flex gap={2} align="center">
         {disabled ? null : (
-          <Button onClick={() => onDelete()}>
-            {deleted ? "Restore" : "Delete"}
-          </Button>
+          <Tooltip label={deleted ? "Restore" : "Mark for deletion"}>
+            <IconButton
+              aria-label={deleted ? "Restore" : "Mark for deletion"}
+              onClick={() => onDelete()}
+              icon={deleted ? <Restore /> : <Trash />}
+            />
+          </Tooltip>
         )}
       </Flex>
     </Box>
@@ -339,7 +367,7 @@ const EnvironmentVariables = ({
       {shouldShowAddEnvironmentVariable ? (
         <GridItem colSpan={3}>
           <Button type="button" onClick={handleAddNew}>
-            Add environment variable
+            Add Environment Variable
           </Button>
         </GridItem>
       ) : null}

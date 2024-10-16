@@ -26,7 +26,9 @@ test.describe("App environment variables", () => {
     await logInUser(page, email, password)
   })
 
-  test("When there's no environment variable", async ({ page }) => {
+  test("Empty state is visible when there are no environment variables", async ({
+    page,
+  }) => {
     await page.goto(`/${team.slug}/apps/${app.slug}`)
 
     await expect(
@@ -38,7 +40,7 @@ test.describe("App environment variables", () => {
     ).toBeVisible()
   })
 
-  test("Adding a new environment variable", async ({ page }) => {
+  test("User can add a new environment variable", async ({ page }) => {
     await page.goto(`/${team.slug}/apps/${app.slug}`)
 
     await page.getByRole("button", { name: "Add environment variable" }).click()
@@ -58,7 +60,7 @@ test.describe("App environment variables", () => {
     await expect(page.getByRole("button", { name: "Edit" })).toBeVisible()
   })
 
-  test("Edit existing environment variables", async ({ page }) => {
+  test("User can edit a existing environment variable", async ({ page }) => {
     await createEnvironmentVariable({
       appId: app.id,
       name: "API_KEY",
@@ -97,7 +99,7 @@ test.describe("App environment variables", () => {
     await expect(page.getByRole("button", { name: "Edit" })).toBeVisible()
   })
 
-  test("Test add when there's existing environment variable", async ({
+  test("User can add a new environment variable when one already exists", async ({
     page,
   }) => {
     await createEnvironmentVariable({
@@ -135,7 +137,7 @@ test.describe("App environment variables", () => {
     await expect(page.getByRole("button", { name: "Edit" })).toBeVisible()
   })
 
-  test("Test delete environment variable", async ({ page }) => {
+  test("User can delete a environment variable", async ({ page }) => {
     await createEnvironmentVariable({
       appId: app.id,
       name: "API_KEY",
@@ -150,8 +152,9 @@ test.describe("App environment variables", () => {
 
     await page
       .getByTestId("environment-variable")
-      .getByRole("button", { name: "Delete" })
-      .click({ timeout: 100 })
+      .getByLabel("Mark for deletion")
+      .click()
+    await expect(page.getByLabel("Restore")).toBeVisible()
 
     await page.getByRole("button", { name: "Save" }).click()
 
