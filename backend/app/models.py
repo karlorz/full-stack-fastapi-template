@@ -7,7 +7,7 @@ from pydantic import AfterValidator, EmailStr, computed_field
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.core.config import settings
+from app.core.config import get_main_settings
 from app.utils import get_datetime_utc
 
 
@@ -274,7 +274,7 @@ class App(AppBase, table=True):
 
     @computed_field
     def url(self) -> str:
-        return f"https://{self.slug}.{settings.DEPLOYMENTS_DOMAIN}"
+        return f"https://{self.slug}.{get_main_settings().DEPLOYMENTS_DOMAIN}"
 
 
 class AppCreate(AppBase):
@@ -315,7 +315,7 @@ class Deployment(SQLModel, table=True):
 
     @computed_field
     def url(self) -> str:
-        return f"https://{self.slug}.{settings.DEPLOYMENTS_DOMAIN}"
+        return f"https://{self.slug}.{get_main_settings().DEPLOYMENTS_DOMAIN}"
 
 
 class DeploymentPublic(SQLModel):

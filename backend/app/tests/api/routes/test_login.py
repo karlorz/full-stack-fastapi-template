@@ -3,11 +3,13 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
-from app.core.config import settings
+from app.core.config import MainSettings, get_main_settings
 from app.core.security import verify_password
 from app.models import User
 from app.tests.utils.user import create_user
 from app.utils import generate_password_reset_token
+
+settings = get_main_settings()
 
 
 def test_get_access_token(client: TestClient) -> None:
@@ -46,9 +48,12 @@ def test_use_access_token(
 def test_recovery_password(
     client: TestClient, normal_user_token_headers: dict[str, str]
 ) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
     with (
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
+        patch("app.api.routes.login.get_main_settings", return_value=test_settings),
     ):
         email = "test@example.com"
         r = client.post(

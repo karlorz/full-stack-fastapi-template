@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
-from app.core.config import settings
+from app.core.config import get_main_settings
 from app.models import (
     App,
     Deployment,
@@ -14,6 +14,8 @@ from app.models import (
 from app.tests.utils.apps import create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_random_user
+
+settings = get_main_settings()
 
 
 def test_create_user(client: TestClient, db: Session) -> None:

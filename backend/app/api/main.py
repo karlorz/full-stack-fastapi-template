@@ -10,7 +10,7 @@ from app.api.routes import (
     users,
     utils,
 )
-from app.core.config import settings
+from app.core.config import get_main_settings
 
 api_router = APIRouter()
 api_router.include_router(login.router, tags=["login"])
@@ -23,5 +23,5 @@ api_router.include_router(
 api_router.include_router(apps.router, prefix="/apps", tags=["apps"])
 api_router.include_router(deployments.router, tags=["deployments"])
 
-if settings.ENABLE_PRIVATE_API:
+if get_main_settings().ENABLE_PRIVATE_API:
     api_router.include_router(private.router, prefix="/private", tags=["private"])

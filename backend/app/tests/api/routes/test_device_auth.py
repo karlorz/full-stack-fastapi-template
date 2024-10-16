@@ -5,7 +5,7 @@ import time_machine
 from fastapi.testclient import TestClient
 from redis import Redis
 
-from app.core.config import settings
+from app.core.config import get_main_settings
 from app.utils import (
     authorize_device_code,
     create_and_store_device_code,
@@ -13,6 +13,8 @@ from app.utils import (
     get_datetime_utc,
     get_device_authorization_data,
 )
+
+settings = get_main_settings()
 
 
 @time_machine.travel("2021-01-01 00:00:00", tick=False)

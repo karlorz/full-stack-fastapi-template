@@ -6,13 +6,15 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 from app.api.utils.invitations import generate_invitation_token
-from app.core.config import settings
+from app.core.config import MainSettings, get_main_settings
 from app.crud import add_user_to_team
 from app.models import Invitation, InvitationCreate, InvitationStatus, Role
 from app.tests.crud.invitations import create_invitation
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 from app.utils import get_datetime_utc
+
+settings = get_main_settings()
 
 
 # ** GET /invitations/me **
@@ -543,10 +545,18 @@ def test_read_invitations_team_not_found_current_user(
 
 # ** POST /invitations **
 def test_create_invitation_success(client: TestClient, db: Session) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
+        patch(
+            "app.api.routes.invitations.get_main_settings", return_value=test_settings
+        ),
+        patch(
+            "app.api.utils.invitations.get_main_settings", return_value=test_settings
+        ),
     ):
         team1 = create_random_team(db)
         user1 = create_user(
@@ -593,10 +603,18 @@ def test_create_invitation_success(client: TestClient, db: Session) -> None:
 def test_create_invitation_team_not_found_current_user(
     client: TestClient, db: Session
 ) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
+        patch(
+            "app.api.routes.invitations.get_main_settings", return_value=test_settings
+        ),
+        patch(
+            "app.api.utils.invitations.get_main_settings", return_value=test_settings
+        ),
     ):
         team1 = create_random_team(db)
         user1 = create_user(
@@ -639,10 +657,18 @@ def test_create_invitation_team_not_found_current_user(
 def test_create_invitation_not_enough_permissions(
     client: TestClient, db: Session
 ) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
+        patch(
+            "app.api.routes.invitations.get_main_settings", return_value=test_settings
+        ),
+        patch(
+            "app.api.utils.invitations.get_main_settings", return_value=test_settings
+        ),
     ):
         team1 = create_random_team(db)
         user1 = create_user(
@@ -683,10 +709,18 @@ def test_create_invitation_not_enough_permissions(
 
 
 def test_create_invitation_already_exists(client: TestClient, db: Session) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
+        patch(
+            "app.api.routes.invitations.get_main_settings", return_value=test_settings
+        ),
+        patch(
+            "app.api.utils.invitations.get_main_settings", return_value=test_settings
+        ),
     ):
         team1 = create_random_team(db)
         user1 = create_user(
@@ -741,10 +775,18 @@ def test_create_invitation_already_exists(client: TestClient, db: Session) -> No
 def test_create_invitation_user_already_in_team(
     client: TestClient, db: Session
 ) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
+        patch(
+            "app.api.routes.invitations.get_main_settings", return_value=test_settings
+        ),
+        patch(
+            "app.api.utils.invitations.get_main_settings", return_value=test_settings
+        ),
     ):
         team1 = create_random_team(db)
         user1 = create_user(
@@ -800,10 +842,18 @@ def test_create_invitation_user_already_in_team(
 def test_create_invitation_user_to_invite_not_found(
     client: TestClient, db: Session
 ) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
+        patch(
+            "app.api.routes.invitations.get_main_settings", return_value=test_settings
+        ),
+        patch(
+            "app.api.utils.invitations.get_main_settings", return_value=test_settings
+        ),
     ):
         team1 = create_random_team(db)
         user1 = create_user(
@@ -842,10 +892,18 @@ def test_create_invitation_user_to_invite_not_found(
 def test_create_invitation_user_already_in_team_without_invitation(
     client: TestClient, db: Session
 ) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
+        patch(
+            "app.api.routes.invitations.get_main_settings", return_value=test_settings
+        ),
+        patch(
+            "app.api.utils.invitations.get_main_settings", return_value=test_settings
+        ),
     ):
         team1 = create_random_team(db)
         user1 = create_user(

@@ -5,13 +5,15 @@ from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
 from app.api.main import api_router
-from app.core.config import settings
+from app.core.config import get_main_settings
 from app.core.exceptions import OAuth2Exception
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
     return f"{route.tags[0]}-{route.name}"
 
+
+settings = get_main_settings()
 
 if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
     sentry_sdk.init(

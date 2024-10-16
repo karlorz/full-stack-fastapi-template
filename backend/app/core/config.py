@@ -1,5 +1,6 @@
 import secrets
 import warnings
+from functools import lru_cache
 from typing import Annotated, Any, Literal
 
 from pydantic import (
@@ -28,13 +29,16 @@ def serialize_cors(v: list[AnyUrl]) -> str:
     return ",".join([str(i) for i in v])
 
 
-class Settings(BaseSettings):
+class SettingsEnv(BaseSettings):
     model_config = SettingsConfigDict(
         # Use top level .env file (one level above ./backend/)
         env_file="../.env",
         env_ignore_empty=True,
         extra="ignore",
     )
+
+
+class MainSettings(SettingsEnv):
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
 
@@ -157,9 +161,19 @@ class Settings(BaseSettings):
         return self
 
     AWS_DEPLOYMENT_BUCKET: str
-    ECR_REGISTRY_URL: str
 
     DEPLOYMENTS_DOMAIN: str = "fastapicloud.club"
 
 
-settings = Settings()  # type: ignore
+class BuilderSettings(SettingsEnv):
+    ECR_REGISTRY_URL: str
+
+
+@lru_cache
+def get_main_settings() -> MainSettings:
+    return MainSettings()  # type: ignore
+
+
+@lru_cache
+def get_builder_settings() -> BuilderSettings:
+    return BuilderSettings()  # type: ignore

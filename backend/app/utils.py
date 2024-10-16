@@ -15,7 +15,9 @@ from jwt.exceptions import InvalidTokenError
 from pydantic import BaseModel, Field
 from redis import Redis
 
-from app.core.config import settings
+from app.core.config import get_main_settings
+
+settings = get_main_settings()
 
 
 @dataclass

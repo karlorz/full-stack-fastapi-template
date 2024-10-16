@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 from app import crud
-from app.core.config import settings
+from app.core.config import MainSettings, get_main_settings
 from app.core.security import verify_password
 from app.models import Role, User, UserCreate
 from app.tests.utils.team import create_random_team
@@ -14,6 +14,8 @@ from app.utils import (
     generate_verification_email_token,
     generate_verification_update_email_token,
 )
+
+settings = get_main_settings()
 
 
 def test_get_users_normal_user_me(
@@ -191,11 +193,14 @@ def test_update_password_me_same_password_error(
 
 
 def test_register_user(client: TestClient, db: Session) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
     with (
-        patch("app.utils.generate_verification_email", return_value=None),
         patch("app.utils.send_email", return_value=None),
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
+        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch("app.utils.generate_verification_email", return_value=None),
     ):
         username = random_email()
         password = random_lower_string()
@@ -219,10 +224,13 @@ def test_register_user(client: TestClient, db: Session) -> None:
 
 
 def test_register_user_already_exists_error(client: TestClient) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.core.config.settings.SMTP_HOST", "smtp.example.com"),
-        patch("app.core.config.settings.SMTP_USER", "admin@example.com"),
+        patch("app.utils.get_main_settings", return_value=test_settings),
     ):
         password = random_lower_string()
         full_name = random_lower_string()

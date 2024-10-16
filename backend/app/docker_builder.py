@@ -16,7 +16,7 @@ from kubernetes import config
 from sqlmodel import select
 
 from app.api.deps import SessionDep
-from app.core.config import settings
+from app.core.config import get_builder_settings, get_main_settings
 from app.models import Deployment, DeploymentStatus, EnvironmentVariable
 
 # aws vars
@@ -99,7 +99,7 @@ def create_or_patch_custom_object(
 def deploy_cloud(
     service_name: str, image_url: str, image_sha256_hash: str, min_scale: int = 0
 ) -> None:
-    env_data = settings.model_dump(
+    env_data = get_main_settings().model_dump(
         mode="json", exclude_unset=True, exclude={"all_cors_origins"}
     )
     env_strs = {k: str(v) for k, v in env_data.items()}
@@ -266,7 +266,7 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
     bucket_name = bucket.get("name")
     object_key = _object.get("key")
     image_tag = _object.get("key").split(".")[0].replace("/", "_")
-    registry_url = settings.ECR_REGISTRY_URL
+    registry_url = get_builder_settings().ECR_REGISTRY_URL
 
     object_name = object_key.split("/")[-1]
     object_id = object_name.split(".")[0]

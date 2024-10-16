@@ -2,13 +2,15 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
-from app.core.config import settings
+from app.core.config import get_main_settings
 from app.crud import add_user_to_team
 from app.models import EnvironmentVariable, Role
 from app.tests.utils.apps import create_environment_variable, create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 from app.tests.utils.utils import random_email
+
+settings = get_main_settings()
 
 
 def test_read_environment_variables_for_app(client: TestClient, db: Session) -> None:

@@ -7,7 +7,7 @@ from sqlmodel import and_, col, select
 
 from app.api.deps import CurrentUser, SessionDep
 from app.api.utils.aws_s3 import generate_presigned_url_post
-from app.core.config import settings
+from app.core.config import get_main_settings
 from app.crud import get_user_team_link
 from app.models import (
     App,
@@ -162,7 +162,7 @@ def upload_deployment_artifact(
     object_name = f"{app.id}/{deployment.id}.tar"
 
     presigned_url = generate_presigned_url_post(
-        bucket_name=settings.AWS_DEPLOYMENT_BUCKET,
+        bucket_name=get_main_settings().AWS_DEPLOYMENT_BUCKET,
         object_name=object_name,
     )
     if not presigned_url:

@@ -2,10 +2,12 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session
 
 from app import crud
-from app.core.config import settings
+from app.core.config import get_main_settings
 from app.models import Role, User, UserCreate, UserUpdate
 from app.tests.utils.team import create_random_team
 from app.tests.utils.utils import random_email, random_lower_string
+
+settings = get_main_settings()
 
 
 def user_authentication_headers(

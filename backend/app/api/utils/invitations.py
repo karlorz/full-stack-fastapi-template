@@ -4,13 +4,14 @@ from datetime import timedelta
 import jwt
 from jwt.exceptions import InvalidTokenError
 
-from app.core.config import settings
+from app.core.config import get_main_settings
 from app.utils import EmailData, get_datetime_utc, render_email_template, send_email
 
 
 def generate_invitation_token_email(
     *, team_name: str, email_to: str, email_from: str, token: str
 ) -> EmailData:
+    settings = get_main_settings()
     project_name = settings.PROJECT_NAME
     subject = f"{ project_name } - { email_from } wants you to join { team_name }"
     link = f"{settings.FRONTEND_HOST}/team-invitation?token={token}"
@@ -28,6 +29,7 @@ def generate_invitation_token_email(
 
 
 def generate_invitation_token(invitation_id: uuid.UUID) -> str:
+    settings = get_main_settings()
     now = get_datetime_utc()
     expires = now + timedelta(hours=settings.INVITATION_TOKEN_EXPIRE_HOURS)
     encoded_jwt = jwt.encode(
@@ -43,6 +45,7 @@ def generate_invitation_token(invitation_id: uuid.UUID) -> str:
 
 
 def verify_invitation_token(token: str) -> str | None:
+    settings = get_main_settings()
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         split_token = decoded_token["sub"].split("-", maxsplit=1)
