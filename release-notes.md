@@ -274,6 +274,7 @@
 
 ### Internal
 
+* 🧱 Add knative security context by default kustomization patch. PR [#426](https://github.com/fastapilabs/cloud/pull/426) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Update GitHub Runner image. PR [#433](https://github.com/fastapilabs/cloud/pull/433) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Remove unneeded variable for Docker in Docker. PR [#431](https://github.com/fastapilabs/cloud/pull/431) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Update builder manifest config file, remove no longer used config map and secrets. PR [#430](https://github.com/fastapilabs/cloud/pull/430) by [@tiangolo](https://github.com/tiangolo).
