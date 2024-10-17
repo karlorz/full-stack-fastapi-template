@@ -277,6 +277,7 @@
 
 ### Internal
 
+* 🔧 Update Dockefiles to use non-root user. PR [#442](https://github.com/fastapilabs/cloud/pull/442) by [@tiangolo](https://github.com/tiangolo).
 * 🧱 Add knative security context by default kustomization patch. PR [#426](https://github.com/fastapilabs/cloud/pull/426) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Update GitHub Runner image. PR [#433](https://github.com/fastapilabs/cloud/pull/433) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Remove unneeded variable for Docker in Docker. PR [#431](https://github.com/fastapilabs/cloud/pull/431) by [@tiangolo](https://github.com/tiangolo).
