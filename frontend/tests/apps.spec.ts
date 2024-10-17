@@ -5,7 +5,12 @@ import {
   randomTeamName,
   slugify,
 } from "./utils/random"
-import { createTeam, logInUser, signUpNewUser } from "./utils/userUtils"
+import {
+  createApp,
+  createTeam,
+  logInUser,
+  signUpNewUser,
+} from "./utils/userUtils"
 
 test.describe("Apps empty states", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
@@ -26,12 +31,10 @@ test.describe("Apps empty states", () => {
     await createTeam(page, team)
 
     await page.goto(`/${teamSlug}/apps/`)
-    // FastAPI CLI instructions is visible
     await expect(
       page.getByRole("heading", { name: "You don't have any app yet" }),
     ).toBeVisible()
     await expect(page.getByTestId("fastapi-cli")).toBeVisible()
-    // Create App button is visible
     await page.getByRole("link", { name: "Create App" }).click()
   })
 })
@@ -68,10 +71,7 @@ test.describe("User can manage apps succesfully", () => {
     await createTeam(page, team)
 
     for (const appName of appNames) {
-      await page.goto(`/${teamSlug}/apps/new`)
-      await page.getByPlaceholder("App Name").fill(appName)
-      await page.getByRole("button", { name: "Create App" }).click()
-      await expect(page.getByTestId("app-created-success")).toBeVisible()
+      await createApp(page, teamSlug, appName)
     }
 
     await page.goto(`/${teamSlug}/apps`)
@@ -79,5 +79,31 @@ test.describe("User can manage apps succesfully", () => {
     for (const appName of appNames) {
       await expect(page.getByRole("cell", { name: appName })).toBeVisible()
     }
+  })
+
+  test("User can delete an app", async ({ page, request }) => {
+    const email = randomEmail()
+    const team = randomTeamName()
+    const teamSlug = slugify(team)
+
+    const appName = randomAppName()
+    const appSlug = slugify(appName)
+
+    await signUpNewUser(page, fullName, email, password, request)
+    await logInUser(page, email, password)
+    await createTeam(page, team)
+    await createApp(page, teamSlug, appName)
+
+    await page.goto(`/${teamSlug}/apps`)
+    await expect(page.getByRole("cell", { name: appName })).toBeVisible()
+
+    await page.getByRole("link", { name: appName }).click()
+    await page.goto(`/${teamSlug}/apps/${appSlug}`)
+
+    await page.getByRole("button", { name: "Delete App" }).click()
+    await expect(page.getByTestId("delete-confirmation-app")).toBeVisible()
+    await page.getByLabel("Confirmation").fill(`delete app ${appSlug}`)
+    await page.getByRole("button", { name: "Confirm" }).click()
+    await expect(page.getByText("Success", { exact: true })).toBeVisible()
   })
 })

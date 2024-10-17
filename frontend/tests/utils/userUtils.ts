@@ -94,3 +94,10 @@ export async function viewInvitation(
   url = url!.replace("http://localhost/", "http://localhost:5173/")
   await page.goto(url)
 }
+
+export async function createApp(page: Page, teamSlug: string, appName: string) {
+  await page.goto(`/${teamSlug}/apps/new`)
+  await page.getByPlaceholder("App Name").fill(appName)
+  await page.getByRole("button", { name: "Create App" }).click()
+  await expect(page.getByTestId("app-created-success")).toBeVisible()
+}
