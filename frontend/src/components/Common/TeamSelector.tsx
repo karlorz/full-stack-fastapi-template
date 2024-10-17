@@ -40,7 +40,7 @@ const MenuItemLink = ({
   bg,
 }: MenuItemLinkProps) => {
   const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
-  const bgMenu = useColorModeValue("white", "ui.darkBg")
+  const bgMenu = useColorModeValue("white", "background.dark")
 
   return (
     <MenuItem
@@ -64,8 +64,8 @@ const TeamSelector = ({
   teams,
   currentTeamSlug,
 }: { teams: TeamsPublic; currentTeamSlug: string }) => {
-  const bg = useColorModeValue("white", "ui.darkBg")
-  const color = useColorModeValue("ui.defaultText", "ui.lightText")
+  const bg = useColorModeValue("white", "background.dark")
+  const color = useColorModeValue("text.dark", "text.light")
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const personalTeam = teams?.data.find((t) => t.is_personal_team)
@@ -88,9 +88,7 @@ const TeamSelector = ({
             <Flex justify="space-between">
               <Box display="flex" alignItems="center" gap={2}>
                 <TeamIcon
-                  bg={
-                    selectedTeam?.is_personal_team ? "ui.gradient" : "ui.main"
-                  }
+                  bg={selectedTeam?.is_personal_team ? "gradient" : "main.dark"}
                   icon={selectedTeam?.is_personal_team ? undefined : Users}
                   initials={
                     selectedTeam?.is_personal_team
@@ -122,7 +120,7 @@ const TeamSelector = ({
                     initials={
                       personalTeam?.name ? getInitials(personalTeam.name) : ""
                     }
-                    bg="ui.gradient"
+                    bg="gradient"
                   />
                 </MenuGroup>
                 <MenuDivider />
@@ -141,7 +139,7 @@ const TeamSelector = ({
                           variant="link"
                           as={Link}
                           to="/teams/all"
-                          color="ui.main"
+                          color="main.dark"
                           textDecoration="underline"
                           onClick={onClose}
                         >
@@ -156,7 +154,7 @@ const TeamSelector = ({
                       to={`/${team.slug}/`}
                       icon={Users}
                       label={team.name}
-                      bg="ui.main"
+                      bg="main.dark"
                     />
                   ))}
                 </MenuGroup>
@@ -167,7 +165,7 @@ const TeamSelector = ({
               to="/teams/new"
               icon={FaPlus}
               label="Add new team"
-              bg="#4D99AE"
+              bg="main.light"
             />
           </MenuList>
         </Menu>

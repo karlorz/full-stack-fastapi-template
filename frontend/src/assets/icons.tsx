@@ -100,6 +100,34 @@ export const EyeCrossed = (props: IconProps) => (
   </Icon>
 )
 
+export const Help = (props: IconProps) => (
+  <Icon {...props}>
+    <path
+      d="M12 0a12 12 0 1 0 12 12A12.013 12.013 0 0 0 12 0Zm0 22a10 10 0 1 1 10-10 10.011 10.011 0 0 1-10 10Z"
+      fill="currentColor"
+      opacity="1"
+      data-original="#000000"
+    />
+    <path
+      d="M12.717 5.063A4 4 0 0 0 8 9a1 1 0 0 0 2 0 2 2 0 0 1 2.371-1.967 2.024 2.024 0 0 1 1.6 1.595 2 2 0 0 1-1 2.125A3.954 3.954 0 0 0 11 14.257V15a1 1 0 0 0 2 0v-.743a1.982 1.982 0 0 1 .93-1.752 4 4 0 0 0-1.213-7.442Z"
+      fill="currentColor"
+      opacity="1"
+      data-original="#000000"
+    />
+  </Icon>
+)
+
+export const Home = (props: IconProps) => (
+  <Icon {...props}>
+    <path
+      d="m23.121 9.069-7.585-7.586a5.008 5.008 0 0 0-7.072 0L.879 9.069A2.978 2.978 0 0 0 0 11.19v9.817a3 3 0 0 0 3 3h18a3 3 0 0 0 3-3V11.19a2.978 2.978 0 0 0-.879-2.121ZM15 22.007H9v-3.934a3 3 0 0 1 6 0Zm7-1a1 1 0 0 1-1 1h-4v-3.934a5 5 0 0 0-10 0v3.934H3a1 1 0 0 1-1-1V11.19a1.008 1.008 0 0 1 .293-.707L9.878 2.9a3.008 3.008 0 0 1 4.244 0l7.585 7.586a1.008 1.008 0 0 1 .293.704Z"
+      fill="currentColor"
+      opacity="1"
+      data-original="#000000"
+    />
+  </Icon>
+)
+
 export const Lock = (props: IconProps) => (
   <Icon {...props}>
     <path
@@ -127,34 +155,6 @@ export const LogOut = (props: IconProps) => (
     />
     <path
       d="m22.867 9.879-4.586-4.586a1 1 0 1 0-1.414 1.414l4.262 4.263L6 11a1 1 0 0 0 0 2l15.188-.031-4.323 4.324a1 1 0 1 0 1.414 1.414l4.586-4.586a3 3 0 0 0 .002-4.242Z"
-      fill="currentColor"
-      opacity="1"
-      data-original="#000000"
-    />
-  </Icon>
-)
-
-export const Help = (props: IconProps) => (
-  <Icon {...props}>
-    <path
-      d="M12 0a12 12 0 1 0 12 12A12.013 12.013 0 0 0 12 0Zm0 22a10 10 0 1 1 10-10 10.011 10.011 0 0 1-10 10Z"
-      fill="currentColor"
-      opacity="1"
-      data-original="#000000"
-    />
-    <path
-      d="M12.717 5.063A4 4 0 0 0 8 9a1 1 0 0 0 2 0 2 2 0 0 1 2.371-1.967 2.024 2.024 0 0 1 1.6 1.595 2 2 0 0 1-1 2.125A3.954 3.954 0 0 0 11 14.257V15a1 1 0 0 0 2 0v-.743a1.982 1.982 0 0 1 .93-1.752 4 4 0 0 0-1.213-7.442Z"
-      fill="currentColor"
-      opacity="1"
-      data-original="#000000"
-    />
-  </Icon>
-)
-
-export const Home = (props: IconProps) => (
-  <Icon {...props}>
-    <path
-      d="m23.121 9.069-7.585-7.586a5.008 5.008 0 0 0-7.072 0L.879 9.069A2.978 2.978 0 0 0 0 11.19v9.817a3 3 0 0 0 3 3h18a3 3 0 0 0 3-3V11.19a2.978 2.978 0 0 0-.879-2.121ZM15 22.007H9v-3.934a3 3 0 0 1 6 0Zm7-1a1 1 0 0 1-1 1h-4v-3.934a5 5 0 0 0-10 0v3.934H3a1 1 0 0 1-1-1V11.19a1.008 1.008 0 0 1 .293-.707L9.878 2.9a3.008 3.008 0 0 1 4.244 0l7.585 7.586a1.008 1.008 0 0 1 .293.704Z"
       fill="currentColor"
       opacity="1"
       data-original="#000000"

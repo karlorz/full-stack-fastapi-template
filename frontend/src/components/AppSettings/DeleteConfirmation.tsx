@@ -92,8 +92,8 @@ const DeleteConfirmation = ({
             <AlertDialogHeader>Delete App</AlertDialogHeader>
             <AlertDialogBody>
               <VStack spacing={4}>
-                <Alert status="warning" borderRadius="md">
-                  <AlertIcon />
+                <Alert status="warning" borderRadius="md" color="warning.base">
+                  <AlertIcon color="warning.base" />
                   <AlertTitle mr={2}>Warning:</AlertTitle>
                   This action cannot be undone.
                 </Alert>

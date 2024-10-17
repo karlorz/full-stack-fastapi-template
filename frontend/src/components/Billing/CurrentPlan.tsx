@@ -31,7 +31,7 @@ const CurrentPlan = () => {
               billing@fastapilabs.com
             </Text>
           </Text>
-          <Link color="ui.danger">Cancel Subscription</Link>
+          <Link color="error.base">Cancel Subscription</Link>
         </VStack>
         <Button variant="outline">Upgrade</Button>
       </HStack>

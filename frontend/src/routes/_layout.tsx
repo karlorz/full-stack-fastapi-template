@@ -54,7 +54,7 @@ function Layout() {
           <Flex flexDir="column" flex="1" ml={{ base: 0, md: "250px" }}>
             {/* Navbar */}
             <Box
-              bg="ui.gradient"
+              bg="gradient"
               id="navbar"
               display={{ base: "none", md: "flex" }}
               justifyContent="space-between"

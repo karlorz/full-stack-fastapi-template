@@ -39,7 +39,7 @@ const PasswordField = ({
       <InputGroup>
         {icon && (
           <InputLeftElement pointerEvents="none">
-            <Icon as={icon} color="ui.dim" />
+            <Icon as={icon} color="icon.base" />
           </InputLeftElement>
         )}
         <Input
@@ -50,7 +50,7 @@ const PasswordField = ({
           variant="outline"
         />
         <InputRightElement
-          color="ui.dim"
+          color="icon.base"
           _hover={{
             cursor: "pointer",
           }}

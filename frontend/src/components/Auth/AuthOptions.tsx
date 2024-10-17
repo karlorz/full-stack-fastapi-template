@@ -28,7 +28,7 @@ const AuthOptions = ({ description, path }: OptionsProps) => {
       </HStack>
       <Box>
         {`${description} `}
-        <Link as={RouterLink} to={path} color="ui.main" fontWeight="bolder">
+        <Link as={RouterLink} to={path} color="main.dark" fontWeight="bolder">
           {path === "/login" ? "Log In" : "Sign Up"}
         </Link>
       </Box>

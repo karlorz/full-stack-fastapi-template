@@ -95,7 +95,7 @@ function SignUp() {
                   </FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none">
-                      <Icon as={User} color="ui.dim" />
+                      <Icon as={User} color="icon.base" />
                     </InputLeftElement>
                     <Input
                       id="full_name"
@@ -118,7 +118,7 @@ function SignUp() {
                   </FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none">
-                      <Icon as={Email} color="ui.dim" />
+                      <Icon as={Email} color="icon.base" />
                     </InputLeftElement>
                     <Input
                       id="email"
@@ -158,7 +158,7 @@ function SignUp() {
                     <Link
                       as={RouterLink}
                       to="/"
-                      color="ui.main"
+                      color="main.dark"
                       fontWeight="bolder"
                     >
                       Terms
@@ -167,7 +167,7 @@ function SignUp() {
                     <Link
                       as={RouterLink}
                       to="/"
-                      color="ui.main"
+                      color="main.dark"
                       fontWeight="bolder"
                     >
                       Privacy Policy.

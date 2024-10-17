@@ -23,7 +23,7 @@ const QuickStart = () => {
         </Text>
         <Text>
           You can learn more in the{" "}
-          <Link color="ui.main" fontWeight="bold">
+          <Link color="main.dark" fontWeight="bold">
             FastAPI CLI documentation
           </Link>
           .

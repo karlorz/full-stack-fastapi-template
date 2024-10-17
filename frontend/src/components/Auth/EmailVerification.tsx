@@ -74,7 +74,7 @@ const EmailVerification = () => {
             <Text>
               There was an error verifying your email. Please try again.
             </Text>
-            <Text color="ui.danger">
+            <Text color="error.base">
               Error detail: {(mutation.error as any).body?.detail}
             </Text>
             <Button mt={4} onClick={handleOkClick}>

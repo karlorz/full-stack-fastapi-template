@@ -155,7 +155,7 @@ function Apps() {
                           as={RouterLink}
                           to={`/$team/apps/${app.slug}/`}
                           _hover={{
-                            color: "ui.main",
+                            color: "main.dark",
                             textDecoration: "underline",
                           }}
                           display="inline-block"

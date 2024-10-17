@@ -108,7 +108,7 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
                   data-testid="invitation-email"
                 />
                 {errors.email && (
-                  <Text id="email-error" color="ui.danger" mt={2}>
+                  <Text id="email-error" color="error.base" mt={2}>
                     {errors.email.message}
                   </Text>
                 )}
@@ -166,7 +166,7 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
               </Center>
               {mutation.error && (
                 <Text
-                  color="ui.danger"
+                  color="error.base"
                   fontWeight="bold"
                   textAlign="center"
                   mt={4}

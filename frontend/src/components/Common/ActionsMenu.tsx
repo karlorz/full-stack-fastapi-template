@@ -64,7 +64,7 @@ const ActionsMenu = ({
               type === "User" ? removeUserModal.onOpen : deleteTeamModal.onOpen
             }
             icon={<Trash fontSize="16px" />}
-            color="ui.danger"
+            color="error.base"
           >
             {type === "User" ? "Remove" : "Delete"} {type}
           </MenuItem>

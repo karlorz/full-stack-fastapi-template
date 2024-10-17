@@ -154,7 +154,7 @@ function NewApp() {
                 </Center>
                 {mutation.error && (
                   <Text
-                    color="ui.danger"
+                    color="error.base"
                     fontWeight="bold"
                     textAlign="center"
                     mt={4}

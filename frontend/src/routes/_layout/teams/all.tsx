@@ -135,7 +135,10 @@ function AllTeams() {
                     <Link
                       as={RouterLink}
                       to={`/${team.slug}/`}
-                      _hover={{ color: "ui.main", textDecoration: "underline" }}
+                      _hover={{
+                        color: "main.dark",
+                        textDecoration: "underline",
+                      }}
                       display="inline-block"
                       minW="20%"
                     >

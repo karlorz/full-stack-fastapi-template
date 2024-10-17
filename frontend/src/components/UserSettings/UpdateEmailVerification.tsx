@@ -55,7 +55,7 @@ const UpdateEmailVerification = () => {
               Success!
             </Text>
             <Text>Your email address has been updated successfully.</Text>
-            <Link as={RouterLink} to="/" color="ui.main">
+            <Link as={RouterLink} to="/" color="main.dark">
               Go to Your Dashboard
             </Link>
           </Box>
@@ -69,7 +69,7 @@ const UpdateEmailVerification = () => {
             <Text>
               There was an error verifying your email. Please try again.
             </Text>
-            <Text color="ui.danger">
+            <Text color="error.base">
               Error detail: {(mutation.error as any).body?.detail}
             </Text>
           </Box>

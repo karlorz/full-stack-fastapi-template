@@ -13,7 +13,7 @@ const Searchbar = () => {
           borderRadius="8px"
         />
         <InputRightElement pointerEvents="none">
-          <Icon as={FaSearch} color="ui.dim" />
+          <Icon as={FaSearch} color="icon.base" />
         </InputRightElement>
       </InputGroup>
     </>

@@ -138,7 +138,7 @@ function AppDetail() {
       </Heading>
       <Box pb={10}>
         {app.url && (
-          <Link href={app.url} isExternal color="ui.main" fontWeight="bold">
+          <Link href={app.url} isExternal color="main.dark" fontWeight="bold">
             {app.url}
             <ExternalLinkIcon mx="2px" />
           </Link>

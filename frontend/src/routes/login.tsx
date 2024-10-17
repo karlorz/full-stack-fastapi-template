@@ -85,7 +85,7 @@ function Login() {
               </FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
-                  <Icon as={Email} color="ui.dim" />
+                  <Icon as={Email} color="icon.base" />
                 </InputLeftElement>
                 <Input
                   id="username"
@@ -113,7 +113,7 @@ function Login() {
             <Link
               as={RouterLink}
               to="/recover-password"
-              color="ui.main"
+              color="main.dark"
               fontWeight="bolder"
             >
               Forgot Password?

@@ -14,7 +14,7 @@ const NotFound = () => {
       >
         <Text
           fontSize="8xl"
-          color="ui.main"
+          color="main.dark"
           fontWeight="bold"
           lineHeight="1"
           mb={4}
@@ -26,8 +26,8 @@ const NotFound = () => {
         <Button
           as={Link}
           to="/"
-          color="ui.main"
-          borderColor="ui.main"
+          color="main.dark"
+          borderColor="main.dark"
           variant="outline"
           mt={4}
         >

@@ -45,9 +45,9 @@ const Plans = () => {
             {Object.values(features).map((feature, index) => (
               <Flex key={index} align="center">
                 {feature.value ? (
-                  <Icon as={FaCheckCircle} color="ui.main" />
+                  <Icon as={FaCheckCircle} color="main.dark" />
                 ) : (
-                  <Icon as={FaCircleXmark} color="ui.dim" />
+                  <Icon as={FaCircleXmark} color="icon.base" />
                 )}
                 <Text
                   fontSize="sm"

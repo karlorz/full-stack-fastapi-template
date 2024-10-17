@@ -126,7 +126,7 @@ function RecoverPassword() {
             </Button>
             <Link
               as={RouterLink}
-              color="ui.main"
+              color="main.dark"
               fontWeight="bolder"
               to="/login"
             >
@@ -139,7 +139,7 @@ function RecoverPassword() {
                 isOpen={showTooltip}
               >
                 <Link
-                  color="ui.main"
+                  color="main.dark"
                   fontWeight="bolder"
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}

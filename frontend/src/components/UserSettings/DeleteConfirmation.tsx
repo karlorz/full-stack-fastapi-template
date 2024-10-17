@@ -99,10 +99,14 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
             {ownsTeams ? (
               <>
                 <AlertDialogBody>
-                  <Alert status="warning" borderRadius="md">
-                    <AlertIcon />
+                  <Alert
+                    status="warning"
+                    borderRadius="md"
+                    color="warning.base"
+                  >
+                    <AlertIcon color="warning.base" />
                     <AlertTitle mr={2}>Warning:</AlertTitle>
-                    You cannot delete your account.
+                    This action cannot be undone.
                   </Alert>
                   <Text my={4}>
                     You must remove or transfer ownership of your teams before
@@ -110,7 +114,7 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
                     <Link
                       as={RouterLink}
                       to="/teams/all"
-                      color="ui.main"
+                      color="main.dark"
                       fontWeight="bolder"
                     >
                       teams page
@@ -127,8 +131,12 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
               <>
                 <AlertDialogBody>
                   <VStack spacing={4}>
-                    <Alert status="warning" borderRadius="md">
-                      <AlertIcon />
+                    <Alert
+                      status="warning"
+                      borderRadius="md"
+                      color="warning.base"
+                    >
+                      <AlertIcon color="warning.base" />
                       <AlertTitle mr={2}>Warning:</AlertTitle>
                       This action cannot be undone.
                     </Alert>

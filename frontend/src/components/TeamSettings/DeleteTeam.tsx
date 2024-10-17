@@ -28,7 +28,7 @@ const DeleteTeam = ({ teamId }: { teamId: string }) => {
             gap={4}
             flexDir={{ base: "column", md: "row" }}
           >
-            <Circle size="40px" bg="ui.danger" color="white">
+            <Circle size="40px" bg="error.base" color="white">
               <WarningTwoIcon boxSize="18px" />
             </Circle>
             <Box>

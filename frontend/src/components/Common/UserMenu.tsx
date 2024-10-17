@@ -34,7 +34,7 @@ const MenuItemLink = ({
   as = Link,
 }: MenuItemLinkProps) => {
   const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
-  const bgMenu = useColorModeValue("white", "ui.darkBg")
+  const bgMenu = useColorModeValue("white", "background.dark")
 
   return (
     <MenuItem
@@ -60,7 +60,7 @@ const CurrentUserEmail = () => {
 }
 
 const UserMenu = () => {
-  const bg = useColorModeValue("white", "ui.darkBg")
+  const bg = useColorModeValue("white", "background.dark")
   const { logout } = useAuth()
 
   const handleLogout = async () => {

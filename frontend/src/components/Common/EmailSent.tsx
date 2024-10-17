@@ -13,7 +13,7 @@ const EmailSent = ({ email }: { email: string }) => {
       <Container
         maxW={{ base: "md", md: "lg" }}
         p={{ base: 4, md: 12 }}
-        color="ui.defaultText"
+        color="text.dark"
         h="70%"
         flexDir="column"
         alignItems="stretch"
@@ -21,7 +21,7 @@ const EmailSent = ({ email }: { email: string }) => {
         centerContent
         borderRadius="md"
         boxShadow="md"
-        bg="ui.lightBg"
+        bg="background.light"
         gap={4}
         zIndex="4"
       >

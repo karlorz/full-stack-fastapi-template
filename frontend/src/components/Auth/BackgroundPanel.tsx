@@ -31,7 +31,7 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
         justify="center"
         alignItems="center"
         h="100vh"
-        bg="ui.gradient"
+        bg="gradient"
         position="relative"
         px={8}
         gap={4}
@@ -64,7 +64,7 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
           <Flex
             flexDir="column"
             align={{ base: "center", lg: "flex-start" }}
-            color="ui.lightText"
+            color="text.light"
             p={{ base: 4, md: 8 }}
             textAlign={{ base: "center", lg: "left" }}
             width="100%"
@@ -73,7 +73,7 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
             <Image src={Logo} alt="Logo" w="xs" />
             <Text fontSize={{ base: "3xl", lg: "6xl" }} fontWeight="bold">
               The{" "}
-              <Text as="span" color="purple.200">
+              <Text as="span" color="secondary.light">
                 {currentWord}
               </Text>{" "}
               <br />
