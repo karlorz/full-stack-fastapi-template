@@ -2,13 +2,11 @@ FROM docker:27-dind
 
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app/
-
 RUN apk add --no-cache python3
 
 # Install uv
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
-COPY --from=ghcr.io/astral-sh/uv:0.4.15-alpine /usr/local/bin/uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.4.23-alpine /usr/local/bin/uv /bin/uv
 
 # Place executables in the environment at the front of the path
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#using-the-environment
@@ -22,14 +20,14 @@ ENV UV_COMPILE_BYTECODE=1
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#caching
 ENV UV_LINK_MODE=copy
 
+WORKDIR /app/
+
 # Install dependencies
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-install-project
-
-ENV PYTHONPATH=/app
 
 COPY ./scripts /app/scripts
 
