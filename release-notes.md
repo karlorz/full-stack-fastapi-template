@@ -126,6 +126,7 @@
 
 ### Refactors
 
+* 💄 Redesign toasts. PR [#435](https://github.com/fastapilabs/cloud/pull/435) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Add delete app test. PR [#428](https://github.com/fastapilabs/cloud/pull/428) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor of settings to its own lru_cache function. PR [#434](https://github.com/fastapilabs/cloud/pull/434) by [@tiangolo](https://github.com/tiangolo).
 * 💄 Add icons to environment variables . PR [#421](https://github.com/fastapilabs/cloud/pull/421) by [@alejsdev](https://github.com/alejsdev).
