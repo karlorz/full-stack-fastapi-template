@@ -282,6 +282,8 @@ Then login to the registry:
 aws ecr get-login-password --region us-east-1 --profile development | docker login --username AWS --password-stdin $REGISTRY_NAME
 ```
 
+**Note**: update the profile accordingly.
+
 #### Set up Ko Repo
 
 Ko depends on the `KO_DOCKER_REPO` environment variable to know where to push the images.
@@ -416,7 +418,11 @@ export SQS_SOURCE_ARN=$(pulumi stack output sqs_deployment_customer_apps_arn --s
 export REGISTRY_ID=961341535962...
 ```
 
-It also expects a `DEPLOY_ENVIRONMENT` with the name of the environment, from `development`, `staging`, or `production`. By default it is set to `development`, which is what you would use when deploying locally.
+It also expects a `DEPLOY_ENVIRONMENT` with the name of the environment, from `development`, `staging`, or `production`. By default it is set to `development`, which is what you would use when deploying locally:
+
+```bash
+export DEPLOY_ENVIRONMENT=development
+```
 
 Then run:
 
@@ -620,6 +626,24 @@ A new environment would need:
 ### Add Pulumi stack files
 
 A new environment would need its own versions of `infra/Pulumi.{environment}.yaml`.
+
+### Mailgun
+
+Set up Mailgun domain, update DNS in Cloudflare.
+
+Store credentials on GitHub Environment secrets and vars.
+
+### DB
+
+Create DB on Neon, store credentials on GitHub Environment secrets and vars.
+
+Configure it not to suspend.
+
+Configure it to use connection pool.
+
+### GitHub Environment
+
+Add GitHub Environment secrets and variables copying from another environment and updating.
 
 ## Destroy an AWS Environment
 
