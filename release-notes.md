@@ -282,6 +282,7 @@
 
 ### Internal
 
+* 👷 Update CI to allow deploying to prod. PR [#450](https://github.com/fastapilabs/cloud/pull/450) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Fix GitHub Runner disk on same instance. PR [#443](https://github.com/fastapilabs/cloud/pull/443) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Update Dockefiles to use non-root user. PR [#442](https://github.com/fastapilabs/cloud/pull/442) by [@tiangolo](https://github.com/tiangolo).
 * 🧱 Add knative security context by default kustomization patch. PR [#426](https://github.com/fastapilabs/cloud/pull/426) by [@estebanx64](https://github.com/estebanx64).
