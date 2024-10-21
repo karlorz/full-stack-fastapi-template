@@ -2,7 +2,7 @@ FROM docker:27-dind
 
 ENV PYTHONUNBUFFERED=1
 
-RUN apk add --no-cache python3
+RUN apk add --no-cache python3 curl
 
 # Install uv
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv

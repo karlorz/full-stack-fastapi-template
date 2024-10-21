@@ -3,24 +3,32 @@ import os
 import shutil
 import tarfile
 import uuid
+from collections.abc import Generator
+from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 import boto3
 import docker
 import sentry_sdk
 from botocore.exceptions import ClientError, NoCredentialsError
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from kubernetes import client as k8s
 from kubernetes import config
-from sqlmodel import select
+from pydantic import BaseModel
+from sqlmodel import Session, select
 
-from app.api.deps import SessionDep
-from app.core.config import get_builder_settings, get_main_settings
+from app.core.config import (
+    get_builder_settings,
+    get_common_settings,
+    get_db_settings,
+    get_main_settings,
+)
+from app.core.db import engine
 from app.models import Deployment, DeploymentStatus, EnvironmentVariable
 
 # aws vars
-aws_region = os.getenv("AWS_REGION")
+aws_region = get_builder_settings().AWS_REGION
 
 # AWS S3 client
 s3 = boto3.client("s3", region_name=aws_region)
@@ -31,11 +39,16 @@ ecr = boto3.client("ecr", region_name=aws_region)
 # Docker client
 docker_client = docker.from_env()
 
+
 # Kubernetes client
-if os.getenv("CI"):
-    config.load_kube_config()
-else:
-    config.load_incluster_config()
+@lru_cache
+def get_kubernetes_client() -> k8s.CustomObjectsApi:
+    if os.getenv("CI"):
+        config.load_kube_config()
+    else:
+        config.load_incluster_config()
+
+    return k8s.CustomObjectsApi()
 
 
 # Sentry
@@ -54,6 +67,14 @@ sentry_sdk.init(
 app = FastAPI()
 
 
+def get_db() -> Generator[Session, None, None]:
+    with Session(engine) as session:
+        yield session
+
+
+SessionDep = Annotated[Session, Depends(get_db)]
+
+
 def create_or_patch_custom_object(
     group: str,
     version: str,
@@ -62,7 +83,7 @@ def create_or_patch_custom_object(
     name: str,
     body: dict[str, Any],
 ) -> None:
-    api_instance = k8s.CustomObjectsApi()
+    api_instance = get_kubernetes_client()
 
     try:
         # Try to get the custom object
@@ -99,10 +120,16 @@ def create_or_patch_custom_object(
 def deploy_cloud(
     service_name: str, image_url: str, image_sha256_hash: str, min_scale: int = 0
 ) -> None:
-    env_data = get_main_settings().model_dump(
+    main_settings = get_main_settings().model_dump(
         mode="json", exclude_unset=True, exclude={"all_cors_origins"}
     )
+    common_settings = get_common_settings().model_dump(mode="json", exclude_unset=True)
+    db_settings = get_db_settings().model_dump(mode="json", exclude_unset=True)
+
+    env_data = {**main_settings, **common_settings, **db_settings}
+
     env_strs = {k: str(v) for k, v in env_data.items()}
+
     deploy_to_kubernetes(
         service_name, image_url, image_sha256_hash, min_scale=min_scale, env=env_strs
     )
@@ -346,3 +373,12 @@ def event_service_handler(event: dict[str, Any], session: SessionDep) -> Any:
         raise e
 
     return {"message": "OK"}
+
+
+class HealthCheckResponse(BaseModel):
+    message: str
+
+
+@app.get("/health-check/", response_model=HealthCheckResponse)
+def health_check() -> Any:
+    return HealthCheckResponse(message="OK")

@@ -15,9 +15,7 @@ from jwt.exceptions import InvalidTokenError
 from pydantic import BaseModel, Field
 from redis import Redis
 
-from app.core.config import get_main_settings
-
-settings = get_main_settings()
+from app.core.config import get_common_settings, get_main_settings
 
 
 @dataclass
@@ -61,7 +59,9 @@ def render_email_template(*, template_name: str, context: dict[str, Any]) -> str
 
 
 def is_allowed_recipient(email_to: str) -> bool:
-    if settings.ENVIRONMENT == "production":
+    settings = get_main_settings()
+
+    if get_common_settings().ENVIRONMENT == "production":
         return True
     if settings.SMTP_HOST in {
         "mailcatcher",
@@ -83,10 +83,12 @@ def send_email(
     subject: str = "",
     html_content: str = "",
 ) -> None:
+    settings = get_main_settings()
+
     assert settings.emails_enabled, "no provided configuration for email variables"
     if not is_allowed_recipient(email_to):
         raise RuntimeError(
-            f"In environment {settings.ENVIRONMENT} with "
+            f"In environment {get_common_settings().ENVIRONMENT} with "
             f"SMTP_HOST {settings.SMTP_HOST} "
             f"recipient email is not allowed: {email_to}"
         )
@@ -109,6 +111,8 @@ def send_email(
 
 
 def generate_test_email(email_to: str) -> EmailData:
+    settings = get_main_settings()
+
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Test email"
     html_content = render_email_template(
@@ -119,6 +123,8 @@ def generate_test_email(email_to: str) -> EmailData:
 
 
 def generate_reset_password_email(email_to: str, email: str, token: str) -> EmailData:
+    settings = get_main_settings()
+
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Password recovery for user {email}"
     link = f"{settings.FRONTEND_HOST}/reset-password?token={token}"
@@ -139,6 +145,8 @@ def generate_reset_password_email(email_to: str, email: str, token: str) -> Emai
 def generate_new_account_email(
     email_to: str, username: str, password: str
 ) -> EmailData:
+    settings = get_main_settings()
+
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - New account for user {username}"
     html_content = render_email_template(
@@ -156,6 +164,8 @@ def generate_new_account_email(
 
 
 def generate_verification_email_token(email: str) -> str:
+    settings = get_main_settings()
+
     delta = timedelta(hours=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_HOURS)
     now = get_datetime_utc()
     expires = now + delta
@@ -169,6 +179,8 @@ def generate_verification_email_token(email: str) -> str:
 
 
 def generate_verification_update_email_token(email: str, old_email: str) -> str:
+    settings = get_main_settings()
+
     delta = timedelta(hours=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_HOURS)
     now = get_datetime_utc()
     expires = now + delta
@@ -187,6 +199,8 @@ def generate_verification_update_email_token(email: str, old_email: str) -> str:
 
 
 def generate_verification_email(email_to: str, token: str) -> EmailData:
+    settings = get_main_settings()
+
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Verify your email address"
     link = f"{settings.FRONTEND_HOST}/verify-email?token={token}"
@@ -203,6 +217,8 @@ def generate_verification_email(email_to: str, token: str) -> EmailData:
 
 
 def verify_email_verification_token(token: str) -> str | None:
+    settings = get_main_settings()
+
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         splitted_sub = decoded_token["sub"].split("-", maxsplit=1)
@@ -214,6 +230,8 @@ def verify_email_verification_token(token: str) -> str | None:
 
 
 def verify_update_email_verification_token(token: str) -> dict[str, Any] | None:
+    settings = get_main_settings()
+
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         splitted_sub = decoded_token["sub"].split("-", maxsplit=1)
@@ -226,6 +244,8 @@ def verify_update_email_verification_token(token: str) -> dict[str, Any] | None:
 
 
 def generate_password_reset_token(email: str) -> str:
+    settings = get_main_settings()
+
     delta = timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
     now = get_datetime_utc()
     expires = now + delta
@@ -239,6 +259,8 @@ def generate_password_reset_token(email: str) -> str:
 
 
 def verify_password_reset_token(token: str) -> str | None:
+    settings = get_main_settings()
+
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         splitted_sub = decoded_token["sub"].split("-", maxsplit=1)
@@ -252,6 +274,8 @@ def verify_password_reset_token(token: str) -> str | None:
 def generate_verification_update_email(
     full_name: str, email_to: str, token: str
 ) -> EmailData:
+    settings = get_main_settings()
+
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Verify your email address"
     link = f"{settings.FRONTEND_HOST}/verify-update-email?token={token}"
@@ -270,6 +294,8 @@ def generate_verification_update_email(
 
 
 def generate_account_deletion_email(email_to: str) -> EmailData:
+    settings = get_main_settings()
+
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Account deletion"
     html_content = render_email_template(
@@ -325,6 +351,8 @@ def create_and_store_device_code(
 
     The device code is returned if it was successfully stored in Redis.
     """
+    settings = get_main_settings()
+
     now = get_datetime_utc()
 
     device_code = str(uuid.uuid4())
@@ -383,6 +411,7 @@ def authorize_device_code(
     device_code: str, access_token: str, redis: "Redis[Any]"
 ) -> None:
     """Authorize the device code in Redis using the device code."""
+    settings = get_main_settings()
 
     data = get_device_authorization_data(device_code, redis)
 

@@ -63,35 +63,15 @@ jobs:
       run: envsubst < infra/k8s/builder/builder.yaml | kubectl apply -f -
       env:
         IMAGE: ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}
-        DOMAIN: "${{ vars.DOMAIN }}"
-        FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
-        API_HOST: "${{ vars.API_HOST }}"
         DEPLOYMENTS_DOMAIN: "${{ vars.DEPLOYMENTS_DOMAIN }}"
         ENVIRONMENT: ${{ matrix.environment }}
-        PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
-        STACK_NAME: "${{ vars.STACK_NAME }}"
-        BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"
-        FIRST_SUPERUSER: "${{ vars.FIRST_SUPERUSER }}"
-        FIRST_SUPERUSER_FULL_NAME: "${{ vars.FIRST_SUPERUSER_FULL_NAME }}"
-        SMTP_HOST: "${{ vars.SMTP_HOST }}"
-        SMTP_USER: "${{ vars.SMTP_USER }}"
-        EMAILS_FROM_EMAIL: "${{ vars.EMAILS_FROM_EMAIL }}"
-        SMTP_TLS: "${{ vars.SMTP_TLS }}"
-        SMTP_SSL: "${{ vars.SMTP_SSL }}"
-        SMTP_PORT: "${{ vars.SMTP_PORT }}"
         POSTGRES_SERVER: "${{ vars.POSTGRES_SERVER }}"
         POSTGRES_PORT: "${{ vars.POSTGRES_PORT }}"
         POSTGRES_DB: "${{ vars.POSTGRES_DB }}"
         POSTGRES_USER: "${{ vars.POSTGRES_USER }}"
         POSTGRES_SSL_ENABLED: "${{ vars.POSTGRES_SSL_ENABLED }}"
-        REDIS_SERVER: "${{ vars.REDIS_SERVER }}"
-        SENTRY_DSN: "${{ vars.SENTRY_DSN }}"
-        DOCKER_IMAGE_BACKEND: "${{ vars.DOCKER_IMAGE_BACKEND }}"
-        DOCKER_IMAGE_FRONTEND: "${{ vars.DOCKER_IMAGE_FRONTEND }}"
-        AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
         ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
         AWS_REGION: "${{ vars.AWS_REGION }}"
-        SECRET_KEY: "${{ secrets.SECRET_KEY }}"
-        FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
-        SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
+
+        # Secrets for the builder
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"

@@ -29,6 +29,18 @@ def serialize_cors(v: list[AnyUrl]) -> str:
     return ",".join([str(i) for i in v])
 
 
+def _check_default_secret(var_name: str, value: str | None) -> None:
+    if value == "changethis":
+        message = (
+            f'The value of {var_name} is "changethis", '
+            "for security, please change it, at least for deployments."
+        )
+        if get_common_settings().ENVIRONMENT == "local":
+            warnings.warn(message, stacklevel=1)
+        else:
+            raise ValueError(message)
+
+
 class SettingsEnv(BaseSettings):
     model_config = SettingsConfigDict(
         # Use top level .env file (one level above ./backend/)
@@ -38,34 +50,12 @@ class SettingsEnv(BaseSettings):
     )
 
 
-class MainSettings(SettingsEnv):
-    API_V1_STR: str = "/api/v1"
-    SECRET_KEY: str = secrets.token_urlsafe(32)
-
-    # AUTH
-    # 60 minutes * 24 hours * 8 days = 8 days
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
-    DEVICE_AUTH_TTL_MINUTES: int = 5
-    DEVICE_AUTH_POLL_INTERVAL_SECONDS: int = 5
-
-    FRONTEND_HOST: str = "http://localhost:5173"
+class CommonSettings(SettingsEnv):
+    DEPLOYMENTS_DOMAIN: str = "fastapicloud.club"
     ENVIRONMENT: Literal["local", "development", "staging", "production"] = "local"
 
-    BACKEND_CORS_ORIGINS: Annotated[
-        list[AnyUrl] | str,
-        BeforeValidator(parse_cors),
-        PlainSerializer(serialize_cors, when_used="json"),
-    ] = []
 
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def all_cors_origins(self) -> list[str]:
-        return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
-            self.FRONTEND_HOST
-        ]
-
-    PROJECT_NAME: str
-    SENTRY_DSN: HttpUrl | None = None
+class DBSettings(SettingsEnv):
     POSTGRES_SERVER: str
     POSTGRES_PORT: int = 5432
     POSTGRES_USER: str
@@ -86,6 +76,40 @@ class MainSettings(SettingsEnv):
             path=self.POSTGRES_DB,
             query=query,
         )
+
+    @model_validator(mode="after")
+    def _enforce_non_default_secrets(self) -> Self:
+        _check_default_secret("POSTGRES_PASSWORD", self.POSTGRES_PASSWORD)
+        return self
+
+
+class MainSettings(SettingsEnv):
+    API_V1_STR: str = "/api/v1"
+    SECRET_KEY: str = secrets.token_urlsafe(32)
+
+    # AUTH
+    # 60 minutes * 24 hours * 8 days = 8 days
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+    DEVICE_AUTH_TTL_MINUTES: int = 5
+    DEVICE_AUTH_POLL_INTERVAL_SECONDS: int = 5
+
+    FRONTEND_HOST: str = "http://localhost:5173"
+
+    BACKEND_CORS_ORIGINS: Annotated[
+        list[AnyUrl] | str,
+        BeforeValidator(parse_cors),
+        PlainSerializer(serialize_cors, when_used="json"),
+    ] = []
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def all_cors_origins(self) -> list[str]:
+        return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
+            self.FRONTEND_HOST
+        ]
+
+    PROJECT_NAME: str
+    SENTRY_DSN: HttpUrl | None = None
 
     REDIS_SERVER: str
     REDIS_PORT: int = 6379
@@ -139,34 +163,19 @@ class MainSettings(SettingsEnv):
 
     ENABLE_PRIVATE_API: bool = False
 
-    def _check_default_secret(self, var_name: str, value: str | None) -> None:
-        if value == "changethis":
-            message = (
-                f'The value of {var_name} is "changethis", '
-                "for security, please change it, at least for deployments."
-            )
-            if self.ENVIRONMENT == "local":
-                warnings.warn(message, stacklevel=1)
-            else:
-                raise ValueError(message)
-
     @model_validator(mode="after")
     def _enforce_non_default_secrets(self) -> Self:
-        self._check_default_secret("SECRET_KEY", self.SECRET_KEY)
-        self._check_default_secret("POSTGRES_PASSWORD", self.POSTGRES_PASSWORD)
-        self._check_default_secret(
-            "FIRST_SUPERUSER_PASSWORD", self.FIRST_SUPERUSER_PASSWORD
-        )
+        _check_default_secret("SECRET_KEY", self.SECRET_KEY)
+        _check_default_secret("FIRST_SUPERUSER_PASSWORD", self.FIRST_SUPERUSER_PASSWORD)
 
         return self
 
     AWS_DEPLOYMENT_BUCKET: str
 
-    DEPLOYMENTS_DOMAIN: str = "fastapicloud.club"
-
 
 class BuilderSettings(SettingsEnv):
     ECR_REGISTRY_URL: str
+    AWS_REGION: str
 
 
 @lru_cache
@@ -177,3 +186,13 @@ def get_main_settings() -> MainSettings:
 @lru_cache
 def get_builder_settings() -> BuilderSettings:
     return BuilderSettings()  # type: ignore
+
+
+@lru_cache
+def get_db_settings() -> DBSettings:
+    return DBSettings()  # type: ignore
+
+
+@lru_cache
+def get_common_settings() -> CommonSettings:
+    return CommonSettings()

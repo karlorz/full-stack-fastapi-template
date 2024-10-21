@@ -1,13 +1,14 @@
 import pytest
 
-from app.core.config import get_main_settings
+from app.core.config import get_common_settings, get_main_settings
 from app.utils import send_email
 
 settings = get_main_settings()
+common_settings = get_common_settings()
 
 
 def test_send_email_not_allowed_local() -> None:
-    settings.ENVIRONMENT = "local"
+    common_settings.ENVIRONMENT = "local"
     settings.SMTP_HOST = "externalemailhost"
     with pytest.raises(RuntimeError) as er:
         send_email(
@@ -17,7 +18,7 @@ def test_send_email_not_allowed_local() -> None:
 
 
 def test_send_email_not_allowed_staging() -> None:
-    settings.ENVIRONMENT = "staging"
+    common_settings.ENVIRONMENT = "staging"
     settings.SMTP_HOST = "externalemailhost"
     with pytest.raises(RuntimeError) as er:
         send_email(
@@ -27,21 +28,21 @@ def test_send_email_not_allowed_staging() -> None:
 
 
 def test_send_email_external_with_mailcatcher_local() -> None:
-    settings.ENVIRONMENT = "local"
+    common_settings.ENVIRONMENT = "local"
     settings.SMTP_HOST = "mailcatcher"
     # This should not raise
     send_email(email_to="notallowed@example.com", subject="Test", html_content="Test")
 
 
 def test_send_email_external_with_mailcatcher_staging() -> None:
-    settings.ENVIRONMENT = "staging"
+    common_settings.ENVIRONMENT = "staging"
     settings.SMTP_HOST = "mailcatcher"
     # This should not raise
     send_email(email_to="notallowed@example.com", subject="Test", html_content="Test")
 
 
 def test_send_email_external_allowed_prod() -> None:
-    settings.ENVIRONMENT = "production"
+    common_settings.ENVIRONMENT = "production"
     assert settings.SMTP_HOST in {
         "mailcatcher",
         "localhost",
@@ -51,7 +52,7 @@ def test_send_email_external_allowed_prod() -> None:
 
 
 def test_send_email_allowed_domain_local() -> None:
-    settings.ENVIRONMENT = "local"
+    common_settings.ENVIRONMENT = "local"
     assert settings.SMTP_HOST in {
         "mailcatcher",
         "localhost",
@@ -61,7 +62,7 @@ def test_send_email_allowed_domain_local() -> None:
 
 
 def test_send_email_allowed_domain_staging() -> None:
-    settings.ENVIRONMENT = "staging"
+    common_settings.ENVIRONMENT = "staging"
     assert settings.SMTP_HOST in {
         "mailcatcher",
         "localhost",
@@ -71,7 +72,7 @@ def test_send_email_allowed_domain_staging() -> None:
 
 
 def test_send_email_allowed_domain_prod() -> None:
-    settings.ENVIRONMENT = "production"
+    common_settings.ENVIRONMENT = "production"
     assert settings.SMTP_HOST in {
         "mailcatcher",
         "localhost",
@@ -81,7 +82,7 @@ def test_send_email_allowed_domain_prod() -> None:
 
 
 def test_send_email_allowed_email_local() -> None:
-    settings.ENVIRONMENT = "local"
+    common_settings.ENVIRONMENT = "local"
     assert settings.SMTP_HOST in {
         "mailcatcher",
         "localhost",
@@ -91,7 +92,7 @@ def test_send_email_allowed_email_local() -> None:
 
 
 def test_send_email_allowed_email_staging() -> None:
-    settings.ENVIRONMENT = "staging"
+    common_settings.ENVIRONMENT = "staging"
     assert settings.SMTP_HOST in {
         "mailcatcher",
         "localhost",
@@ -101,7 +102,7 @@ def test_send_email_allowed_email_staging() -> None:
 
 
 def test_send_email_allowed_email_prod() -> None:
-    settings.ENVIRONMENT = "production"
+    common_settings.ENVIRONMENT = "production"
     assert settings.SMTP_HOST in {
         "mailcatcher",
         "localhost",

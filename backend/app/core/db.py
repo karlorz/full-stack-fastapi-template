@@ -1,10 +1,9 @@
 from sqlmodel import Session, create_engine, select
 
-from app import crud
-from app.core.config import get_main_settings
+from app.core.config import get_db_settings, get_main_settings
 from app.models import Role, Team, User, UserCreate, UserTeamLink
 
-engine = create_engine(str(get_main_settings().SQLALCHEMY_DATABASE_URI))
+engine = create_engine(str(get_db_settings().SQLALCHEMY_DATABASE_URI))
 
 
 # make sure all SQLModel models are imported (app.models) before initializing DB
@@ -13,6 +12,7 @@ engine = create_engine(str(get_main_settings().SQLALCHEMY_DATABASE_URI))
 
 
 def init_db(session: Session) -> None:
+    from app import crud
     # Tables should be created with Alembic migrations
     # But if you don't want to use migrations, create
     # the tables un-commenting the next lines

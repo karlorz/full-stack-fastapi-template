@@ -27,38 +27,10 @@ spec:
             cpu: 500m
             memory: 512Mi
         env:
-          - name: DOMAIN
-            value: "${DOMAIN}"
-          - name: FRONTEND_HOST
-            value: "${FRONTEND_HOST}"
-          - name: API_HOST
-            value: "${API_HOST}"
           - name: DEPLOYMENTS_DOMAIN
             value: "${DEPLOYMENTS_DOMAIN}"
           - name: ENVIRONMENT
             value: "${ENVIRONMENT}"
-          - name: PROJECT_NAME
-            value: "${PROJECT_NAME}"
-          - name: STACK_NAME
-            value: "${STACK_NAME}"
-          - name: BACKEND_CORS_ORIGINS
-            value: "${BACKEND_CORS_ORIGINS}"
-          - name: FIRST_SUPERUSER
-            value: "${FIRST_SUPERUSER}"
-          - name: FIRST_SUPERUSER_FULL_NAME
-            value: "${FIRST_SUPERUSER_FULL_NAME}"
-          - name: SMTP_HOST
-            value: "${SMTP_HOST}"
-          - name: SMTP_USER
-            value: "${SMTP_USER}"
-          - name: EMAILS_FROM_EMAIL
-            value: "${EMAILS_FROM_EMAIL}"
-          - name: SMTP_TLS
-            value: "${SMTP_TLS}"
-          - name: SMTP_SSL
-            value: "${SMTP_SSL}"
-          - name: SMTP_PORT
-            value: "${SMTP_PORT}"
           - name: POSTGRES_SERVER
             value: "${POSTGRES_SERVER}"
           - name: POSTGRES_PORT
@@ -69,26 +41,10 @@ spec:
             value: "${POSTGRES_USER}"
           - name: POSTGRES_SSL_ENABLED
             value: "${POSTGRES_SSL_ENABLED}"
-          - name: REDIS_SERVER
-            value: "${REDIS_SERVER}"
-          - name: SENTRY_DSN
-            value: "${SENTRY_DSN}"
-          - name: DOCKER_IMAGE_BACKEND
-            value: "${DOCKER_IMAGE_BACKEND}"
-          - name: DOCKER_IMAGE_FRONTEND
-            value: "${DOCKER_IMAGE_FRONTEND}"
-          - name: AWS_DEPLOYMENT_BUCKET
-            value: "${AWS_DEPLOYMENT_BUCKET}"
           - name: ECR_REGISTRY_URL
             value: "${ECR_REGISTRY_URL}"
           - name: AWS_REGION
             value: "${AWS_REGION}"
-          - name: SECRET_KEY
-            value: "${SECRET_KEY}"
-          - name: FIRST_SUPERUSER_PASSWORD
-            value: "${FIRST_SUPERUSER_PASSWORD}"
-          - name: SMTP_PASSWORD
-            value: "${SMTP_PASSWORD}"
           - name: POSTGRES_PASSWORD
             value: "${POSTGRES_PASSWORD}"
         volumeMounts:
