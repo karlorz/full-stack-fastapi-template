@@ -6,22 +6,21 @@ on:
       - master
     paths:
       - 'backend/**'
-      - 'infra/k8s/knative/backend/**'
-      - '.github/workflows/deploy-backend-staging.yml'
+      - '.github/workflows/deploy-backend.yml'
   workflow_dispatch:
     inputs:
       environment:
-        description: Environment to deploy to, staging or development
+        description: Environment to deploy to, development, staging, production
         required: true
         type: environment
         default: staging
 
 env:
   ECR_REPOSITORY: fastapicloud-backend
-  IMAGE_TAG: staging-${{ github.sha }}
 
 jobs:
   deploy-backend:
+    if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
     name: Deploy Backend
     strategy:
       matrix:
@@ -30,6 +29,8 @@ jobs:
         environment: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.environment)) || fromJson('["staging", "development"]') }}
     runs-on: ${{ matrix.environment }}
     environment: ${{ matrix.environment }}
+    env:
+      IMAGE_TAG: ${{ matrix.environment }}-${{ github.sha }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python

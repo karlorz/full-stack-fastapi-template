@@ -1,4 +1,4 @@
-name: Deploy UI - Staging
+name: Deploy UI
 on:
   push:
     branches:
@@ -7,6 +7,13 @@ on:
     types:
       - opened
       - synchronize
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to deploy to, development, staging, production
+        required: true
+        type: environment
+        default: staging
 
 permissions:
   contents: read
@@ -20,9 +27,9 @@ jobs:
     if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
     strategy:
       matrix:
-        environment:
-          - staging
-          - development
+        # Two environments by default: staging and development, but can be overridden by the user in a workflow dispatch
+        # TODO: once production is stable, disallow deploying to production from workflow_dispatch
+        environment: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.environment)) || fromJson('["staging", "development"]') }}
     environment: ${{ matrix.environment }}
     runs-on: ubuntu-latest
     steps:
@@ -54,8 +61,8 @@ jobs:
         if: hashFiles('./frontend/dist/*')
         id: deploy
         env:
-          PROJECT_NAME: ${{ matrix.environment == 'staging' && 'dashboard-fastapicloud-work' || matrix.environment == 'development' && 'dashboard-fastapicloud-site' }}
-          BRANCH: ${{ github.event_name == 'pull_request' && 'preview' || github.event_name == 'push' && 'main' }}
+          PROJECT_NAME: ${{ vars.CLOUDFLARE_PAGES_PROJECT_NAME }}
+          BRANCH: ${{ github.event_name == 'pull_request' && 'preview' || ( ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) && 'main' ) }}
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

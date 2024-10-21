@@ -11,28 +11,30 @@ on:
       - 'backend/builder_entrypoint.sh'
       - 'backend/pyproject.toml'
       - 'backend/uv.lock'
-      - 'infra/k8s/knative/deployment-workflow/**'
-      - '.github/workflows/deploy-builder-staging.yml'
+      - 'infra/k8s/builder/builder.yaml'
+      - '.github/workflows/deploy-builder.yml'
   workflow_dispatch:
     inputs:
       environment:
-        description: Environment to deploy to, staging or development
+        description: Environment to deploy to, development, staging, production
         required: true
         type: environment
         default: staging
 
 env:
   ECR_REPOSITORY: fastapicloud-builder
-  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  deploy:
-    name: Deploy to Staging
+  deploy-builder:
+    if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
+    name: Deploy Builder
     strategy:
       matrix:
         # Two environments by default: staging and development, but can be overridden by the user in a workflow dispatch
         # TODO: once production is stable, disallow deploying to production from workflow_dispatch
         environment: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.environment)) || fromJson('["staging", "development"]') }}
+    env:
+      IMAGE_TAG: ${{ matrix.environment }}-${{ github.sha }}
     runs-on: ${{ matrix.environment }}
     environment: ${{ matrix.environment }}
     steps:
