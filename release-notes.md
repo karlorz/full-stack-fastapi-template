@@ -126,6 +126,7 @@
 
 ### Refactors
 
+* ♻️ Refactor settings to allow builder to start with only needed env vars and add it to Docker Compose. PR [#445](https://github.com/fastapilabs/cloud/pull/445) by [@estebanx64](https://github.com/estebanx64).
 * ♻️ Refactor app detail and add `RefetchInterval` to deployments query. PR [#441](https://github.com/fastapilabs/cloud/pull/441) by [@alejsdev](https://github.com/alejsdev).
 * 💄 Redesign toasts. PR [#435](https://github.com/fastapilabs/cloud/pull/435) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Add delete app test. PR [#428](https://github.com/fastapilabs/cloud/pull/428) by [@alejsdev](https://github.com/alejsdev).
