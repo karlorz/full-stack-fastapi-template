@@ -49,11 +49,11 @@ test("Forgot Password link is visible", async ({ page }) => {
   ).toBeVisible()
 })
 
-test("Sign Up link is visible", async ({ page }) => {
-  await page.goto("/login")
+// test("Sign Up link is visible", async ({ page }) => {
+//   await page.goto("/login")
 
-  await expect(page.getByRole("link", { name: "Sign Up" })).toBeVisible()
-})
+//   await expect(page.getByRole("link", { name: "Sign Up" })).toBeVisible()
+// })
 
 test("Log in with valid email and password ", async ({ page }) => {
   await page.goto("/login")

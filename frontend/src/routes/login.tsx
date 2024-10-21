@@ -23,7 +23,6 @@ import { type SubmitHandler, useForm } from "react-hook-form"
 import { Email, Lock } from "@/assets/icons.tsx"
 import PasswordField from "@/components/Common/PasswordField"
 import type { Body_login_login_access_token as AccessToken } from "../client"
-import AuthOptions from "../components/Auth/AuthOptions"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import CustomAuthContainer from "../components/Auth/CustomContainer"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
@@ -126,10 +125,10 @@ function Login() {
             >
               Log In
             </Button>
-            <AuthOptions
+            {/* <AuthOptions
               description={"Don't have an account?"}
               path={"/signup"}
-            />
+            /> */}
           </LightMode>
         </CustomAuthContainer>
       </BackgroundPanel>

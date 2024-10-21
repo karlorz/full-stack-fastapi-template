@@ -26,7 +26,6 @@ import { Email, Lock, User } from "@/assets/icons.tsx"
 import CustomAuthContainer from "@/components/Auth/CustomContainer"
 import PasswordField from "@/components/Common/PasswordField"
 import type { UserRegister } from "../client"
-import AuthOptions from "../components/Auth/AuthOptions"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import EmailSent from "../components/Common/EmailSent"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
@@ -182,10 +181,10 @@ function SignUp() {
                 >
                   Sign Up
                 </Button>
-                <AuthOptions
+                {/* <AuthOptions
                   description={"Already have an account?"}
                   path={"/login"}
-                />
+                /> */}
               </LightMode>
             </CustomAuthContainer>
           </>
