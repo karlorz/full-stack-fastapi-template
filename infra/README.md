@@ -62,13 +62,17 @@ aws eks --region us-east-1 list-clusters --profile development
 
 Adjust the `--profile` to the one you configured before (probably one for `development`, one for `staging`, one for `production`).
 
+Set an env var with the cluster name:
+
+```bash
+export CLUSTER_NAME=eks-cluster-development-eksCluster-da1671d...
+```
+
 Then you can configure `kubectl` with the AWS environment:
 
 ```bash
-aws eks --region us-east-1 update-kubeconfig --name cluster_name --profile development
+aws eks --region us-east-1 update-kubeconfig --name $CLUSTER_NAME --profile development
 ```
-
-Adjust the `cluster_name` and `--profile` as needed.
 
 ### Configure the kubectl context/environment
 
@@ -336,13 +340,19 @@ Now you can continue with the rest of the scripts that will use these images.
 
 Start with `infra/deploy-helm.sh`.
 
-This script expects an environment variable `CLUSTER_NAME`. If it's run in GitHub Actions, it will be set by automatically. If you are running it locally, get it from Pulumi:
+This script expects an environment variable `CLUSTER_NAME`. If it's run in GitHub Actions, it will be set by automatically. If you are running it locally, find it in EKS:
 
 ```bash
-export CLUSTER_NAME=$(pulumi stack output cluster_name --stack 'fastapilabs/development')
+aws eks --region us-east-1 list-clusters --profile development
 ```
 
-Set the stack accordingly.
+Adjust the `--profile` to the one you configured before (probably one for `development`, one for `staging`, one for `production`).
+
+Set an env var with the cluster name:
+
+```bash
+export CLUSTER_NAME=eks-cluster-development-eksCluster-da1671d...
+```
 
 Then run:
 
@@ -357,9 +367,11 @@ This script will:
 * Use Helm to install the following Helm Charts:
     * AWS Load Balancer Controller: this creates the AWS Load Balancers allow the external world to communicate with our Kubernetes cluster. This uses the Kubernetes Service Account we created with Pulumi.
     * Cert Manager: this will manage the TLS (HTTPS) certificates obtained from Let's Encrypt. We'll configure more things later for it.
-        * It seems this needs to call the AWS Load Balancer Controller, and it might not be ready yet, so this might take a second run to install successfully.
+        * It seems this needs to call the AWS Load Balancer Controller, and it might not be ready yet, so this might **take a second run** to install successfully.
     * Ingress Nginx Controller: this manages ingress resources we deploy manually, with Kubernetes Deployments (currently none), in contrast to doing that with Knative. This uses customization values from `infra/helm-values/ingress-nginx-external-values.yaml` to enable it to use the AWS Load Balancer Controller.
 * At the end it obtains and shows the DNS name of the load balancer.
+
+**Note**: as Cert Manager might depend on the AWS Load Balancer Controller, it might need a **second run to install** successfully.
 
 We need to update the DNS records in Cloudflare to use it (with a `CNAME`). This is normally done once by hand (by Sebastián) and left configured. Later we might want to set up ExternalDNS to do it automatically. (To be reviewed and updated).
 
@@ -471,6 +483,12 @@ https://docs.docker.com/engine/install/ubuntu/
 
 ### Install AWS CLI
 
+Install `unzip` with:
+
+```bash
+sudo apt-get install unzip
+```
+
 https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 
 ### Install the GitHub Runner
@@ -483,6 +501,12 @@ Get the kubeconfig content from Pulumi, execute locally:
 
 ```bash
 pulumi stack output kubeconfig --stack 'fastapilabs/development'
+```
+
+Use the `github` user:
+
+```bash
+sudo su - github
 ```
 
 Create the directory for the kubeconfig for GitHub:
@@ -601,6 +625,8 @@ A new environment would need its own versions of `infra/Pulumi.{environment}.yam
 
 To destroy an environment in AWS do the following.
 
+* Set up the env vars for Pulumi as described in deploying with [Pulumi Manually](#pulumi-manually).
+
 * Destroy the Pulumi stack:
 
 ```bash
@@ -615,10 +641,16 @@ While Pulumi is destroying the cluster, some additional steps need to be done ma
 kubectl delete serviceaccounts default
 ```
 
-* Delete the AWS Load Balancers from the AWS Console, those were created by the AWS Load Balancer Controller. The VPC could hang deleting if there are dependencies.
+**Note**: the service account is created automatically again, you might need to delete it again if Pulumi is not yet at that point.
 
-* Delete the ECR repositories from the AWS Console, those were created by our code.
+* Delete the ECR repositories from the AWS Console, those were created by our code. The ones created by Pulumi also need to be deleted by hand because they contain images that Pulumi doesn't delete.
 
 * Delete the S3 bucket's contents and the bucket.
+
+* Delete the AWS Load Balancers from the AWS Console, those were created by the AWS Load Balancer Controller.
+
+* Delete the VPC manually from the AWS Console.
+    * There are security groups created by the AWS Load Balancer Controller that depend on the VPC and block the VPC for deletion.
+    * If Pulumi hasn't destroyed the other resources, the VPC will be blocked for deletion, wait for Pulumi to destroy them to be able to destroy the VPC.
 
 After that, the `pulumi destroy` command should be able to finish.
