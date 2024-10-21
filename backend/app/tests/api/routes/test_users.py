@@ -202,7 +202,7 @@ def test_register_user(client: TestClient, db: Session) -> None:
         patch("app.utils.get_main_settings", return_value=test_settings),
         patch("app.utils.generate_verification_email", return_value=None),
     ):
-        username = random_email()
+        username = f"{random_lower_string()}@fastapilabs.com"
         password = random_lower_string()
         full_name = random_lower_string()
         data = {"email": username, "password": password, "full_name": full_name}
@@ -232,13 +232,19 @@ def test_register_user_already_exists_error(client: TestClient) -> None:
         patch("app.utils.send_email", return_value=None),
         patch("app.utils.get_main_settings", return_value=test_settings),
     ):
+        username = f"{random_lower_string()}@fastapilabs.com"
         password = random_lower_string()
         full_name = random_lower_string()
         data = {
-            "email": settings.FIRST_SUPERUSER,
+            "email": username,
             "password": password,
             "full_name": full_name,
         }
+        r = client.post(
+            f"{settings.API_V1_STR}/users/signup",
+            json=data,
+        )
+        assert r.status_code == 200
         r = client.post(
             f"{settings.API_V1_STR}/users/signup",
             json=data,
@@ -250,8 +256,35 @@ def test_register_user_already_exists_error(client: TestClient) -> None:
         )
 
 
+def test_signup_not_allowed_email(client: TestClient) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
+    with (
+        patch("app.utils.send_email", return_value=None),
+        patch("app.utils.get_main_settings", return_value=test_settings),
+    ):
+        password = random_lower_string()
+        full_name = random_lower_string()
+        data = {
+            "email": "johndoe@example.com",
+            "password": password,
+            "full_name": full_name,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/users/signup",
+            json=data,
+        )
+        assert r.status_code == 400
+        assert (
+            r.json()["detail"]
+            == "This email has not yet been invited to join FastAPI Cloud"
+        )
+
+
 def test_register_user_empty_full_name(client: TestClient) -> None:
-    email = random_email()
+    email = f"{random_lower_string()}@fastapilabs.com"
     data = {"email": email, "password": "totally-legit", "full_name": ""}
     r = client.post(
         f"{settings.API_V1_STR}/users/signup",

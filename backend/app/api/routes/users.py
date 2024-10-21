@@ -30,6 +30,7 @@ from app.utils import (
     generate_verification_email_token,
     generate_verification_update_email,
     generate_verification_update_email_token,
+    is_allowed_recipient,
     send_email,
     verify_email_verification_token,
     verify_update_email_verification_token,
@@ -164,6 +165,11 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     """
     Create new user without the need to be logged in.
     """
+    if not is_allowed_recipient(user_in.email):
+        raise HTTPException(
+            status_code=400,
+            detail="This email has not yet been invited to join FastAPI Cloud",
+        )
     user = crud.get_user_by_email(session=session, email=user_in.email)
     if user:
         raise HTTPException(

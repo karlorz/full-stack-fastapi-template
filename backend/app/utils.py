@@ -60,9 +60,9 @@ def render_email_template(*, template_name: str, context: dict[str, Any]) -> str
 
 def is_allowed_recipient(email_to: str) -> bool:
     settings = get_main_settings()
-
-    if get_common_settings().ENVIRONMENT == "production":
-        return True
+    # TODO: Uncomment when GA
+    # if get_common_settings().ENVIRONMENT == "production":
+    #     return True
     if settings.SMTP_HOST in {
         "mailcatcher",
         "localhost",
