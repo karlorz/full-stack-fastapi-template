@@ -285,6 +285,7 @@
 
 ### Internal
 
+* 👷 Update Smokeshow CI, read contents. PR [#456](https://github.com/fastapilabs/cloud/pull/456) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add notification when Smokeshow ends. PR [#455](https://github.com/fastapilabs/cloud/pull/455) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Run Smokeshow coverage only if coverage files available. PR [#454](https://github.com/fastapilabs/cloud/pull/454) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Tweak each CI workflow to run conditionally on its own file changes. PR [#453](https://github.com/fastapilabs/cloud/pull/453) by [@tiangolo](https://github.com/tiangolo).
