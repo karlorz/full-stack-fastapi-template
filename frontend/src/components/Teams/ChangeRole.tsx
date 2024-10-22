@@ -94,13 +94,14 @@ const ChangeRole = ({
 
             <AlertDialogFooter gap={3}>
               <Button
+                variant="tertiary"
                 ref={cancelRef}
                 onClick={onClose}
                 isDisabled={isSubmitting}
               >
                 Cancel
               </Button>
-              <Button variant="danger" type="submit" isLoading={isSubmitting}>
+              <Button variant="primary" type="submit" isLoading={isSubmitting}>
                 Confirm
               </Button>
             </AlertDialogFooter>

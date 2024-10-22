@@ -1,11 +1,11 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
   Icon,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
   SkeletonText,
@@ -33,7 +33,7 @@ const MenuItemLink = ({
   onClick,
   as = Link,
 }: MenuItemLinkProps) => {
-  const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
+  const bgHover = useColorModeValue("#F3F3F3", "#252525")
   const bgMenu = useColorModeValue("white", "background.dark")
 
   return (
@@ -94,13 +94,13 @@ const UserMenu = () => {
                 <CurrentUserEmail />
               </Text>
             </Suspense>
-            <Divider />
+            <MenuDivider m={1} />
             <MenuItemLink
               to="/settings"
               icon={Settings}
               label="User Settings"
             />
-            <Divider />
+            <MenuDivider m={1} />
             <MenuItemLink
               as="button"
               icon={LogOut}

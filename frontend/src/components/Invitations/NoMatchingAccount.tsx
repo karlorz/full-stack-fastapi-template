@@ -72,7 +72,7 @@ const NoMatchingAccount = ({
         </ModalBody>
         <ModalFooter gap={3}>
           <Button
-            variant="outline"
+            variant="tertiary"
             onClick={() => {
               onClose()
               navigate({ to: "/" })

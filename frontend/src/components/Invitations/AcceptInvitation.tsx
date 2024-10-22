@@ -75,7 +75,7 @@ const AcceptInvitation = ({
             </ModalBody>
             <ModalFooter gap={3}>
               <Button
-                variant="outline"
+                variant="tertiary"
                 onClick={() => {
                   onClose()
                   navigate({ to: "/" })
@@ -84,7 +84,7 @@ const AcceptInvitation = ({
                 Cancel
               </Button>
               <Button variant="primary" onClick={handleJoinTeam}>
-                Join team
+                Join Team
               </Button>
             </ModalFooter>
           </>

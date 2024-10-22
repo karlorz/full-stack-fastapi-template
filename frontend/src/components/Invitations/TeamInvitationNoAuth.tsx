@@ -54,6 +54,7 @@ const TeamInvitationNoAuth = ({
         </ModalBody>
         <ModalFooter gap={3}>
           <Button
+            variant="secondary"
             onClick={() => {
               onClose()
               navigate({

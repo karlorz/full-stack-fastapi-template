@@ -20,7 +20,7 @@ const TransferTeam = () => {
             </FormLabel>
             <Input id="email" placeholder="Email address" type="text" />
           </FormControl>
-          <Button variant="outline" type="submit" ml={4}>
+          <Button variant="text_primary" type="submit" ml={4}>
             Transfer
           </Button>
         </Flex>

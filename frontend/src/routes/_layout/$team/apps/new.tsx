@@ -95,7 +95,7 @@ function NewApp() {
           <Text mb={4}>
             Connect your app to a source code repository to deploy it.
           </Text>
-          <Button variant="outline" colorScheme="gray" leftIcon={<FaGithub />}>
+          <Button variant="secondary" colorScheme="gray" leftIcon={<FaGithub />}>
             Connect
           </Button>
         </CustomCard> */}
@@ -128,6 +128,7 @@ function NewApp() {
               </ModalBody>
               <ModalFooter>
                 <Button
+                  variant="secondary"
                   onClick={() => {
                     onClose()
                     navigate({
@@ -169,7 +170,7 @@ function NewApp() {
                 </Text>
               </ModalBody>
               <ModalFooter>
-                <Button onClick={onClose} mt={4}>
+                <Button variant="secondary" onClick={onClose} mt={4}>
                   Ok
                 </Button>
               </ModalFooter>

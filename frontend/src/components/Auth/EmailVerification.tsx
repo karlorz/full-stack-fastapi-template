@@ -55,7 +55,7 @@ const EmailVerification = () => {
             <Text>
               Your email has been verified. You can now login to your account.
             </Text>
-            <Button mt={4} onClick={handleOkClick}>
+            <Button variant="secondary" mt={4} onClick={handleOkClick}>
               Ok
             </Button>
           </Box>
@@ -77,7 +77,7 @@ const EmailVerification = () => {
             <Text color="error.base">
               Error detail: {(mutation.error as any).body?.detail}
             </Text>
-            <Button mt={4} onClick={handleOkClick}>
+            <Button variant="secondary" mt={4} onClick={handleOkClick}>
               Ok
             </Button>
           </Box>

@@ -48,7 +48,9 @@ const UpdateEmailVerification = ({
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={onClose}>Ok</Button>
+            <Button variant="secondary" onClick={onClose}>
+              Ok
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

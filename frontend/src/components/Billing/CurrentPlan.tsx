@@ -33,7 +33,7 @@ const CurrentPlan = () => {
           </Text>
           <Link color="error.base">Cancel Subscription</Link>
         </VStack>
-        <Button variant="outline">Upgrade</Button>
+        <Button variant="secondary">Upgrade</Button>
       </HStack>
     </Container>
   )

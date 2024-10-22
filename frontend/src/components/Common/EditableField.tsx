@@ -3,7 +3,6 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
-  Icon,
   Input,
   Text,
 } from "@chakra-ui/react"
@@ -13,7 +12,6 @@ import {
   type SubmitHandler,
   useForm,
 } from "react-hook-form"
-import { AiFillEdit, AiFillSave } from "react-icons/ai"
 
 interface EditableFieldProps {
   type: string
@@ -83,13 +81,17 @@ const EditableField = ({
       {canEdit && (
         <Flex gap={2} ml={4}>
           {editMode && (
-            <Button onClick={onCancel} isDisabled={isSubmitting} size="sm">
+            <Button
+              variant="tertiary"
+              onClick={onCancel}
+              isDisabled={isSubmitting}
+              size="sm"
+            >
               Cancel
             </Button>
           )}
           <Button
-            variant="outline"
-            leftIcon={<Icon as={editMode ? AiFillSave : AiFillEdit} />}
+            variant={editMode ? "outline" : "text_primary"}
             size="sm"
             onClick={editMode ? undefined : () => setEditMode(true)}
             type={editMode ? "submit" : "button"}

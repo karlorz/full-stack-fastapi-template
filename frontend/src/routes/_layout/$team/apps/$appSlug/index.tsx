@@ -68,7 +68,7 @@ function AppDetail() {
 
   return (
     <Container maxW="full" p={0}>
-      <Heading size="lg" pb={2}>
+      <Heading size="md" pb={2}>
         {app?.name}
       </Heading>
       <Box pb={10}>

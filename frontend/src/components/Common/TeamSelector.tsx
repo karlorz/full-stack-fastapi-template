@@ -39,7 +39,7 @@ const MenuItemLink = ({
   initials,
   bg,
 }: MenuItemLinkProps) => {
-  const bgHover = useColorModeValue("#F0F0F0", "#4A5568")
+  const bgHover = useColorModeValue("#F3F3F3", "#252525")
   const bgMenu = useColorModeValue("white", "background.dark")
 
   return (
@@ -64,9 +64,9 @@ const TeamSelector = ({
   teams,
   currentTeamSlug,
 }: { teams: TeamsPublic; currentTeamSlug: string }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const bg = useColorModeValue("white", "background.dark")
   const color = useColorModeValue("text.dark", "text.light")
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const personalTeam = teams?.data.find((t) => t.is_personal_team)
   const selectedTeam = teams?.data.find((t) => t.slug === currentTeamSlug)
@@ -81,9 +81,12 @@ const TeamSelector = ({
           <MenuButton
             as={Button}
             py={6}
+            bg="none"
             w="100%"
             onClick={onOpen}
             data-testid="team-selector"
+            _hover={{ bg: "none" }}
+            _active={{ bg: "none" }}
           >
             <Flex justify="space-between">
               <Box display="flex" alignItems="center" gap={2}>
@@ -136,7 +139,7 @@ const TeamSelector = ({
                     {otherTeams?.length > 3 && (
                       <Box textAlign="end" my={2}>
                         <Button
-                          variant="link"
+                          variant="text_primary"
                           as={Link}
                           to="/teams/all"
                           color="main.dark"
@@ -158,7 +161,7 @@ const TeamSelector = ({
                     />
                   ))}
                 </MenuGroup>
-                <MenuDivider />
+                <MenuDivider m={1} />
               </>
             )}
             <MenuItemLink

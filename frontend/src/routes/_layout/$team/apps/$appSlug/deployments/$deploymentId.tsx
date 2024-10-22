@@ -40,7 +40,7 @@ function DeploymentDetail() {
   return (
     <Container maxW="full" p={0}>
       <Flex alignItems="center">
-        <Heading size="lg" textAlign={{ base: "center", md: "left" }} pb={2}>
+        <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
           Deployment details
         </Heading>
       </Flex>

@@ -94,7 +94,7 @@ function NewTeam() {
           <Plans />
         </CustomCard>
         <CustomCard title="Payment">
-          <Button mt={2} mb={4}>
+          <Button variant="secondary" mt={2} mb={4}>
             Add card
           </Button>
         </CustomCard> */}
@@ -126,6 +126,7 @@ function NewTeam() {
               </ModalBody>
               <ModalFooter gap={2}>
                 <Button
+                  variant="secondary"
                   onClick={() => {
                     onClose()
                     navigate({
@@ -167,7 +168,7 @@ function NewTeam() {
                 </Text>
               </ModalBody>
               <ModalFooter>
-                <Button onClick={onClose} mt={4}>
+                <Button variant="secondary" onClick={onClose} mt={4}>
                   Ok
                 </Button>
               </ModalFooter>

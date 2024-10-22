@@ -84,8 +84,8 @@ const SidebarItems = ({
   teams,
   currentTeamSlug,
 }: SidebarItemsProps) => {
-  const bgHover = useColorModeValue("#F7F7F7", "#5A6578")
-  const bgActive = useColorModeValue("#F3F3F3", "#4A5568")
+  const bgHover = useColorModeValue("#F3F3F3", "#252525")
+  const bgActive = useColorModeValue("#F3F3F3", "#252525")
   const fontColor = useColorModeValue("#00667A", "#FAFAFA")
 
   const items = getSidebarItems({ team: currentTeamSlug })

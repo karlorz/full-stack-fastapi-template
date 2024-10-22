@@ -24,11 +24,11 @@ const NotFound = () => {
         <Text fontSize="md">Oops!</Text>
         <Text fontSize="md">Page not found.</Text>
         <Button
+          variant="tertiary"
           as={Link}
           to="/"
           color="main.dark"
           borderColor="main.dark"
-          variant="outline"
           mt={4}
         >
           Go back

@@ -39,7 +39,7 @@ const EmailSent = ({ email }: { email: string }) => {
             instructions. Check your spam folder if you don't see it in your
             inbox.
           </Text>
-          <Button mt={4} onClick={handleOkClick}>
+          <Button variant="secondary" mt={4} onClick={handleOkClick}>
             Ok
           </Button>
         </Box>

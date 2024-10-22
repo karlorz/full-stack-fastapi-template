@@ -68,7 +68,7 @@ const ChangePassword = () => {
             />
           </VStack>
           <Button
-            variant="outline"
+            variant="secondary"
             mt={4}
             type="submit"
             isLoading={isSubmitting}

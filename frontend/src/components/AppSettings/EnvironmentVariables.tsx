@@ -366,7 +366,7 @@ const EnvironmentVariables = ({
 
       {shouldShowAddEnvironmentVariable ? (
         <GridItem colSpan={3}>
-          <Button type="button" onClick={handleAddNew}>
+          <Button variant="secondary" type="button" onClick={handleAddNew}>
             Add Environment Variable
           </Button>
         </GridItem>
@@ -377,6 +377,7 @@ const EnvironmentVariables = ({
           {isEditing ? (
             <>
               <Button
+                variant="tertiary"
                 type="button"
                 onClick={() => {
                   setIsEditing(false)
@@ -385,13 +386,22 @@ const EnvironmentVariables = ({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isPending}>
-                {isPending ? "Saving..." : "Save"}
+              <Button
+                variant="secondary"
+                type="submit"
+                disabled={isPending}
+                isLoading={isPending}
+              >
+                Save
               </Button>
             </>
           ) : (
             <>
-              <Button type="button" onClick={() => setIsEditing(true)}>
+              <Button
+                variant="text_primary"
+                type="button"
+                onClick={() => setIsEditing(true)}
+              >
                 Edit
               </Button>
             </>

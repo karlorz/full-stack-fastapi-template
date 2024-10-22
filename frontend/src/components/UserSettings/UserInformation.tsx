@@ -74,7 +74,7 @@ const UserInformationContent = () => {
         </CustomCard>
         {/* TODO: Complete this when GitHub integration it's ready */}
         {/* <CustomCard title="Connect with Github">
-          <Button variant="outline" colorScheme="gray" leftIcon={<FaGithub />}>
+          <Button variant="secondary" colorScheme="gray" leftIcon={<FaGithub />}>
             Connect
           </Button>
         </CustomCard> */}

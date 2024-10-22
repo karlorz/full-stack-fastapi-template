@@ -59,7 +59,7 @@ const Plans = () => {
               </Flex>
             ))}
           </List>
-          <Button mt={6} variant="outline">
+          <Button variant="secondary" mt={6}>
             Choose Plan
           </Button>
         </VStack>

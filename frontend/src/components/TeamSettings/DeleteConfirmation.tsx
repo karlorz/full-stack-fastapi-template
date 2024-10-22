@@ -130,6 +130,7 @@ const DeleteConfirmation = ({ teamId, isOpen, onClose }: DeleteProps) => {
 
             <AlertDialogFooter gap={3}>
               <Button
+                variant="tertiary"
                 ref={cancelRef}
                 onClick={onClose}
                 isDisabled={isSubmitting}

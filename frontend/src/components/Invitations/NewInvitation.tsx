@@ -147,7 +147,7 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
               </Text>
             </ModalBody>
             <ModalFooter>
-              <Button onClick={handleClose} mt={4}>
+              <Button variant="secondary" onClick={handleClose} mt={4}>
                 Ok
               </Button>
             </ModalFooter>
@@ -183,7 +183,7 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
               </Text>
             </ModalBody>
             <ModalFooter>
-              <Button onClick={handleClose} mt={4}>
+              <Button variant="secondary" onClick={handleClose} mt={4}>
                 Ok
               </Button>
             </ModalFooter>

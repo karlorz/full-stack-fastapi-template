@@ -45,10 +45,12 @@ const Footer = () => {
               <Textarea placeholder="Your comments" mb={3} />
             </PopoverBody>
             <PopoverFooter>
-              <ButtonGroup size="sm">
-                <Button>Submit</Button>
-                <Button variant="outline">Cancel</Button>
-              </ButtonGroup>
+              <Flex justify="flex-end">
+                <ButtonGroup size="sm">
+                  <Button variant="tertiary">Cancel</Button>
+                  <Button variant="secondary">Submit</Button>
+                </ButtonGroup>
+              </Flex>
             </PopoverFooter>
           </PopoverContent>
         </Popover>

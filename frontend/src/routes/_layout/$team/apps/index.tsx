@@ -124,7 +124,7 @@ function Apps() {
 
   return (
     <Container maxW="full" p={0}>
-      <Heading size="lg" textAlign={{ base: "center", md: "left" }} pb={2}>
+      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
         Apps
       </Heading>
       <Text>View and manage apps related to your team.</Text>

@@ -114,6 +114,7 @@ function AuthorizeDevice() {
             </Box>
 
             <Button
+              variant="secondary"
               isLoading={mutation.isPending}
               onClick={() => mutation.mutate()}
             >

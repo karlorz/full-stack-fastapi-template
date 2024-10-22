@@ -44,7 +44,9 @@ function Dashboard() {
           <Text mt={2}>
             Last deployment was successful. Your app is up and running.
           </Text>
-          <Button mt={4}>View Deployment</Button>
+          <Button variant="secondary" mt={4}>
+            View Deployment
+          </Button>
         </CustomCard>
 
         {/* TODO: Finalize once real data is available */}

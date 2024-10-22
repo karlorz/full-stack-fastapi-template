@@ -124,7 +124,9 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
                 </AlertDialogBody>
 
                 <AlertDialogFooter>
-                  <Button onClick={onClose}>Ok</Button>
+                  <Button variant="secondary" onClick={onClose}>
+                    Ok
+                  </Button>
                 </AlertDialogFooter>
               </>
             ) : (
@@ -177,6 +179,7 @@ const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
 
                 <AlertDialogFooter gap={3}>
                   <Button
+                    variant="tertiary"
                     ref={cancelRef}
                     onClick={onClose}
                     isDisabled={isSubmitting}
