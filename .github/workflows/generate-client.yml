@@ -7,7 +7,33 @@ on:
     - synchronize
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
+      contents: read
+    # Set job outputs to values from filter step
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+    steps:
+    - uses: actions/checkout@v4
+    # For pull requests it's not necessary to checkout the code but for the main branch it is
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          changed:
+            - backend/**
+            - frontend/**
+            - .env
+            - scripts/generate-client.sh
+            - .github/workflows/generate-client.yml
+
   generate-client:
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.changed == 'true' }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -55,3 +81,16 @@ jobs:
       if: ( github.event_name == 'pull_request' && github.secret_source != 'Actions' )
       run: |
         git diff --staged --quiet || (echo "Changes detected in generated client, run scripts/generate-client.sh and commit the changes" && exit 1)
+
+  # https://github.com/marketplace/actions/alls-green#why
+  alls-green-generate-client:  # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+      - generate-client
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+          allowed-skips: generate-client

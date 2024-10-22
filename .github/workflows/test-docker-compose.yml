@@ -10,7 +10,33 @@ on:
       - synchronize
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
+      contents: read
+    # Set job outputs to values from filter step
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+    steps:
+    - uses: actions/checkout@v4
+    # For pull requests it's not necessary to checkout the code but for the main branch it is
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          changed:
+            - backend/**
+            - frontend/**
+            - .env
+            - compose.yml
+            - .github/workflows/test-docker-compose.yml
+
   test-docker-compose:
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,3 +51,16 @@ jobs:
       - name: Test frontend is up
         run: curl http://localhost:5173
       - run: docker compose down -v --remove-orphans
+
+  # https://github.com/marketplace/actions/alls-green#why
+  alls-green-test-docker-compose:  # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+      - test-docker-compose
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+          allowed-skips: test-docker-compose

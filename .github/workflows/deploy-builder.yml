@@ -4,15 +4,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'backend/app/*'
-      - 'backend/Dockerfile.builder'
-      - 'backend/Dockerfile.build'
-      - 'backend/builder_entrypoint.sh'
-      - 'backend/pyproject.toml'
-      - 'backend/uv.lock'
-      - 'infra/k8s/builder/builder.yaml'
-      - '.github/workflows/deploy-builder.yml'
   workflow_dispatch:
     inputs:
       environment:
@@ -25,8 +16,32 @@ env:
   ECR_REPOSITORY: fastapicloud-builder
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
+      contents: read
+    # Set job outputs to values from filter step
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+    steps:
+    - uses: actions/checkout@v4
+    # For pull requests it's not necessary to checkout the code but for the main branch it is
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          changed:
+            - backend/**
+            - .env
+            - infra/k8s/builder/builder.yaml
+            - .github/workflows/deploy-builder.yml
+
   deploy-builder:
-    if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.changed == 'true' }}
     name: Deploy Builder
     strategy:
       matrix:
@@ -77,3 +92,16 @@ jobs:
 
         # Secrets for the builder
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
+
+  # https://github.com/marketplace/actions/alls-green#why
+  alls-green-deploy-builder:  # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+      - deploy-builder
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+          allowed-skips: deploy-builder

@@ -16,8 +16,33 @@ on:
         default: 'false'
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
+      contents: read
+    # Set job outputs to values from filter step
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+    steps:
+    - uses: actions/checkout@v4
+    # For pull requests it's not necessary to checkout the code but for the main branch it is
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          changed:
+            - backend/**
+            - frontend/**
+            - .env
+            - compose.yml
+            - .github/workflows/playwright.yml
 
-  test:
+  test-playwright:
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.changed == 'true' }}
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
@@ -49,7 +74,6 @@ jobs:
     - run: docker compose up -d --wait backend
       env:
         ENABLE_PRIVATE_API: true
-
     - name: Run Playwright tests
       run: npx playwright test --fail-on-flaky-tests --trace=retain-on-failure --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       working-directory: frontend
@@ -62,11 +86,12 @@ jobs:
         path: frontend/blob-report
         retention-days: 1
 
-  merge-reports:
+  merge-playwright-reports:
+    needs:
+      - test-playwright
+      - changes
     # Merge reports after playwright-tests, even if some shards have failed
-    if: ${{ !cancelled() }}
-    needs: [test]
-
+    if: ${{ !cancelled() && needs.changes.outputs.paths == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -76,18 +101,15 @@ jobs:
     - name: Install dependencies
       run: npm ci
       working-directory: frontend
-
     - name: Download blob reports from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
       with:
         path: frontend/all-blob-reports
         pattern: blob-report-*
         merge-multiple: true
-
     - name: Merge into HTML Report
       run: npx playwright merge-reports --reporter html ./all-blob-reports
       working-directory: frontend
-
     - name: Upload HTML report
       uses: actions/upload-artifact@v4
       with:
@@ -97,13 +119,14 @@ jobs:
 
 
   # https://github.com/marketplace/actions/alls-green#why
-  e2e-alls-green:  # This job does nothing and is only used for the branch protection
+  alls-green-playwright:  # This job does nothing and is only used for the branch protection
     if: always()
     needs:
-      - test
+      - test-playwright
     runs-on: ubuntu-latest
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
         with:
           jobs: ${{ toJSON(needs) }}
+          allowed-skips: test-playwright

@@ -7,7 +7,30 @@ on:
     - synchronize
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
+      contents: read
+    # Set job outputs to values from filter step
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+    steps:
+    - uses: actions/checkout@v4
+    # For pull requests it's not necessary to checkout the code but for the main branch it is
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          changed:
+            - frontend/**
+            - .github/workflows/format-frontend.yml
+
   format-frontend:
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.changed == 'true' }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -47,3 +70,16 @@ jobs:
       if: ( github.event_name == 'pull_request' && github.secret_source != 'Actions' )
       run: |
         git diff --staged --quiet || (echo "Changes detected in, run npm run biome-check and npm run biome-format and commit the changes" && exit 1)
+
+  # https://github.com/marketplace/actions/alls-green#why
+  alls-green-format-frontend:  # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+      - format-frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+          allowed-skips: format-frontend

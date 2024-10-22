@@ -15,7 +15,30 @@ on:
         default: 'false'
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
+      contents: read
+    # Set job outputs to values from filter step
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+    steps:
+    - uses: actions/checkout@v4
+    # For pull requests it's not necessary to checkout the code but for the main branch it is
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          changed:
+            - infra/**
+            - .github/workflows/pulumi-preview.yml
+
   pulumi-deploy:
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.changed == 'true' }}
     name: Pulumi Deploy
     runs-on: ubuntu-latest
     environment: ${{ github.event_name == 'release' && 'production' || 'staging' }}
@@ -61,3 +84,16 @@ jobs:
           DEPLOYMENT_ENVIRONMENT: ${{ github.event_name == 'release' && 'production' || 'staging' }}
       - run: rm kubeconfig.json
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
+
+  # https://github.com/marketplace/actions/alls-green#why
+  alls-green-pulumi-deploy:  # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+      - pulumi-deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+          allowed-skips: pulumi-deploy
