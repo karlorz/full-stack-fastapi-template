@@ -78,6 +78,24 @@ jobs:
           path: backend/htmlcov
           include-hidden-files: true
 
+  skip-coverage:
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.changed != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - run: |
+          mkdir -p backend/htmlcov/
+          touch backend/htmlcov/.skip
+      - name: Store coverage files
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: backend/htmlcov
+          include-hidden-files: true
+
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-test-backend:  # This job does nothing and is only used for the branch protection
     if: always()
