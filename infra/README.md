@@ -645,6 +645,12 @@ Configure it to use connection pool.
 
 Add GitHub Environment secrets and variables copying from another environment and updating.
 
+### Cloudflare Pages
+
+Create a new Cloudflare Pages project and deploy once by hand so that the project exists.
+
+Update the GitHub Environment variable `CLOUDFLARE_PAGES_PROJECT_NAME` with the new project name.
+
 ## Destroy an AWS Environment
 
 To destroy an environment in AWS do the following.
