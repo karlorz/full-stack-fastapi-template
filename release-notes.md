@@ -285,6 +285,7 @@
 
 ### Internal
 
+* 👷 Tweak each CI workflow to run conditionally on its own file changes. PR [#453](https://github.com/fastapilabs/cloud/pull/453) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update CI to allow deploying to prod. PR [#450](https://github.com/fastapilabs/cloud/pull/450) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Fix GitHub Runner disk on same instance. PR [#443](https://github.com/fastapilabs/cloud/pull/443) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Update Dockefiles to use non-root user. PR [#442](https://github.com/fastapilabs/cloud/pull/442) by [@tiangolo](https://github.com/tiangolo).
