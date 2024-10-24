@@ -161,8 +161,6 @@ class MainSettings(SettingsEnv):
     FIRST_SUPERUSER_PASSWORD: str
     FIRST_SUPERUSER_FULL_NAME: str
 
-    ENABLE_PRIVATE_API: bool = False
-
     @model_validator(mode="after")
     def _enforce_non_default_secrets(self) -> Self:
         _check_default_secret("SECRET_KEY", self.SECRET_KEY)
