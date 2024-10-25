@@ -285,6 +285,7 @@
 
 ### Internal
 
+* 👷 Use Depot to build the Docker Compose images. PR [#463](https://github.com/fastapilabs/cloud/pull/463) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Use Depot for GitHub Actions runners. PR [#462](https://github.com/fastapilabs/cloud/pull/462) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Enable private API based on environment, not dedicated env var. PR [#458](https://github.com/fastapilabs/cloud/pull/458) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update Smokeshow command. PR [#459](https://github.com/fastapilabs/cloud/pull/459) by [@tiangolo](https://github.com/tiangolo).
