@@ -126,6 +126,7 @@
 
 ### Refactors
 
+* 🔧 Add env vars for Playwright tests. PR [#465](https://github.com/fastapilabs/cloud/pull/465) by [@tiangolo](https://github.com/tiangolo).
 * 💄 Improve color palette. PR [#436](https://github.com/fastapilabs/cloud/pull/436) by [@alejsdev](https://github.com/alejsdev).
 * 🔒️ Disallow registering emails not from FastAPI Labs. PR [#451](https://github.com/fastapilabs/cloud/pull/451) by [@tiangolo](https://github.com/tiangolo).
 * 🙈 Hide Google and Github auth options and Sign Up link. PR [#448](https://github.com/fastapilabs/cloud/pull/448) by [@alejsdev](https://github.com/alejsdev).
