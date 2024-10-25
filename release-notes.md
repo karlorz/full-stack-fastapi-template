@@ -285,6 +285,7 @@
 
 ### Internal
 
+* 👷 Use Depot for GitHub Actions runners. PR [#462](https://github.com/fastapilabs/cloud/pull/462) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Enable private API based on environment, not dedicated env var. PR [#458](https://github.com/fastapilabs/cloud/pull/458) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Update Smokeshow command. PR [#459](https://github.com/fastapilabs/cloud/pull/459) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Update pulumi-eks requirement from <3.0.0,>=2.0.0 to >=2.0.0,<4.0.0. PR [#446](https://github.com/fastapilabs/cloud/pull/446) by [@dependabot[bot]](https://github.com/apps/dependabot).
