@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   changes:
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-22.04
     # Required permissions
     permissions:
       pull-requests: read
@@ -54,7 +54,7 @@ jobs:
         # TODO: once production is stable, disallow deploying to production from workflow_dispatch
         environment: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.environment)) || fromJson('["staging", "development"]') }}
     environment: ${{ matrix.environment }}
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-22.04
     steps:
       - name: Dump GitHub context
         env:
@@ -109,7 +109,7 @@ jobs:
     if: always()
     needs:
       - build-and-deploy-ui
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-22.04
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1

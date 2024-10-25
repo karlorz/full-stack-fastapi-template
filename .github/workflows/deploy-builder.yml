@@ -17,7 +17,7 @@ env:
 
 jobs:
   changes:
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-22.04
     # Required permissions
     permissions:
       pull-requests: read
@@ -98,7 +98,7 @@ jobs:
     if: always()
     needs:
       - deploy-builder
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-22.04
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1

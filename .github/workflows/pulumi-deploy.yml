@@ -16,7 +16,7 @@ on:
 
 jobs:
   changes:
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-22.04
     # Required permissions
     permissions:
       pull-requests: read
@@ -40,7 +40,7 @@ jobs:
       - changes
     if: ${{ needs.changes.outputs.changed == 'true' }}
     name: Pulumi Deploy
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-22.04
     environment: ${{ github.event_name == 'release' && 'production' || 'staging' }}
     steps:
       - uses: actions/checkout@v4
@@ -90,7 +90,7 @@ jobs:
     if: always()
     needs:
       - pulumi-deploy
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-22.04
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
