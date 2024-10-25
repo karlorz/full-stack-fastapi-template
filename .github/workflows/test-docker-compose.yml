@@ -38,10 +38,18 @@ jobs:
       - changes
     if: ${{ needs.changes.outputs.changed == 'true' }}
     runs-on: depot-ubuntu-22.04
+    # Permissions for Depot Docker build
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - run: docker compose build
+      - uses: depot/setup-action@v1
+      # - run: docker compose build
+      - run: depot bake --load
+        env:
+          DEPOT_PROJECT_ID: ${{ vars.DEPOT_PROJECT_ID }}
       - run: docker compose down -v --remove-orphans
       - run: docker compose up -d --wait
       - name: Test backend is up
