@@ -2,7 +2,7 @@ import { OpenAPI } from "../../src/client"
 import { PrivateService } from "../../src/client/services"
 
 // TODO: from env
-OpenAPI.BASE = "http://127.0.0.1:8000"
+OpenAPI.BASE = `${process.env.VITE_API_URL}`
 
 export const createUser = async ({
   email,

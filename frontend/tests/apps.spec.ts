@@ -25,7 +25,6 @@ test.describe("Apps empty states", () => {
     const team = randomTeamName()
     const teamSlug = slugify(team)
 
-    const appName = randomAppName()
     await signUpNewUser(page, fullName, email, password, request)
     await logInUser(page, email, password)
     await createTeam(page, team)

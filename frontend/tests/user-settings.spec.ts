@@ -68,7 +68,9 @@ test.describe("Edit user full name and email successfully", () => {
       timeout: 5000,
     })
 
-    await page.goto(`http://localhost:1080/messages/${emailData.id}.html`)
+    await page.goto(
+      `${process.env.MAILCATCHER_HOST}/messages/${emailData.id}.html`,
+    )
 
     const selector = 'a[href*="/verify-update-email?token="]'
 
@@ -162,7 +164,7 @@ test.describe("Change password successfully", () => {
     await page.getByRole("button", { name: "Save" }).click()
     await expect(page.getByText("Password updated successfully")).toBeVisible()
 
-    await logOutUser(page, fullName)
+    await logOutUser(page)
 
     // Check if the user can log in with the new password
     await logInUser(page, email, NewPassword)
@@ -297,7 +299,7 @@ test("Selected mode is preserved across sessions", async ({ page }) => {
   )
   expect(isDarkMode).toBe(true)
 
-  await logOutUser(page, "fastapi admin")
+  await logOutUser(page)
   await logInUser(page, "admin@example.com", "changethis")
 
   isDarkMode = await page.evaluate(() =>

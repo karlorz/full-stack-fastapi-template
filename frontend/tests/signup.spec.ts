@@ -88,7 +88,9 @@ test("Sign up with valid name, email, and password", async ({
     timeout: 5000,
   })
 
-  await page.goto(`http://localhost:1080/messages/${emailData.id}.html`)
+  await page.goto(
+    `${process.env.MAILCATCHER_HOST}/messages/${emailData.id}.html`,
+  )
 
   const selector = 'a[href*="/verify-email?token="]'
 

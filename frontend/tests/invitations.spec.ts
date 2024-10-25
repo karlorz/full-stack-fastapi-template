@@ -117,7 +117,7 @@ test.describe("User can accept invitations to a team", () => {
     await page.goto(`/${teamSlug}`)
     await sendInvitation(page, teamSlug, user2Email)
     await page.getByRole("button", { name: "Ok" }).click()
-    await logOutUser(page, teamName)
+    await logOutUser(page)
 
     // user 2 logs in and accepts the invitation
     await logInUser(page, user2Email, "password")
@@ -128,7 +128,9 @@ test.describe("User can accept invitations to a team", () => {
       timeout: 5000,
     })
 
-    await page.goto(`http://localhost:1080/messages/${emailData.id}.html`)
+    await page.goto(
+      `${process.env.MAILCATCHER_HOST}/messages/${emailData.id}.html`,
+    )
 
     const selector = 'a[href*="/team-invitation?token="]'
     let url = await page.getAttribute(selector, "href")
@@ -141,7 +143,7 @@ test.describe("User can accept invitations to a team", () => {
       page.getByText(`You are now a member of ${teamName}`),
     ).toBeVisible()
     await page.getByRole("button", { name: "Ok" }).click()
-    await logOutUser(page, user2Name)
+    await logOutUser(page)
 
     // check if user was added to the team members list
     await logInUser(page, user1Email, "password")
@@ -178,7 +180,7 @@ test.describe("Different scenarios for viewing invitations", () => {
     await page.goto(`/${teamSlug}`)
     await sendInvitation(page, teamSlug, user2Email)
     await page.getByRole("button", { name: "Ok" }).click()
-    await logOutUser(page, teamName)
+    await logOutUser(page)
 
     // view invitation logged out
     await viewInvitation(page, user2Email, request)
@@ -207,7 +209,7 @@ test.describe("Different scenarios for viewing invitations", () => {
     await page.goto(`/${teamSlug}`)
     await sendInvitation(page, teamSlug, user2Email)
     await page.getByRole("button", { name: "Ok" }).click()
-    await logOutUser(page, teamName)
+    await logOutUser(page)
 
     // user 3 logs in and tries to view the invitation
     await logInUser(page, user3Email, "password")

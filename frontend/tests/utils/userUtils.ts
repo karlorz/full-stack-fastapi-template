@@ -22,7 +22,9 @@ export async function signUpNewUser(
     timeout: 5000,
   })
 
-  await page.goto(`http://localhost:1080/messages/${emailData.id}.html`)
+  await page.goto(
+    `${process.env.MAILCATCHER_HOST}/messages/${emailData.id}.html`,
+  )
 
   const selector = 'a[href*="/verify-email?token="]'
 
@@ -59,7 +61,7 @@ export async function createTeam(page: Page, name: string) {
   await expect(page.getByText("Team created")).toBeVisible()
 }
 
-export async function logOutUser(page: Page, name: string) {
+export async function logOutUser(page: Page) {
   await page.getByTestId("user-menu").click()
   await page.getByRole("menuitem", { name: "Log out" }).click()
   await page.goto("/login")
@@ -87,7 +89,9 @@ export async function viewInvitation(
     timeout: 5000,
   })
 
-  await page.goto(`http://localhost:1080/messages/${emailData.id}.html`)
+  await page.goto(
+    `${process.env.MAILCATCHER_HOST}/messages/${emailData.id}.html`,
+  )
 
   const selector = 'a[href*="/team-invitation?token="]'
   let url = await page.getAttribute(selector, "href")
