@@ -287,6 +287,7 @@
 
 ### Internal
 
+* 👷 Update Playwright CI and Docker Compose to use depends on backend and mailcatcher. PR [#468](https://github.com/fastapilabs/cloud/pull/468) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Run Playwright on Docker for performance. PR [#466](https://github.com/fastapilabs/cloud/pull/466) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Use Depot to build the Docker Compose images. PR [#463](https://github.com/fastapilabs/cloud/pull/463) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Use Depot for GitHub Actions runners. PR [#462](https://github.com/fastapilabs/cloud/pull/462) by [@tiangolo](https://github.com/tiangolo).
