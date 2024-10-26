@@ -8,7 +8,7 @@ import useCustomToast from "@/hooks/useCustomToast"
 import { handleError, nameRules } from "@/utils"
 import CustomCard from "../Common/CustomCard"
 import EditableField from "../Common/EditableField"
-import UpdateEmailVerification from "../Common/UpdateEmailVerification"
+import UpdateEmailInfo from "../Common/UpdateEmailInfo"
 import ChangePassword from "./ChangePassword"
 import DeleteAccount from "./DeleteAccount"
 
@@ -83,7 +83,7 @@ const UserInformationContent = () => {
         </CustomCard>
       </Container>
       {showUpdateEmailModal && (
-        <UpdateEmailVerification isOpen={isOpen} onClose={onClose} />
+        <UpdateEmailInfo isOpen={isOpen} onClose={onClose} />
       )}
     </>
   )

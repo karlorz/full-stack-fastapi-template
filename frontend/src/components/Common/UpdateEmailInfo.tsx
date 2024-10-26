@@ -15,10 +15,7 @@ interface UpdateEmailVerificationProps {
   onClose: () => void
 }
 
-const UpdateEmailVerification = ({
-  isOpen,
-  onClose,
-}: UpdateEmailVerificationProps) => {
+const UpdateEmailInfo = ({ isOpen, onClose }: UpdateEmailVerificationProps) => {
   return (
     <>
       <Modal
@@ -58,4 +55,4 @@ const UpdateEmailVerification = ({
   )
 }
 
-export default UpdateEmailVerification
+export default UpdateEmailInfo

@@ -5,7 +5,7 @@ import { useEffect } from "react"
 
 import { UsersService } from "../../client"
 
-const UpdateEmailVerification = () => {
+const VerifyEmailUpdate = () => {
   const token = new URLSearchParams(window.location.search).get("token")
 
   const verifyEmail = async (token: string) => {
@@ -79,4 +79,4 @@ const UpdateEmailVerification = () => {
   )
 }
 
-export default UpdateEmailVerification
+export default VerifyEmailUpdate
