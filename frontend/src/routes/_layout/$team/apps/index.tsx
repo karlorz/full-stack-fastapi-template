@@ -96,7 +96,9 @@ function Apps() {
   const { page = 1, order, orderBy } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
-    navigate({ search: (prev: any) => ({ ...prev, page }) })
+    navigate({
+      search: (prev: { [key: string]: string }) => ({ ...prev, page }),
+    })
   const queryClient = useQueryClient()
 
   const {

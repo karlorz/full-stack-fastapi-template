@@ -90,7 +90,9 @@ function AllTeams() {
   const { page = 1, orderBy, order } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
-    navigate({ search: (prev: any) => ({ ...prev, page }) })
+    navigate({
+      search: (prev: { [key: string]: string }) => ({ ...prev, page }),
+    })
 
   const {
     teams: { data },
