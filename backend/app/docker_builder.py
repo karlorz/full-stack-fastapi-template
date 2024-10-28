@@ -12,10 +12,11 @@ import boto3
 import docker
 import sentry_sdk
 from botocore.exceptions import ClientError, NoCredentialsError
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI
 from kubernetes import client as k8s
 from kubernetes import config
 from pydantic import BaseModel
+from sqlalchemy.orm import joinedload
 from sqlmodel import Session, select
 
 from app.core.config import (
@@ -25,7 +26,7 @@ from app.core.config import (
     get_main_settings,
 )
 from app.core.db import engine
-from app.models import Deployment, DeploymentStatus, EnvironmentVariable
+from app.models import App, Deployment, DeploymentStatus, EnvironmentVariable
 
 # aws vars
 aws_region = get_builder_settings().AWS_REGION
@@ -42,13 +43,23 @@ docker_client = docker.from_env()
 
 # Kubernetes client
 @lru_cache
-def get_kubernetes_client() -> k8s.CustomObjectsApi:
+def get_kubernetes_client_custom_objects() -> k8s.CustomObjectsApi:
     if os.getenv("CI"):
         config.load_kube_config()
     else:
         config.load_incluster_config()
 
     return k8s.CustomObjectsApi()
+
+
+@lru_cache
+def get_kubernetes_client_core_v1() -> k8s.CoreV1Api:
+    if os.getenv("CI"):
+        config.load_kube_config()
+    else:
+        config.load_incluster_config()
+
+    return k8s.CoreV1Api()
 
 
 # Sentry
@@ -75,6 +86,30 @@ def get_db() -> Generator[Session, None, None]:
 SessionDep = Annotated[Session, Depends(get_db)]
 
 
+def create_namespace_by_team(namespace: str) -> None:
+    api_instance = get_kubernetes_client_core_v1()
+
+    try:
+        api_instance.read_namespace(name=namespace)  # type: ignore
+        print(
+            f"Namespace '{namespace}' already exists."
+        )  # if there is no error, the namespace exists
+    except k8s.rest.ApiException as e:
+        if e.status == 404:
+            namespace_body = k8s.V1Namespace(metadata=k8s.V1ObjectMeta(name=namespace))
+            try:
+                api_instance.create_namespace(namespace_body)  # type: ignore
+                print(
+                    f"Namespace '{namespace}' created."
+                )  # if there is no error, the namespace was created
+            except k8s.rest.ApiException as ex:
+                print(f"Error creating namespace: {ex}")
+                raise ex
+        else:
+            print(f"Error reading namespace: {e}")
+            raise e
+
+
 def create_or_patch_custom_object(
     group: str,
     version: str,
@@ -83,7 +118,7 @@ def create_or_patch_custom_object(
     name: str,
     body: dict[str, Any],
 ) -> None:
-    api_instance = get_kubernetes_client()
+    api_instance = get_kubernetes_client_custom_objects()
 
     try:
         # Try to get the custom object
@@ -131,7 +166,12 @@ def deploy_cloud(
     env_strs = {k: str(v) for k, v in env_data.items()}
 
     deploy_to_kubernetes(
-        service_name, image_url, image_sha256_hash, min_scale=min_scale, env=env_strs
+        service_name,
+        image_url,
+        image_sha256_hash,
+        namespace="default",
+        min_scale=min_scale,
+        env=env_strs,
     )
 
 
@@ -139,6 +179,7 @@ def deploy_to_kubernetes(
     service_name: str,
     image_url: str,
     image_sha256_hash: str,
+    namespace: str,
     min_scale: int = 0,
     env: dict[str, str] | None = None,
 ) -> None:
@@ -148,6 +189,7 @@ def deploy_to_kubernetes(
         "kind": "Service",
         "metadata": {
             "name": service_name,
+            "namespace": namespace,
         },
         "spec": {
             "template": {
@@ -171,8 +213,9 @@ def deploy_to_kubernetes(
         },
     }
 
-    namespace = "default"  # Replace with your namespace if needed
-    # TODO: add a namespace per customer
+    ## TODO: Add resource limits and quotas by namespace
+    create_namespace_by_team(namespace)
+
     create_or_patch_custom_object(
         group="serving.knative.dev",
         version="v1",
@@ -298,10 +341,15 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
     object_name = object_key.split("/")[-1]
     object_id = object_name.split(".")[0]
 
-    smt = select(Deployment).where(Deployment.id == object_id)
-    deployment = session.exec(smt).first()
-    if deployment is None:
-        raise HTTPException(status_code=404, detail="Deployment not found")
+    deployment_with_team = session.exec(
+        select(Deployment)
+        .options(joinedload(Deployment.app).joinedload(App.team))  # type: ignore
+        .where(Deployment.id == object_id)
+    ).first()
+    if deployment_with_team is None:
+        raise RuntimeError("Deployment not found")
+
+    team = deployment_with_team.app.team
 
     # Create a temporary directory for the build context
     build_context = f"/tmp/{object_id}/build_context"
@@ -309,10 +357,10 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
         shutil.rmtree(build_context)
     os.makedirs(build_context)
 
-    app_name = deployment.slug
+    app_name = deployment_with_team.slug
 
     # Update status to building
-    deployment.status = DeploymentStatus.building
+    deployment_with_team.status = DeploymentStatus.building
     session.commit()
 
     # Download and extract the tar file
@@ -334,16 +382,17 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
     sha256 = build_and_push_docker_image(image_tag, build_context, registry_url)
 
     # Update status to deploying
-    deployment.status = DeploymentStatus.deploying
+    deployment_with_team.status = DeploymentStatus.deploying
     session.commit()
 
-    env_vars = get_env_vars(deployment.app_id, session)
+    env_vars = get_env_vars(deployment_with_team.app_id, session)
 
     # Deploy to Kubernetes
     deploy_to_kubernetes(
         service_name=app_name,
         image_url=f"{registry_url}/{image_tag}",
         image_sha256_hash=sha256,
+        namespace=f"team-{team.id}",
         env=env_vars,
     )
 
@@ -351,7 +400,7 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
     shutil.rmtree(build_context)
 
     # Update status to success
-    deployment.status = DeploymentStatus.success
+    deployment_with_team.status = DeploymentStatus.success
     session.commit()
 
 
@@ -382,3 +431,7 @@ class HealthCheckResponse(BaseModel):
 @app.get("/health-check/", response_model=HealthCheckResponse)
 def health_check() -> Any:
     return HealthCheckResponse(message="OK")
+
+
+# dump comment
+# TODO: separate service accounts for better security

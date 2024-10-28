@@ -1,27 +1,55 @@
 # Reference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/
-# This role is used to allow Knative Serving to create services
+
+# Namespace management ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  name: knative-service-manager
-  namespace: default  # Adjust the namespace as needed
+  name: namespace-manager
 rules:
-- apiGroups: ["serving.knative.dev"]
-  resources: ["services"]
-  verbs: ["create", "get", "patch"]
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get", "create"]
 
 ---
 
+# Knative service management ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRole
 metadata:
-  name: knative-service-manager-binding
-  namespace: default  # Adjust the namespace as needed
+  name: knative-service-manager
+rules:
+- apiGroups: ["serving.knative.dev"]
+  resources: ["services"]
+  verbs: ["create", "get", "patch", "update", "delete", "list", "watch"]
+
+---
+
+# Namespace management ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: knative-namespace-manager-binding
 subjects:
 - kind: ServiceAccount
-  name: default  # Adjust if your service account has a different name
-  namespace: default  # Adjust the namespace as needed
+  name: default
+  namespace: default
 roleRef:
-  kind: Role
+  kind: ClusterRole
+  name: namespace-manager
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+# Knative service management ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: knative-service-manager-binding
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+roleRef:
+  kind: ClusterRole
   name: knative-service-manager
   apiGroup: rbac.authorization.k8s.io
