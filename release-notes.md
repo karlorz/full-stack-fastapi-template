@@ -288,6 +288,7 @@
 
 ### Internal
 
+* ✨ Add initial namespace per team logic in builder. PR [#440](https://github.com/fastapilabs/cloud/pull/440) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Update Playwright CI and Docker Compose to use depends on backend and mailcatcher. PR [#468](https://github.com/fastapilabs/cloud/pull/468) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Run Playwright on Docker for performance. PR [#466](https://github.com/fastapilabs/cloud/pull/466) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Use Depot to build the Docker Compose images. PR [#463](https://github.com/fastapilabs/cloud/pull/463) by [@tiangolo](https://github.com/tiangolo).
