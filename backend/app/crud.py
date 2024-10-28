@@ -12,6 +12,8 @@ from app.models import (
     UserCreate,
     UserTeamLink,
     UserUpdate,
+    WaitingListUser,
+    WaitingListUserCreate,
 )
 
 
@@ -94,3 +96,13 @@ def get_user_team_link(
     )
 
     return session.exec(statement).first()
+
+
+def add_to_waiting_list(
+    *, session: Session, user_in: WaitingListUserCreate
+) -> WaitingListUser:
+    db_obj = WaitingListUser.model_validate(user_in)
+    session.add(db_obj)
+    session.commit()
+    session.refresh(db_obj)
+    return db_obj

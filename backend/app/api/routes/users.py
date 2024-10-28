@@ -1,13 +1,20 @@
 import logging
 from typing import Any
 
+import emailable  # type: ignore
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from sqlmodel import select
 
 from app import crud
-from app.api.deps import CurrentUser, SessionDep, get_first_superuser
+from app.api.deps import (
+    CurrentUser,
+    SessionDep,
+    get_first_superuser,
+    rate_limit_5_per_minute,
+)
 from app.api.utils.teams import generate_team_slug_name
+from app.core.config import get_main_settings
 from app.core.security import get_password_hash, verify_password
 from app.models import (
     EmailVerificationToken,
@@ -23,6 +30,8 @@ from app.models import (
     UserTeamLink,
     UserUpdateEmailMe,
     UserUpdateMe,
+    WaitingListUser,
+    WaitingListUserCreate,
 )
 from app.utils import (
     generate_account_deletion_email,
@@ -30,13 +39,17 @@ from app.utils import (
     generate_verification_email_token,
     generate_verification_update_email,
     generate_verification_update_email_token,
-    is_allowed_recipient,
+    generate_waiting_list_email,
+    generate_waiting_list_update_email,
+    is_signup_allowed,
     send_email,
     verify_email_verification_token,
     verify_update_email_verification_token,
 )
 
 router = APIRouter()
+settings = get_main_settings()
+emailable_client = emailable.Client(settings.EMAILABLE_KEY)
 
 
 @router.patch("/me", response_model=UserPublic)
@@ -165,7 +178,7 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     """
     Create new user without the need to be logged in.
     """
-    if not is_allowed_recipient(user_in.email):
+    if not is_signup_allowed(user_in.email, session):
         raise HTTPException(
             status_code=400,
             detail="This email has not yet been invited to join FastAPI Cloud",
@@ -245,3 +258,50 @@ def verify_email_html_content(email: str, session: SessionDep) -> Any:
     return HTMLResponse(
         content=email_data.html_content, headers={"subject:": email_data.subject}
     )
+
+
+@router.post("/waiting-list", dependencies=[Depends(rate_limit_5_per_minute)])
+def add_to_waiting_list(session: SessionDep, user_in: WaitingListUserCreate) -> Message:
+    """
+    Add user to waiting list
+    """
+    email_response = emailable_client.verify(email=user_in.email)
+    if email_response.state != "deliverable":
+        raise HTTPException(
+            status_code=400,
+            detail="This email is not valid",
+        )
+
+    existing_user = crud.get_user_by_email(session=session, email=user_in.email)
+    if existing_user:
+        raise HTTPException(
+            status_code=409,
+            detail="This email is already registered in the system",
+        )
+
+    user = session.exec(
+        select(WaitingListUser).where(WaitingListUser.email == user_in.email)
+    ).first()
+
+    if user:
+        update_dict = user_in.model_dump(exclude_unset=True)
+        user.sqlmodel_update(update_dict)
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        email_data = generate_waiting_list_update_email(email_to=user.email)
+        send_email(
+            email_to=user.email,
+            subject=email_data.subject,
+            html_content=email_data.html_content,
+        )
+        return Message(message="User updated in waiting list")
+    else:
+        crud.add_to_waiting_list(session=session, user_in=user_in)
+        email_data = generate_waiting_list_email(email_to=user_in.email)
+        send_email(
+            email_to=user_in.email,
+            subject=email_data.subject,
+            html_content=email_data.html_content,
+        )
+        return Message(message="User added to waiting list")

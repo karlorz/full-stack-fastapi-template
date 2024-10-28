@@ -14,8 +14,10 @@ from jinja2 import Template
 from jwt.exceptions import InvalidTokenError
 from pydantic import BaseModel, Field
 from redis import Redis
+from sqlmodel import Session, col, select
 
 from app.core.config import get_common_settings, get_main_settings
+from app.models import User, WaitingListUser
 
 
 @dataclass
@@ -68,12 +70,28 @@ def is_allowed_recipient(email_to: str) -> bool:
         "localhost",
     }:
         return True
-    for domain in settings.EMAILS_DEV_ALLOWED_RECIPIENT_DOMAINS:
+    for domain in settings.ALLOWED_EMAIL_RECIPIENT_DOMAINS:
         if email_to.endswith(f"@{domain}"):
             return True
-    for email in settings.EMAILS_DEV_ALLOWED_RECIPIENTS:
-        if email_to == email:
-            return True
+    return False
+
+
+def is_signup_allowed(email_to: str, session: Session) -> bool:
+    settings = get_main_settings()
+
+    # TODO: Uncomment when GA
+    # if settings.ENVIRONMENT == "production":
+    statement = select(WaitingListUser).where(
+        col(WaitingListUser.email) == email_to,
+    )
+    user = session.exec(statement).first()
+    if (
+        user
+        and user.allowed_at is not None
+        and user.email in settings.ALLOWED_SIGNUP_EMAILS
+    ) or email_to.endswith(tuple(settings.ALLOWED_SIGNUP_DOMAINS)):
+        return True
+
     return False
 
 
@@ -309,6 +327,46 @@ def generate_account_deletion_email(email_to: str) -> EmailData:
     return EmailData(html_content=html_content, subject=subject)
 
 
+def generate_waiting_list_email(email_to: str) -> EmailData:
+    settings = get_main_settings()
+    subject = "You're on the waiting list 🎉"
+    html_content = render_email_template(
+        template_name="joined_waiting_list.html",
+        context={
+            "server_host": settings.FRONTEND_HOST,
+            "email": email_to,
+        },
+    )
+    return EmailData(html_content=html_content, subject=subject)
+
+
+def generate_waiting_list_update_email(email_to: str) -> EmailData:
+    settings = get_main_settings()
+    subject = "Your data has been updated 🤓"
+    html_content = render_email_template(
+        template_name="updated_waiting_list.html",
+        context={
+            "server_host": settings.FRONTEND_HOST,
+            "email": email_to,
+        },
+    )
+    return EmailData(html_content=html_content, subject=subject)
+
+
+def generate_invitation_email_for_waiting_list_user(email_to: str) -> EmailData:
+    settings = get_main_settings()
+    subject = "Join FastAPI Cloud, you have been invited 🎉"
+    html_content = render_email_template(
+        template_name="invited_from_waiting_list.html",
+        context={
+            "server_host": settings.FRONTEND_HOST,
+            "email": email_to,
+            "link": f"{settings.FRONTEND_HOST}/signup",
+        },
+    )
+    return EmailData(html_content=html_content, subject=subject)
+
+
 def generate_user_code() -> str:
     """Generates a unique user code for device auth."""
 
@@ -426,3 +484,26 @@ def authorize_device_code(
         data.model_dump_json(),
         ex=settings.DEVICE_AUTH_TTL_MINUTES * 60,
     )
+
+
+def query_pending_users_to_send_invitation(session: Session) -> None:
+    statement = select(WaitingListUser).where(
+        col(WaitingListUser.allowed_at) != None,  # noqa: E711
+        col(WaitingListUser.invitation_sent_at) == None,  # noqa: E711
+    )
+    users_to_send_invitation = session.exec(statement).all()
+
+    for user in users_to_send_invitation:
+        user_obj = session.exec(select(User).where(User.email == user.email)).first()
+        if user_obj:
+            continue
+        email_data = generate_invitation_email_for_waiting_list_user(
+            email_to=user.email
+        )
+        send_email(
+            email_to=user.email,
+            subject=email_data.subject,
+            html_content=email_data.html_content,
+        )
+        user.invitation_sent_at = get_datetime_utc()
+        session.commit()

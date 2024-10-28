@@ -54,6 +54,7 @@ dependencies = [
     { name = "boto3-stubs", extra = ["s3"] },
     { name = "docker" },
     { name = "email-validator" },
+    { name = "emailable" },
     { name = "emails" },
     { name = "fastapi", extra = ["standard"] },
     { name = "gunicorn" },
@@ -94,6 +95,7 @@ requires-dist = [
     { name = "boto3-stubs", extras = ["s3"], specifier = ">=1.35.10,<2.0.0" },
     { name = "docker", specifier = ">=7.1.0,<8.0.0" },
     { name = "email-validator", specifier = ">=2.1.0.post1,<3.0.0.0" },
+    { name = "emailable", specifier = ">=3.0.2" },
     { name = "emails", specifier = ">=0.6,<1.0" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.0,<1.0.0" },
     { name = "gunicorn", specifier = ">=21.2.0,<22.0.0" },
@@ -546,6 +548,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/48/ce/13508a1ec3f8bb981ae4ca79ea40384becc868bfae97fd1c942bb3a001b1/email_validator-2.2.0.tar.gz", hash = "sha256:cb690f344c617a714f22e66ae771445a1ceb46821152df8e165c5f9a364582b7", size = 48967 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d7/ee/bf0adb559ad3c786f12bcbc9296b3f5675f529199bef03e2df281fa1fadb/email_validator-2.2.0-py3-none-any.whl", hash = "sha256:561977c2d73ce3611850a06fa56b414621e0c8faa9d66f2611407d87465da631", size = 33521 },
+]
+
+[[package]]
+name = "emailable"
+version = "3.0.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/53/42/45f5a7ca51261c2189bb4ebe48c6c081b040b40dd92a72fec90f3dc4c912/emailable-3.0.2.tar.gz", hash = "sha256:3a79e0b593cf69decebb5f3443b84b48d2ca96071547b93d9278c62d4b1c4605", size = 5251 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/93/dc/caac6a9eb8fb3b74d5323a55a550cdf09f5ce0638f306f5d4d462c96c2b7/emailable-3.0.2-py3-none-any.whl", hash = "sha256:298bb496aa73a9030810483dae3b41803bb494e2af7547329cdb2a67f403f479", size = 6091 },
 ]
 
 [[package]]

@@ -20,6 +20,7 @@ import type {
   UserRegister,
   UserUpdateEmailMe,
   UserUpdateMe,
+  WaitingListUserCreate,
   HealthCheckResponse,
   TeamCreate,
   TeamPublic,
@@ -99,6 +100,9 @@ export type UsersData = {
   }
   VerifyEmailHtmlContent: {
     email: string
+  }
+  AddToWaitingList: {
+    requestBody: WaitingListUserCreate
   }
 }
 
@@ -607,6 +611,27 @@ export class UsersService {
       path: {
         email,
       },
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+
+  /**
+   * Add To Waiting List
+   * Add user to waiting list
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+  public static addToWaitingList(
+    data: UsersData["AddToWaitingList"],
+  ): CancelablePromise<Message> {
+    const { requestBody } = data
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/users/waiting-list",
+      body: requestBody,
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },

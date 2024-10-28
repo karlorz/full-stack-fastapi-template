@@ -146,13 +146,15 @@ class MainSettings(SettingsEnv):
     def emails_enabled(self) -> bool:
         return bool(self.SMTP_HOST and self.EMAILS_FROM_EMAIL)
 
-    EMAILS_DEV_ALLOWED_RECIPIENT_DOMAINS: list[str] = ["fastapilabs.com"]
-    EMAILS_DEV_ALLOWED_RECIPIENTS: list[str] = [
-        "tiangolo@gmail.com",
-        "alejsdev@gmail.com",
-        "patrick.arminio@gmail.com",
-        "emayacadavid9@gmail.com",
+    ALLOWED_SIGNUP_DOMAINS: list[str] = ["example.com"]
+    ALLOWED_SIGNUP_EMAILS: list[str] = [
+        "esteban@fastapilabs.com",
+        "alejandra@fastapilabs.com",
+        "sebastian@fastapilabs.com",
+        "patrick@fastapilabs.com",
     ]
+
+    ALLOWED_EMAIL_RECIPIENT_DOMAINS: list[str] = ["fastapilabs.com"]
 
     # TODO: update type to EmailStr when sqlmodel supports it
     EMAIL_TEST_USER: str = "test@example.com"
@@ -169,6 +171,7 @@ class MainSettings(SettingsEnv):
         return self
 
     AWS_DEPLOYMENT_BUCKET: str
+    EMAILABLE_KEY: str
 
 
 class BuilderSettings(SettingsEnv):

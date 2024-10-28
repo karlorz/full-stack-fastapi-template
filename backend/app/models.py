@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Annotated, Any
 
@@ -8,7 +8,10 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.core.config import get_common_settings
-from app.utils import get_datetime_utc
+
+
+def get_datetime_utc() -> datetime:
+    return datetime.now(timezone.utc)
 
 
 class Role(str, Enum):
@@ -377,3 +380,31 @@ class EnvironmentVariableCreate(SQLModel):
 
 class EnvironmentVariableUpdate(SQLModel):
     value: str
+
+
+class WaitingListUserBase(SQLModel):
+    email: EmailStr = Field(max_length=255, index=True)
+    name: str | None = Field(default=None, max_length=255)
+    organization: str | None = Field(default=None, max_length=255)
+    role: str | None = Field(default=None, max_length=255)
+    team_size: int | None = Field(default=None, index=True)
+    country: str | None = Field(default=None, max_length=255)
+    use_case: str | None = Field(default=None, max_length=255)
+
+
+class WaitingListUser(WaitingListUserBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    created_at: datetime = Field(default_factory=get_datetime_utc)
+    updated_at: datetime = Field(default_factory=get_datetime_utc)
+    allowed_at: datetime | None = Field(default=None, index=True)
+    invitation_sent_at: datetime | None = Field(default=None, index=True)
+
+
+class WaitingListUserCreate(WaitingListUserBase):
+    pass
+
+
+class WaitingListUserPublic(WaitingListUserBase):
+    id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime

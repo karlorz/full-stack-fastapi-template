@@ -290,6 +290,16 @@ export type ValidationError = {
   type: string
 }
 
+export type WaitingListUserCreate = {
+  email: string
+  name?: string | null
+  organization?: string | null
+  role?: string | null
+  team_size?: number | null
+  country?: string | null
+  use_case?: string | null
+}
+
 export type app__models__Role__1 = "member" | "admin"
 
 export type app__models__Role__2 = "member" | "admin"

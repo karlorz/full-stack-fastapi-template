@@ -120,6 +120,7 @@ jobs:
         FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
         SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
+        EMAILABLE_KEY: "${{ secrets.EMAILABLE_KEY }}"
     - name: Update Knative Service image
       run: uv run typer --func deploy_cloud app.docker_builder run api $IMAGE_URL $IMAGE_DIGEST --min-scale 1
       working-directory: backend
@@ -161,6 +162,7 @@ jobs:
         FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
         SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
+        EMAILABLE_KEY: "${{ secrets.EMAILABLE_KEY }}"
 
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-backend:  # This job does nothing and is only used for the branch protection

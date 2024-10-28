@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+from datetime import datetime
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -6,7 +8,7 @@ from sqlmodel import Session, select
 from app import crud
 from app.core.config import MainSettings, get_main_settings
 from app.core.security import verify_password
-from app.models import Role, User, UserCreate
+from app.models import Role, User, UserCreate, WaitingListUserCreate
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 from app.tests.utils.utils import random_email, random_lower_string
@@ -194,7 +196,7 @@ def test_update_password_me_same_password_error(
 
 def test_register_user(client: TestClient, db: Session) -> None:
     test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
+        SMTP_HOST="localhost",
         SMTP_USER="admin@example.com",
     )
     with (
@@ -202,7 +204,7 @@ def test_register_user(client: TestClient, db: Session) -> None:
         patch("app.utils.get_main_settings", return_value=test_settings),
         patch("app.utils.generate_verification_email", return_value=None),
     ):
-        username = f"{random_lower_string()}@fastapilabs.com"
+        username = f"{random_lower_string()}@example.com"
         password = random_lower_string()
         full_name = random_lower_string()
         data = {"email": username, "password": password, "full_name": full_name}
@@ -225,14 +227,14 @@ def test_register_user(client: TestClient, db: Session) -> None:
 
 def test_register_user_already_exists_error(client: TestClient) -> None:
     test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
+        SMTP_HOST="localhost",
         SMTP_USER="admin@example.com",
     )
     with (
         patch("app.utils.send_email", return_value=None),
         patch("app.utils.get_main_settings", return_value=test_settings),
     ):
-        username = f"{random_lower_string()}@fastapilabs.com"
+        username = f"{random_lower_string()}@example.com"
         password = random_lower_string()
         full_name = random_lower_string()
         data = {
@@ -253,33 +255,6 @@ def test_register_user_already_exists_error(client: TestClient) -> None:
         assert (
             r.json()["detail"]
             == "The user with this email already exists in the system"
-        )
-
-
-def test_signup_not_allowed_email(client: TestClient) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
-    )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch("app.utils.get_main_settings", return_value=test_settings),
-    ):
-        password = random_lower_string()
-        full_name = random_lower_string()
-        data = {
-            "email": "johndoe@example.com",
-            "password": password,
-            "full_name": full_name,
-        }
-        r = client.post(
-            f"{settings.API_V1_STR}/users/signup",
-            json=data,
-        )
-        assert r.status_code == 400
-        assert (
-            r.json()["detail"]
-            == "This email has not yet been invited to join FastAPI Cloud"
         )
 
 
@@ -392,3 +367,223 @@ def test_verify_email(client: TestClient, db: Session) -> None:
 
     assert user.personal_team
     assert user.personal_team.id == team_link.team.id
+
+
+@dataclass
+class EmailResponse:
+    state: str
+
+
+def test_add_to_waiting_list(client: TestClient) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
+    email_response = EmailResponse(state="deliverable")
+    with (
+        patch("app.utils.send_email", return_value=None),
+        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch(
+            "app.api.routes.users.emailable_client.verify", return_value=email_response
+        ),
+    ):
+        email = "test@fastapilabs.com"
+        data = {
+            "email": email,
+            "name": "John Doe",
+            "team_size": 1,
+            "organization": "FastAPI Labs",
+            "role": "developer",
+            "country": "US",
+        }
+        r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
+        assert r.status_code == 200
+        response = r.json()
+        assert response["message"] == "User added to waiting list"
+
+
+def test_update_waiting_list_user(client: TestClient) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
+    email_response = EmailResponse(state="deliverable")
+    with (
+        patch("app.utils.send_email", return_value=None),
+        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch(
+            "app.api.routes.users.emailable_client.verify", return_value=email_response
+        ),
+    ):
+        email = "test@fastapilabs.com"
+        data = {
+            "email": email,
+            "name": "John Doe",
+            "team_size": 1,
+            "organization": "FastAPI Labs",
+            "role": "developer",
+            "country": "US",
+            "use_case": "I want to build a web app",
+        }
+        r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
+        assert r.status_code == 200
+        response = r.json()
+        assert response["message"] == "User updated in waiting list"
+
+
+def test_add_to_waiting_list_invalid_email(client: TestClient) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
+    email_response = EmailResponse(state="undeliverable")
+    with (
+        patch("app.utils.send_email", return_value=None),
+        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch(
+            "app.api.routes.users.emailable_client.verify", return_value=email_response
+        ),
+    ):
+        email = "test@test.com"
+        data = {
+            "email": email,
+            "name": "John Doe",
+            "team_size": 1,
+            "organization": "FastAPI Labs",
+            "role": "developer",
+            "country": "US",
+        }
+        r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
+        assert r.status_code == 400
+        assert r.json()["detail"] == "This email is not valid"
+
+
+def test_add_to_waiting_list_email_already_registered_in_system(
+    client: TestClient, db: Session
+) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
+    email_response = EmailResponse(state="deliverable")
+    with (
+        patch("app.utils.send_email", return_value=None),
+        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch(
+            "app.api.routes.users.emailable_client.verify", return_value=email_response
+        ),
+    ):
+        user_in = UserCreate(
+            email="alejandra@fastapilabs.com",
+            password="totally-legit",
+            full_name="John Doe",
+            is_active=True,
+        )
+        user = crud.create_user(session=db, user_create=user_in, is_verified=True)
+        db.add(user)
+        db.commit()
+
+        data = {
+            "email": user.email,
+            "name": "John Doe",
+            "team_size": 1,
+            "organization": "FastAPI Labs",
+        }
+
+        r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
+        assert r.status_code == 409
+        response = r.json()
+
+        assert response["detail"] == "This email is already registered in the system"
+
+
+def test_signup_with_waiting_list_email_allowed(
+    client: TestClient, db: Session
+) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
+    with (
+        patch("app.utils.send_email", return_value=None),
+        patch("app.utils.get_main_settings", return_value=test_settings),
+    ):
+        user_in = WaitingListUserCreate(email="sebastian@fastapilabs.com")
+        user = crud.add_to_waiting_list(session=db, user_in=user_in)
+        user.allowed_at = datetime.now()
+        db.add(user)
+        db.commit()
+
+        data = {
+            "email": user.email,
+            "password": "totally-legit",
+            "full_name": "John Doe",
+        }
+
+        r = client.post(f"{settings.API_V1_STR}/users/signup", json=data)
+        assert r.status_code == 200
+        response = r.json()
+
+        assert response["email"] == "sebastian@fastapilabs.com"
+        assert response["full_name"] == "John Doe"
+
+
+def test_signup_with_waiting_list_email_not_allowed(
+    client: TestClient, db: Session
+) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
+    with (
+        patch("app.utils.send_email", return_value=None),
+        patch("app.utils.get_main_settings", return_value=test_settings),
+    ):
+        user_in = WaitingListUserCreate(email="esteban@fastapilabs.com")
+        user = crud.add_to_waiting_list(session=db, user_in=user_in)
+        db.add(user)
+        db.commit()
+
+        data = {
+            "email": user.email,
+            "password": "totally-legit",
+            "full_name": "John Doe",
+        }
+
+        r = client.post(f"{settings.API_V1_STR}/users/signup", json=data)
+        assert r.status_code == 400
+        assert (
+            r.json()["detail"]
+            == "This email has not yet been invited to join FastAPI Cloud"
+        )
+
+
+def test_signup_with_waiting_list_email_not_in_db(client: TestClient) -> None:
+    test_settings = MainSettings(  # type: ignore
+        SMTP_HOST="smtp.example.com",
+        SMTP_USER="admin@example.com",
+    )
+    with (
+        patch("app.utils.send_email", return_value=None),
+        patch("app.utils.get_main_settings", return_value=test_settings),
+    ):
+        data = {
+            "email": "demo211@fastapilabs.com",
+            "password": "totally-legit",
+            "full_name": "John Doe",
+        }
+
+        r = client.post(f"{settings.API_V1_STR}/users/signup", json=data)
+        assert r.status_code == 400
+        assert (
+            r.json()["detail"]
+            == "This email has not yet been invited to join FastAPI Cloud"
+        )
+
+
+def test_rate_limit_on_waiting_list(client: TestClient) -> None:
+    for _ in range(6):
+        r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json={})
+
+    assert r.status_code == 429
+    assert r.json()["detail"] == "Rate limit exceeded"

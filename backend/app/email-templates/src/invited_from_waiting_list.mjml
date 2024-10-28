@@ -1,0 +1,27 @@
+<mjml>
+  <mj-head>
+    <mj-font name="Ubuntu" href="https://fonts.googleapis.com/css?family=Ubuntu" />
+  </mj-head>
+  <mj-body background-color="#fafbfc">
+    <mj-section background-color="#ffffff" padding="0px">
+      <mj-column>
+        <mj-image src="{{ server_host }}/assets/images/banner.png" align="center"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#fff" padding="40px 20px">
+      <mj-column vertical-align="middle" width="100%">
+        <mj-text align="center" padding="35px" font-size="20px" font-family="Ubuntu" color="#333">Join <strong>FastAPI Cloud</strong>, you have been invited 🎉</mj-text>
+        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Ubuntu" color="#555"><span>This invitation is for the <strong>exact email</strong>: {{ email }}</span></mj-text>
+        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Ubuntu" color="#555"><span>...we are fancy and exclusive like that. 😎</span></mj-text>
+        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Ubuntu" color="#555"><span>Now, speak friend and enter. ✨</span></mj-text>
+        <mj-button align="center" font-size="18px" background-color="#009688" border-radius="8px" color="#fff" href="{{ link }}" padding="15px 30px">Create Account</mj-button>
+        <mj-divider border-color="#ccc" border-width="2px"></mj-divider>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#009688" padding="20px">
+      <mj-column>
+        <mj-text align="center" font-size="14px" color="#ffffff" font-family="Ubuntu">© 2024 FastAPI Cloud</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
