@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✨ Add waiting list API, models, and emails. PR [#457](https://github.com/fastapilabs/cloud/pull/457) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Implement environment variables UI. PR [#375](https://github.com/fastapilabs/cloud/pull/375) by [@patrick91](https://github.com/patrick91).
 * ✨ API to batch update environment variables. PR [#384](https://github.com/fastapilabs/cloud/pull/384) by [@patrick91](https://github.com/patrick91).
 * ✨Add API for environment variables. PR [#374](https://github.com/fastapilabs/cloud/pull/374) by [@patrick91](https://github.com/patrick91).
