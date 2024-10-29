@@ -127,6 +127,7 @@
 
 ### Refactors
 
+* ♻️ Refactor actions menu. PR [#480](https://github.com/fastapilabs/cloud/pull/480) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Rename Update Email components. PR [#469](https://github.com/fastapilabs/cloud/pull/469) by [@alejsdev](https://github.com/alejsdev).
 * 🎨 Fix two types in the UI. PR [#467](https://github.com/fastapilabs/cloud/pull/467) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Add env vars for Playwright tests. PR [#465](https://github.com/fastapilabs/cloud/pull/465) by [@tiangolo](https://github.com/tiangolo).
