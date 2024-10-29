@@ -7,7 +7,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 import { BsThreeDotsVertical } from "react-icons/bs"
-import { FaEdit, FaExchangeAlt } from "react-icons/fa"
+import { FaExchangeAlt } from "react-icons/fa"
 
 import { Trash } from "@/assets/icons.tsx"
 import type { TeamPublic, UserPublic } from "@/client"
@@ -17,21 +17,12 @@ import RemoveUser from "./RemoveUser"
 interface ActionsMenuProps {
   userRole?: string
   team?: TeamPublic
-  type: string
   value: UserPublic | TeamPublic
   disabled?: boolean
 }
 
-const ActionsMenu = ({
-  userRole,
-  team,
-  type,
-  value,
-  disabled,
-}: ActionsMenuProps) => {
+const ActionsMenu = ({ userRole, team, value, disabled }: ActionsMenuProps) => {
   const changeRoleModal = useDisclosure()
-  const editUserModal = useDisclosure()
-  const deleteTeamModal = useDisclosure()
   const removeUserModal = useDisclosure()
 
   return (
@@ -44,29 +35,18 @@ const ActionsMenu = ({
           variant="unstyled"
         />
         <MenuList>
-          {type === "User" ? (
-            <MenuItem
-              onClick={changeRoleModal.onOpen}
-              icon={<FaExchangeAlt fontSize="16px" />}
-            >
-              Change Role
-            </MenuItem>
-          ) : (
-            <MenuItem
-              onClick={editUserModal.onOpen}
-              icon={<FaEdit fontSize="16px" />}
-            >
-              Edit {type}
-            </MenuItem>
-          )}
           <MenuItem
-            onClick={
-              type === "User" ? removeUserModal.onOpen : deleteTeamModal.onOpen
-            }
+            onClick={changeRoleModal.onOpen}
+            icon={<FaExchangeAlt fontSize="16px" />}
+          >
+            Change Role
+          </MenuItem>
+          <MenuItem
+            onClick={removeUserModal.onOpen}
             icon={<Trash fontSize="16px" />}
             color="error.base"
           >
-            {type === "User" ? "Remove" : "Delete"} {type}
+            Remove User
           </MenuItem>
         </MenuList>
         <ChangeRole

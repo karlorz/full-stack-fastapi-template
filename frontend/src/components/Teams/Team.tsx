@@ -94,7 +94,6 @@ function Team() {
                       <ActionsMenu
                         userRole={role}
                         team={team}
-                        type="User"
                         value={user}
                         disabled={
                           currentUserRole === "member" ||
