@@ -50,27 +50,35 @@ jobs:
         environment: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.environment)) || fromJson('["staging", "development"]') }}
     env:
       IMAGE_TAG: ${{ matrix.environment }}-${{ github.sha }}
-    runs-on: ${{ matrix.environment }}
+    runs-on: depot-ubuntu-22.04
+    # Permissions for Depot Docker build
+    permissions:
+      contents: read
+      id-token: write
     environment: ${{ matrix.environment }}
     steps:
     - uses: actions/checkout@v4
-    - name: Install kubectl
-      uses: azure/setup-kubectl@v4
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ vars.AWS_REGION }}
+    - uses: azure/k8s-set-context@v4
+      with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG_DATA }}
     - name: Login to Amazon ECR
       with:
         mask-password: True
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
+    - uses: depot/setup-action@v1
     - name: Build and push Docker images to Amazon ECR
-      uses: docker/build-push-action@v6
+      uses: depot/build-push-action@v1
       id: docker-build
       with:
+        project: ${{ vars.DEPOT_PROJECT_ID }}
         push: true
         tags: |
           ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
