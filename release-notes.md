@@ -291,6 +291,7 @@
 
 ### Internal
 
+* 🔥 Remove Pulumi to set up an instance in where to install a GitHub Actions Runner and its docs. PR [#487](https://github.com/fastapilabs/cloud/pull/487) by [@tiangolo](https://github.com/tiangolo).
 * 🚀 Deploy our backend from Depot runners instead of custom GitHub runners. PR [#486](https://github.com/fastapilabs/cloud/pull/486) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Add initial namespace per team logic in builder. PR [#440](https://github.com/fastapilabs/cloud/pull/440) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Update Playwright CI and Docker Compose to use depends on backend and mailcatcher. PR [#468](https://github.com/fastapilabs/cloud/pull/468) by [@tiangolo](https://github.com/tiangolo).
