@@ -54,23 +54,20 @@ aws sso login --profile profile_name
 
 Follow: https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html
 
-You will need the name of the cluster, you can get it from the Pulumi output, by going to the AWS web console, going to Elastic Kubernetes Service, and copying the name of the cluster, or by running:
+You will need the name of the cluster, you can get it from the Pulumi output, by going to the AWS web console, going to Elastic Kubernetes Service, and copying the name of the cluster, or by running this:
+
+Create an `ENVIRONMENT` env var (`development`, `staging`, `production`):
 
 ```bash
-aws eks --region us-east-1 list-clusters --profile development
+export ENVIRONMENT=development
 ```
 
-Adjust the `--profile` to the one you configured before (probably one for `development`, one for `staging`, one for `production`).
-
-Set an env var with the cluster name:
+Set up `kubectl`:
 
 ```bash
-export CLUSTER_NAME=eks-cluster-development-eksCluster-da1671d...
-```
-
-Then you can configure `kubectl` with the AWS environment:
-
-```bash
+# Get the cluster name
+export CLUSTER_NAME=$(aws eks --region us-east-1 list-clusters --profile $ENVIRONMENT --query 'clusters[0]' --output text)
+# Configure kubectl with that cluster
 aws eks --region us-east-1 update-kubeconfig --name $CLUSTER_NAME --profile development
 ```
 
@@ -173,48 +170,32 @@ Update the environment variables in the GitHub Action Secrets and environment va
 * `ecr_registry_url`: `ECR_REGISTRY_URL` environment variable
 * `redis_backend`: `REDIS_SERVER` environment variable
 
-## Tmate
-
-For staging, when the GitHub Action is run with debug enabled, after the Pulumi code is run, it starts a Tmate session.
-
-It is shown in the logs with a line that says something like:
-
-```
-SSH: ssh z6b7h5TBUbFEctKyzzLy5tUzc@nyc1.tmate.io
-or: ssh -i <path-to-private-SSH-key> z6b7h5TBUbFEctKyzzLy5tUzc@nyc1.tmate.io
-```
-
-If you have SSH keys configured in your GitHub account, it will use them to enable you to SSH into the GitHub Action runner machine by executing that command:
-
-```bash
-ssh z6b7h5TBUbFEctKyzzLy5tUzc@nyc1.tmate.io
-```
-
-It will only allow you to SSH into the machine using your SSH key, just by typing that same command.
-
-Once you are in the machine, you can continue the deployment manually.
-
-You will have some environment variables available, defined in the GitHub Action. For example, including the Kubeconfig that will be needed to interact with the Kubernetes cluster.
-
-You will be shown some instructions, after reading, you can type `q` to have the remote SSH session.
-
-In the Tmate session, you can continue the deployment of Kubernetes resources manually.
-
-This step was done once by Sebastián, it (normally) doesn't need to be done again, unless we are updating versions or similar.
-
-Once you are done with the next steps, you can terminate the Tmate session by creating a file called `continue` in the main directory, e.g.:
-
-```bash
-touch continue
-```
-
-Tmate will read it, terminate the SSH session and continue the GitHub Action execution (just finishing it).
-
 ## Kubernetes Deployment
 
 Once you have access to the Kubernetes cluster from `kubectl` you can deploy the rest of the Kubernetes components.
 
 If you just deployed the cluster, you need to go read above and [Configure `kubectl` with AWS](#configure-kubectl-with-aws), and [Change the `kubectl` context/environment](#configure-the-kubectl-contextenvironment).
+
+Create an `ENVIRONMENT` env var:
+
+```bash
+export ENVIRONMENT=development
+```
+
+Set up the cluster:
+
+```bash
+# Get the cluster name
+export CLUSTER_NAME=$(aws eks --region us-east-1 list-clusters --profile $ENVIRONMENT --query 'clusters[0]' --output text)
+# Configure kubectl with that cluster
+aws eks --region us-east-1 update-kubeconfig --name $CLUSTER_NAME --profile $ENVIRONMENT
+```
+
+Then rename the context:
+
+```bash
+kubectl config rename-context ...
+```
 
 ### Build TriggerMesh
 
@@ -247,50 +228,25 @@ Move `ko` to a location in the `PATH`, for example.
 
 `ko` will use the Docker credentials to push the images to the AWS ECR.
 
-Get  the container registry ID with:
+Create an `ENVIRONMENT` env var:
 
 ```bash
-aws ecr describe-registry --profile development
+export ENVIRONMENT=development
 ```
 
-That will output something like:
-
-```json
-{
-    "registryId": "961341535962",
-    "replicationConfiguration": {
-        "rules": []
-    }
-}
-```
-
-Set an env var with this registry ID, for example:
+Configure the env vars
 
 ```bash
-export REGISTRY_ID=961341535962
-```
+# Get the registry ID
+export REGISTRY_ID=$(aws ecr describe-registry --profile $ENVIRONMENT --query "registryId" --output text)
 
-Set an env var with the full registry name:
-
-```bash
+#Set an env var with the full registry name:
 export REGISTRY_NAME=$REGISTRY_ID.dkr.ecr.us-east-1.amazonaws.com
-```
 
-Then login to the registry:
+# Login to the registry
+aws ecr get-login-password --region us-east-1 --profile $ENVIRONMENT | docker login --username AWS --password-stdin $REGISTRY_NAME
 
-```bash
-aws ecr get-login-password --region us-east-1 --profile development | docker login --username AWS --password-stdin $REGISTRY_NAME
-```
-
-**Note**: update the profile accordingly.
-
-#### Set up Ko Repo
-
-Ko depends on the `KO_DOCKER_REPO` environment variable to know where to push the images.
-
-Set it with:
-
-```bash
+# Set up Ko env var
 export KO_DOCKER_REPO=$REGISTRY_NAME
 ```
 
@@ -342,18 +298,17 @@ Now you can continue with the rest of the scripts that will use these images.
 
 Start with `infra/deploy-helm.sh`.
 
-This script expects an environment variable `CLUSTER_NAME`. If it's run in GitHub Actions, it will be set by automatically. If you are running it locally, find it in EKS:
+Create an `ENVIRONMENT` env var:
 
 ```bash
-aws eks --region us-east-1 list-clusters --profile development
+export ENVIRONMENT=development
 ```
 
-Adjust the `--profile` to the one you configured before (probably one for `development`, one for `staging`, one for `production`).
-
-Set an env var with the cluster name:
+Create an environment variable `CLUSTER_NAME`:
 
 ```bash
-export CLUSTER_NAME=eks-cluster-development-eksCluster-da1671d...
+# Get the cluster name
+export CLUSTER_NAME=$(aws eks --region us-east-1 list-clusters --profile $ENVIRONMENT --query 'clusters[0]' --output text)
 ```
 
 Then run:
@@ -370,27 +325,8 @@ This script will:
     * AWS Load Balancer Controller: this creates the AWS Load Balancers allow the external world to communicate with our Kubernetes cluster. This uses the Kubernetes Service Account we created with Pulumi.
     * Cert Manager: this will manage the TLS (HTTPS) certificates obtained from Let's Encrypt. We'll configure more things later for it.
         * It seems this needs to call the AWS Load Balancer Controller, and it might not be ready yet, so this might **take a second run** to install successfully.
-    * Ingress Nginx Controller: this manages ingress resources we deploy manually, with Kubernetes Deployments (currently none), in contrast to doing that with Knative. This uses customization values from `infra/helm-values/ingress-nginx-external-values.yaml` to enable it to use the AWS Load Balancer Controller.
-* At the end it obtains and shows the DNS name of the load balancer.
 
-**Note**: as Cert Manager might depend on the AWS Load Balancer Controller, it might need a **second run to install** successfully.
-
-We need to update the DNS records in Cloudflare to use it (with a `CNAME`). This is normally done once by hand (by Sebastián) and left configured. Later we might want to set up ExternalDNS to do it automatically. (To be reviewed and updated).
-
-* `fastapicloud.dev` is configured later, for production for Knative.
-* `fastapicloud.club` is configured later, for staging for Knative.
-* `fastapicloud.space` is configured later, for development for Knative.
-
-**Note**: we currently don't use the following, we might want to refactor or remove them.
-
-* `fastapicloud.com` points to production at the Ingress Nginx.
-* `fastapicloud.work` points to staging at the Ingress Nginx.
-* `fastapicloud.site` points to development at the Ingress Nginx.
-
-### Cloudflare DNS
-
-* Add a `CNAME` record in Cloudflare to point the domain to the AWS Load Balancer for the star subdomain, e.g. `*.fastapicloud.work`.
-* Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
+**Note**: interactions with the AWS Load Balancer Controller might need a **second run to install** successfully.
 
 ### Kubernetes Manifests
 
@@ -400,29 +336,27 @@ Continue with: `infra/deploy-kubectl.sh`.
 
 This script expects some environment variables to be set. If running on the GitHub Action, they are set automatically. If running locally, set them manually.
 
-* `CLOUDFLARE_API_TOKEN_DNS` with the Cloudflare DNS token for Knative serving:
+* `CLOUDFLARE_API_TOKEN_SSL` with the Cloudflare SSL user API token for Knative serving:
 
 ```bash
-export CLOUDFLARE_API_TOKEN_DNS=...
+export CLOUDFLARE_API_TOKEN_SSL=...
 ```
+
+**Note**: this is not an account token (beta), it's a profile user token.
 
 * `SQS_SOURCE_ARN` with the ARN of the SQS queue that will be used by the S3 event listener, you can read it from the Pulumi output:
 
 ```bash
-export SQS_SOURCE_ARN=$(pulumi stack output sqs_deployment_customer_apps_arn --stack 'fastapilabs/development')
+export SQS_SOURCE_ARN=$(pulumi stack output sqs_deployment_customer_apps_arn --stack "fastapilabs/$ENVIRONMENT")
 ```
 
 * `REGISTRY_ID` with the AWS ECR registry ID, you can get it from [Login to AWS ECR](#login-to-aws-ecr):
 
 ```bash
-export REGISTRY_ID=961341535962...
+export REGISTRY_ID=$(aws ecr describe-registry --profile $ENVIRONMENT --query "registryId" --output text)
 ```
 
-It also expects a `DEPLOY_ENVIRONMENT` with the name of the environment, from `development`, `staging`, or `production`. By default it is set to `development`, which is what you would use when deploying locally:
-
-```bash
-export DEPLOY_ENVIRONMENT=development
-```
+It also expects an `ENVIRONMENT` with the name of the environment, from `development`, `staging`, or `production`. By default it is set to `development`, which is what you would use when deploying locally.
 
 Then run:
 
@@ -434,23 +368,89 @@ bash deploy-kubectl.sh
 This script will:
 
 * Expect `kubectl` to be already configured.
-* Add the Cloudflare token, so that the Cert Manager can create the DNS records needed for TLS (HTTPS) certificates from Let's Encrypt.
-* Add the Cert Manager resources: the staging and production issuers and the wildcard certificates for the Ingress Nginx controller and Knative.
+* Add the Cert Manager resources: the staging and production issuers.
+* Install Cloudflare's Origin Server CA to obtain certificates for Cloudflare to communicate with the cluster (final users will communicate through Cloudflare).
 * Install the Knative CRDs (Custom Resource Definitions for Kubernetes).
 * Install Knative Serving and Kourier as the Knative network layer. This uses Kustomize with the files and directories in `infra/k8s/knative` (described below).
 * Install the Knative role to allow it to create Knative services.
 * Install the TriggerMesh components.
-* Show the DNS of the Knative AWS Load Balancer to update the DNS records in Cloudflare (with a `CNAME`). This is done by hand by Sebastián.
 
-We need to update the DNS records in Cloudflare manually with this DNS name.
+### Cloudflare DNS
 
-* `fastapicloud.dev` points to production at the Knative ingress with Kourier, people's apps would have a subdomain here.
-* `fastapicloud.club` points at staging at the Knative ingress with Kourier.
-* `fastapicloud.space` points at development at the Knative ingress with Kourier.
+* Get the AWS Load Balancer DNS name, copy it from the command above or get it with the AWS CLI:
 
-`fastapicloud.com`, `fastapicloud.work`, `fastapicloud.site` were configured previously.
+```bash
+aws elbv2 describe-load-balancers --profile $ENVIRONMENT --query 'LoadBalancers[*].DNSName' --output text
+```
 
-### Knative Kustomize
+We need to update the DNS records in Cloudflare manually with this AWS Load Balancer DNS name.
+
+**Note**: for this step to work, the load balancer and cluster must be working, or must be off completely. If there's a response from the cluster but it doesn't validate the certificate (e.g. Cloudflare Origin CA certificate), configuring the Custom Hostnames might not work.
+
+#### Development
+
+In `fastapicloud.space`:
+
+* Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
+* Enable redirect HTTPS, SSL/TLS -> Edge Certificates -> Always Use HTTPS.
+* Add a `CNAME` record pointing `cluster-fastapicloud.fastapicloud.space` to the AWS Load Balancer DNS.
+* Add a `CNAME` record pointing `*.fastapicloud.space` to the AWS Load Balancer DNS.
+* Add a `CNAME` record pointing `customdomain-fastapicloud.fastapicloud.space` to `cluster-fastapicloud.fastapicloud.space`.
+* Enable SaaS, SSL/TLS -> Custom Hostnames -> Fallback Origin: `cluster-fastapicloud.fastapicloud.space`.
+* SSL/TLS -> Custom Hostnames -> Add Custom Hostname with `TXT` validation: `api.fastapicloud.site`.
+* Copy the `TXT` certificate validation record.
+
+In `fastapicloud.site`:
+
+* Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
+* Enable redirect HTTPS, SSL/TLS -> Edge Certificates -> Always Use HTTPS.
+* Add the `TXT` record for validating `api.fastapicloud.site`.
+* Add a `CNAME` record pointing `customdomain.fastapicloud.site` to `customdomain-fastapicloud.fastapicloud.space`.
+* Add a `CNAME` record pointing `api.fastapicloud.site` to `customdomain.fastapicloud.site`.
+
+#### Staging
+
+In `fastapicloud.club`:
+
+* Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
+* Enable redirect HTTPS, SSL/TLS -> Edge Certificates -> Always Use HTTPS.
+* Add a `CNAME` record pointing `cluster-fastapicloud.fastapicloud.club` to the AWS Load Balancer DNS.
+* Add a `CNAME` record pointing `*.fastapicloud.club` to the AWS Load Balancer DNS.
+* Add a `CNAME` record pointing `customdomain-fastapicloud.fastapicloud.club` to `cluster-fastapicloud.fastapicloud.club`.
+* Enable SaaS, SSL/TLS -> Custom Hostnames -> Fallback Origin: `cluster-fastapicloud.fastapicloud.club`.
+* SSL/TLS -> Custom Hostnames -> Add Custom Hostname with `TXT` validation: `api.fastapicloud.work`.
+* Copy the `TXT` certificate validation record.
+
+In `fastapicloud.work`:
+
+* Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
+* Enable redirect HTTPS, SSL/TLS -> Edge Certificates -> Always Use HTTPS.
+* Add the `TXT` record for validating `api.fastapicloud.work`.
+* Add a `CNAME` record pointing `customdomain.fastapicloud.work` to `customdomain-fastapicloud.fastapicloud.club`.
+* Add a `CNAME` record pointing `api.fastapicloud.work` to `customdomain.fastapicloud.work`.
+
+### Production
+
+In `fastapicloud.dev`:
+
+* Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
+* Enable redirect HTTPS, SSL/TLS -> Edge Certificates -> Always Use HTTPS.
+* Add a `CNAME` record pointing `cluster-fastapicloud.fastapicloud.dev` to the AWS Load Balancer DNS.
+* Add a `CNAME` record pointing `*.fastapicloud.dev` to the AWS Load Balancer DNS.
+* Add a `CNAME` record pointing `customdomain-fastapicloud.fastapicloud.dev` to `cluster-fastapicloud.fastapicloud.dev`.
+* Enable SaaS, SSL/TLS -> Custom Hostnames -> Fallback Origin: `cluster-fastapicloud.fastapicloud.dev`.
+* SSL/TLS -> Custom Hostnames -> Add Custom Hostname with `TXT` validation: `api.fastapicloud.com`.
+* Copy the `TXT` certificate validation record.
+
+In `fastapicloud.com`:
+
+* Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
+* Enable redirect HTTPS, SSL/TLS -> Edge Certificates -> Always Use HTTPS.
+* Add the `TXT` record for validating `api.fastapicloud.com`.
+* Add a `CNAME` record pointing `customdomain.fastapicloud.com` to `customdomain-fastapicloud.fastapicloud.dev`.
+* Add a `CNAME` record pointing `api.fastapicloud.com` to `customdomain.fastapicloud.com`.
+
+### How Knative Kustomize Works
 
 Knative uses Kourier for the network. Kourier is in charge of handling the network traffic from the outside world into Knative, through Kubernetes.
 
@@ -469,7 +469,7 @@ Then it uses Kustomize to patch (update) several configs.
 * It patches Kourier to make it use the AWS Load Balancer Controller so that it creates an AWS Load Balancer to communicate with the external world.
 * It patches Kourier to use the custom certificate for the Knative domain created before.
 
-### Knative Kustomize Overlay
+#### About the Knative Kustomize Overlay
 
 The previous file is not really used directly.
 
@@ -506,7 +506,7 @@ Follow the guide on: https://github.com/fastapi/full-stack-fastapi-template/blob
 Get the kubeconfig content from Pulumi, execute locally:
 
 ```bash
-pulumi stack output kubeconfig --stack 'fastapilabs/development'
+pulumi stack output kubeconfig --stack "fastapilabs/$ENVIRONMENT"
 ```
 
 Use the `github` user:
@@ -614,10 +614,7 @@ A new environment would need its own versions of some files.
 
 A new environment would need:
 
-* Its own certmanager domain config `k8s/cert-manager/wildcard-cert-${DEPLOY_ENVIRONMENT}.yaml`
-* Its own certmanager domain config for Knative Serving `k8s/cert-manager/wildcard-cert-serving-${DEPLOY_ENVIRONMENT}.yaml`
-
-**Note**: Let's encrypt has a concept of `staging` and `production`, this is different from our staging and production environments. Their concept refers to debugging the setup to acquire certificates in *their* staging environment and getting the actual real certificates from their production environment. The files refer to `letsencrypt-production`, leave it as is, even for our development environment. This `letsencrypt-production` refers to Let's Encrypt creating real HTTPS certificates for our real domain name (that points to one of our environments).
+* Its own Cloudflare Origin CA config `k8s/cloudflare/origin-ca-cert-${ENVIRONMENT}.yaml`
 
 #### Knative Serving
 
@@ -651,11 +648,20 @@ Create a new Cloudflare Pages project and deploy once by hand so that the projec
 
 Update the GitHub Environment variable `CLOUDFLARE_PAGES_PROJECT_NAME` with the new project name.
 
+### Cloudflare for SaaS
+
+Go to the zone for the new environment domain, go to SSL/TLS -> Custom Hostnames -> Enable Cloudflare for SaaS.
+
 ## Destroy an AWS Environment
 
 To destroy an environment in AWS do the following.
 
-* Set up the env vars for Pulumi as described in deploying with [Pulumi Manually](#pulumi-manually).
+* Set up the env vars for Pulumi as described in deploying with [Pulumi Manually](#pulumi-manually):
+
+```bash
+export AWS_ACCESS_KEY_ID=...
+export AWS_SECRET_ACCESS_KEY=...
+```
 
 * Destroy the Pulumi stack:
 

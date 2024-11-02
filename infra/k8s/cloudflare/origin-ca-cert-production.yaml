@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: fastapicloud-knative-serving-tls-origin
+  namespace: fastapicloud
+spec:
+  secretName: fastapicloud-knative-serving-tls-origin
+  dnsNames:
+    - fastapicloud.dev
+    - "*.fastapicloud.dev"
+  issuerRef:
+    group: cert-manager.k8s.cloudflare.com
+    kind: ClusterOriginIssuer
+    name: cloudflare-cluster-origin-issuer

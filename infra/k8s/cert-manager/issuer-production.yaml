@@ -1,6 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
+  # This is Let's Encrypt staging issuer, it has nothing to do with our staging environment
   name: letsencrypt-production
   namespace: cert-manager
 spec:

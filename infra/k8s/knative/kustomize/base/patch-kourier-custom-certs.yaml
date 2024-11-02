@@ -10,6 +10,6 @@ spec:
         env:
         # Sync with cert-manager certs
         - name: CERTS_SECRET_NAMESPACE
-          value: cert-manager
+          value: fastapicloud
         - name: CERTS_SECRET_NAME
-          value: fastapicloud-serving-tls
+          value: fastapicloud-knative-serving-tls-origin

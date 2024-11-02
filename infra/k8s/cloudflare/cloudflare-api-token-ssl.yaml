@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudflare-api-token-ssl-secret
+  namespace: origin-ca-issuer
+type: Opaque
+stringData:
+  api-token: ${CLOUDFLARE_API_TOKEN_SSL}
