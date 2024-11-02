@@ -169,6 +169,7 @@ Update the environment variables in the GitHub Action Secrets and environment va
 * `s3_deployment_customer_apps`: `AWS_DEPLOYMENT_BUCKET` environment variable
 * `ecr_registry_url`: `ECR_REGISTRY_URL` environment variable
 * `redis_backend`: `REDIS_SERVER` environment variable
+* `kubeconfig`: `KUBECONFIG_DATA` environment variable
 
 ## Kubernetes Deployment
 
@@ -476,56 +477,6 @@ The previous file is not really used directly.
 Instead, one of two Kustomize "overlays" is used, one for production, one for staging, and one for development.
 
 These overlays extend the `base` Kustomize configuration and add the Knative domain used for production (`fastapicloud.dev`), staging (`fastapicloud.club`), or development (`fastapicloud.site`).
-
-## Github Runner k8s deployment
-
-### Connect to the GitHub Runner
-
-Go to the AWS web Console -> EC2 -> Instances -> Select the GitHub Runner instance, click on "Connect" via the web UI.
-
-### Install docker adding the official repositories
-
-https://docs.docker.com/engine/install/ubuntu/
-
-### Install AWS CLI
-
-Install `unzip` with:
-
-```bash
-sudo apt-get install unzip
-```
-
-https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
-
-### Install the GitHub Runner
-
-Follow the guide on: https://github.com/fastapi/full-stack-fastapi-template/blob/master/deployment.md#install-github-actions-runner
-
-### Setup kubeconfig
-
-Get the kubeconfig content from Pulumi, execute locally:
-
-```bash
-pulumi stack output kubeconfig --stack "fastapilabs/$ENVIRONMENT"
-```
-
-Use the `github` user:
-
-```bash
-sudo su - github
-```
-
-Create the directory for the kubeconfig for GitHub:
-
-```bash
-mkdir -p /home/github/.kube
-```
-
-Copy the content output from pulumi under `/home/github/.kube/config`. You can open the file with:
-
-```bash
-nano /home/github/.kube/config
-```
 
 ## Deploy Backend and Builder
 

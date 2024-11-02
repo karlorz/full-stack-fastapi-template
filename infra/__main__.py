@@ -266,62 +266,6 @@ redis_backend = aws.elasticache.Cluster(
     apply_immediately=True,  # Add this line to apply changes immediately
 )
 
-# Github Actions Runner
-# TODO: Refactor to split this logic in another module after moving EKS vpc to another module
-
-# get the latest ubuntu ami
-ubuntu_latest_ami = aws.ec2.get_ami(
-    most_recent=True,
-    filters=[
-        {
-            "name": "name",
-            "values": ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"],
-        },
-    ],
-)
-
-github_actions_runner_security_group = aws.ec2.SecurityGroup(
-    "github-actions-runner-security-group",
-    vpc_id=eks_vpc.vpc_id,
-    description="Security group for Github Actions Runner",
-    ingress=[
-        {
-            "protocol": "tcp",
-            "from_port": 22,
-            "to_port": 22,
-            "cidr_blocks": ["0.0.0.0/0"],
-            "description": "Allow SSH access",
-        }
-    ],
-    egress=[
-        {
-            "protocol": "-1",
-            "from_port": 0,
-            "to_port": 0,
-            "cidr_blocks": ["0.0.0.0/0"],
-            "description": "Allow all outbound traffic",
-        },
-    ],
-    tags={
-        "Name": "github-actions-runner-security-group",
-    },
-)
-
-github_actions_runner_instance = aws.ec2.Instance(
-    "github-actions-runner",
-    ami=ubuntu_latest_ami.id,
-    instance_type=aws.ec2.InstanceType.T3_MEDIUM,
-    vpc_security_group_ids=[github_actions_runner_security_group.id],
-    subnet_id=eks_vpc.public_subnet_ids[0],
-    tags={
-        "Name": "github-actions-runner",
-    },
-    availability_zone=f"{region}a",
-    root_block_device={
-        "volume_size": 50,
-    },
-)
-
 # ECR Registry
 repository_backend = aws.ecr.Repository(
     "repository-backend",
@@ -392,8 +336,6 @@ pulumi.export("aws_lb_controller_policy", aws_lb_controller_policy.arn)
 pulumi.export("sqs_deployment_customer_apps_arn", sqs.sqs_deployment_customer_apps.arn)
 pulumi.export("s3_deployment_customer_apps", s3.s3_deployment_customer_apps.bucket)
 pulumi.export("redis_backend", redis_backend.cache_nodes[0].address)
-pulumi.export("github_actions_runner_host", github_actions_runner_instance.public_dns)
-pulumi.export("github_actions_runner_id", github_actions_runner_instance.id)
 pulumi.export(
     "ecr_registry_url",
     repository_backend.registry_id.apply(
