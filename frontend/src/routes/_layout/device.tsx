@@ -96,7 +96,7 @@ function AuthorizeDevice() {
               Authorize FastAPI CLI
             </Heading>
             <Text>Click the button below to authorize FastAPI CLI</Text>
-            <Box bg="yellow.50" p={4} borderRadius="md">
+            <Box bg="yellow.50" p={4} borderRadius="md" color="black">
               <Icon
                 as={FaExclamationTriangle}
                 color="yellow.500"
