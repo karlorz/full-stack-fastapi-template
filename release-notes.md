@@ -291,6 +291,7 @@
 
 ### Internal
 
+* 🚸 Fix device authorization box in dark mode. PR [#481](https://github.com/fastapilabs/cloud/pull/481) by [@patrick91](https://github.com/patrick91).
 * 🔥 Remove Pulumi to set up an instance in where to install a GitHub Actions Runner and its docs. PR [#487](https://github.com/fastapilabs/cloud/pull/487) by [@tiangolo](https://github.com/tiangolo).
 * 🚀 Deploy our backend from Depot runners instead of custom GitHub runners. PR [#486](https://github.com/fastapilabs/cloud/pull/486) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Add initial namespace per team logic in builder. PR [#440](https://github.com/fastapilabs/cloud/pull/440) by [@estebanx64](https://github.com/estebanx64).
