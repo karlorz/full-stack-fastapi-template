@@ -182,6 +182,12 @@ class BuilderSettings(SettingsEnv):
     AWS_REGION: str
 
 
+class DepotSettings(SettingsEnv):
+    DEPOT_PROJECT_ID: str
+    DEPOT_TOKEN: str
+    DEPOT_HOSTNAME: str = "api.depot.dev"
+
+
 @lru_cache
 def get_main_settings() -> MainSettings:
     return MainSettings()  # type: ignore
@@ -200,3 +206,8 @@ def get_db_settings() -> DBSettings:
 @lru_cache
 def get_common_settings() -> CommonSettings:
     return CommonSettings()  # type: ignore
+
+
+@lru_cache
+def get_depot_settings() -> DepotSettings:
+    return DepotSettings()  # type: ignore

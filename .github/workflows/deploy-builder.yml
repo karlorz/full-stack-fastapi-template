@@ -97,9 +97,11 @@ jobs:
         POSTGRES_SSL_ENABLED: "${{ vars.POSTGRES_SSL_ENABLED }}"
         ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
         AWS_REGION: "${{ vars.AWS_REGION }}"
+        DEPOT_PROJECT_ID: "${{ vars.DEPOT_PROJECT_ID }}"
 
         # Secrets for the builder
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
+        DEPOT_TOKEN: "${{ secrets.DEPOT_TOKEN }}"
         BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
 
   # https://github.com/marketplace/actions/alls-green#why

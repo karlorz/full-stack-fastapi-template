@@ -1,16 +1,14 @@
-FROM docker:27-dind
+FROM python:3.10
 
 ENV PYTHONUNBUFFERED=1
 
-RUN apk add --no-cache python3 curl
+# Install Depot CLI
+ENV DEPOT_INSTALL_DIR=/usr/local/bin
+RUN curl -L https://depot.dev/install-cli.sh | sh
 
 # Install uv
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
-COPY --from=ghcr.io/astral-sh/uv:0.4.23-alpine /usr/local/bin/uv /bin/uv
-
-# Place executables in the environment at the front of the path
-# Ref: https://docs.astral.sh/uv/guides/integration/docker/#using-the-environment
-ENV PATH="/app/.venv/bin:$PATH"
+COPY --from=ghcr.io/astral-sh/uv:0.4.23 /uv /bin/uv
 
 # Compile bytecode
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#compiling-bytecode
@@ -20,31 +18,36 @@ ENV UV_COMPILE_BYTECODE=1
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#caching
 ENV UV_LINK_MODE=copy
 
+# Set up user
+RUN useradd --create-home -r user -u 1000
+# Set user by non-root ID for Knative security compatibility
+USER 1000
+
 WORKDIR /app/
+
+# Place executables in the environment at the front of the path
+# Ref: https://docs.astral.sh/uv/guides/integration/docker/#using-the-environment
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Install dependencies
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
-RUN --mount=type=cache,target=/root/.cache/uv \
+RUN --mount=type=cache,target=/user/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-install-project
 
-COPY ./scripts /app/scripts
+COPY --chown=user:user ./scripts /app/scripts
 
-COPY ./pyproject.toml ./uv.lock ./alembic.ini /app/
+COPY --chown=user:user ./pyproject.toml ./uv.lock ./alembic.ini /app/
 
-COPY Dockerfile.standard /app/Dockerfile.standard
-COPY Dockerfile.requirements /app/Dockerfile.requirements
+COPY --chown=user:user ./app /app/app
 
-COPY builder_entrypoint.sh /app/builder_entrypoint.sh
-RUN chmod +x /app/builder_entrypoint.sh
-
-COPY ./app /app/app
+COPY --chown=user:user Dockerfile.standard /app/Dockerfile.standard
+COPY --chown=user:user Dockerfile.requirements /app/Dockerfile.requirements
 
 # Sync the project
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
-RUN --mount=type=cache,target=/root/.cache/uv \
+RUN --mount=type=cache,target=/user/.cache/uv \
     uv sync
 
-EXPOSE 8080
-ENTRYPOINT ["/app/builder_entrypoint.sh"]
+CMD ["sh", "-c", "fastapi run app/docker_builder.py --port ${PORT:-8080}"]

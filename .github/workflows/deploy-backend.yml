@@ -132,11 +132,10 @@ jobs:
         EMAILABLE_KEY: "${{ secrets.EMAILABLE_KEY }}"
         BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
     - name: Update Knative Service image
-      run: uv run typer --func deploy_cloud app.docker_builder run api $IMAGE_URL $IMAGE_DIGEST --min-scale 1
+      run: uv run typer --func deploy_cloud app.docker_builder run api $IMAGE_URL --min-scale 1
       working-directory: backend
       env:
-        IMAGE_URL: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}
-        IMAGE_DIGEST: ${{ steps.docker-build.outputs.digest }}
+        IMAGE_URL: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}
 
         # Env vars for the app
         DOMAIN: "${{ vars.DOMAIN }}"
@@ -166,6 +165,8 @@ jobs:
         DOCKER_IMAGE_FRONTEND: "${{ vars.DOCKER_IMAGE_FRONTEND }}"
         AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
         ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
+        DEPOT_PROJECT_ID: "${{ vars.DEPOT_PROJECT_ID }}"
+
         BUILDER_API_URL: "${{ vars.BUILDER_API_URL }}"
         # Secrets for the app
         SECRET_KEY: "${{ secrets.SECRET_KEY }}"
@@ -173,6 +174,8 @@ jobs:
         SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
         EMAILABLE_KEY: "${{ secrets.EMAILABLE_KEY }}"
+        DEPOT_TOKEN: "${{ secrets.DEPOT_TOKEN }}"
+
         BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-backend:  # This job does nothing and is only used for the branch protection

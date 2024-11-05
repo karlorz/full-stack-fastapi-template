@@ -49,6 +49,10 @@ spec:
             value: "${POSTGRES_PASSWORD}"
           - name: BUILDER_API_KEY
             value: "${BUILDER_API_KEY}"
+          - name: DEPOT_PROJECT_ID
+            value: "${DEPOT_PROJECT_ID}"
+          - name: DEPOT_TOKEN
+            value: "${DEPOT_TOKEN}"
         volumeMounts:
         - mountPath: /var/lib/docker
           name: docker-graph-storage

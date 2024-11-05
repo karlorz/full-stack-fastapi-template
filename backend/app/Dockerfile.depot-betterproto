@@ -1,0 +1,26 @@
+FROM python:3.10
+
+RUN apt-get update && \
+    apt-get install -y protobuf-compiler && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install --pre "betterproto[compiler]>=2.0.0b7"
+
+WORKDIR /code
+
+ADD https://github.com/depot/proto/archive/refs/heads/main.zip /code/
+RUN unzip /code/main.zip
+
+RUN mkdir -p /code/depot_py
+
+CMD protoc -I proto-main/proto/depot/ \
+    --python_betterproto_out=/code/depot_py \
+    --python_betterproto_opt=pydantic_dataclasses \
+    proto-main/proto/depot/build/v1/build.proto \
+    proto-main/proto/depot/buildkit/v1/buildkit.proto \
+    proto-main/proto/depot/core/v1/build.proto \
+    proto-main/proto/depot/core/v1/project.proto
+
+# docker build -t betterproto -f Dockerfile.depot-betterproto .
+# docker run -v $(pwd)/depot_py:/code/depot_py betterproto

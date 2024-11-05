@@ -1,32 +1,38 @@
-import base64
+import json
 import os
 import shutil
+import subprocess
 import tarfile
 import uuid
-from collections.abc import Generator
+from collections.abc import Generator, Iterator
+from contextlib import contextmanager
 from functools import lru_cache
 from pathlib import Path
 from typing import Annotated, Any
 
 import boto3
-import docker
 import sentry_sdk
+from asyncer import syncify
 from botocore.exceptions import ClientError, NoCredentialsError
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import APIKeyHeader
 from kubernetes import client as k8s
 from kubernetes import config
+from kubernetes.client.rest import ApiException as K8sApiException
 from pydantic import BaseModel
 from sqlalchemy.orm import joinedload
 from sqlmodel import Session, select
 
+from app import depot_client
 from app.core.config import (
     get_builder_settings,
     get_common_settings,
     get_db_settings,
+    get_depot_settings,
     get_main_settings,
 )
 from app.core.db import engine
+from app.depot_py.depot.build import v1 as depot_build
 from app.models import (
     App,
     Deployment,
@@ -44,9 +50,6 @@ s3 = boto3.client("s3", region_name=aws_region)
 
 # AWS ECR client
 ecr = boto3.client("ecr", region_name=aws_region)
-
-# Docker client
-docker_client = docker.from_env()
 
 
 # Kubernetes client
@@ -102,7 +105,7 @@ def create_namespace_by_team(namespace: str) -> None:
         print(
             f"Namespace '{namespace}' already exists."
         )  # if there is no error, the namespace exists
-    except k8s.rest.ApiException as e:
+    except K8sApiException as e:
         if e.status == 404:
             namespace_body = k8s.V1Namespace(metadata=k8s.V1ObjectMeta(name=namespace))
             try:
@@ -110,7 +113,7 @@ def create_namespace_by_team(namespace: str) -> None:
                 print(
                     f"Namespace '{namespace}' created."
                 )  # if there is no error, the namespace was created
-            except k8s.rest.ApiException as ex:
+            except K8sApiException as ex:
                 print(f"Error creating namespace: {ex}")
                 raise ex
         else:
@@ -145,7 +148,7 @@ def create_or_patch_custom_object(
         )
         print(f"Custom object patched. Status='{api_response}'")
 
-    except k8s.rest.ApiException as e:
+    except K8sApiException as e:
         if e.status == 404:  # Not Found
             # Object doesn't exist, so create it
             api_response = api_instance.create_namespaced_custom_object(  # type: ignore
@@ -160,9 +163,7 @@ def create_or_patch_custom_object(
             raise e
 
 
-def deploy_cloud(
-    service_name: str, image_url: str, image_sha256_hash: str, min_scale: int = 0
-) -> None:
+def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
     main_settings = get_main_settings().model_dump(
         mode="json", exclude_unset=True, exclude={"all_cors_origins"}
     )
@@ -176,7 +177,6 @@ def deploy_cloud(
     deploy_to_kubernetes(
         service_name,
         image_url,
-        image_sha256_hash,
         namespace="default",
         min_scale=min_scale,
         env=env_strs,
@@ -186,7 +186,6 @@ def deploy_cloud(
 def deploy_to_kubernetes(
     service_name: str,
     image_url: str,
-    image_sha256_hash: str,
     namespace: str,
     min_scale: int = 0,
     env: dict[str, str] | None = None,
@@ -209,7 +208,7 @@ def deploy_to_kubernetes(
                 "spec": {
                     "containers": [
                         {
-                            "image": f"{image_url}@{image_sha256_hash}",
+                            "image": f"{image_url}",
                             "env": [
                                 {"name": str(k), "value": str(v)}
                                 for k, v in use_env.items()
@@ -234,22 +233,27 @@ def deploy_to_kubernetes(
     )
 
 
-def docker_login(registry_url: str) -> None:
+@contextmanager
+def docker_login(registry_url: str) -> Iterator[None]:
     try:
         # Get ECR authorization token
         response = ecr.get_authorization_token()
-        token = response["authorizationData"][0]["authorizationToken"]
-
-        # Decode and extract username and password
-        username, password = base64.b64decode(token).decode("utf-8").split(":")
-
-        # Log in to Docker
-        docker_client.login(username=username, password=password, registry=registry_url)  # type: ignore
     except NoCredentialsError:
         print("Credentials not available")
-    except Exception as e:
-        print(f"Error during Docker login: {e}")
         raise
+    token = response["authorizationData"][0].get("authorizationToken")
+    assert token, "No authorization token available"
+    docker_config_path = Path.home().joinpath(".docker/config.json")
+    docker_config_path.parent.mkdir(parents=True, exist_ok=True)
+    docker_config_path.write_text(
+        json.dumps({"auths": {registry_url: {"auth": token}}})
+    )
+    try:
+        yield
+    finally:
+        # After finishing with this build, remove the Docker config file
+        # login should be done again for the next build
+        docker_config_path.unlink()
 
 
 def repository_exists(repository_name: str) -> bool:
@@ -257,7 +261,7 @@ def repository_exists(repository_name: str) -> bool:
         response = ecr.describe_repositories(repositoryNames=[repository_name])
         return len(response["repositories"]) > 0
     except ClientError as e:
-        if e.response["Error"]["Code"] == "RepositoryNotFoundException":
+        if e.response.get("Error", {}).get("Code") == "RepositoryNotFoundException":
             return False
         else:
             raise
@@ -301,33 +305,61 @@ def download_and_extract_tar(
     os.remove(tar_path)
 
 
+def depot_build_exec(
+    *,
+    context_dir: Path,
+    image_full_name: str,
+    project_id: str,
+    build_id: str,
+    build_token: str,
+) -> subprocess.CompletedProcess[bytes]:
+    push_load_flag = (
+        "--load" if get_common_settings().ENVIRONMENT == "local" else "--push"
+    )
+    result = subprocess.run(
+        [
+            "depot",
+            "build",
+            push_load_flag,
+            "-t",
+            image_full_name,
+            str(context_dir),
+        ],
+        env={
+            **os.environ,
+            "DEPOT_BUILD_ID": build_id,
+            "DEPOT_TOKEN": build_token,
+            "DEPOT_PROJECT_ID": project_id,
+        },
+        check=True,
+        capture_output=True,
+    )
+    return result
+
+
 def build_and_push_docker_image(
-    image_tag: str, dockerfile_path: str, registry_url: str
-) -> str:
+    *, registry_url: str, image_tag: str, docker_context_path: str
+) -> None:
+    depot_settings = get_depot_settings()
     # Docker login
-    docker_login(registry_url)
+    with docker_login(registry_url):
+        build_request = syncify(depot_client.build().create_build)(
+            create_build_request=depot_build.CreateBuildRequest(
+                project_id=depot_settings.DEPOT_PROJECT_ID
+            ),
+        )
+        print(f"Build request created: {build_request.build_id}")
 
-    # Build Docker image
-    image, logs = docker_client.images.build(path=dockerfile_path, tag=image_tag)
-    for log in logs:
-        print(log)
-
-    # Tag Docker image
-    full_image_tag = f"{registry_url}/{image_tag}"
-    image.tag(full_image_tag)
-
-    # Push Docker image to registry
-    push_logs = docker_client.images.push(full_image_tag, stream=True, decode=True)
-    sha256 = None
-    for push_log in push_logs:
-        if "aux" in push_log:
-            sha256 = push_log["aux"]["Digest"]
-        print(push_log)
-
-    if not sha256:
-        raise Exception("Failed to push Docker image")
-
-    return sha256  # type: ignore
+        full_image_name = f"{registry_url}/{image_tag}"
+        result = depot_build_exec(
+            context_dir=Path(docker_context_path),
+            image_full_name=full_image_name,
+            # TODO: one project per app
+            project_id=depot_settings.DEPOT_PROJECT_ID,
+            build_id=build_request.build_id,
+            build_token=build_request.build_token,
+        )
+        print(result.stdout)
 
 
 def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
@@ -387,10 +419,13 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
         shutil.copy("/app/Dockerfile.standard", f"{build_context}/Dockerfile")
 
     # Build and push Docker image
-    sha256 = build_and_push_docker_image(image_tag, build_context, registry_url)
+    build_and_push_docker_image(
+        registry_url=registry_url,
+        image_tag=image_tag,
+        docker_context_path=build_context,
+    )
 
     # Update status to deploying
-    deployment_with_team.image_hash = sha256
     deployment_with_team.status = DeploymentStatus.deploying
     session.commit()
 
@@ -400,7 +435,6 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
     deploy_to_kubernetes(
         service_name=app_name,
         image_url=f"{registry_url}/{image_tag}",
-        image_sha256_hash=sha256,
         namespace=f"team-{team.id}",
         env=env_vars,
     )
@@ -452,12 +486,12 @@ def send_deploy(
     ).first()
     if not deployment:
         raise HTTPException(status_code=404, detail="Deployment not found")
-
-    if not deployment.image_hash:
-        raise HTTPException(
-            status_code=400,
-            detail="Deployment image hash not found, please build first",
-        )
+    # TODO: handle this after Depot
+    # if not deployment.image_hash:
+    #     raise HTTPException(
+    #         status_code=400,
+    #         detail="Deployment image hash not found, please build first",
+    #     )
 
     app = session.exec(select(App).where(App.id == deployment.app_id)).first()
     if not app:
@@ -474,7 +508,6 @@ def send_deploy(
     deploy_to_kubernetes(
         service_name=deployment.slug,
         image_url=f"{registry_url}/{image_tag}",
-        image_sha256_hash=deployment.image_hash,
         namespace=f"team-{team.id}",
         env=env_vars,
     )
