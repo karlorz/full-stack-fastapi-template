@@ -292,6 +292,7 @@
 
 ### Internal
 
+* 👔 Add app name reserved suffix keywords. PR [#478](https://github.com/fastapilabs/cloud/pull/478) by [@estebanx64](https://github.com/estebanx64).
 * 🚸 Fix device authorization box in dark mode. PR [#481](https://github.com/fastapilabs/cloud/pull/481) by [@patrick91](https://github.com/patrick91).
 * 🔥 Remove Pulumi to set up an instance in where to install a GitHub Actions Runner and its docs. PR [#487](https://github.com/fastapilabs/cloud/pull/487) by [@tiangolo](https://github.com/tiangolo).
 * 🚀 Deploy our backend from Depot runners instead of custom GitHub runners. PR [#486](https://github.com/fastapilabs/cloud/pull/486) by [@tiangolo](https://github.com/tiangolo).
