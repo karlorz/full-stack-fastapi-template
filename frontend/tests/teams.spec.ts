@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test"
-import { randomEmail, randomTeamName, slugify } from "./utils/random"
+import { randomEmail, randomTeamName } from "./utils/random"
 import { createTeam, logInUser, signUpNewUser } from "./utils/userUtils"
 
 test.describe("Select and change team successfully", () => {
@@ -40,8 +40,7 @@ test.describe("Select and change team successfully", () => {
     await logInUser(page, email, password)
 
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
 
     await page.goto(`/${teamSlug}`)
     await page.getByTestId("team-selector").click()
@@ -71,8 +70,7 @@ test.describe("Select and change team successfully", () => {
     await logInUser(page, email, password)
 
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
     await page.goto("/teams/all?orderBy=created_at&order=desc")
     await page.getByRole("link", { name: teamName }).click()
     await expect(page.getByRole("button", { name: teamName })).toBeVisible()
@@ -88,9 +86,8 @@ test.describe("Select and change team successfully", () => {
 test.describe("User with admin role can update team information", () => {
   test("User can update team name", async ({ page }) => {
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
     const newTeamName = randomTeamName()
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
 
     await page.goto(`/${teamSlug}/settings`)
     await page.getByRole("button", { name: "Edit" }).click()
@@ -109,8 +106,7 @@ test.describe("User with admin role can update team information", () => {
     page,
   }) => {
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
 
     await page.goto(`/${teamSlug}/settings`)
     await page.getByRole("button", { name: "Edit" }).click()
@@ -121,8 +117,7 @@ test.describe("User with admin role can update team information", () => {
 
   test("User can delete a team", async ({ page }) => {
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
 
     await page.goto(`/${teamSlug}/settings`)
 

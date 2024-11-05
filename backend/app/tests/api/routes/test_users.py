@@ -363,7 +363,7 @@ def test_verify_email(client: TestClient, db: Session) -> None:
 
     assert team_link.role == Role.admin
     assert team_link.team.name == user.full_name
-    assert team_link.team.slug == user.username
+    assert team_link.team.slug.startswith(user.username)
 
     assert user.personal_team
     assert user.personal_team.id == team_link.team.id

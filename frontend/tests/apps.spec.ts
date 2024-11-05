@@ -23,11 +23,10 @@ test.describe("Apps empty states", () => {
   }) => {
     const email = randomEmail()
     const team = randomTeamName()
-    const teamSlug = slugify(team)
 
     await signUpNewUser(page, fullName, email, password, request)
     await logInUser(page, email, password)
-    await createTeam(page, team)
+    const teamSlug = await createTeam(page, team)
 
     await page.goto(`/${teamSlug}/apps/`)
     await expect(
@@ -46,12 +45,11 @@ test.describe("User can manage apps succesfully", () => {
   test("User can create a new app", async ({ page, request }) => {
     const email = randomEmail()
     const team = randomTeamName()
-    const teamSlug = slugify(team)
 
     const appName = randomAppName()
     await signUpNewUser(page, fullName, email, password, request)
     await logInUser(page, email, password)
-    await createTeam(page, team)
+    const teamSlug = await createTeam(page, team)
 
     await page.goto(`/${teamSlug}/apps/new`)
     await page.getByPlaceholder("App Name").fill(appName)
@@ -62,12 +60,11 @@ test.describe("User can manage apps succesfully", () => {
   test("User can read all apps", async ({ page, request }) => {
     const email = randomEmail()
     const team = randomTeamName()
-    const teamSlug = slugify(team)
 
     const appNames = [randomAppName(), randomAppName(), randomAppName()]
     await signUpNewUser(page, fullName, email, password, request)
     await logInUser(page, email, password)
-    await createTeam(page, team)
+    const teamSlug = await createTeam(page, team)
 
     for (const appName of appNames) {
       await createApp(page, teamSlug, appName)
@@ -83,14 +80,13 @@ test.describe("User can manage apps succesfully", () => {
   test("User can delete an app", async ({ page, request }) => {
     const email = randomEmail()
     const team = randomTeamName()
-    const teamSlug = slugify(team)
 
     const appName = randomAppName()
     const appSlug = slugify(appName)
 
     await signUpNewUser(page, fullName, email, password, request)
     await logInUser(page, email, password)
-    await createTeam(page, team)
+    const teamSlug = await createTeam(page, team)
     await createApp(page, teamSlug, appName)
 
     await page.goto(`/${teamSlug}/apps`)

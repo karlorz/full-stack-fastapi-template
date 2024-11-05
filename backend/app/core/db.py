@@ -1,5 +1,6 @@
 from sqlmodel import Session, create_engine, select
 
+from app.api.utils.teams import generate_team_slug_name
 from app.core.config import get_db_settings, get_main_settings
 from app.models import Role, Team, User, UserCreate, UserTeamLink
 
@@ -34,7 +35,10 @@ def init_db(session: Session) -> None:
         )
         user = crud.create_user(session=session, user_create=user_in, is_verified=True)
         team = Team(
-            name=user.full_name, slug=user.username, owner=user, is_personal_team=True
+            name=user.full_name,
+            slug=generate_team_slug_name(user.full_name, session),
+            owner=user,
+            is_personal_team=True,
         )
         user_team_link = UserTeamLink(user=user, team=team, role=Role.admin)
         session.add(user_team_link)

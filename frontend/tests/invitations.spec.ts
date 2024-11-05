@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test"
 import { findLastEmail } from "./utils/mailcatcher"
-import { randomEmail, randomTeamName, slugify } from "./utils/random"
+import { randomEmail, randomTeamName } from "./utils/random"
 import {
   createTeam,
   logInUser,
@@ -16,9 +16,8 @@ test.describe("User with role admin can manage team invitations", () => {
   }) => {
     const email = randomEmail()
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
 
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
 
     await expect(
@@ -31,9 +30,8 @@ test.describe("User with role admin can manage team invitations", () => {
   }) => {
     const email = randomEmail()
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
 
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
     await page.getByRole("button", { name: "Ok" }).click()
     await page.getByRole("tab", { name: "Pending Invitations" }).click()
@@ -44,9 +42,8 @@ test.describe("User with role admin can manage team invitations", () => {
   test("User can cancel the invitation", async ({ page }) => {
     const email = randomEmail()
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
 
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
     await page.getByRole("button", { name: "Ok" }).click()
     await page.getByRole("tab", { name: "Pending Invitations" }).click()
@@ -57,9 +54,8 @@ test.describe("User with role admin can manage team invitations", () => {
   test("Invitation with invalid email addresses", async ({ page }) => {
     const email = "invalidEmail"
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
 
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
 
     await expect(page.getByText("Invalid email address")).toBeVisible()
@@ -68,9 +64,8 @@ test.describe("User with role admin can manage team invitations", () => {
   test("Invitation to an existing team member", async ({ page }) => {
     const email = "admin@example.com"
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
 
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
 
     await expect(
@@ -83,9 +78,8 @@ test.describe("User with role admin can manage team invitations", () => {
   }) => {
     const email = randomEmail()
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
 
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
     await sendInvitation(page, teamSlug, email)
 
@@ -110,8 +104,7 @@ test.describe("User can accept invitations to a team", () => {
     // user 1 logs in and creates a team
     await logInUser(page, user1Email, "password")
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
 
     // user 1 sends an invitation to user 2
     await page.goto(`/${teamSlug}`)
@@ -173,8 +166,7 @@ test.describe("Different scenarios for viewing invitations", () => {
     // user 1 logs in and creates a team
     await logInUser(page, user1Email, "password")
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
 
     // user 1 sends an invitation to user 2
     await page.goto(`/${teamSlug}`)
@@ -202,8 +194,7 @@ test.describe("Different scenarios for viewing invitations", () => {
     // user 1 logs in and creates a team
     await logInUser(page, user1Email, "password")
     const teamName = randomTeamName()
-    const teamSlug = slugify(teamName)
-    await createTeam(page, teamName)
+    const teamSlug = await createTeam(page, teamName)
 
     // user 1 sends an invitation to user 2
     await page.goto(`/${teamSlug}`)
