@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta
 
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
@@ -6,7 +7,7 @@ from sqlmodel import Session, select
 from app.core.config import get_main_settings
 from app.crud import add_user_to_team
 from app.models import App, Role
-from app.tests.utils.apps import create_random_app
+from app.tests.utils.apps import create_deployment_for_app, create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 from app.tests.utils.utils import random_email
@@ -27,6 +28,11 @@ def test_read_apps(client: TestClient, db: Session) -> None:
 
     app = create_random_app(db, team=team)
     app2 = create_random_app(db, team=team)
+
+    deployment = create_deployment_for_app(db, app=app)
+    deployment.updated_at = app.updated_at - timedelta(days=1)
+    create_deployment_for_app(db, app=app2)
+    db.commit()
 
     team2 = create_random_team(db, owner_id=user.id)
     add_user_to_team(session=db, user=user, team=team2, role=Role.admin)
@@ -51,9 +57,11 @@ def test_read_apps(client: TestClient, db: Session) -> None:
     assert data["data"][0]["id"] == str(app.id)
     assert data["data"][0]["name"] == app.name
     assert data["data"][0]["slug"] == app.slug
+    assert data["data"][0]["is_fresh"] is True
     assert data["data"][1]["id"] == str(app2.id)
     assert data["data"][1]["name"] == app2.name
     assert data["data"][1]["slug"] == app2.slug
+    assert data["data"][1]["is_fresh"] is False
     assert all(app["id"] not in {str(app3.id), str(app4.id)} for app in data["data"])
 
 
@@ -91,6 +99,7 @@ def test_read_apps_filter_by_slug(client: TestClient, db: Session) -> None:
     assert data["data"][0]["id"] == str(app.id)
     assert data["data"][0]["name"] == app.name
     assert data["data"][0]["slug"] == app.slug
+    assert data["data"][0]["is_fresh"] is None
 
 
 def test_create_app_admin(client: TestClient, db: Session) -> None:
@@ -122,6 +131,7 @@ def test_create_app_admin(client: TestClient, db: Session) -> None:
     assert data["id"]
     assert data["name"] == app_in["name"]
     assert data["team_id"] == str(team.id)
+    assert data["is_fresh"] is None
 
     app_query = select(App).where(App.id == data["id"])
     app_db = db.exec(app_query).first()
@@ -159,6 +169,7 @@ def test_create_app_member(client: TestClient, db: Session) -> None:
     assert data["id"]
     assert data["name"] == app_in["name"]
     assert data["team_id"] == str(team.id)
+    assert data["is_fresh"] is None
 
     app_query = select(App).where(App.id == data["id"])
     app_db = db.exec(app_query).first()
@@ -288,6 +299,45 @@ def test_read_app(client: TestClient, db: Session) -> None:
     assert data["name"] == app.name
     assert data["slug"] == app.slug
     assert data["team_id"] == str(team.id)
+    assert data["is_fresh"] is None
+
+
+def test_read_app_with_fresh_deployment(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+    deployment = create_deployment_for_app(db, app=app)
+    deployment.updated_at = app.updated_at - timedelta(days=1)
+    db.commit()
+    db.refresh(deployment)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{app.id}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["id"] == str(app.id)
+    assert data["name"] == app.name
+    assert data["slug"] == app.slug
+    assert data["team_id"] == str(team.id)
+    assert data["is_fresh"] is True
+    assert app.updated_at > deployment.updated_at
 
 
 def test_read_app_user_not_in_team(client: TestClient, db: Session) -> None:

@@ -15,6 +15,7 @@ from app.models import (
     EnvironmentVariableUpdate,
     Message,
 )
+from app.utils import get_datetime_utc
 
 router = APIRouter(prefix="/{app_id}/environment-variables")
 
@@ -104,7 +105,10 @@ def create_environment_variable(
             detail="An environment variable with the provided name already exists",
         )
 
+    app.updated_at = get_datetime_utc()
+
     session.add(environment_variable)
+    session.add(app)
     session.commit()
 
     session.refresh(environment_variable)
@@ -159,6 +163,8 @@ def update_environment_variables(
 
             session.add(environment_variable)
 
+    app.updated_at = get_datetime_utc()
+    session.add(app)
     session.commit()
 
     count_statement = (
@@ -212,7 +218,10 @@ def delete_environment_variable(
     if not environment_variable:
         raise HTTPException(status_code=404, detail="Environment variable not found")
 
+    app.updated_at = get_datetime_utc()
+
     session.delete(environment_variable)
+    session.add(app)
     session.commit()
 
     return Message(message="Environment variable deleted")
@@ -256,7 +265,10 @@ def update_environment_variable(
     if environment_variable_in.value:
         environment_variable.value = environment_variable_in.value
 
+    app.updated_at = get_datetime_utc()
+
     session.add(environment_variable)
+    session.add(app)
     session.commit()
 
     session.refresh(environment_variable)

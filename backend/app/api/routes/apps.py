@@ -7,13 +7,7 @@ from sqlmodel import col, func, select
 from app.api.deps import CurrentUser, SessionDep
 from app.api.utils.teams import generate_app_slug_name
 from app.crud import get_user_team_link
-from app.models import (
-    App,
-    AppCreate,
-    AppPublic,
-    AppsPublic,
-    Message,
-)
+from app.models import App, AppCreate, AppPublic, AppsPublic, Message
 
 from .environment_variables import router as environment_variables_router
 

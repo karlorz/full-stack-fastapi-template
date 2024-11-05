@@ -279,6 +279,15 @@ class App(AppBase, table=True):
     def url(self) -> str:
         return f"https://{self.slug}.{get_common_settings().DEPLOYMENTS_DOMAIN}"
 
+    @computed_field
+    @hybrid_property
+    def is_fresh(self) -> bool | None:
+        deployments = sorted(self.deployments, key=lambda x: x.updated_at, reverse=True)
+        if not deployments:
+            return None
+
+        return self.updated_at > deployments[0].updated_at
+
 
 class AppCreate(AppBase):
     team_id: uuid.UUID
@@ -291,6 +300,7 @@ class AppPublic(AppBase):
     created_at: datetime
     updated_at: datetime
     url: str
+    is_fresh: bool | None
 
 
 class AppsPublic(SQLModel):

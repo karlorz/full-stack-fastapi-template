@@ -67,6 +67,18 @@ export const $AppPublic = {
       type: "string",
       isRequired: true,
     },
+    is_fresh: {
+      type: "any-of",
+      contains: [
+        {
+          type: "boolean",
+        },
+        {
+          type: "null",
+        },
+      ],
+      isRequired: true,
+    },
   },
 } as const
 

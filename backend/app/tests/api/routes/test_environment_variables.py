@@ -117,6 +117,7 @@ def test_create_environment_variable_for_app(client: TestClient, db: Session) ->
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     app = create_random_app(db, team=team)
+    initial_updated_at = app.updated_at
 
     user_auth_headers = user_authentication_headers(
         client=client,
@@ -137,9 +138,11 @@ def test_create_environment_variable_for_app(client: TestClient, db: Session) ->
 
     assert response.status_code == 201
     data = response.json()
+    db.refresh(app)
 
     assert data["name"] == "name"
     assert data["value"] == "value"
+    assert app.updated_at > initial_updated_at
 
     env = db.exec(
         select(EnvironmentVariable).where(
@@ -325,6 +328,7 @@ def test_delete_environment_variable_for_app(client: TestClient, db: Session) ->
 
     app = create_random_app(db, team=team)
     env = create_environment_variable(db, app=app, name="name", value="value")
+    initial_updated_at = app.updated_at
 
     user_auth_headers = user_authentication_headers(
         client=client,
@@ -339,9 +343,10 @@ def test_delete_environment_variable_for_app(client: TestClient, db: Session) ->
 
     assert response.status_code == 200
     data = response.json()
+    db.refresh(app)
 
     assert data["message"] == "Environment variable deleted"
-
+    assert app.updated_at > initial_updated_at
     assert (
         db.exec(
             select(EnvironmentVariable).where(
@@ -431,7 +436,7 @@ def test_edit_environment_variable_for_app(client: TestClient, db: Session) -> N
     env = create_environment_variable(
         db, app=app, name="initial_name", value="initial_value"
     )
-
+    initial_updated_at = app.updated_at
     user_auth_headers = user_authentication_headers(
         client=client,
         email=user.email,
@@ -448,9 +453,11 @@ def test_edit_environment_variable_for_app(client: TestClient, db: Session) -> N
 
     assert response.status_code == 200
     data = response.json()
+    db.refresh(app)
 
     assert data["name"] == "initial_name"
     assert data["value"] == "updated_value"
+    assert app.updated_at > initial_updated_at
 
     db.refresh(env)
 
@@ -547,7 +554,7 @@ def test_batch_update(client: TestClient, db: Session) -> None:
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
     app = create_random_app(db, team=team)
-
+    initial_updated_at = app.updated_at
     create_environment_variable(db, app=app, name="initial_name", value="initial_value")
     create_environment_variable(
         db, app=app, name="initial_name_2", value="initial_value_2"
@@ -574,7 +581,7 @@ def test_batch_update(client: TestClient, db: Session) -> None:
 
     assert response.status_code == 200
     data = response.json()
-
+    db.refresh(app)
     assert data["count"] == 3
     assert data["data"][0]["name"] == "initial_name"
     assert data["data"][0]["value"] == "updated_value"
@@ -582,6 +589,7 @@ def test_batch_update(client: TestClient, db: Session) -> None:
     assert data["data"][1]["value"] == "initial_value_3"
     assert data["data"][2]["name"] == "new_name"
     assert data["data"][2]["value"] == "new_value"
+    assert app.updated_at > initial_updated_at
 
     assert (
         db.exec(

@@ -17,6 +17,7 @@ export type AppPublic = {
   created_at: string
   updated_at: string
   url: string
+  is_fresh: boolean | null
 }
 
 export type AppsPublic = {
