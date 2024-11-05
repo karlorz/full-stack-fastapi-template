@@ -2,6 +2,7 @@ import secrets
 
 from sqlmodel import Session, select
 
+from app.core.config import get_main_settings
 from app.models import App, Team
 from app.utils import slugify
 
@@ -15,8 +16,13 @@ def generate_team_slug_name(name: str, session: Session) -> str:
 
 
 def generate_app_slug_name(name: str, session: Session) -> str:
-    slug_name = slugify(name)
-    while session.exec(select(App).where(App.slug == slug_name)).first():
-        slug_name = f"{slug_name}-{secrets.token_hex(4)}"
+    settings = get_main_settings()
 
-    return slug_name
+    slug_name = slugify(name)
+    new_slug = slug_name
+    while session.exec(
+        select(App).where(App.slug == new_slug)
+    ).first() or new_slug.endswith(tuple(settings.RESERVED_APP_NAMES)):
+        new_slug = f"{slug_name}-{secrets.token_hex(4)}"
+
+    return new_slug

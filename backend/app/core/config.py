@@ -17,7 +17,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Self
 
 
-def parse_cors(v: Any) -> list[str] | str:
+def parse_list_or_str(v: Any) -> list[str] | str:
     if isinstance(v, str) and not v.startswith("["):
         return [i.strip() for i in v.split(",")]
     elif isinstance(v, list | str):
@@ -98,7 +98,7 @@ class MainSettings(SettingsEnv):
 
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str,
-        BeforeValidator(parse_cors),
+        BeforeValidator(parse_list_or_str),
         PlainSerializer(serialize_cors, when_used="json"),
     ] = []
 
@@ -110,6 +110,7 @@ class MainSettings(SettingsEnv):
         ]
 
     PROJECT_NAME: str
+    RESERVED_APP_NAMES: Annotated[list[str] | str, BeforeValidator(parse_list_or_str)]
     SENTRY_DSN: HttpUrl | None = None
 
     REDIS_SERVER: str
