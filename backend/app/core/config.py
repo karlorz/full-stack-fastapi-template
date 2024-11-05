@@ -53,6 +53,7 @@ class SettingsEnv(BaseSettings):
 class CommonSettings(SettingsEnv):
     DEPLOYMENTS_DOMAIN: str = "fastapicloud.club"
     ENVIRONMENT: Literal["local", "development", "staging", "production"] = "local"
+    BUILDER_API_KEY: str
 
 
 class DBSettings(SettingsEnv):
@@ -172,6 +173,7 @@ class MainSettings(SettingsEnv):
 
     AWS_DEPLOYMENT_BUCKET: str
     EMAILABLE_KEY: str
+    BUILDER_API_URL: str
 
 
 class BuilderSettings(SettingsEnv):
@@ -196,4 +198,4 @@ def get_db_settings() -> DBSettings:
 
 @lru_cache
 def get_common_settings() -> CommonSettings:
-    return CommonSettings()
+    return CommonSettings()  # type: ignore

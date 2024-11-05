@@ -47,6 +47,8 @@ spec:
             value: "${AWS_REGION}"
           - name: POSTGRES_PASSWORD
             value: "${POSTGRES_PASSWORD}"
+          - name: BUILDER_API_KEY
+            value: "${BUILDER_API_KEY}"
         volumeMounts:
         - mountPath: /var/lib/docker
           name: docker-graph-storage

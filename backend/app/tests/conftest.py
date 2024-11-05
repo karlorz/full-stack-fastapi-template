@@ -72,7 +72,11 @@ def redis() -> Generator["Redis[Any]", None, None]:
 
 @pytest.fixture(scope="function", autouse=True)
 def common_settings() -> CommonSettings:
-    return CommonSettings(ENVIRONMENT="local", DEPLOYMENTS_DOMAIN="fastapicloud.club")
+    return CommonSettings(
+        ENVIRONMENT="local",
+        DEPLOYMENTS_DOMAIN="fastapicloud.club",
+        BUILDER_API_KEY="peWaQz7UE5uqQcAUpchvq1tyDyq918zaCed84tJJEB8=",
+    )
 
 
 @pytest.fixture(scope="function", autouse=True)

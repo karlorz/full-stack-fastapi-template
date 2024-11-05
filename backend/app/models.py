@@ -408,3 +408,7 @@ class WaitingListUserPublic(WaitingListUserBase):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
+
+
+class SendDeploy(SQLModel):
+    deployment_id: uuid.UUID

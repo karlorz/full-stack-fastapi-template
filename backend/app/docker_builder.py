@@ -12,7 +12,8 @@ import boto3
 import docker
 import sentry_sdk
 from botocore.exceptions import ClientError, NoCredentialsError
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.security import APIKeyHeader
 from kubernetes import client as k8s
 from kubernetes import config
 from pydantic import BaseModel
@@ -26,7 +27,14 @@ from app.core.config import (
     get_main_settings,
 )
 from app.core.db import engine
-from app.models import App, Deployment, DeploymentStatus, EnvironmentVariable
+from app.models import (
+    App,
+    Deployment,
+    DeploymentStatus,
+    EnvironmentVariable,
+    Message,
+    SendDeploy,
+)
 
 # aws vars
 aws_region = get_builder_settings().AWS_REGION
@@ -382,6 +390,7 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
     sha256 = build_and_push_docker_image(image_tag, build_context, registry_url)
 
     # Update status to deploying
+    deployment_with_team.image_hash = sha256
     deployment_with_team.status = DeploymentStatus.deploying
     session.commit()
 
@@ -422,6 +431,55 @@ def event_service_handler(event: dict[str, Any], session: SessionDep) -> Any:
         raise e
 
     return {"message": "OK"}
+
+
+api_key_header = APIKeyHeader(name="X-API-KEY")
+
+
+def validate_api_key(api_key: Annotated[str, Depends(api_key_header)]) -> str:
+    if api_key != get_common_settings().BUILDER_API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid API key")
+    return api_key
+
+
+@app.post("/send/deploy", dependencies=[Depends(validate_api_key)])
+def send_deploy(
+    message: SendDeploy,
+    session: SessionDep,
+) -> Message:
+    deployment = session.exec(
+        select(Deployment).where(Deployment.id == message.deployment_id)
+    ).first()
+    if not deployment:
+        raise HTTPException(status_code=404, detail="Deployment not found")
+
+    if not deployment.image_hash:
+        raise HTTPException(
+            status_code=400,
+            detail="Deployment image hash not found, please build first",
+        )
+
+    app = session.exec(select(App).where(App.id == deployment.app_id)).first()
+    if not app:
+        raise HTTPException(
+            status_code=404, detail="App associated with the deployment not found"
+        )
+
+    team = app.team
+
+    image_tag = f"{app.id}_{deployment.id}"
+    registry_url = get_builder_settings().ECR_REGISTRY_URL
+    env_vars = get_env_vars(app.id, session)
+
+    deploy_to_kubernetes(
+        service_name=deployment.slug,
+        image_url=f"{registry_url}/{image_tag}",
+        image_sha256_hash=deployment.image_hash,
+        namespace=f"team-{team.id}",
+        env=env_vars,
+    )
+
+    return Message(message="OK")
 
 
 class HealthCheckResponse(BaseModel):

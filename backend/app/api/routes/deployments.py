@@ -1,13 +1,14 @@
 import uuid
 from typing import Any, Literal
 
+import httpx
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import func
 from sqlmodel import and_, col, select
 
 from app.api.deps import CurrentUser, SessionDep
 from app.api.utils.aws_s3 import generate_presigned_url_post
-from app.core.config import get_main_settings
+from app.core.config import get_common_settings, get_main_settings
 from app.crud import get_user_team_link
 from app.models import (
     App,
@@ -16,6 +17,7 @@ from app.models import (
     DeploymentsPublic,
     DeploymentStatus,
     DeploymentUploadOut,
+    Message,
 )
 
 router = APIRouter()
@@ -173,3 +175,47 @@ def upload_deployment_artifact(
     )
 
     return deployment_url
+
+
+@router.post("/deployments/{deployment_id}/redeploy")
+def redeploy_deployment(
+    session: SessionDep,
+    current_user: CurrentUser,
+    deployment_id: uuid.UUID,
+) -> Any:
+    """
+    Send to builder to redeploy the deployment.
+    """
+    deployment = session.exec(
+        select(Deployment).where(Deployment.id == deployment_id)
+    ).first()
+    if not deployment:
+        raise HTTPException(status_code=404, detail="Deployment not found")
+
+    app = session.exec(select(App).where(App.id == deployment.app_id)).first()
+    if not app:
+        raise HTTPException(status_code=404, detail="App not found")
+
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=app.team_id
+    )
+    if not user_team_link:
+        raise HTTPException(
+            status_code=404, detail="Team not found for the current user"
+        )
+
+    response = httpx.post(
+        f"{get_main_settings().BUILDER_API_URL}/send/deploy",
+        headers={"X-API-KEY": get_common_settings().BUILDER_API_KEY},
+        json={"deployment_id": str(deployment_id)},
+    )
+
+    if response.status_code != 200:
+        try:
+            data = response.json()
+            detail = data.get("detail", "Unknown error")
+        except Exception:
+            detail = "Unknown error"
+        raise HTTPException(status_code=500, detail=detail)
+
+    return Message(message="OK")
