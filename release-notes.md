@@ -20,6 +20,7 @@
 
 ### Features
 
+* 👔 App stale API on env var changes. PR [#482](https://github.com/fastapilabs/cloud/pull/482) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add services to redeploy an app in builder. PR [#483](https://github.com/fastapilabs/cloud/pull/483) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add waiting list API, models, and emails. PR [#457](https://github.com/fastapilabs/cloud/pull/457) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Implement environment variables UI. PR [#375](https://github.com/fastapilabs/cloud/pull/375) by [@patrick91](https://github.com/patrick91).
