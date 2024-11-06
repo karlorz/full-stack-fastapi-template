@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test"
 import { findLastEmail } from "./utils/mailcatcher"
+import { createUser } from "./utils/privateApi"
 import { randomEmail, randomTeamName } from "./utils/random"
 import {
   createTeam,
   logInUser,
   logOutUser,
   sendInvitation,
-  signUpNewUser,
   viewInvitation,
 } from "./utils/userUtils"
 
@@ -81,6 +81,8 @@ test.describe("User with role admin can manage team invitations", () => {
 
     const teamSlug = await createTeam(page, teamName)
     await sendInvitation(page, teamSlug, email)
+    await createTeam(page, teamName)
+    await sendInvitation(page, teamSlug, email)
     await sendInvitation(page, teamSlug, email)
 
     await expect(
@@ -93,13 +95,11 @@ test.describe("User can accept invitations to a team", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
 
   test("User can accept invitations to a team", async ({ page, request }) => {
-    const user1Name = "TestUserA"
-    const user2Name = "TestUserB"
     const user1Email = randomEmail()
     const user2Email = randomEmail()
 
-    await signUpNewUser(page, user1Name, user1Email, "password", request)
-    await signUpNewUser(page, user2Name, user2Email, "password", request)
+    await createUser({ email: user1Email, password: "password" })
+    await createUser({ email: user2Email, password: "password" })
 
     // user 1 logs in and creates a team
     await logInUser(page, user1Email, "password")
@@ -155,13 +155,11 @@ test.describe("Different scenarios for viewing invitations", () => {
     page,
     request,
   }) => {
-    const user1Name = "TestUserC"
-    const user2Name = "TestUserD"
     const user1Email = randomEmail()
     const user2Email = randomEmail()
 
-    await signUpNewUser(page, user1Name, user1Email, "password", request)
-    await signUpNewUser(page, user2Name, user2Email, "password", request)
+    await createUser({ email: user1Email, password: "password" })
+    await createUser({ email: user2Email, password: "password" })
 
     // user 1 logs in and creates a team
     await logInUser(page, user1Email, "password")
@@ -182,14 +180,12 @@ test.describe("Different scenarios for viewing invitations", () => {
   })
 
   test("Invited user is not the same logged in", async ({ page, request }) => {
-    const user1Name = "TestUserE"
-    const user3Name = "TestUserF"
     const user1Email = randomEmail()
     const user2Email = randomEmail()
     const user3Email = randomEmail()
 
-    await signUpNewUser(page, user1Name, user1Email, "password", request)
-    await signUpNewUser(page, user3Name, user3Email, "password", request)
+    await createUser({ email: user1Email, password: "password" })
+    await createUser({ email: user3Email, password: "password" })
 
     // user 1 logs in and creates a team
     await logInUser(page, user1Email, "password")

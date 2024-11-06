@@ -1,23 +1,20 @@
 import { expect, test } from "@playwright/test"
 import { findLastEmail } from "./utils/mailcatcher"
+import { createUser } from "./utils/privateApi"
 import { randomEmail } from "./utils/random"
-import { logInUser, logOutUser, signUpNewUser } from "./utils/userUtils"
+import { logInUser, logOutUser } from "./utils/userUtils"
 
 // User Information
 
 test.describe("Edit user full name and email successfully", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
 
-  test("Edit user name with a valid name", async ({ page, request }) => {
-    const fullName = "Test User"
+  test("Edit user name with a valid name", async ({ page }) => {
     const email = randomEmail()
     const updatedName = "Test User 2"
     const password = "password"
 
-    // Sign up a new user
-    await signUpNewUser(page, fullName, email, password, request)
-
-    // Log in the user
+    await createUser({ email, password })
     await logInUser(page, email, password)
 
     await page.goto("/settings")
@@ -41,15 +38,11 @@ test.describe("Edit user full name and email successfully", () => {
     page,
     request,
   }) => {
-    const fullName = "Test User"
     const email = randomEmail()
     const updatedEmail = randomEmail()
     const password = "password"
 
-    // Sign up a new user
-    await signUpNewUser(page, fullName, email, password, request)
-
-    // Log in the user
+    await createUser({ email, password })
     await logInUser(page, email, password)
 
     // Request email update
@@ -143,16 +136,12 @@ test.describe("Edit user full name and email with invalid data", () => {
 test.describe("Change password successfully", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
 
-  test("Update password successfully", async ({ page, request }) => {
-    const fullName = "Test User"
+  test("Update password successfully", async ({ page }) => {
     const email = randomEmail()
     const password = "password"
     const NewPassword = "newPassword"
 
-    // Sign up a new user
-    await signUpNewUser(page, fullName, email, password, request)
-
-    // Log in the user
+    await createUser({ email, password })
     await logInUser(page, email, password)
 
     await page.goto("/settings")
@@ -215,15 +204,11 @@ test.describe("Change password with invalid data", () => {
 test.describe("Delete account successfully", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
 
-  test("Delete account successfully", async ({ page, request }) => {
-    const fullName = "Test User"
+  test("Delete account successfully", async ({ page }) => {
     const email = randomEmail()
     const password = "password"
 
-    // Sign up a new user
-    await signUpNewUser(page, fullName, email, password, request)
-
-    // Log in the user
+    await createUser({ email, password })
     await logInUser(page, email, password)
 
     await page.getByTestId("user-menu").click()

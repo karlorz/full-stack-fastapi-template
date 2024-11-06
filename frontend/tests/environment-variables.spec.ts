@@ -19,7 +19,11 @@ test.describe("App environment variables", () => {
     const email = randomEmail()
     const password = "password"
 
-    const user = await createUser({ email, password })
+    const user = await createUser({
+      email,
+      password,
+      createPersonalTeam: false,
+    })
     team = await createTeam({ name: "Personal", ownerId: user.id })
     app = await createApp({ teamId: team.id, name: "Test App" })
 

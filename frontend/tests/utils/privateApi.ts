@@ -7,8 +7,13 @@ OpenAPI.BASE = `${process.env.VITE_API_URL}`
 export const createUser = async ({
   email,
   password,
-}: { email: string; password: string }) => {
-  return PrivateService.createUser({
+  createPersonalTeam = true,
+}: {
+  email: string
+  password: string
+  createPersonalTeam?: boolean
+}) => {
+  const user = await PrivateService.createUser({
     requestBody: {
       email,
       password,
@@ -16,12 +21,24 @@ export const createUser = async ({
       full_name: "Test User",
     },
   })
+
+  if (createPersonalTeam) {
+    await createTeam({
+      name: user.full_name,
+      ownerId: user.id,
+    })
+  }
+
+  return user
 }
 
 export const createTeam = async ({
   name,
   ownerId,
-}: { name: string; ownerId: string }) => {
+}: {
+  name: string
+  ownerId: string
+}) => {
   return PrivateService.createTeam({
     requestBody: {
       name,
@@ -33,7 +50,10 @@ export const createTeam = async ({
 export const createApp = async ({
   teamId,
   name,
-}: { teamId: string; name: string }) => {
+}: {
+  teamId: string
+  name: string
+}) => {
   return await PrivateService.createApp({
     requestBody: {
       team_id: teamId,
@@ -54,7 +74,11 @@ export const createEnvironmentVariable = async ({
   appId,
   name,
   value,
-}: { appId: string; name: string; value: string }) => {
+}: {
+  appId: string
+  name: string
+  value: string
+}) => {
   return PrivateService.createEnvironmentVariable({
     requestBody: {
       app_id: appId,

@@ -1,22 +1,18 @@
 import { expect, test } from "@playwright/test"
+import { createUser } from "./utils/privateApi"
 import { randomEmail, randomTeamName } from "./utils/random"
-import { createTeam, logInUser, signUpNewUser } from "./utils/userUtils"
+import { createTeam, logInUser } from "./utils/userUtils"
 
 test.describe("Select and change team successfully", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
 
   test("Each user has its own personal team which is the default team", async ({
     page,
-    request,
   }) => {
-    const fullName = "Test User"
     const email = randomEmail()
     const password = "password"
 
-    // Sign up a new user
-    await signUpNewUser(page, fullName, email, password, request)
-
-    // Log in the user
+    await createUser({ email, password })
     await logInUser(page, email, password)
 
     await page.goto("/")
@@ -25,18 +21,11 @@ test.describe("Select and change team successfully", () => {
     )
   })
 
-  test("Change the current team from the team selector", async ({
-    page,
-    request,
-  }) => {
-    const fullName = "Test User"
+  test("Change the current team from the team selector", async ({ page }) => {
     const email = randomEmail()
     const password = "password"
 
-    // Sign up a new user
-    await signUpNewUser(page, fullName, email, password, request)
-
-    // Log in the user
+    const user = await createUser({ email, password })
     await logInUser(page, email, password)
 
     const teamName = randomTeamName()
@@ -44,8 +33,10 @@ test.describe("Select and change team successfully", () => {
 
     await page.goto(`/${teamSlug}`)
     await page.getByTestId("team-selector").click()
-    await page.getByRole("menuitem", { name: fullName }).click()
-    await expect(page.getByRole("button", { name: fullName })).toBeVisible()
+    await page.getByRole("menuitem", { name: user.full_name }).click()
+    await expect(
+      page.getByRole("button", { name: user.full_name }),
+    ).toBeVisible()
 
     // Check if the team is visible in the team settings
 
@@ -57,16 +48,11 @@ test.describe("Select and change team successfully", () => {
 
   test("Change the current team from the user's list of teams", async ({
     page,
-    request,
   }) => {
-    const fullName = "Test User"
     const email = randomEmail()
     const password = "password"
 
-    // Sign up a new user
-    await signUpNewUser(page, fullName, email, password, request)
-
-    // Log in the user
+    await createUser({ email, password })
     await logInUser(page, email, password)
 
     const teamName = randomTeamName()
@@ -107,6 +93,7 @@ test.describe("User with admin role can update team information", () => {
   }) => {
     const teamName = randomTeamName()
     const teamSlug = await createTeam(page, teamName)
+    await createTeam(page, teamName)
 
     await page.goto(`/${teamSlug}/settings`)
     await page.getByRole("button", { name: "Edit" }).click()

@@ -1,30 +1,22 @@
 import { expect, test } from "@playwright/test"
+import { createUser } from "./utils/privateApi"
 import {
   randomAppName,
   randomEmail,
   randomTeamName,
   slugify,
 } from "./utils/random"
-import {
-  createApp,
-  createTeam,
-  logInUser,
-  signUpNewUser,
-} from "./utils/userUtils"
+import { createApp, createTeam, logInUser } from "./utils/userUtils"
 
 test.describe("Apps empty states", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
-  const fullName = "Test User"
   const password = "password"
 
-  test("Empty state is visible when there are no apps", async ({
-    page,
-    request,
-  }) => {
+  test("Empty state is visible when there are no apps", async ({ page }) => {
     const email = randomEmail()
     const team = randomTeamName()
 
-    await signUpNewUser(page, fullName, email, password, request)
+    await createUser({ email, password })
     await logInUser(page, email, password)
     const teamSlug = await createTeam(page, team)
 
@@ -39,15 +31,14 @@ test.describe("Apps empty states", () => {
 
 test.describe("User can manage apps succesfully", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
-  const fullName = "Test User"
   const password = "password"
 
-  test("User can create a new app", async ({ page, request }) => {
+  test("User can create a new app", async ({ page }) => {
     const email = randomEmail()
     const team = randomTeamName()
 
     const appName = randomAppName()
-    await signUpNewUser(page, fullName, email, password, request)
+    await createUser({ email, password })
     await logInUser(page, email, password)
     const teamSlug = await createTeam(page, team)
 
@@ -57,12 +48,12 @@ test.describe("User can manage apps succesfully", () => {
     await expect(page.getByText("App created")).toBeVisible()
   })
 
-  test("User can read all apps", async ({ page, request }) => {
+  test("User can read all apps", async ({ page }) => {
     const email = randomEmail()
     const team = randomTeamName()
 
     const appNames = [randomAppName(), randomAppName(), randomAppName()]
-    await signUpNewUser(page, fullName, email, password, request)
+    await createUser({ email, password })
     await logInUser(page, email, password)
     const teamSlug = await createTeam(page, team)
 
@@ -77,14 +68,14 @@ test.describe("User can manage apps succesfully", () => {
     }
   })
 
-  test("User can delete an app", async ({ page, request }) => {
+  test("User can delete an app", async ({ page }) => {
     const email = randomEmail()
     const team = randomTeamName()
 
     const appName = randomAppName()
     const appSlug = slugify(appName)
 
-    await signUpNewUser(page, fullName, email, password, request)
+    await createUser({ email, password })
     await logInUser(page, email, password)
     const teamSlug = await createTeam(page, team)
     await createApp(page, teamSlug, appName)

@@ -15,7 +15,11 @@ test.describe("View single deployment", () => {
     const email = randomEmail()
     const password = "password"
 
-    const user = await createUser({ email, password })
+    const user = await createUser({
+      email,
+      password,
+      createPersonalTeam: false,
+    })
     const team = await createTeam({ name: "Personal", ownerId: user.id })
     const app = await createApp({ teamId: team.id, name: "Test App" })
     const deployment = await createDeployment({ appId: app.id })

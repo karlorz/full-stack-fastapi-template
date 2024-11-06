@@ -1,7 +1,8 @@
 import { expect, test } from "@playwright/test"
 import { findLastEmail } from "./utils/mailcatcher"
+import { createUser } from "./utils/privateApi"
 import { randomEmail } from "./utils/random"
-import { logInUser, signUpNewUser } from "./utils/userUtils"
+import { logInUser } from "./utils/userUtils"
 
 test.use({ storageState: { cookies: [], origins: [] } })
 
@@ -31,13 +32,11 @@ test("User can reset password successfully using the link", async ({
   page,
   request,
 }) => {
-  const full_name = "Test User"
   const email = randomEmail()
   const password = "changethis"
   const new_password = "changethat"
 
-  // Sign up a new user
-  await signUpNewUser(page, full_name, email, password, request)
+  await createUser({ email, password })
 
   await page.goto("/recover-password")
   await page.getByPlaceholder("Email").fill(email)
@@ -88,12 +87,10 @@ test("Expired or invalid reset link", async ({ page }) => {
 })
 
 test("Weak new password validation", async ({ page, request }) => {
-  const full_name = "Test User"
   const email = randomEmail()
   const password = "password"
 
-  // Sign up a new user
-  await signUpNewUser(page, full_name, email, password, request)
+  await createUser({ email, password })
 
   await page.goto("/recover-password")
   await page.getByPlaceholder("Email").fill(email)
