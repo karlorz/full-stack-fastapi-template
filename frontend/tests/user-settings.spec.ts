@@ -125,7 +125,7 @@ test.describe("Edit user full name and email with invalid data", () => {
     await expect(
       page
         .locator("form")
-        .filter({ hasText: "fastapi admin" })
+        .filter({ hasText: process.env.USER_EMAIL! })
         .getByRole("paragraph"),
     ).toBeVisible()
   })

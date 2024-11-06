@@ -1,9 +1,8 @@
 import { expect, test } from "@playwright/test"
 import { findLastEmail } from "./utils/mailcatcher"
-import { createUser } from "./utils/privateApi"
+import { createTeam, createUser } from "./utils/privateApi"
 import { randomEmail, randomTeamName } from "./utils/random"
 import {
-  createTeam,
   logInUser,
   logOutUser,
   sendInvitation,
@@ -17,8 +16,11 @@ test.describe("User with role admin can manage team invitations", () => {
     const email = randomEmail()
     const teamName = randomTeamName()
 
-    const teamSlug = await createTeam(page, teamName)
-    await sendInvitation(page, teamSlug, email)
+    const team = await createTeam({
+      name: teamName,
+      ownerId: process.env.USER_ID!,
+    })
+    await sendInvitation(page, team.slug, email)
 
     await expect(
       page.getByText(`The invitation has been sent to ${email}`),
@@ -31,8 +33,12 @@ test.describe("User with role admin can manage team invitations", () => {
     const email = randomEmail()
     const teamName = randomTeamName()
 
-    const teamSlug = await createTeam(page, teamName)
-    await sendInvitation(page, teamSlug, email)
+    const team = await createTeam({
+      name: teamName,
+      ownerId: process.env.USER_ID!,
+    })
+
+    await sendInvitation(page, team.slug, email)
     await page.getByRole("button", { name: "Ok" }).click()
     await page.getByRole("tab", { name: "Pending Invitations" }).click()
     await expect(page.getByRole("cell", { name: email })).toBeVisible()
@@ -43,8 +49,11 @@ test.describe("User with role admin can manage team invitations", () => {
     const email = randomEmail()
     const teamName = randomTeamName()
 
-    const teamSlug = await createTeam(page, teamName)
-    await sendInvitation(page, teamSlug, email)
+    const team = await createTeam({
+      name: teamName,
+      ownerId: process.env.USER_ID!,
+    })
+    await sendInvitation(page, team.slug, email)
     await page.getByRole("button", { name: "Ok" }).click()
     await page.getByRole("tab", { name: "Pending Invitations" }).click()
     await page.getByTestId("cancel-invitation").click()
@@ -55,18 +64,24 @@ test.describe("User with role admin can manage team invitations", () => {
     const email = "invalidEmail"
     const teamName = randomTeamName()
 
-    const teamSlug = await createTeam(page, teamName)
-    await sendInvitation(page, teamSlug, email)
+    const team = await createTeam({
+      name: teamName,
+      ownerId: process.env.USER_ID!,
+    })
+    await sendInvitation(page, team.slug, email)
 
     await expect(page.getByText("Invalid email address")).toBeVisible()
   })
 
   test("Invitation to an existing team member", async ({ page }) => {
-    const email = "admin@example.com"
+    const email = process.env.USER_EMAIL!
     const teamName = randomTeamName()
 
-    const teamSlug = await createTeam(page, teamName)
-    await sendInvitation(page, teamSlug, email)
+    const team = await createTeam({
+      name: teamName,
+      ownerId: process.env.USER_ID!,
+    })
+    await sendInvitation(page, team.slug, email)
 
     await expect(
       page.getByText("The user is already in the team"),
@@ -79,11 +94,13 @@ test.describe("User with role admin can manage team invitations", () => {
     const email = randomEmail()
     const teamName = randomTeamName()
 
-    const teamSlug = await createTeam(page, teamName)
-    await sendInvitation(page, teamSlug, email)
-    await createTeam(page, teamName)
-    await sendInvitation(page, teamSlug, email)
-    await sendInvitation(page, teamSlug, email)
+    const team = await createTeam({
+      name: teamName,
+      ownerId: process.env.USER_ID!,
+    })
+
+    await sendInvitation(page, team.slug, email)
+    await sendInvitation(page, team.slug, email)
 
     await expect(
       page.getByText("Invitation already exists for this user"),
@@ -98,17 +115,16 @@ test.describe("User can accept invitations to a team", () => {
     const user1Email = randomEmail()
     const user2Email = randomEmail()
 
-    await createUser({ email: user1Email, password: "password" })
+    const user = await createUser({ email: user1Email, password: "password" })
     await createUser({ email: user2Email, password: "password" })
 
-    // user 1 logs in and creates a team
-    await logInUser(page, user1Email, "password")
     const teamName = randomTeamName()
-    const teamSlug = await createTeam(page, teamName)
+    const team = await createTeam({ name: teamName, ownerId: user.id })
 
     // user 1 sends an invitation to user 2
-    await page.goto(`/${teamSlug}`)
-    await sendInvitation(page, teamSlug, user2Email)
+    await logInUser(page, user1Email, "password")
+    await page.goto(`/${team.slug}`)
+    await sendInvitation(page, team.slug, user2Email)
     await page.getByRole("button", { name: "Ok" }).click()
     await logOutUser(page)
 
@@ -140,7 +156,7 @@ test.describe("User can accept invitations to a team", () => {
 
     // check if user was added to the team members list
     await logInUser(page, user1Email, "password")
-    await page.goto(`${teamSlug}/settings`)
+    await page.goto(`${team.slug}/settings`)
     await page.getByRole("tab", { name: "Active Members" }).click()
     expect(await page.getByTestId("team-members").innerText()).toContain(
       user2Email,
@@ -158,17 +174,16 @@ test.describe("Different scenarios for viewing invitations", () => {
     const user1Email = randomEmail()
     const user2Email = randomEmail()
 
-    await createUser({ email: user1Email, password: "password" })
+    const user = await createUser({ email: user1Email, password: "password" })
     await createUser({ email: user2Email, password: "password" })
 
-    // user 1 logs in and creates a team
-    await logInUser(page, user1Email, "password")
     const teamName = randomTeamName()
-    const teamSlug = await createTeam(page, teamName)
+    const team = await createTeam({ name: teamName, ownerId: user.id })
 
     // user 1 sends an invitation to user 2
-    await page.goto(`/${teamSlug}`)
-    await sendInvitation(page, teamSlug, user2Email)
+    await logInUser(page, user1Email, "password")
+    await page.goto(`/${team.slug}`)
+    await sendInvitation(page, team.slug, user2Email)
     await page.getByRole("button", { name: "Ok" }).click()
     await logOutUser(page)
 
@@ -184,17 +199,16 @@ test.describe("Different scenarios for viewing invitations", () => {
     const user2Email = randomEmail()
     const user3Email = randomEmail()
 
-    await createUser({ email: user1Email, password: "password" })
+    const user = await createUser({ email: user1Email, password: "password" })
     await createUser({ email: user3Email, password: "password" })
 
-    // user 1 logs in and creates a team
-    await logInUser(page, user1Email, "password")
     const teamName = randomTeamName()
-    const teamSlug = await createTeam(page, teamName)
+    const team = await createTeam({ name: teamName, ownerId: user.id })
 
     // user 1 sends an invitation to user 2
-    await page.goto(`/${teamSlug}`)
-    await sendInvitation(page, teamSlug, user2Email)
+    await logInUser(page, user1Email, "password")
+    await page.goto(`/${team.slug}`)
+    await sendInvitation(page, team.slug, user2Email)
     await page.getByRole("button", { name: "Ok" }).click()
     await logOutUser(page)
 

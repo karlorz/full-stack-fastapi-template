@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test"
+import { createTeam } from "./utils/privateApi"
 import { randomTeamName } from "./utils/random"
-import { createTeam } from "./utils/userUtils"
 
 test("All teams is visible", async ({ page }) => {
   await page.goto("/teams/all")
@@ -16,6 +16,12 @@ test("User can see all teams they belong to", async ({ page }) => {
   const teamsName = new Array(4).fill(null).map(() => randomTeamName())
 
   for (const teamName of teamsName) {
-    await createTeam(page, teamName)
+    await createTeam({ name: teamName, ownerId: process.env.USER_ID! })
+  }
+
+  await page.goto("/teams/all")
+
+  for (const teamName of teamsName) {
+    await expect(page.getByRole("cell", { name: teamName })).toBeVisible()
   }
 })

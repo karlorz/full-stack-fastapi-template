@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test"
-import { createUser } from "./utils/privateApi"
+import { createTeam, createUser } from "./utils/privateApi"
 import {
   randomAppName,
   randomEmail,
   randomTeamName,
   slugify,
 } from "./utils/random"
-import { createApp, createTeam, logInUser } from "./utils/userUtils"
+import { createApp, logInUser } from "./utils/userUtils"
 
 test.describe("Apps empty states", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
@@ -14,13 +14,22 @@ test.describe("Apps empty states", () => {
 
   test("Empty state is visible when there are no apps", async ({ page }) => {
     const email = randomEmail()
-    const team = randomTeamName()
+    const teamName = randomTeamName()
 
-    await createUser({ email, password })
+    const user = await createUser({
+      email,
+      password,
+      createPersonalTeam: false,
+    })
+    const team = await createTeam({
+      name: teamName,
+      ownerId: user.id,
+      isPersonalTeam: true,
+    })
+
     await logInUser(page, email, password)
-    const teamSlug = await createTeam(page, team)
 
-    await page.goto(`/${teamSlug}/apps/`)
+    await page.goto(`/${team.slug}/apps/`)
     await expect(
       page.getByRole("heading", { name: "You don't have any app yet" }),
     ).toBeVisible()
@@ -35,14 +44,22 @@ test.describe("User can manage apps succesfully", () => {
 
   test("User can create a new app", async ({ page }) => {
     const email = randomEmail()
-    const team = randomTeamName()
+    const teamName = randomTeamName()
 
     const appName = randomAppName()
-    await createUser({ email, password })
+    const user = await createUser({
+      email,
+      password,
+      createPersonalTeam: false,
+    })
+    const team = await createTeam({
+      name: teamName,
+      ownerId: user.id,
+      isPersonalTeam: true,
+    })
     await logInUser(page, email, password)
-    const teamSlug = await createTeam(page, team)
 
-    await page.goto(`/${teamSlug}/apps/new`)
+    await page.goto(`/${team.slug}/apps/new`)
     await page.getByPlaceholder("App Name").fill(appName)
     await page.getByRole("button", { name: "Create App" }).click()
     await expect(page.getByText("App created")).toBeVisible()
@@ -50,18 +67,26 @@ test.describe("User can manage apps succesfully", () => {
 
   test("User can read all apps", async ({ page }) => {
     const email = randomEmail()
-    const team = randomTeamName()
+    const teamName = randomTeamName()
 
     const appNames = [randomAppName(), randomAppName(), randomAppName()]
-    await createUser({ email, password })
+    const user = await createUser({
+      email,
+      password,
+      createPersonalTeam: false,
+    })
+    const team = await createTeam({
+      name: teamName,
+      ownerId: user.id,
+      isPersonalTeam: true,
+    })
     await logInUser(page, email, password)
-    const teamSlug = await createTeam(page, team)
 
     for (const appName of appNames) {
-      await createApp(page, teamSlug, appName)
+      await createApp(page, team.slug, appName)
     }
 
-    await page.goto(`/${teamSlug}/apps`)
+    await page.goto(`/${team.slug}/apps`)
 
     for (const appName of appNames) {
       await expect(page.getByRole("cell", { name: appName })).toBeVisible()
@@ -70,21 +95,29 @@ test.describe("User can manage apps succesfully", () => {
 
   test("User can delete an app", async ({ page }) => {
     const email = randomEmail()
-    const team = randomTeamName()
+    const teamName = randomTeamName()
 
     const appName = randomAppName()
     const appSlug = slugify(appName)
 
-    await createUser({ email, password })
+    const user = await createUser({
+      email,
+      password,
+      createPersonalTeam: false,
+    })
+    const team = await createTeam({
+      name: teamName,
+      ownerId: user.id,
+      isPersonalTeam: true,
+    })
     await logInUser(page, email, password)
-    const teamSlug = await createTeam(page, team)
-    await createApp(page, teamSlug, appName)
+    await createApp(page, team.slug, appName)
 
-    await page.goto(`/${teamSlug}/apps`)
+    await page.goto(`/${team.slug}/apps`)
     await expect(page.getByRole("cell", { name: appName })).toBeVisible()
 
     await page.getByRole("link", { name: appName }).click()
-    await page.goto(`/${teamSlug}/apps/${appSlug}`)
+    await page.goto(`/${team.slug}/apps/${appSlug}`)
 
     await page.getByRole("button", { name: "Delete App" }).click()
     await expect(page.getByTestId("delete-confirmation-app")).toBeVisible()

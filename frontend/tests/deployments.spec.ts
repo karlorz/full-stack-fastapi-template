@@ -20,7 +20,11 @@ test.describe("View single deployment", () => {
       password,
       createPersonalTeam: false,
     })
-    const team = await createTeam({ name: "Personal", ownerId: user.id })
+    const team = await createTeam({
+      name: "Personal",
+      ownerId: user.id,
+      isPersonalTeam: true,
+    })
     const app = await createApp({ teamId: team.id, name: "Test App" })
     const deployment = await createDeployment({ appId: app.id })
 

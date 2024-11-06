@@ -67,6 +67,7 @@ export type CreateEnvironmentVariable = {
 export type CreateTeam = {
   name: string
   owner_id: string
+  is_personal_team?: boolean
 }
 
 export type CreateUser = {

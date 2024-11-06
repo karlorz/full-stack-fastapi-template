@@ -14,26 +14,6 @@ export async function logInUser(page: Page, email: string, password: string) {
   ).toBeVisible()
 }
 
-export async function createTeam(page: Page, name: string): Promise<string> {
-  await page.goto("/teams/new")
-
-  const responsePromise = page.waitForResponse(
-    (response) =>
-      response.url().includes("/api/v1/teams") &&
-      response.request().method() === "POST",
-  )
-
-  await page.getByPlaceholder("Name").fill(name)
-  await page.getByRole("button", { name: "Create Team" }).click()
-
-  const response = await responsePromise
-  const responseData = await response.json()
-  const teamSlug = responseData.slug
-
-  await expect(page.getByText("Team created")).toBeVisible()
-  return teamSlug
-}
-
 export async function logOutUser(page: Page) {
   await page.getByTestId("user-menu").click()
   await page.getByRole("menuitem", { name: "Log out" }).click()

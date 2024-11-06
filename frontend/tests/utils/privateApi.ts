@@ -26,6 +26,7 @@ export const createUser = async ({
     await createTeam({
       name: user.full_name,
       ownerId: user.id,
+      isPersonalTeam: true,
     })
   }
 
@@ -35,14 +36,17 @@ export const createUser = async ({
 export const createTeam = async ({
   name,
   ownerId,
+  isPersonalTeam = false,
 }: {
   name: string
   ownerId: string
+  isPersonalTeam?: boolean
 }) => {
   return PrivateService.createTeam({
     requestBody: {
       name,
       owner_id: ownerId,
+      is_personal_team: isPersonalTeam,
     },
   })
 }

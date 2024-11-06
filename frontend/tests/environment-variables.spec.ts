@@ -24,7 +24,11 @@ test.describe("App environment variables", () => {
       password,
       createPersonalTeam: false,
     })
-    team = await createTeam({ name: "Personal", ownerId: user.id })
+    team = await createTeam({
+      name: "Personal",
+      ownerId: user.id,
+      isPersonalTeam: true,
+    })
     app = await createApp({ teamId: team.id, name: "Test App" })
 
     await logInUser(page, email, password)

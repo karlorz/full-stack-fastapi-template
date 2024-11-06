@@ -55,6 +55,7 @@ def create_user(user_in: CreateUser, session: SessionDep) -> Any:
 class CreateTeam(BaseModel):
     name: str
     owner_id: uuid.UUID
+    is_personal_team: bool = False
 
 
 @router.post("/teams/", response_model=TeamPublic)
@@ -66,7 +67,7 @@ def create_team(team_in: CreateTeam, session: SessionDep) -> Any:
     team = Team(
         name=team_in.name,
         slug=random_lower_string(),
-        is_personal_team=True,
+        is_personal_team=team_in.is_personal_team,
         owner_id=team_in.owner_id,
     )
 

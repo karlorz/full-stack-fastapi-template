@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test"
-import { createUser } from "./utils/privateApi"
+import { createTeam, createUser } from "./utils/privateApi"
 import { randomEmail, randomTeamName } from "./utils/random"
-import { createTeam, logInUser } from "./utils/userUtils"
+import { logInUser } from "./utils/userUtils"
 
 test.describe("Select and change team successfully", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
@@ -29,9 +29,9 @@ test.describe("Select and change team successfully", () => {
     await logInUser(page, email, password)
 
     const teamName = randomTeamName()
-    const teamSlug = await createTeam(page, teamName)
+    const team = await createTeam({ name: teamName, ownerId: user.id })
 
-    await page.goto(`/${teamSlug}`)
+    await page.goto(`/${team.slug}`)
     await page.getByTestId("team-selector").click()
     await page.getByRole("menuitem", { name: user.full_name }).click()
     await expect(
@@ -40,7 +40,7 @@ test.describe("Select and change team successfully", () => {
 
     // Check if the team is visible in the team settings
 
-    await page.goto(`/${teamSlug}/settings`)
+    await page.goto(`/${team.slug}/settings`)
     await expect(
       page.locator("form").filter({ hasText: teamName }).getByRole("paragraph"),
     ).toBeVisible()
@@ -51,18 +51,19 @@ test.describe("Select and change team successfully", () => {
   }) => {
     const email = randomEmail()
     const password = "password"
+    const teamName = randomTeamName()
 
-    await createUser({ email, password })
+    const user = await createUser({ email, password })
+    const team = await createTeam({ name: teamName, ownerId: user.id })
+
     await logInUser(page, email, password)
 
-    const teamName = randomTeamName()
-    const teamSlug = await createTeam(page, teamName)
     await page.goto("/teams/all?orderBy=created_at&order=desc")
     await page.getByRole("link", { name: teamName }).click()
     await expect(page.getByRole("button", { name: teamName })).toBeVisible()
 
     // Check if the team is visible in the team settings
-    await page.goto(`/${teamSlug}/settings`)
+    await page.goto(`/${team.slug}/settings`)
     await expect(
       page.locator("form").filter({ hasText: teamName }).getByRole("paragraph"),
     ).toBeVisible()
@@ -73,9 +74,12 @@ test.describe("User with admin role can update team information", () => {
   test("User can update team name", async ({ page }) => {
     const teamName = randomTeamName()
     const newTeamName = randomTeamName()
-    const teamSlug = await createTeam(page, teamName)
+    const team = await createTeam({
+      name: teamName,
+      ownerId: process.env.USER_ID!,
+    })
 
-    await page.goto(`/${teamSlug}/settings`)
+    await page.goto(`/${team.slug}/settings`)
     await page.getByRole("button", { name: "Edit" }).click()
     await page.locator("#name").click()
     await page.locator("#name").fill(newTeamName)
@@ -92,10 +96,12 @@ test.describe("User with admin role can update team information", () => {
     page,
   }) => {
     const teamName = randomTeamName()
-    const teamSlug = await createTeam(page, teamName)
-    await createTeam(page, teamName)
+    const team = await createTeam({
+      name: teamName,
+      ownerId: process.env.USER_ID!,
+    })
 
-    await page.goto(`/${teamSlug}/settings`)
+    await page.goto(`/${team.slug}/settings`)
     await page.getByRole("button", { name: "Edit" }).click()
     await page.locator("#name").click()
     await page.locator("#name").fill("")
@@ -104,13 +110,16 @@ test.describe("User with admin role can update team information", () => {
 
   test("User can delete a team", async ({ page }) => {
     const teamName = randomTeamName()
-    const teamSlug = await createTeam(page, teamName)
+    const team = await createTeam({
+      name: teamName,
+      ownerId: process.env.USER_ID!,
+    })
 
-    await page.goto(`/${teamSlug}/settings`)
+    await page.goto(`/${team.slug}/settings`)
 
     await page.getByRole("button", { name: "Delete Team" }).click()
     await expect(page.getByTestId("delete-confirmation-team")).toBeVisible()
-    await page.getByLabel("Confirmation").fill(`delete team ${teamSlug}`)
+    await page.getByLabel("Confirmation").fill(`delete team ${team.slug}`)
     await page.getByRole("button", { name: "Confirm" }).click()
     await expect(page.getByText("The team was deleted")).toBeVisible()
 

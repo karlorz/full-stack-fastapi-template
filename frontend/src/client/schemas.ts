@@ -249,6 +249,10 @@ export const $CreateTeam = {
       isRequired: true,
       format: "uuid",
     },
+    is_personal_team: {
+      type: "boolean",
+      default: false,
+    },
   },
 } as const
 
