@@ -294,6 +294,7 @@
 
 ### Internal
 
+* 💚 Use private API to create users. PR [#488](https://github.com/fastapilabs/cloud/pull/488) by [@patrick91](https://github.com/patrick91).
 * 👔 All team slugs should have a suffix. PR [#479](https://github.com/fastapilabs/cloud/pull/479) by [@estebanx64](https://github.com/estebanx64).
 * 👔 Add app name reserved suffix keywords. PR [#478](https://github.com/fastapilabs/cloud/pull/478) by [@estebanx64](https://github.com/estebanx64).
 * 🚸 Fix device authorization box in dark mode. PR [#481](https://github.com/fastapilabs/cloud/pull/481) by [@patrick91](https://github.com/patrick91).
