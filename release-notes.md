@@ -294,6 +294,7 @@
 
 ### Internal
 
+* 💚 Replace base playwright image. PR [#493](https://github.com/fastapilabs/cloud/pull/493) by [@patrick91](https://github.com/patrick91).
 * 💚 Use private API to create teams. PR [#490](https://github.com/fastapilabs/cloud/pull/490) by [@patrick91](https://github.com/patrick91).
 * 💚 Use private API to create users. PR [#488](https://github.com/fastapilabs/cloud/pull/488) by [@patrick91](https://github.com/patrick91).
 * 👔 All team slugs should have a suffix. PR [#479](https://github.com/fastapilabs/cloud/pull/479) by [@estebanx64](https://github.com/estebanx64).
