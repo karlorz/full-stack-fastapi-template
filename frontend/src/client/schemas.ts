@@ -316,7 +316,14 @@ export const $DeploymentPublic = {
 
 export const $DeploymentStatus = {
   type: "Enum",
-  enum: ["waiting_upload", "building", "deploying", "success", "failed"],
+  enum: [
+    "waiting_upload",
+    "ready_for_build",
+    "building",
+    "deploying",
+    "success",
+    "failed",
+  ],
 } as const
 
 export const $DeploymentUploadOut = {

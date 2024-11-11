@@ -4,26 +4,30 @@ import shutil
 import subprocess
 import tarfile
 import uuid
-from collections.abc import Generator, Iterator
+from collections.abc import Iterator
 from contextlib import contextmanager
-from functools import lru_cache
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Any
 
 import boto3
 import sentry_sdk
 from asyncer import syncify
 from botocore.exceptions import ClientError, NoCredentialsError
-from fastapi import Depends, FastAPI, HTTPException
-from fastapi.security import APIKeyHeader
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException
 from kubernetes import client as k8s
-from kubernetes import config
 from kubernetes.client.rest import ApiException as K8sApiException
 from pydantic import BaseModel
 from sqlalchemy.orm import joinedload
-from sqlmodel import Session, select
+from sqlmodel import select
 
 from app import depot_client
+from app.builder_utils import (
+    SessionDep,
+    ensure_deployment_is_buildable,
+    get_kubernetes_client_core_v1,
+    get_kubernetes_client_custom_objects,
+    validate_api_key,
+)
 from app.core.config import (
     get_builder_settings,
     get_common_settings,
@@ -31,7 +35,6 @@ from app.core.config import (
     get_depot_settings,
     get_main_settings,
 )
-from app.core.db import engine
 from app.depot_py.depot.build import v1 as depot_build
 from app.models import (
     App,
@@ -52,27 +55,6 @@ s3 = boto3.client("s3", region_name=aws_region)
 ecr = boto3.client("ecr", region_name=aws_region)
 
 
-# Kubernetes client
-@lru_cache
-def get_kubernetes_client_custom_objects() -> k8s.CustomObjectsApi:
-    if os.getenv("CI"):
-        config.load_kube_config()
-    else:
-        config.load_incluster_config()
-
-    return k8s.CustomObjectsApi()
-
-
-@lru_cache
-def get_kubernetes_client_core_v1() -> k8s.CoreV1Api:
-    if os.getenv("CI"):
-        config.load_kube_config()
-    else:
-        config.load_incluster_config()
-
-    return k8s.CoreV1Api()
-
-
 # Sentry
 sentry_sdk.init(
     dsn="https://c88c25ac97cd610c007760c0bd062fc6@o4506985151856640.ingest.us.sentry.io/4507940416716800",
@@ -87,14 +69,6 @@ sentry_sdk.init(
 
 # FastAPI app
 app = FastAPI()
-
-
-def get_db() -> Generator[Session, None, None]:
-    with Session(engine) as session:
-        yield session
-
-
-SessionDep = Annotated[Session, Depends(get_db)]
 
 
 def create_namespace_by_team(namespace: str) -> None:
@@ -368,44 +342,36 @@ def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
     return {env_var.name: env_var.value for env_var in env_vars}
 
 
-def process_message(message: dict[str, Any], session: SessionDep) -> None:
-    bucket = message.get("bucket", {})
-    _object = message.get("object", {})
-
-    # Extract necessary data from the message
-    bucket_name = bucket.get("name")
-    object_key = _object.get("key")
-    image_tag = _object.get("key").split(".")[0].replace("/", "_")
+def _app_process_build(deployment_id: uuid.UUID, session: SessionDep) -> None:
     registry_url = get_builder_settings().ECR_REGISTRY_URL
-
-    object_name = object_key.split("/")[-1]
-    object_id = object_name.split(".")[0]
+    bucket_name = get_common_settings().AWS_DEPLOYMENT_BUCKET
 
     deployment_with_team = session.exec(
         select(Deployment)
         .options(joinedload(Deployment.app).joinedload(App.team))  # type: ignore
-        .where(Deployment.id == object_id)
+        .where(Deployment.id == deployment_id)
     ).first()
     if deployment_with_team is None:
-        raise RuntimeError("Deployment not found")
-
-    team = deployment_with_team.app.team
-
-    # Create a temporary directory for the build context
-    build_context = f"/tmp/{object_id}/build_context"
-    if os.path.exists(build_context):
-        shutil.rmtree(build_context)
-    os.makedirs(build_context)
-
-    app_name = deployment_with_team.slug
+        raise HTTPException(status_code=404, detail="Deployment not found")
 
     # Update status to building
     deployment_with_team.status = DeploymentStatus.building
     session.commit()
 
+    team = deployment_with_team.app.team
+    image_tag = f"{deployment_with_team.app.id}_{deployment_with_team.id}"
+    object_key = f"{deployment_with_team.app.id}/{deployment_with_team.id}.tar"
+    env_vars = get_env_vars(deployment_with_team.app_id, session)
+    app_name = deployment_with_team.slug
+
+    build_context = f"/tmp/{deployment_with_team.id}/build_context"
+    if os.path.exists(build_context):
+        shutil.rmtree(build_context)
+    os.makedirs(build_context)
+
     # Download and extract the tar file
     download_and_extract_tar(
-        bucket_name, object_key, object_id, extract_to=build_context
+        bucket_name, object_key, str(deployment_with_team.id), extract_to=build_context
     )
 
     # Create ECR repository if it doesn't exist
@@ -429,8 +395,6 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
     deployment_with_team.status = DeploymentStatus.deploying
     session.commit()
 
-    env_vars = get_env_vars(deployment_with_team.app_id, session)
-
     # Deploy to Kubernetes
     deploy_to_kubernetes(
         service_name=app_name,
@@ -447,14 +411,23 @@ def process_message(message: dict[str, Any], session: SessionDep) -> None:
     session.commit()
 
 
+# ! Deprecated, will be removed to use the new endpoint /apps/depot/build
 @app.post("/apps")
 def event_service_handler(event: dict[str, Any], session: SessionDep) -> Any:
     message = event["Body"]["Records"][0].get("s3", {})
     try:
-        process_message(message, session)
+        # Extract deployment id from the message
+        _object = message.get("object", {})
+        object_key = _object.get("key")
+        object_name = object_key.split("/")[-1]
+        deployment_id = object_name.split(".")[0]
+        ensure_deployment_is_buildable(deployment_id, "sqs", session)
+        _app_process_build(deployment_id, session)
     except Exception as e:
-        object_id = message.get("object", {}).get("key").split("/")[-1].split(".")[0]
-        smt = select(Deployment).where(Deployment.id == object_id)
+        deployment_id = (
+            message.get("object", {}).get("key").split("/")[-1].split(".")[0]
+        )
+        smt = select(Deployment).where(Deployment.id == deployment_id)
         deployment = session.exec(smt).first()
         if deployment is None:
             raise RuntimeError("Deployment not found")
@@ -467,13 +440,13 @@ def event_service_handler(event: dict[str, Any], session: SessionDep) -> Any:
     return {"message": "OK"}
 
 
-api_key_header = APIKeyHeader(name="X-API-KEY")
-
-
-def validate_api_key(api_key: Annotated[str, Depends(api_key_header)]) -> str:
-    if api_key != get_common_settings().BUILDER_API_KEY:
-        raise HTTPException(status_code=401, detail="Invalid API key")
-    return api_key
+@app.post("/apps/depot/build", dependencies=[Depends(validate_api_key)])
+async def app_depot_build(
+    message: SendDeploy, session: SessionDep, background_tasks: BackgroundTasks
+) -> Message:
+    ensure_deployment_is_buildable(message.deployment_id, "api", session)
+    background_tasks.add_task(_app_process_build, message.deployment_id, session)
+    return Message(message="OK")
 
 
 @app.post("/send/deploy", dependencies=[Depends(validate_api_key)])

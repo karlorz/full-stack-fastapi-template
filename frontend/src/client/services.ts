@@ -241,6 +241,9 @@ export type DeploymentsData = {
   RedeployDeployment: {
     deploymentId: string
   }
+  FinishedUpload: {
+    deploymentId: string
+  }
 }
 
 export type PrivateData = {
@@ -1377,6 +1380,28 @@ export class DeploymentsService {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/v1/deployments/{deployment_id}/redeploy",
+      path: {
+        deployment_id: deploymentId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    })
+  }
+
+  /**
+   * Finished Upload
+   * Notify the builder backend that the deployment artifact has been uploaded.
+   * @returns unknown Successful Response
+   * @throws ApiError
+   */
+  public static finishedUpload(
+    data: DeploymentsData["FinishedUpload"],
+  ): CancelablePromise<unknown> {
+    const { deploymentId } = data
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/apps/{deployment_id}/finished-upload",
       path: {
         deployment_id: deploymentId,
       },

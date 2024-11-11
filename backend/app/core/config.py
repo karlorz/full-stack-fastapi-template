@@ -54,6 +54,7 @@ class CommonSettings(SettingsEnv):
     DEPLOYMENTS_DOMAIN: str = "fastapicloud.club"
     ENVIRONMENT: Literal["local", "development", "staging", "production"] = "local"
     BUILDER_API_KEY: str
+    AWS_DEPLOYMENT_BUCKET: str
 
 
 class DBSettings(SettingsEnv):
@@ -172,7 +173,6 @@ class MainSettings(SettingsEnv):
 
         return self
 
-    AWS_DEPLOYMENT_BUCKET: str
     EMAILABLE_KEY: str
     BUILDER_API_URL: str
 

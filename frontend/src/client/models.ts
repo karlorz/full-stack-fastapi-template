@@ -89,6 +89,7 @@ export type DeploymentPublic = {
 
 export type DeploymentStatus =
   | "waiting_upload"
+  | "ready_for_build"
   | "building"
   | "deploying"
   | "success"

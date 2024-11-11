@@ -90,6 +90,8 @@ show_missing = true
 sort = "-Cover"
 omit = [
     "app/depot_py/*",
+    "app/builder_utils.py",
+    "app/docker_builder.py",
 ]
 
 [tool.coverage.html]

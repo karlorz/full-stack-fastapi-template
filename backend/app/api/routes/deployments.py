@@ -164,7 +164,7 @@ def upload_deployment_artifact(
     object_name = f"{app.id}/{deployment.id}.tar"
 
     presigned_url = generate_presigned_url_post(
-        bucket_name=get_main_settings().AWS_DEPLOYMENT_BUCKET,
+        bucket_name=get_common_settings().AWS_DEPLOYMENT_BUCKET,
         object_name=object_name,
     )
     if not presigned_url:
@@ -206,6 +206,53 @@ def redeploy_deployment(
 
     response = httpx.post(
         f"{get_main_settings().BUILDER_API_URL}/send/deploy",
+        headers={"X-API-KEY": get_common_settings().BUILDER_API_KEY},
+        json={"deployment_id": str(deployment_id)},
+    )
+
+    if response.status_code != 200:
+        try:
+            data = response.json()
+            detail = data.get("detail", "Unknown error")
+        except Exception:
+            detail = "Unknown error"
+        raise HTTPException(status_code=500, detail=detail)
+
+    return Message(message="OK")
+
+
+@router.post("/apps/{deployment_id}/finished-upload")
+def finished_upload(
+    session: SessionDep,
+    current_user: CurrentUser,
+    deployment_id: uuid.UUID,
+) -> Any:
+    """
+    Notify the builder backend that the deployment artifact has been uploaded.
+    """
+    deployment = session.exec(
+        select(Deployment).where(Deployment.id == deployment_id)
+    ).first()
+    if not deployment:
+        raise HTTPException(status_code=404, detail="Deployment not found")
+
+    app = session.exec(select(App).where(App.id == deployment.app_id)).first()
+    if not app:
+        raise HTTPException(status_code=404, detail="App not found")
+
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=app.team_id
+    )
+    if not user_team_link:
+        raise HTTPException(
+            status_code=404, detail="Team not found for the current user"
+        )
+
+    deployment.status = DeploymentStatus.ready_for_build
+    session.commit()
+
+    response = httpx.post(
+        f"{get_main_settings().BUILDER_API_URL}/apps/depot/build",
         headers={"X-API-KEY": get_common_settings().BUILDER_API_KEY},
         json={"deployment_id": str(deployment_id)},
     )

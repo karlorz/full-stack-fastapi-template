@@ -98,6 +98,7 @@ jobs:
         ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
         AWS_REGION: "${{ vars.AWS_REGION }}"
         DEPOT_PROJECT_ID: "${{ vars.DEPOT_PROJECT_ID }}"
+        AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
 
         # Secrets for the builder
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
