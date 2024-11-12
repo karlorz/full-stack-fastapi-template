@@ -129,6 +129,7 @@
 
 ### Refactors
 
+* 🎨 Rename upload complete route. PR [#497](https://github.com/fastapilabs/cloud/pull/497) by [@patrick91](https://github.com/patrick91).
 * ♻️ Use Depot for customer builds instead of Docker in Docker. PR [#489](https://github.com/fastapilabs/cloud/pull/489) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor actions menu. PR [#480](https://github.com/fastapilabs/cloud/pull/480) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Rename Update Email components. PR [#469](https://github.com/fastapilabs/cloud/pull/469) by [@alejsdev](https://github.com/alejsdev).
