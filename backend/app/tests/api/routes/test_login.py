@@ -1,9 +1,7 @@
-from unittest.mock import patch
-
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
-from app.core.config import MainSettings, get_main_settings
+from app.core.config import get_main_settings
 from app.core.security import verify_password
 from app.models import User
 from app.tests.utils.user import create_user
@@ -48,20 +46,13 @@ def test_use_access_token(
 def test_recovery_password(
     client: TestClient, normal_user_token_headers: dict[str, str]
 ) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
+    email = "test@example.com"
+    r = client.post(
+        f"{settings.API_V1_STR}/password-recovery/{email}",
+        headers=normal_user_token_headers,
     )
-    with (
-        patch("app.api.routes.login.get_main_settings", return_value=test_settings),
-    ):
-        email = "test@example.com"
-        r = client.post(
-            f"{settings.API_V1_STR}/password-recovery/{email}",
-            headers=normal_user_token_headers,
-        )
-        assert r.status_code == 200
-        assert r.json() == {"message": "Password recovery email sent"}
+    assert r.status_code == 200
+    assert r.json() == {"message": "Password recovery email sent"}
 
 
 def test_recovery_password_user_not_exits(
