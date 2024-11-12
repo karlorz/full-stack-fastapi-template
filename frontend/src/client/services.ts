@@ -241,7 +241,7 @@ export type DeploymentsData = {
   RedeployDeployment: {
     deploymentId: string
   }
-  FinishedUpload: {
+  UploadComplete: {
     deploymentId: string
   }
 }
@@ -1390,18 +1390,18 @@ export class DeploymentsService {
   }
 
   /**
-   * Finished Upload
+   * Upload Complete
    * Notify the builder backend that the deployment artifact has been uploaded.
    * @returns unknown Successful Response
    * @throws ApiError
    */
-  public static finishedUpload(
-    data: DeploymentsData["FinishedUpload"],
+  public static uploadComplete(
+    data: DeploymentsData["UploadComplete"],
   ): CancelablePromise<unknown> {
     const { deploymentId } = data
     return __request(OpenAPI, {
       method: "POST",
-      url: "/api/v1/apps/{deployment_id}/finished-upload",
+      url: "/api/v1/deployments/{deployment_id}/upload-complete",
       path: {
         deployment_id: deploymentId,
       },

@@ -221,8 +221,8 @@ def redeploy_deployment(
     return Message(message="OK")
 
 
-@router.post("/apps/{deployment_id}/finished-upload")
-def finished_upload(
+@router.post("/deployments/{deployment_id}/upload-complete")
+def upload_complete(
     session: SessionDep,
     current_user: CurrentUser,
     deployment_id: uuid.UUID,

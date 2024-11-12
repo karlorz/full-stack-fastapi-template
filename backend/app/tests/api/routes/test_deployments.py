@@ -1,6 +1,8 @@
 import uuid
 
+import respx
 from fastapi.testclient import TestClient
+from httpx import Response
 from sqlmodel import Session, select
 
 from app.core.config import get_main_settings
@@ -214,3 +216,134 @@ def test_read_deployment(client: TestClient, db: Session) -> None:
     assert data["slug"] == deployment.slug
     assert data["status"] == deployment.status
     assert data["url"] == deployment.url
+
+
+@respx.mock
+def test_upload_complete(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+    deployment = create_deployment_for_app(db, app=app)
+
+    respx.post(
+        f"{get_main_settings().BUILDER_API_URL}/apps/depot/build",
+        json={"deployment_id": str(deployment.id)},
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.post(
+        f"{settings.API_V1_STR}/deployments/{deployment.id}/upload-complete",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "OK"
+
+
+@respx.mock
+def test_upload_complete_return_500_if_depot_is_erroring(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+    deployment = create_deployment_for_app(db, app=app)
+
+    respx.post(
+        f"{get_main_settings().BUILDER_API_URL}/apps/depot/build",
+        json={"deployment_id": str(deployment.id)},
+    ).mock(return_value=Response(500))
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.post(
+        f"{settings.API_V1_STR}/deployments/{deployment.id}/upload-complete",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 500
+    data = response.json()
+    assert data["detail"] == "Unknown error"
+
+
+def test_upload_complete_returns_404_if_deployment_not_found(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.post(
+        f"{settings.API_V1_STR}/deployments/{uuid.uuid4()}/upload-complete",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "Deployment not found"
+
+
+def test_upload_complete_not_member_of_team(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db)
+    app = create_random_app(db, team=team)
+    deployment = create_deployment_for_app(db, app=app)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.post(
+        f"{settings.API_V1_STR}/deployments/{deployment.id}/upload-complete",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "Team not found for the current user"
