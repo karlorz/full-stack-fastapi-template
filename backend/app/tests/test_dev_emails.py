@@ -1,10 +1,10 @@
 import pytest
 
-from app.core.config import get_common_settings, get_main_settings
+from app.core.config import CommonSettings, MainSettings
 from app.utils import send_email
 
-settings = get_main_settings()
-common_settings = get_common_settings()
+settings = MainSettings.get_settings()
+common_settings = CommonSettings.get_settings()
 
 
 def test_send_email_not_allowed_local() -> None:

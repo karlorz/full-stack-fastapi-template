@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from sqlmodel import Session, select
 
-from app.core.config import get_main_settings
+from app.core.config import MainSettings
 from app.models import Invitation, InvitationCreate, Team, User
 from app.utils import get_datetime_utc
 
@@ -14,7 +14,7 @@ def create_invitation(
     invited_by: User,
     invitation_status: str,
     expires_at: datetime = get_datetime_utc()
-    + timedelta(hours=get_main_settings().INVITATION_TOKEN_EXPIRE_HOURS),
+    + timedelta(hours=MainSettings.get_settings().INVITATION_TOKEN_EXPIRE_HOURS),
 ) -> Invitation:
     invited_user = session.exec(
         select(User).where(User.email == invitation_in.email)

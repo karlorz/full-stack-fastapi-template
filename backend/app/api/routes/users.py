@@ -14,7 +14,7 @@ from app.api.deps import (
     rate_limit_5_per_minute,
 )
 from app.api.utils.teams import generate_team_slug_name
-from app.core.config import get_main_settings
+from app.core.config import MainSettings
 from app.core.security import get_password_hash, verify_password
 from app.models import (
     EmailVerificationToken,
@@ -48,7 +48,7 @@ from app.utils import (
 )
 
 router = APIRouter()
-settings = get_main_settings()
+settings = MainSettings.get_settings()
 emailable_client = emailable.Client(settings.EMAILABLE_KEY)
 
 

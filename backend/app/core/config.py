@@ -1,7 +1,7 @@
 import secrets
 import warnings
 from functools import lru_cache
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, TypeVar
 
 from pydantic import (
     AnyUrl,
@@ -35,10 +35,21 @@ def _check_default_secret(var_name: str, value: str | None) -> None:
             f'The value of {var_name} is "changethis", '
             "for security, please change it, at least for deployments."
         )
-        if get_common_settings().ENVIRONMENT == "local":
+        if CommonSettings.get_settings().ENVIRONMENT == "local":
             warnings.warn(message, stacklevel=1)
         else:
             raise ValueError(message)
+
+
+TSettingsEnv = TypeVar("TSettingsEnv", bound="SettingsEnv")
+
+
+# Put outside of classmethod because mypy chokes on it on the same line, it seems
+# lru_cache is hard to type
+# Ref: https://github.com/python/mypy/issues/5107
+@lru_cache
+def _get_single_settings_instance(cls: type[TSettingsEnv]) -> TSettingsEnv:
+    return cls()
 
 
 class SettingsEnv(BaseSettings):
@@ -48,6 +59,10 @@ class SettingsEnv(BaseSettings):
         env_ignore_empty=True,
         extra="ignore",
     )
+
+    @classmethod
+    def get_settings(cls) -> Self:
+        return _get_single_settings_instance(cls)  # type: ignore
 
 
 class CommonSettings(SettingsEnv):
@@ -186,28 +201,3 @@ class DepotSettings(SettingsEnv):
     DEPOT_PROJECT_ID: str
     DEPOT_TOKEN: str
     DEPOT_HOSTNAME: str = "api.depot.dev"
-
-
-@lru_cache
-def get_main_settings() -> MainSettings:
-    return MainSettings()  # type: ignore
-
-
-@lru_cache
-def get_builder_settings() -> BuilderSettings:
-    return BuilderSettings()  # type: ignore
-
-
-@lru_cache
-def get_db_settings() -> DBSettings:
-    return DBSettings()  # type: ignore
-
-
-@lru_cache
-def get_common_settings() -> CommonSettings:
-    return CommonSettings()  # type: ignore
-
-
-@lru_cache
-def get_depot_settings() -> DepotSettings:
-    return DepotSettings()  # type: ignore

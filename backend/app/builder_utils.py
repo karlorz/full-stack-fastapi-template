@@ -10,7 +10,7 @@ from kubernetes import client as k8s
 from kubernetes import config
 from sqlmodel import Session, select
 
-from app.core.config import get_common_settings
+from app.core.config import CommonSettings
 from app.core.db import engine
 from app.models import Deployment, DeploymentStatus
 
@@ -45,7 +45,7 @@ api_key_header = APIKeyHeader(name="X-API-KEY")
 
 
 def validate_api_key(api_key: Annotated[str, Depends(api_key_header)]) -> str:
-    if api_key != get_common_settings().BUILDER_API_KEY:
+    if api_key != CommonSettings.get_settings().BUILDER_API_KEY:
         raise HTTPException(status_code=401, detail="Invalid API key")
     return api_key
 

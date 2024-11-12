@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 from app import crud
-from app.core.config import MainSettings, get_main_settings
+from app.core.config import MainSettings
 from app.core.security import verify_password
 from app.models import Role, User, UserCreate, WaitingListUserCreate
 from app.tests.utils.team import create_random_team
@@ -17,7 +17,7 @@ from app.utils import (
     generate_verification_update_email_token,
 )
 
-settings = get_main_settings()
+settings = MainSettings.get_settings()
 
 
 def test_get_users_normal_user_me(
@@ -201,7 +201,7 @@ def test_register_user(client: TestClient, db: Session) -> None:
     )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch.object(MainSettings, "get_settings", return_value=test_settings),
         patch("app.utils.generate_verification_email", return_value=None),
     ):
         username = f"{random_lower_string()}@example.com"
@@ -232,7 +232,7 @@ def test_register_user_already_exists_error(client: TestClient) -> None:
     )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch.object(MainSettings, "get_settings", return_value=test_settings),
     ):
         username = f"{random_lower_string()}@example.com"
         password = random_lower_string()
@@ -382,7 +382,7 @@ def test_add_to_waiting_list(client: TestClient) -> None:
     email_response = EmailResponse(state="deliverable")
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch.object(MainSettings, "get_settings", return_value=test_settings),
         patch(
             "app.api.routes.users.emailable_client.verify", return_value=email_response
         ),
@@ -410,7 +410,7 @@ def test_update_waiting_list_user(client: TestClient) -> None:
     email_response = EmailResponse(state="deliverable")
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch.object(MainSettings, "get_settings", return_value=test_settings),
         patch(
             "app.api.routes.users.emailable_client.verify", return_value=email_response
         ),
@@ -439,7 +439,7 @@ def test_add_to_waiting_list_invalid_email(client: TestClient) -> None:
     email_response = EmailResponse(state="undeliverable")
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch.object(MainSettings, "get_settings", return_value=test_settings),
         patch(
             "app.api.routes.users.emailable_client.verify", return_value=email_response
         ),
@@ -468,7 +468,7 @@ def test_add_to_waiting_list_email_already_registered_in_system(
     email_response = EmailResponse(state="deliverable")
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch.object(MainSettings, "get_settings", return_value=test_settings),
         patch(
             "app.api.routes.users.emailable_client.verify", return_value=email_response
         ),
@@ -506,7 +506,7 @@ def test_signup_with_waiting_list_email_allowed(
     )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch.object(MainSettings, "get_settings", return_value=test_settings),
     ):
         user_in = WaitingListUserCreate(email="sebastian@fastapilabs.com")
         user = crud.add_to_waiting_list(session=db, user_in=user_in)
@@ -537,7 +537,7 @@ def test_signup_with_waiting_list_email_not_allowed(
     )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch.object(MainSettings, "get_settings", return_value=test_settings),
     ):
         user_in = WaitingListUserCreate(email="esteban@fastapilabs.com")
         user = crud.add_to_waiting_list(session=db, user_in=user_in)
@@ -565,7 +565,7 @@ def test_signup_with_waiting_list_email_not_in_db(client: TestClient) -> None:
     )
     with (
         patch("app.utils.send_email", return_value=None),
-        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch.object(MainSettings, "get_settings", return_value=test_settings),
     ):
         data = {
             "email": "demo211@fastapilabs.com",

@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 from redis import Redis
 from sqlmodel import Session, col, select
 
-from app.core.config import get_common_settings, get_main_settings
+from app.core.config import CommonSettings, MainSettings
 from app.models import User, WaitingListUser
 
 
@@ -61,7 +61,7 @@ def render_email_template(*, template_name: str, context: dict[str, Any]) -> str
 
 
 def is_allowed_recipient(email_to: str) -> bool:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     # TODO: Uncomment when GA
     # if get_common_settings().ENVIRONMENT == "production":
     #     return True
@@ -77,7 +77,7 @@ def is_allowed_recipient(email_to: str) -> bool:
 
 
 def is_signup_allowed(email_to: str, session: Session) -> bool:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     # TODO: Uncomment when GA
     # if settings.ENVIRONMENT == "production":
@@ -101,12 +101,12 @@ def send_email(
     subject: str = "",
     html_content: str = "",
 ) -> None:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     assert settings.emails_enabled, "no provided configuration for email variables"
     if not is_allowed_recipient(email_to):
         raise RuntimeError(
-            f"In environment {get_common_settings().ENVIRONMENT} with "
+            f"In environment {CommonSettings.get_settings().ENVIRONMENT} with "
             f"SMTP_HOST {settings.SMTP_HOST} "
             f"recipient email is not allowed: {email_to}"
         )
@@ -129,7 +129,7 @@ def send_email(
 
 
 def generate_test_email(email_to: str) -> EmailData:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Test email"
@@ -141,7 +141,7 @@ def generate_test_email(email_to: str) -> EmailData:
 
 
 def generate_reset_password_email(email_to: str, email: str, token: str) -> EmailData:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Password recovery for user {email}"
@@ -163,7 +163,7 @@ def generate_reset_password_email(email_to: str, email: str, token: str) -> Emai
 def generate_new_account_email(
     email_to: str, username: str, password: str
 ) -> EmailData:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - New account for user {username}"
@@ -182,7 +182,7 @@ def generate_new_account_email(
 
 
 def generate_verification_email_token(email: str) -> str:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     delta = timedelta(hours=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_HOURS)
     now = get_datetime_utc()
@@ -197,7 +197,7 @@ def generate_verification_email_token(email: str) -> str:
 
 
 def generate_verification_update_email_token(email: str, old_email: str) -> str:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     delta = timedelta(hours=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_HOURS)
     now = get_datetime_utc()
@@ -217,7 +217,7 @@ def generate_verification_update_email_token(email: str, old_email: str) -> str:
 
 
 def generate_verification_email(email_to: str, token: str) -> EmailData:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Verify your email address"
@@ -235,7 +235,7 @@ def generate_verification_email(email_to: str, token: str) -> EmailData:
 
 
 def verify_email_verification_token(token: str) -> str | None:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
@@ -248,7 +248,7 @@ def verify_email_verification_token(token: str) -> str | None:
 
 
 def verify_update_email_verification_token(token: str) -> dict[str, Any] | None:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
@@ -262,7 +262,7 @@ def verify_update_email_verification_token(token: str) -> dict[str, Any] | None:
 
 
 def generate_password_reset_token(email: str) -> str:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     delta = timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
     now = get_datetime_utc()
@@ -277,7 +277,7 @@ def generate_password_reset_token(email: str) -> str:
 
 
 def verify_password_reset_token(token: str) -> str | None:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
@@ -292,7 +292,7 @@ def verify_password_reset_token(token: str) -> str | None:
 def generate_verification_update_email(
     full_name: str, email_to: str, token: str
 ) -> EmailData:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Verify your email address"
@@ -312,7 +312,7 @@ def generate_verification_update_email(
 
 
 def generate_account_deletion_email(email_to: str) -> EmailData:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Account deletion"
@@ -328,7 +328,7 @@ def generate_account_deletion_email(email_to: str) -> EmailData:
 
 
 def generate_waiting_list_email(email_to: str) -> EmailData:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     subject = "You're on the waiting list 🎉"
     html_content = render_email_template(
         template_name="joined_waiting_list.html",
@@ -341,7 +341,7 @@ def generate_waiting_list_email(email_to: str) -> EmailData:
 
 
 def generate_waiting_list_update_email(email_to: str) -> EmailData:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     subject = "Your data has been updated 🤓"
     html_content = render_email_template(
         template_name="updated_waiting_list.html",
@@ -354,7 +354,7 @@ def generate_waiting_list_update_email(email_to: str) -> EmailData:
 
 
 def generate_invitation_email_for_waiting_list_user(email_to: str) -> EmailData:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     subject = "Join FastAPI Cloud, you have been invited 🎉"
     html_content = render_email_template(
         template_name="invited_from_waiting_list.html",
@@ -409,7 +409,7 @@ def create_and_store_device_code(
 
     The device code is returned if it was successfully stored in Redis.
     """
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     now = get_datetime_utc()
 
@@ -469,7 +469,7 @@ def authorize_device_code(
     device_code: str, access_token: str, redis: "Redis[Any]"
 ) -> None:
     """Authorize the device code in Redis using the device code."""
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     data = get_device_authorization_data(device_code, redis)
 

@@ -8,7 +8,7 @@ from sqlmodel import and_, col, select
 
 from app.api.deps import CurrentUser, SessionDep
 from app.api.utils.aws_s3 import generate_presigned_url_post
-from app.core.config import get_common_settings, get_main_settings
+from app.core.config import CommonSettings, MainSettings
 from app.crud import get_user_team_link
 from app.models import (
     App,
@@ -164,7 +164,7 @@ def upload_deployment_artifact(
     object_name = f"{app.id}/{deployment.id}.tar"
 
     presigned_url = generate_presigned_url_post(
-        bucket_name=get_common_settings().AWS_DEPLOYMENT_BUCKET,
+        bucket_name=CommonSettings.get_settings().AWS_DEPLOYMENT_BUCKET,
         object_name=object_name,
     )
     if not presigned_url:
@@ -205,8 +205,8 @@ def redeploy_deployment(
         )
 
     response = httpx.post(
-        f"{get_main_settings().BUILDER_API_URL}/send/deploy",
-        headers={"X-API-KEY": get_common_settings().BUILDER_API_KEY},
+        f"{MainSettings.get_settings().BUILDER_API_URL}/send/deploy",
+        headers={"X-API-KEY": CommonSettings.get_settings().BUILDER_API_KEY},
         json={"deployment_id": str(deployment_id)},
     )
 
@@ -252,8 +252,8 @@ def upload_complete(
     session.commit()
 
     response = httpx.post(
-        f"{get_main_settings().BUILDER_API_URL}/apps/depot/build",
-        headers={"X-API-KEY": get_common_settings().BUILDER_API_KEY},
+        f"{MainSettings.get_settings().BUILDER_API_URL}/apps/depot/build",
+        headers={"X-API-KEY": CommonSettings.get_settings().BUILDER_API_KEY},
         json={"deployment_id": str(deployment_id)},
     )
 

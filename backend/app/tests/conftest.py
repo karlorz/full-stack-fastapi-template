@@ -7,7 +7,7 @@ from redis import Redis
 from sqlmodel import Session, delete
 
 from app.api.deps import get_redis
-from app.core.config import CommonSettings, get_main_settings
+from app.core.config import CommonSettings, MainSettings
 from app.core.db import engine, init_db
 from app.main import app
 from app.models import (
@@ -22,7 +22,7 @@ from app.models import (
 from app.tests.utils.user import authentication_token_from_email
 from app.tests.utils.utils import get_superuser_token_headers
 
-settings = get_main_settings()
+settings = MainSettings.get_settings()
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -84,13 +84,11 @@ def common_settings() -> CommonSettings:
 def override_get_common_settings(
     common_settings: CommonSettings,
 ) -> Generator[None, None, None]:
-    from app.core import config
-
-    original_get_common_settings = config.get_common_settings
+    original_get_common_settings = CommonSettings.get_settings
 
     def mock_get_common_settings() -> CommonSettings:
         return common_settings
 
-    config.get_common_settings = mock_get_common_settings  # type: ignore
+    CommonSettings.get_settings = mock_get_common_settings  # type: ignore
     yield
-    config.get_common_settings = original_get_common_settings
+    CommonSettings.get_settings = original_get_common_settings  # type: ignore[method-assign]

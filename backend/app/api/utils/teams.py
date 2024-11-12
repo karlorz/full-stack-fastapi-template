@@ -2,7 +2,7 @@ import secrets
 
 from sqlmodel import Session, select
 
-from app.core.config import get_main_settings
+from app.core.config import MainSettings
 from app.models import App, Team
 from app.utils import slugify
 
@@ -17,7 +17,7 @@ def generate_team_slug_name(name: str, session: Session) -> str:
 
 
 def generate_app_slug_name(name: str, session: Session) -> str:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
 
     slug_name = slugify(name)
     new_slug = slug_name

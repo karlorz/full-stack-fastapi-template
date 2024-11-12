@@ -3,9 +3,9 @@ import string
 
 from fastapi.testclient import TestClient
 
-from app.core.config import get_main_settings
+from app.core.config import MainSettings
 
-settings = get_main_settings()
+settings = MainSettings.get_settings()
 
 
 def random_lower_string() -> str:

@@ -16,7 +16,7 @@ from app.api.deps import (
     rate_limit_20_per_minute,
 )
 from app.core import security
-from app.core.config import get_main_settings
+from app.core.config import MainSettings
 from app.core.exceptions import OAuth2Exception
 from app.core.security import get_password_hash
 from app.models import Message, NewPassword, Token, UserMePublic, UserPublic
@@ -47,7 +47,7 @@ def login_access_token(
     """
     OAuth2 compatible token login, get the access token and the user data
     """
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     user = crud.authenticate(
         session=session, email=form_data.username, password=form_data.password
     )
@@ -96,7 +96,7 @@ async def device_authorization(
     """
     Device Authorization Grant
     """
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     user_code = generate_user_code()
     request_ip = request.client.host if request.client else None
 
@@ -193,7 +193,7 @@ async def authorize_device(
     current_user: CurrentUser,
     redis: RedisDep,
 ) -> Any:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     device_data = get_device_authorization_data_by_user_code(data.user_code, redis)
 
     if device_data is None:
@@ -223,7 +223,7 @@ def recover_password(email: str, session: SessionDep) -> Message:
     """
     Password Recovery
     """
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     user = crud.get_user_by_email(session=session, email=email)
 
     if not user:

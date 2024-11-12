@@ -11,14 +11,14 @@ from sqlmodel import Session
 
 from app.core import security
 from app.core.config import (
-    get_main_settings,
+    MainSettings,
 )
 from app.core.db import engine
 from app.models import TokenPayload, User
 from app.utils import TokenType
 
 reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{get_main_settings().API_V1_STR}/login/access-token"
+    tokenUrl=f"{MainSettings.get_settings().API_V1_STR}/login/access-token"
 )
 
 
@@ -32,7 +32,7 @@ TokenDep = Annotated[str, Depends(reusable_oauth2)]
 
 
 def get_redis() -> Generator["redis.Redis[Any]", None, None]:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     pool = redis.ConnectionPool(
         host=settings.REDIS_SERVER,
         port=settings.REDIS_PORT,
@@ -52,7 +52,7 @@ RedisDep = Annotated["redis.Redis[Any]", Depends(get_redis)]
 
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
@@ -80,7 +80,7 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
 def get_first_superuser(current_user: CurrentUser) -> User:
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     if current_user.email != settings.FIRST_SUPERUSER:
         raise HTTPException(
             status_code=403,

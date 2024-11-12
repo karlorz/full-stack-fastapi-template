@@ -29,11 +29,11 @@ from app.builder_utils import (
     validate_api_key,
 )
 from app.core.config import (
-    get_builder_settings,
-    get_common_settings,
-    get_db_settings,
-    get_depot_settings,
-    get_main_settings,
+    BuilderSettings,
+    CommonSettings,
+    DBSettings,
+    DepotSettings,
+    MainSettings,
 )
 from app.depot_py.depot.build import v1 as depot_build
 from app.models import (
@@ -46,7 +46,7 @@ from app.models import (
 )
 
 # aws vars
-aws_region = get_builder_settings().AWS_REGION
+aws_region = BuilderSettings.get_settings().AWS_REGION
 
 # AWS S3 client
 s3 = boto3.client("s3", region_name=aws_region)
@@ -138,11 +138,13 @@ def create_or_patch_custom_object(
 
 
 def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
-    main_settings = get_main_settings().model_dump(
+    main_settings = MainSettings.get_settings().model_dump(
         mode="json", exclude_unset=True, exclude={"all_cors_origins"}
     )
-    common_settings = get_common_settings().model_dump(mode="json", exclude_unset=True)
-    db_settings = get_db_settings().model_dump(mode="json", exclude_unset=True)
+    common_settings = CommonSettings.get_settings().model_dump(
+        mode="json", exclude_unset=True
+    )
+    db_settings = DBSettings.get_settings().model_dump(mode="json", exclude_unset=True)
 
     env_data = {**main_settings, **common_settings, **db_settings}
 
@@ -288,7 +290,7 @@ def depot_build_exec(
     build_token: str,
 ) -> subprocess.CompletedProcess[bytes]:
     push_load_flag = (
-        "--load" if get_common_settings().ENVIRONMENT == "local" else "--push"
+        "--load" if CommonSettings.get_settings().ENVIRONMENT == "local" else "--push"
     )
     result = subprocess.run(
         [
@@ -314,7 +316,7 @@ def depot_build_exec(
 def build_and_push_docker_image(
     *, registry_url: str, image_tag: str, docker_context_path: str
 ) -> None:
-    depot_settings = get_depot_settings()
+    depot_settings = DepotSettings.get_settings()
     # Docker login
     with docker_login(registry_url):
         build_request = syncify(depot_client.build().create_build)(
@@ -343,8 +345,8 @@ def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
 
 
 def _app_process_build(deployment_id: uuid.UUID, session: SessionDep) -> None:
-    registry_url = get_builder_settings().ECR_REGISTRY_URL
-    bucket_name = get_common_settings().AWS_DEPLOYMENT_BUCKET
+    registry_url = BuilderSettings.get_settings().ECR_REGISTRY_URL
+    bucket_name = CommonSettings.get_settings().AWS_DEPLOYMENT_BUCKET
 
     deployment_with_team = session.exec(
         select(Deployment)
@@ -475,7 +477,7 @@ def send_deploy(
     team = app.team
 
     image_tag = f"{app.id}_{deployment.id}"
-    registry_url = get_builder_settings().ECR_REGISTRY_URL
+    registry_url = BuilderSettings.get_settings().ECR_REGISTRY_URL
     env_vars = get_env_vars(app.id, session)
 
     deploy_to_kubernetes(

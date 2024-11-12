@@ -19,7 +19,7 @@ fileConfig(config.config_file_name)
 # target_metadata = None
 
 from app.models import SQLModel  # noqa
-from app.core.config import get_db_settings  # noqa
+from app.core.config import DBSettings  # noqa
 
 target_metadata = SQLModel.metadata
 
@@ -30,7 +30,7 @@ target_metadata = SQLModel.metadata
 
 
 def get_url():
-    return str(get_db_settings().SQLALCHEMY_DATABASE_URI)
+    return str(DBSettings.get_settings().SQLALCHEMY_DATABASE_URI)
 
 
 def run_migrations_offline():

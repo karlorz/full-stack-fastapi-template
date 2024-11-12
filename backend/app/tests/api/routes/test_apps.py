@@ -4,7 +4,7 @@ from datetime import timedelta
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
-from app.core.config import get_main_settings
+from app.core.config import MainSettings
 from app.crud import add_user_to_team
 from app.models import App, Role
 from app.tests.utils.apps import create_deployment_for_app, create_random_app
@@ -12,7 +12,7 @@ from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 from app.tests.utils.utils import random_email
 
-settings = get_main_settings()
+settings = MainSettings.get_settings()
 
 
 def test_read_apps(client: TestClient, db: Session) -> None:

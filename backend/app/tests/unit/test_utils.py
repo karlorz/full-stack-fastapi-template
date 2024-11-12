@@ -17,7 +17,7 @@ def test_query_pending_users_to_send_invitation(db: Session) -> None:
     mock_send_email = Mock()
     with (
         patch("app.utils.send_email", mock_send_email),
-        patch("app.utils.get_main_settings", return_value=test_settings),
+        patch.object(MainSettings, "get_settings", return_value=test_settings),
         patch("app.utils.generate_verification_email", return_value=None),
     ):
         existing_user = crud.create_user(

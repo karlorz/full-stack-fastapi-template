@@ -14,7 +14,7 @@ from app.api.utils.invitations import (
     send_invitation_email,
     verify_invitation_token,
 )
-from app.core.config import get_main_settings
+from app.core.config import MainSettings
 from app.crud import add_user_to_team, get_user_team_link
 from app.models import (
     Invitation,
@@ -135,7 +135,7 @@ def create_invitation(
     """
     Create new invitation.
     """
-    settings = get_main_settings()
+    settings = MainSettings.get_settings()
     user_team_link = get_user_team_link(
         session=session, user_id=current_user.id, team_id=invitation_in.team_id
     )
