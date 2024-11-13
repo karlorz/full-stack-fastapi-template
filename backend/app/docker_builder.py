@@ -30,6 +30,7 @@ from app.builder_utils import (
 )
 from app.core.config import (
     BuilderSettings,
+    CloudflareSettings,
     CommonSettings,
     DBSettings,
     DepotSettings,
@@ -147,8 +148,16 @@ def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
         mode="json", exclude_unset=True
     )
     db_settings = DBSettings.get_settings().model_dump(mode="json", exclude_unset=True)
+    cloudflare_settings = CloudflareSettings.get_settings().model_dump(
+        mode="json", exclude_unset=True
+    )
 
-    env_data = {**main_settings, **common_settings, **db_settings}
+    env_data = {
+        **main_settings,
+        **common_settings,
+        **db_settings,
+        **cloudflare_settings,
+    }
 
     env_strs = {k: str(v) for k, v in env_data.items()}
 
