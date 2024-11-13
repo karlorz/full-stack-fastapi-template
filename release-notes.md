@@ -130,6 +130,7 @@
 
 ### Refactors
 
+* ♻️ Refactor builder to support calling Kubernetes locally, use our own settings. PR [#504](https://github.com/fastapilabs/cloud/pull/504) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Set Sentry environment in builder and disable locally. PR [#502](https://github.com/fastapilabs/cloud/pull/502) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor `get_settings` util functions, couple with their respective classes. PR [#498](https://github.com/fastapilabs/cloud/pull/498) by [@tiangolo](https://github.com/tiangolo).
 * ✅ Remove unused patches in tests. PR [#499](https://github.com/fastapilabs/cloud/pull/499) by [@tiangolo](https://github.com/tiangolo).
