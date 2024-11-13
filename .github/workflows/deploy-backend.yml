@@ -123,8 +123,6 @@ jobs:
         AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
         ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
         BUILDER_API_URL: "${{ vars.BUILDER_API_URL }}"
-
-        # Secrets for the app
         SECRET_KEY: "${{ secrets.SECRET_KEY }}"
         FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
         SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
@@ -166,17 +164,17 @@ jobs:
         AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
         ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
         DEPOT_PROJECT_ID: "${{ vars.DEPOT_PROJECT_ID }}"
-
         BUILDER_API_URL: "${{ vars.BUILDER_API_URL }}"
-        # Secrets for the app
         SECRET_KEY: "${{ secrets.SECRET_KEY }}"
         FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
         SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
         EMAILABLE_KEY: "${{ secrets.EMAILABLE_KEY }}"
         DEPOT_TOKEN: "${{ secrets.DEPOT_TOKEN }}"
-
         BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
+        CLOUDFLARE_ACCOUNT_ID: "${{ vars.CLOUDFLARE_ACCOUNT_ID }}"
+        CLOUDFLARE_ZONE_ID: "${{ vars.CLOUDFLARE_ZONE_ID }}"
+        CLOUDFLARE_API_TOKEN_SSL: "${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}"
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-backend:  # This job does nothing and is only used for the branch protection
     if: always()

@@ -100,6 +100,9 @@ jobs:
         DEPOT_PROJECT_ID: "${{ vars.DEPOT_PROJECT_ID }}"
         AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
         BUILDER_SENTRY_DSN: "${{ vars.BUILDER_SENTRY_DSN }}"
+        CLOUDFLARE_ACCOUNT_ID: "${{ vars.CLOUDFLARE_ACCOUNT_ID }}"
+        CLOUDFLARE_ZONE_ID: "${{ vars.CLOUDFLARE_ZONE_ID }}"
+        CLOUDFLARE_API_TOKEN_SSL: "${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}"
 
         # Secrets for the builder
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
