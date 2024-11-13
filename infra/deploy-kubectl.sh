@@ -69,9 +69,6 @@ kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_
 echo "Install Knative Serving and Kourier"
 kubectl apply -k "k8s/knative/kustomize/overlays/${ENVIRONMENT}"
 
-echo "Install Knative Serving Role"
-kubectl apply -f k8s/knative/knative-serving-role.yaml
-
 echo "Install TriggerMesh Core CRDs"
 kubectl apply -f k8s/triggermesh/triggermesh-core-crds.yaml
 
@@ -89,6 +86,9 @@ kubectl apply -f k8s/triggermesh/redis-broker.yaml
 
 echo "Install TriggerMesh SQS S3 Source"
 envsubst < k8s/triggermesh/s3-source.yaml | kubectl apply -f -
+
+echo "Create fastapicloud service account"
+kubectl apply -f k8s/fastapicloud/service-account.yaml
 
 echo "Add DNS record for Knative:"
 

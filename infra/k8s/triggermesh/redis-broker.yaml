@@ -3,6 +3,7 @@ apiVersion: eventing.triggermesh.io/v1alpha1
 kind: RedisBroker
 metadata:
   name: redis-broker
+  namespace: fastapicloud
 
 ---
 
@@ -10,6 +11,7 @@ apiVersion: eventing.triggermesh.io/v1alpha1
 kind: Trigger
 metadata:
   name: redis-broker-trigger
+  namespace: fastapicloud
 spec:
   broker:
     kind: RedisBroker

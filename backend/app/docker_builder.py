@@ -225,6 +225,8 @@ def create_custom_domain(*, namespace: str, domain: str, service_name: str) -> N
 
 
 def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
+    namespace = "fastapicloud"
+
     main_settings = MainSettings.get_settings().model_dump(
         mode="json", exclude_unset=True, exclude={"all_cors_origins"}
     )
@@ -244,8 +246,6 @@ def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
     }
 
     env_strs = {k: str(v) for k, v in env_data.items()}
-
-    namespace = "default"
 
     deploy_to_kubernetes(
         service_name,

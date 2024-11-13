@@ -104,6 +104,8 @@ oidc_arn = eks_cluster.core.apply(lambda x: x.oidc_provider and x.oidc_provider.
 oidc_id = oidc_url.apply(lambda x: x.split("/")[-1])
 eks_namespace = "default"
 k8s_service_acount_name = "default"
+fastapi_cloud_admin_service_account_name = "fastapicloud"
+fastapi_cloud_namespace = "fastapicloud"
 # Get the security group ID from the EKS cluster
 cluster_security_group_id = eks_cluster.cluster_security_group.id
 
@@ -148,8 +150,9 @@ aws.iam.PolicyAttachment(
     roles=[aws_lb_controller_role.name],
 )
 
-k8s_iam_deployment_workflow_role = aws.iam.Role(
-    "k8sDeploymentServiceAccountRole",
+# FastAPI Cloud Admin Service Account Role and policy attachment
+k8s_iam_fastapi_cloud_admin_role = aws.iam.Role(
+    "k8sFastAPICloudAdminServiceAccountRole",
     assume_role_policy=pulumi.Output.json_dumps(
         {
             "Version": "2012-10-17",
@@ -182,9 +185,48 @@ k8s_iam_deployment_workflow_role = aws.iam.Role(
 
 
 aws.iam.RolePolicyAttachment(
-    "eksDeploymentRolePolicyAttachment",
-    role=k8s_iam_deployment_workflow_role.name,
-    policy_arn=iam.knative_deploy_workflow_policy.arn,
+    "eksFastAPICloudAdminRolePolicyAttachment",
+    role=k8s_iam_fastapi_cloud_admin_role.name,
+    policy_arn=iam.fastapi_cloud_admin_policy.arn,
+)
+
+# Knative Customer Apps Service Account Role and policy attachment
+k8s_iam_knative_customer_apps_role = aws.iam.Role(
+    "k8sKnativeCustomerAppsServiceAccountRole",
+    assume_role_policy=pulumi.Output.json_dumps(
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Federated": pulumi.Output.format(
+                            "arn:aws:iam::{account_id}:oidc-provider/oidc.eks.{region}.amazonaws.com/id/{oidc_id}",
+                            account_id=account_id,
+                            region=region,
+                            oidc_id=oidc_id,
+                        )
+                    },
+                    "Action": "sts:AssumeRoleWithWebIdentity",
+                    "Condition": {
+                        "StringEquals": {
+                            pulumi.Output.format(
+                                "oidc.eks.{region}.amazonaws.com/id/{oidc_id}:aud",
+                                region=region,
+                                oidc_id=oidc_id,
+                            ): "sts.amazonaws.com"
+                        }
+                    },
+                }
+            ],
+        }
+    ),
+)
+
+aws.iam.RolePolicyAttachment(
+    "eksKnativeCustomerAppsRolePolicyAttachment",
+    role=k8s_iam_knative_customer_apps_role.name,
+    policy_arn=iam.knative_customer_apps_policy.arn,
 )
 
 ### Kubernetes Resources ###
@@ -205,13 +247,26 @@ aws_load_balancer_service_account = k8s.core.v1.ServiceAccount(
     opts=pulumi.ResourceOptions(provider=provider),
 )
 
-service_account = k8s.core.v1.ServiceAccount(
-    "defaultServiceAccountAnnotation",
+# FastAPI Labs Admin Service Account k8s annotation
+k8s.core.v1.ServiceAccount(
+    "FastAPILabsAdminServiceAccountAnnotation",
+    metadata={
+        "name": fastapi_cloud_admin_service_account_name,
+        "namespace": fastapi_cloud_namespace,
+        "annotations": {
+            "eks.amazonaws.com/role-arn": k8s_iam_fastapi_cloud_admin_role.arn
+        },
+    },
+)
+
+# Knative Customer Apps Service Account k8s annotation
+k8s.core.v1.ServiceAccount(
+    "KnativeCustomerAppServiceAccountAnnotation",
     metadata={
         "name": k8s_service_acount_name,
         "namespace": eks_namespace,
         "annotations": {
-            "eks.amazonaws.com/role-arn": k8s_iam_deployment_workflow_role.arn
+            "eks.amazonaws.com/role-arn": k8s_iam_knative_customer_apps_role.arn
         },
     },
     opts=pulumi.ResourceOptions(provider=provider),

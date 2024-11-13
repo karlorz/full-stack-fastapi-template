@@ -8,11 +8,11 @@ from pulumi_deployment_workflow.config import account_id, region
 # Reference: https://www.pulumi.com/registry/packages/aws-iam/
 # Reference: https://awspolicygen.s3.amazonaws.com/policygen.html
 
-knative_deploy_workflow_policy = aws.iam.Policy(
-    "knative-deployment-workflow-policy",
-    name="knative-deployment-workflow-policy",
+fastapi_cloud_admin_policy = aws.iam.Policy(
+    "fastapi-cloud-admin-policy",
+    name="fastapi-cloud-admin-policy",
     path="/",
-    description="Policy for Knative Deployment Workflow to allow EKS cluster to handle deployments",
+    description="Policy for FastAPI Cloud Admin to allow EKS cluster to handle deployments",
     policy=pulumi.Output.json_dumps(
         {
             "Version": "2012-10-17",
@@ -64,6 +64,34 @@ knative_deploy_workflow_policy = aws.iam.Policy(
                     "Resource": pulumi.Output.concat(
                         s3.s3_deployment_customer_apps.arn, "/*"
                     ),
+                },
+            ],
+        }
+    ),
+)
+
+knative_customer_apps_policy = aws.iam.Policy(
+    "knative-customer-apps-policy",
+    name="knative-customer-apps-policy",
+    path="/",
+    description="Policy for Knative Customer Apps to allow EKS pull images from ECR",
+    policy=pulumi.Output.json_dumps(
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "ecr:BatchCheckLayerAvailability",
+                        "ecr:GetDownloadUrlForLayer",
+                        "ecr:BatchGetImage",
+                    ],
+                    "Resource": f"arn:aws:ecr:{region}:{account_id}:repository/*",
+                },
+                {
+                    "Effect": "Allow",
+                    "Action": ["ecr:GetAuthorizationToken"],
+                    "Resource": "*",
                 },
             ],
         }
