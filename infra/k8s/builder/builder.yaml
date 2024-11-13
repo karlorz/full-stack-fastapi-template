@@ -55,6 +55,8 @@ spec:
             value: "${DEPOT_TOKEN}"
           - name: AWS_DEPLOYMENT_BUCKET
             value: "${AWS_DEPLOYMENT_BUCKET}"
+          - name: BUILDER_SENTRY_DSN
+            value: "${BUILDER_SENTRY_DSN}"
         volumeMounts:
         - mountPath: /var/lib/docker
           name: docker-graph-storage
