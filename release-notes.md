@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✨ Add first Cloudflare utils for custom domains. PR [#501](https://github.com/fastapilabs/cloud/pull/501) by [@tiangolo](https://github.com/tiangolo).
 * 👔 App stale API on env var changes. PR [#482](https://github.com/fastapilabs/cloud/pull/482) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add services to redeploy an app in builder. PR [#483](https://github.com/fastapilabs/cloud/pull/483) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add waiting list API, models, and emails. PR [#457](https://github.com/fastapilabs/cloud/pull/457) by [@estebanx64](https://github.com/estebanx64).
