@@ -45,8 +45,10 @@ from app.models import (
     SendDeploy,
 )
 
+builder_settings = BuilderSettings.get_settings()
+
 # aws vars
-aws_region = BuilderSettings.get_settings().AWS_REGION
+aws_region = builder_settings.AWS_REGION
 
 # AWS S3 client
 s3 = boto3.client("s3", region_name=aws_region)
@@ -56,16 +58,16 @@ ecr = boto3.client("ecr", region_name=aws_region)
 
 
 # Sentry
-sentry_sdk.init(
-    dsn="https://c88c25ac97cd610c007760c0bd062fc6@o4506985151856640.ingest.us.sentry.io/4507940416716800",
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for tracing.
-    traces_sample_rate=1.0,
-    # Set profiles_sample_rate to 1.0 to profile 100%
-    # of sampled transactions.
-    # We recommend adjusting this value in production.
-    profiles_sample_rate=1.0,
-)
+
+if (
+    builder_settings.BUILDER_SENTRY_DSN
+    and CommonSettings.get_settings().ENVIRONMENT != "local"
+):
+    sentry_sdk.init(
+        dsn=str(builder_settings.BUILDER_SENTRY_DSN),
+        enable_tracing=True,
+        environment=CommonSettings.get_settings().ENVIRONMENT,
+    )
 
 # FastAPI app
 app = FastAPI()

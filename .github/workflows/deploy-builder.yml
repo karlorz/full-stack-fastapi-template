@@ -99,6 +99,7 @@ jobs:
         AWS_REGION: "${{ vars.AWS_REGION }}"
         DEPOT_PROJECT_ID: "${{ vars.DEPOT_PROJECT_ID }}"
         AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
+        BUILDER_SENTRY_DSN: "${{ vars.BUILDER_SENTRY_DSN }}"
 
         # Secrets for the builder
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"

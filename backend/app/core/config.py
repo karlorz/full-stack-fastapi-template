@@ -195,6 +195,7 @@ class MainSettings(SettingsEnv):
 class BuilderSettings(SettingsEnv):
     ECR_REGISTRY_URL: str
     AWS_REGION: str
+    BUILDER_SENTRY_DSN: HttpUrl | None = None
 
 
 class DepotSettings(SettingsEnv):
