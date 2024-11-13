@@ -98,7 +98,7 @@ def create_namespace_by_team(namespace: str) -> None:
             raise e
 
 
-def create_or_patch_custom_object(
+def create_or_patch_custom_namespaced_object(
     group: str,
     version: str,
     namespace: str,
@@ -140,6 +140,90 @@ def create_or_patch_custom_object(
             raise e
 
 
+def create_or_patch_custom_cluster_object(
+    *,
+    group: str,
+    version: str,
+    plural: str,
+    name: str,
+    body: dict[str, Any],
+) -> None:
+    api_instance = get_kubernetes_client_custom_objects()
+
+    try:
+        # Try to get the custom object
+        api_instance.get_cluster_custom_object(  # type: ignore
+            group=group, version=version, plural=plural, name=name
+        )
+
+        # Object exists, so patch it
+        api_response = api_instance.patch_cluster_custom_object(  # type: ignore
+            group=group,
+            version=version,
+            plural=plural,
+            name=name,
+            body=body,
+        )
+        print(f"Custom object patched. Status='{api_response}'")
+
+    except K8sApiException as e:
+        if e.status == 404:  # Not Found
+            # Object doesn't exist, so create it
+            api_response = api_instance.create_cluster_custom_object(  # type: ignore
+                group=group,
+                version=version,
+                plural=plural,
+                body=body,
+            )
+            print(f"Custom object created. Status='{api_response}'")
+        else:
+            raise e
+
+
+def create_custom_domain(*, namespace: str, domain: str, service_name: str) -> None:
+    domain_claim = {
+        "apiVersion": "networking.internal.knative.dev/v1alpha1",
+        "kind": "ClusterDomainClaim",
+        "metadata": {
+            "name": domain,
+        },
+        "spec": {
+            "namespace": namespace,
+        },
+    }
+    create_or_patch_custom_cluster_object(
+        group="networking.internal.knative.dev",
+        version="v1alpha1",
+        plural="clusterdomainclaims",
+        name=domain,
+        body=domain_claim,
+    )
+
+    domain_mapping = {
+        "apiVersion": "serving.knative.dev/v1beta1",
+        "kind": "DomainMapping",
+        "metadata": {
+            "name": domain,
+            "namespace": namespace,
+        },
+        "spec": {
+            "ref": {
+                "name": service_name,
+                "kind": "Service",
+                "apiVersion": "serving.knative.dev/v1",
+            },
+        },
+    }
+    create_or_patch_custom_namespaced_object(
+        group="serving.knative.dev",
+        version="v1beta1",
+        namespace=namespace,
+        plural="domainmappings",
+        name=domain,
+        body=domain_mapping,
+    )
+
+
 def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
     main_settings = MainSettings.get_settings().model_dump(
         mode="json", exclude_unset=True, exclude={"all_cors_origins"}
@@ -161,12 +245,19 @@ def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
 
     env_strs = {k: str(v) for k, v in env_data.items()}
 
+    namespace = "default"
+
     deploy_to_kubernetes(
         service_name,
         image_url,
-        namespace="default",
+        namespace=namespace,
         min_scale=min_scale,
         env=env_strs,
+    )
+    create_custom_domain(
+        namespace=namespace,
+        domain=MainSettings.get_settings().API_DOMAIN,
+        service_name=service_name,
     )
 
 
@@ -210,7 +301,7 @@ def deploy_to_kubernetes(
     ## TODO: Add resource limits and quotas by namespace
     create_namespace_by_team(namespace)
 
-    create_or_patch_custom_object(
+    create_or_patch_custom_namespaced_object(
         group="serving.knative.dev",
         version="v1",
         namespace=namespace,

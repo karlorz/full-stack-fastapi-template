@@ -111,6 +111,7 @@ class MainSettings(SettingsEnv):
     DEVICE_AUTH_POLL_INTERVAL_SECONDS: int = 5
 
     FRONTEND_HOST: str = "http://localhost:5173"
+    API_DOMAIN: str = "api.fastapicloud.site"
 
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str,
