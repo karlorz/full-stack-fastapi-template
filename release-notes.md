@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✨ Add support for our custom domains for the API, same domain as dashboard. PR [#508](https://github.com/fastapilabs/cloud/pull/508) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Add first Cloudflare utils for custom domains. PR [#501](https://github.com/fastapilabs/cloud/pull/501) by [@tiangolo](https://github.com/tiangolo).
 * 👔 App stale API on env var changes. PR [#482](https://github.com/fastapilabs/cloud/pull/482) by [@estebanx64](https://github.com/estebanx64).
 * ✨ Add services to redeploy an app in builder. PR [#483](https://github.com/fastapilabs/cloud/pull/483) by [@estebanx64](https://github.com/estebanx64).
