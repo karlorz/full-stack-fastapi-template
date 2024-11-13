@@ -1,4 +1,3 @@
-import os
 import uuid
 from collections.abc import Generator
 from functools import lru_cache
@@ -17,7 +16,7 @@ from app.models import Deployment, DeploymentStatus
 
 @lru_cache
 def get_kubernetes_client_custom_objects() -> k8s.CustomObjectsApi:
-    if os.getenv("CI"):
+    if CommonSettings.get_settings().ENVIRONMENT == "local":
         config.load_kube_config()
     else:
         config.load_incluster_config()
@@ -27,7 +26,7 @@ def get_kubernetes_client_custom_objects() -> k8s.CustomObjectsApi:
 
 @lru_cache
 def get_kubernetes_client_core_v1() -> k8s.CoreV1Api:
-    if os.getenv("CI"):
+    if CommonSettings.get_settings().ENVIRONMENT == "local":
         config.load_kube_config()
     else:
         config.load_incluster_config()
