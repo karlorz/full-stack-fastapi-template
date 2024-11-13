@@ -130,6 +130,7 @@
 
 ### Refactors
 
+* ♻️ Set Sentry environment in builder and disable locally. PR [#502](https://github.com/fastapilabs/cloud/pull/502) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor `get_settings` util functions, couple with their respective classes. PR [#498](https://github.com/fastapilabs/cloud/pull/498) by [@tiangolo](https://github.com/tiangolo).
 * ✅ Remove unused patches in tests. PR [#499](https://github.com/fastapilabs/cloud/pull/499) by [@tiangolo](https://github.com/tiangolo).
 * 🎨 Rename upload complete route. PR [#497](https://github.com/fastapilabs/cloud/pull/497) by [@patrick91](https://github.com/patrick91).
