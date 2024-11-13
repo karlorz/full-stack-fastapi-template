@@ -304,6 +304,7 @@
 
 ### Internal
 
+* ♻️ Move our own apps to our own Kubernetes namespace `fastapicloud`. PR [#500](https://github.com/fastapilabs/cloud/pull/500) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Add Cloudflare env vars to deployments, will be used for domains. PR [#506](https://github.com/fastapilabs/cloud/pull/506) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Add new depot deploy service in both api & builder and refactor builder utils. PR [#491](https://github.com/fastapilabs/cloud/pull/491) by [@estebanx64](https://github.com/estebanx64).
 * ⬆ Bump tiangolo/latest-changes from 0.3.1 to 0.3.2. PR [#494](https://github.com/fastapilabs/cloud/pull/494) by [@dependabot[bot]](https://github.com/apps/dependabot).
