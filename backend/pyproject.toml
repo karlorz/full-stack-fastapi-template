@@ -29,6 +29,7 @@ dependencies = [
     "emailable>=3.0.2",
     "betterproto>=2.0.0b7",
     "asyncer>=0.0.8",
+    "cloudflare>=3.1.0",
 ]
 
 [tool.uv]
@@ -93,6 +94,7 @@ omit = [
     "app/depot_py/*",
     "app/builder_utils.py",
     "app/docker_builder.py",
+    "app/cloudflare_utils.py",
 ]
 
 [tool.coverage.html]

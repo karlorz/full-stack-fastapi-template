@@ -54,6 +54,7 @@ dependencies = [
     { name = "betterproto" },
     { name = "boto3" },
     { name = "boto3-stubs", extra = ["ecr", "s3"] },
+    { name = "cloudflare" },
     { name = "email-validator" },
     { name = "emailable" },
     { name = "emails" },
@@ -97,6 +98,7 @@ requires-dist = [
     { name = "betterproto", specifier = ">=2.0.0b7" },
     { name = "boto3", specifier = ">=1.35.10,<2.0.0" },
     { name = "boto3-stubs", extras = ["s3", "ecr"], specifier = ">=1.35.10,<2.0.0" },
+    { name = "cloudflare", specifier = ">=3.1.0" },
     { name = "email-validator", specifier = ">=2.1.0.post1,<3.0.0.0" },
     { name = "emailable", specifier = ">=3.0.2" },
     { name = "emails", specifier = ">=0.6,<1.0" },
@@ -432,6 +434,23 @@ wheels = [
 ]
 
 [[package]]
+name = "cloudflare"
+version = "3.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "distro" },
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "sniffio" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ba/97/3634f35fb6c7d1de0a7e690d5605e51ca064d94c0c95b28a9ca52530df02/cloudflare-3.1.0.tar.gz", hash = "sha256:fcb72f22803071054820a152ff403834c5df27f731f732ac26fcf681e909ef58", size = 1368813 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/17/a3/8394580b64c021ae070c1c2a1acab862bb58f16c84cee16cb3b09b8bdd1a/cloudflare-3.1.0-py3-none-any.whl", hash = "sha256:e93ddafa85ab34f0dc4e38b2e6807da77dedbf41d34a9019f3ad5569879a6f37", size = 2913936 },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -565,6 +584,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/0d/dd/1bec4c5ddb504ca60fc29472f3d27e8d4da1257a854e1d96742f15c1d02d/distlib-0.3.9.tar.gz", hash = "sha256:a60f20dea646b8a33f3e7772f74dc0b2d0772d2837ee1342a00645c81edf9403", size = 613923 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/91/a1/cf2472db20f7ce4a6be1253a81cfdf85ad9c7885ffbed7047fb72c24cf87/distlib-0.3.9-py2.py3-none-any.whl", hash = "sha256:47f8c22fd27c27e25a65601af709b38e4f0a45ea4fc2e710f65755fa8caaaf87", size = 468973 },
+]
+
+[[package]]
+name = "distro"
+version = "1.9.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fc/f8/98eea607f65de6527f8a2e8885fc8015d3e6f5775df186e443e0964a11c3/distro-1.9.0.tar.gz", hash = "sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed", size = 60722 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/12/b3/231ffd4ab1fc9d679809f356cebee130ac7daa00d6d6f3206dd4fd137e9e/distro-1.9.0-py3-none-any.whl", hash = "sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2", size = 20277 },
 ]
 
 [[package]]

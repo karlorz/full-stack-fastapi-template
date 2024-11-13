@@ -201,3 +201,9 @@ class DepotSettings(SettingsEnv):
     DEPOT_PROJECT_ID: str
     DEPOT_TOKEN: str
     DEPOT_HOSTNAME: str = "api.depot.dev"
+
+
+class CloudflareSettings(SettingsEnv):
+    CLOUDFLARE_API_TOKEN_SSL: str
+    CLOUDFLARE_ACCOUNT_ID: str
+    CLOUDFLARE_ZONE_ID: str
