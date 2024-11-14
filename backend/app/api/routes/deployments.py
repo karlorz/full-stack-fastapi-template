@@ -167,8 +167,6 @@ def upload_deployment_artifact(
         bucket_name=CommonSettings.get_settings().AWS_DEPLOYMENT_BUCKET,
         object_name=object_name,
     )
-    if not presigned_url:
-        raise HTTPException(status_code=500, detail="Error generating presigned URL")
 
     deployment_url = DeploymentUploadOut(
         url=presigned_url["url"], fields=presigned_url["fields"]
