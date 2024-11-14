@@ -156,8 +156,6 @@ Then run Pulumi:
 pulumi up
 ```
 
-Check on the web UI the diagnostics, you might need to subscribe to an Ubuntu license and run it again.
-
 After it, create a new terminal so that any commands you run don't use the same environment variables, for example, communicating with Kubernetes using `kubectl`.
 
 ### Pulumi Outputs
@@ -170,6 +168,12 @@ Update the environment variables in the GitHub Action Secrets and environment va
 * `ecr_registry_url`: `ECR_REGISTRY_URL` environment variable
 * `redis_backend`: `REDIS_SERVER` environment variable
 * `kubeconfig`: `KUBECONFIG_DATA` environment variable
+
+To get the `kubeconfig` value, you can run:
+
+```bash
+pulumi stack output kubeconfig
+```
 
 ## Kubernetes Deployment
 
@@ -198,103 +202,6 @@ Then rename the context:
 kubectl config rename-context ...
 ```
 
-### Build TriggerMesh
-
-AWS S3 sends events to AWS SQS, we listen to those events with a TriggerMesh.
-
-But TriggerMesh was discontinued/abandoned, so, while we refactor and migrate that, we are building our own container images from the TriggerMesh source code: https://github.com/triggermesh/triggermesh
-
-We need to manually build the images and push them to our AWS ECR.
-
-#### Clone TriggerMesh Core
-
-```bash
-git clone git@github.com:triggermesh/triggermesh.git
-git clone git@github.com:triggermesh/triggermesh-core.git
-git clone git@github.com:triggermesh/brokers.git
-
-```
-
-#### Install Go
-
-https://go.dev/doc/install
-
-#### Install Ko
-
-Install ko following the guide: https://ko.build/install/
-
-Move `ko` to a location in the `PATH`, for example.
-
-#### Login to AWS ECR
-
-`ko` will use the Docker credentials to push the images to the AWS ECR.
-
-Create an `ENVIRONMENT` env var:
-
-```bash
-export ENVIRONMENT=development
-```
-
-Configure the env vars
-
-```bash
-# Get the registry ID
-export REGISTRY_ID=$(aws ecr describe-registry --profile $ENVIRONMENT --query "registryId" --output text)
-
-#Set an env var with the full registry name:
-export REGISTRY_NAME=$REGISTRY_ID.dkr.ecr.us-east-1.amazonaws.com
-
-# Login to the registry
-aws ecr get-login-password --region us-east-1 --profile $ENVIRONMENT | docker login --username AWS --password-stdin $REGISTRY_NAME
-
-# Set up Ko env var
-export KO_DOCKER_REPO=$REGISTRY_NAME
-```
-
-#### Build the TriggerMesh Core Image
-
-From inside the `triggermesh-core` directory, build the image with:
-
-```bash
-ko build -t latest --base-import-paths --local ./cmd/core-controller
-```
-
-That will tag the image with `latest`, will use the plain image name `core-controller` (without a hash at the end) and will save it to the local Docker.
-
-#### Build the TriggerMesh Redis Image
-
-From inside the `brokers` directory, build the image with:
-
-```bash
-ko build -t latest --base-import-paths --local ./cmd/redis-broker
-```
-
-#### Build the TriggerMesh Controller Image
-
-From inside the `triggermesh` directory, build the images with:
-
-```bash
-ko build -t latest --base-import-paths --local ./cmd/triggermesh-controller
-ko build -t latest --base-import-paths --local ./cmd/triggermesh-webhook
-ko build -t latest --base-import-paths --local ./cmd/awssqssource-adapter
-```
-
-### Push the Images
-
-Push the images to the AWS ECR with:
-
-```bash
-docker push $REGISTRY_NAME/core-controller:latest
-docker push $REGISTRY_NAME/redis-broker:latest
-docker push $REGISTRY_NAME/triggermesh-controller:latest
-docker push $REGISTRY_NAME/triggermesh-webhook:latest
-docker push $REGISTRY_NAME/awssqssource-adapter:latest
-```
-
----
-
-Now you can continue with the rest of the scripts that will use these images.
-
 ### Helm Charts
 
 Start with `infra/deploy-helm.sh`.
@@ -321,7 +228,7 @@ bash deploy-helm.sh
 
 This script will:
 
-* Expects `kubectl` to be already configured, in the GitHub Action, it's set up before starting Tmate, if you are running it locally, you need to set it up manually.
+* Expects `kubectl` to be already configured.
 * Use Helm to install the following Helm Charts:
     * AWS Load Balancer Controller: this creates the AWS Load Balancers allow the external world to communicate with our Kubernetes cluster. This uses the Kubernetes Service Account we created with Pulumi.
     * Cert Manager: this will manage the TLS (HTTPS) certificates obtained from Let's Encrypt. We'll configure more things later for it.
@@ -345,12 +252,6 @@ export CLOUDFLARE_API_TOKEN_SSL=...
 
 **Note**: this is not an account token (beta), it's a profile user token.
 
-* `SQS_SOURCE_ARN` with the ARN of the SQS queue that will be used by the S3 event listener, you can read it from the Pulumi output:
-
-```bash
-export SQS_SOURCE_ARN=$(pulumi stack output sqs_deployment_customer_apps_arn --stack "fastapilabs/$ENVIRONMENT")
-```
-
 * `REGISTRY_ID` with the AWS ECR registry ID, you can get it from [Login to AWS ECR](#login-to-aws-ecr):
 
 ```bash
@@ -373,8 +274,7 @@ This script will:
 * Install Cloudflare's Origin Server CA to obtain certificates for Cloudflare to communicate with the cluster (final users will communicate through Cloudflare).
 * Install the Knative CRDs (Custom Resource Definitions for Kubernetes).
 * Install Knative Serving and Kourier as the Knative network layer. This uses Kustomize with the files and directories in `infra/k8s/knative` (described below).
-* Install the Knative role to allow it to create Knative services.
-* Install the TriggerMesh components.
+* Install the role to allow FastAPI Cloud to create Knative services.
 
 ### Cloudflare DNS
 
@@ -394,8 +294,8 @@ In `fastapicloud.space`:
 
 * Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
 * Enable redirect HTTPS, SSL/TLS -> Edge Certificates -> Always Use HTTPS.
-* Add a `CNAME` record pointing `cluster-fastapicloud.fastapicloud.space` to the AWS Load Balancer DNS.
-* Add a `CNAME` record pointing `*.fastapicloud.space` to the AWS Load Balancer DNS.
+* Add a `CNAME` record pointing `cluster-fastapicloud.fastapicloud.space` to the **AWS Load Balancer DNS**.
+* Add a `CNAME` record pointing `*.fastapicloud.space` to the **AWS Load Balancer DNS**.
 * Add a `CNAME` record pointing `customdomain-fastapicloud.fastapicloud.space` to `cluster-fastapicloud.fastapicloud.space`.
 * Enable SaaS, SSL/TLS -> Custom Hostnames -> Fallback Origin: `cluster-fastapicloud.fastapicloud.space`.
 * SSL/TLS -> Custom Hostnames -> Add Custom Hostname with `TXT` validation: `api.fastapicloud.site`.
@@ -415,8 +315,8 @@ In `fastapicloud.club`:
 
 * Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
 * Enable redirect HTTPS, SSL/TLS -> Edge Certificates -> Always Use HTTPS.
-* Add a `CNAME` record pointing `cluster-fastapicloud.fastapicloud.club` to the AWS Load Balancer DNS.
-* Add a `CNAME` record pointing `*.fastapicloud.club` to the AWS Load Balancer DNS.
+* Add a `CNAME` record pointing `cluster-fastapicloud.fastapicloud.club` to the **AWS Load Balancer DNS**.
+* Add a `CNAME` record pointing `*.fastapicloud.club` to the **AWS Load Balancer DNS**.
 * Add a `CNAME` record pointing `customdomain-fastapicloud.fastapicloud.club` to `cluster-fastapicloud.fastapicloud.club`.
 * Enable SaaS, SSL/TLS -> Custom Hostnames -> Fallback Origin: `cluster-fastapicloud.fastapicloud.club`.
 * SSL/TLS -> Custom Hostnames -> Add Custom Hostname with `TXT` validation: `api.fastapicloud.work`.
@@ -436,8 +336,8 @@ In `fastapicloud.dev`:
 
 * Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
 * Enable redirect HTTPS, SSL/TLS -> Edge Certificates -> Always Use HTTPS.
-* Add a `CNAME` record pointing `cluster-fastapicloud.fastapicloud.dev` to the AWS Load Balancer DNS.
-* Add a `CNAME` record pointing `*.fastapicloud.dev` to the AWS Load Balancer DNS.
+* Add a `CNAME` record pointing `cluster-fastapicloud.fastapicloud.dev` to the **AWS Load Balancer DNS**.
+* Add a `CNAME` record pointing `*.fastapicloud.dev` to the **AWS Load Balancer DNS**.
 * Add a `CNAME` record pointing `customdomain-fastapicloud.fastapicloud.dev` to `cluster-fastapicloud.fastapicloud.dev`.
 * Enable SaaS, SSL/TLS -> Custom Hostnames -> Fallback Origin: `cluster-fastapicloud.fastapicloud.dev`.
 * SSL/TLS -> Custom Hostnames -> Add Custom Hostname with `TXT` validation: `api.fastapicloud.com`.

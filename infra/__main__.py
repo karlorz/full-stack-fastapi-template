@@ -4,7 +4,7 @@ import pulumi_awsx as awsx
 import pulumi_eks as eks
 import pulumi_aws as aws
 import pulumi_kubernetes as k8s
-from pulumi_deployment_workflow import iam, sqs, s3
+from pulumi_deployment_workflow import iam, s3
 from pulumi_deployment_workflow.config import (
     account_id,
     region,
@@ -338,57 +338,12 @@ repository_docker_builder = aws.ecr.Repository(
     },
 )
 
-# TriggerMesh
-
-repository_core_controller = aws.ecr.Repository(
-    "repository-triggermesh-core-controller",
-    name="core-controller",
-    image_scanning_configuration={
-        "scan_on_push": True,
-    },
-)
-
-repository_redis_broker = aws.ecr.Repository(
-    "repository-triggermesh-redis-broker",
-    name="redis-broker",
-    image_scanning_configuration={
-        "scan_on_push": True,
-    },
-)
-
-repository_triggermesh_controller = aws.ecr.Repository(
-    "repository-triggermesh-controller",
-    name="triggermesh-controller",
-    image_scanning_configuration={
-        "scan_on_push": True,
-    },
-)
-
-repository_triggermesh_webhook = aws.ecr.Repository(
-    "repository-triggermesh-webhook",
-    name="triggermesh-webhook",
-    image_scanning_configuration={
-        "scan_on_push": True,
-    },
-)
-
-repository_awssqssource_adapter = aws.ecr.Repository(
-    "repository-triggermesh-awssqssource-adapter",
-    name="awssqssource-adapter",
-    image_scanning_configuration={
-        "scan_on_push": True,
-    },
-)
-
-# TriggerMesh End
-
 # Export values to use elsewhere
 pulumi.export("kubeconfig", eks_cluster.kubeconfig)
 pulumi.export("cluster_name", cluster_name)
 pulumi.export("vpc_id", eks_vpc.vpc_id)
 pulumi.export("k8s_role_arn", k8s_role_arn)
 pulumi.export("aws_lb_controller_policy", aws_lb_controller_policy.arn)
-pulumi.export("sqs_deployment_customer_apps_arn", sqs.sqs_deployment_customer_apps.arn)
 pulumi.export("s3_deployment_customer_apps", s3.s3_deployment_customer_apps.bucket)
 pulumi.export("redis_backend", redis_backend.cache_nodes[0].address)
 pulumi.export(

@@ -7,7 +7,6 @@ set -x
 # CLOUDFLARE_API_TOKEN_DNS=${CLOUDFLARE_API_TOKEN_DNS:?}
 CLOUDFLARE_API_TOKEN_SSL=${CLOUDFLARE_API_TOKEN_SSL:?}
 REGISTRY_ID=${REGISTRY_ID:?}
-SQS_SOURCE_ARN=${SQS_SOURCE_ARN:?}
 ENVIRONMENT=${ENVIRONMENT:-development}
 KNATIVE_VERSION="1.16.0"
 CLOUDFLARE_ORIGIN_CA_ISSUER_VERSION="0.10.0"
@@ -68,24 +67,6 @@ kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_
 
 echo "Install Knative Serving and Kourier"
 kubectl apply -k "k8s/knative/kustomize/overlays/${ENVIRONMENT}"
-
-echo "Install TriggerMesh Core CRDs"
-kubectl apply -f k8s/triggermesh/triggermesh-core-crds.yaml
-
-echo "Install TriggerMesh Core"
-envsubst < k8s/triggermesh/triggermesh-core.yaml | kubectl apply -f -
-
-echo "Install TriggerMesh CRDs v2"
-kubectl apply -f k8s/triggermesh/triggermesh-crds_v2.yaml
-
-echo "Install TriggerMesh v2"
-envsubst < k8s/triggermesh/triggermesh_v2.yaml | kubectl apply -f -
-
-echo "Install TriggerMesh Redis Broker"
-kubectl apply -f k8s/triggermesh/redis-broker.yaml
-
-echo "Install TriggerMesh SQS S3 Source"
-envsubst < k8s/triggermesh/s3-source.yaml | kubectl apply -f -
 
 echo "Create fastapicloud service account"
 kubectl apply -f k8s/fastapicloud/service-account.yaml

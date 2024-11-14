@@ -15,5 +15,3 @@ stack = pulumi.get_stack()
 stack_name = stack.split("/")[-1]
 
 aws_load_balancer_name = "aws-load-balancer-controller"
-
-sqs_deployment_customer_apps_name = f"sqs-deployment-customer-apps-{stack_name}"
