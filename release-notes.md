@@ -133,6 +133,7 @@
 
 ### Refactors
 
+* 🔥 Remove TriggerMesh. PR [#510](https://github.com/fastapilabs/cloud/pull/510) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Pass Cloudflare config env vars to backend on deployment. PR [#507](https://github.com/fastapilabs/cloud/pull/507) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Add BUILDER_SENTRY_DSN to builder deployment. PR [#505](https://github.com/fastapilabs/cloud/pull/505) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor builder to support calling Kubernetes locally, use our own settings. PR [#504](https://github.com/fastapilabs/cloud/pull/504) by [@tiangolo](https://github.com/tiangolo).
