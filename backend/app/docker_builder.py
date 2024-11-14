@@ -253,6 +253,7 @@ def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
         namespace=namespace,
         min_scale=min_scale,
         env=env_strs,
+        service_account="fastapicloud",
     )
     create_custom_domain(
         namespace=namespace,
@@ -267,9 +268,10 @@ def deploy_to_kubernetes(
     namespace: str,
     min_scale: int = 0,
     env: dict[str, str] | None = None,
+    service_account: str | None = None,
 ) -> None:
     use_env = env or {}
-    knative_service = {
+    knative_service: dict[str, Any] = {
         "apiVersion": "serving.knative.dev/v1",
         "kind": "Service",
         "metadata": {
@@ -297,6 +299,11 @@ def deploy_to_kubernetes(
             }
         },
     }
+
+    if service_account:
+        knative_service["spec"]["template"]["spec"]["serviceAccountName"] = (
+            service_account
+        )
 
     ## TODO: Add resource limits and quotas by namespace
     create_namespace_by_team(namespace)

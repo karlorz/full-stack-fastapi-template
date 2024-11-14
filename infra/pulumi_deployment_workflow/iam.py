@@ -56,6 +56,7 @@ fastapi_cloud_admin_policy = aws.iam.Policy(
                 {
                     "Effect": "Allow",
                     "Action": [
+                        "s3:HeadObject",
                         "s3:GetObject",
                         "s3:ListBucket",
                         "s3:PutObject",
