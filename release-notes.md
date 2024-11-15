@@ -288,6 +288,7 @@
 
 ### Docs
 
+* ♻️ Refactor Kubernetes deployment, do not deploy from Pulumi. PR [#515](https://github.com/fastapilabs/cloud/pull/515) by [@tiangolo](https://github.com/tiangolo).
 * 🔒️ Migrate TLS and domain handling, use Cloudflare, support customer domains in cluster/cloud. PR [#485](https://github.com/fastapilabs/cloud/pull/485) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update docs for Cloudflare pages CI in a new environment. PR [#452](https://github.com/fastapilabs/cloud/pull/452) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update docs for deploying and production config. PR [#449](https://github.com/fastapilabs/cloud/pull/449) by [@tiangolo](https://github.com/tiangolo).
