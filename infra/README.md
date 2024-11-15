@@ -139,9 +139,7 @@ Then it runs the Pulumi deployment.
 
 It will also run on "workflow dispatch", which means, run manually from the GitHub Actions UI. When it's run that way, there's an option to run it with debug enabled. When that is done, at the end, it starts a Tmate session that can be used to manually deploy the rest of the Kubernetes components.
 
-### Pulumi Manually
-
-If you are deploying a cluster manually, for example the `development` cluster, you can do the following.
+## Deploy Manually
 
 Export the AWS environment variables for Pulumi for that AWS account (e.g. `development`):
 
@@ -213,11 +211,9 @@ bash deploy-01-kubectl.sh
 
 ### Helm Charts
 
-Start with `infra/deploy-helm.sh`.
-
 Run `env-vars-01.sh` above to prepare the environment variables needed.
 
-Then run:
+Then deploy the Helm parts:
 
 ```bash
 cd infra
@@ -238,8 +234,6 @@ This script will:
 
 After having the Helm Charts installed, install other non-Helm Kubernetes resources.
 
-Continue with: `infra/deploy-kubectl.sh`.
-
 This script expects some environment variables to be set. If running on the GitHub Action, they are set automatically. If running locally, set them manually.
 
 * `CLOUDFLARE_API_TOKEN_SSL` with the Cloudflare SSL user API token for Knative serving:
@@ -252,7 +246,7 @@ export CLOUDFLARE_API_TOKEN_SSL=...
 
 Run `env-vars-01.sh` above to prepare the other environment variables needed.
 
-Then run:
+Then deploy the Kubernetes resources:
 
 ```bash
 cd infra
@@ -554,13 +548,13 @@ pulumi destroy
 
 While Pulumi is destroying the cluster, some additional steps need to be done manually for it to be able to finish.
 
-* Delete the ECR repositories from the AWS Console, those were created by our code. The ones created by Pulumi also need to be deleted by hand because they contain images that Pulumi doesn't delete.
+* Delete the **ECR** repositories from the AWS Console, those were created by our code. The ones created by Pulumi also need to be deleted by hand because they contain images that Pulumi doesn't delete.
 
-* Delete the S3 bucket's contents and the bucket.
+* Delete the **S3** bucket's contents and the bucket.
 
-* Delete the AWS Load Balancers from the AWS Console, those were created by the AWS Load Balancer Controller.
+* Delete the AWS **Load Balancers** from the AWS Console, those were created by the AWS Load Balancer Controller.
 
-* Delete the VPC manually from the AWS Console.
+* Delete the **VPC** manually from the AWS Console.
     * There are security groups created by the AWS Load Balancer Controller that depend on the VPC and block the VPC for deletion.
     * If Pulumi hasn't destroyed the other resources, the VPC will be blocked for deletion, wait for Pulumi to destroy them to be able to destroy the VPC.
 
