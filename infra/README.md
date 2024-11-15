@@ -160,19 +160,25 @@ After it, create a new terminal so that any commands you run don't use the same 
 
 ### Pulumi Outputs
 
-After Pulumi finishes, take note of the Pulumi outputs.
+After Pulumi finishes, it generates some outputs, they are used in the next steps.
 
-Update the environment variables in the GitHub Action Secrets and environment variables for the GitHub environment:
-
-* `s3_deployment_customer_apps`: `AWS_DEPLOYMENT_BUCKET` environment variable
-* `ecr_registry_url`: `ECR_REGISTRY_URL` environment variable
-* `redis_backend`: `REDIS_SERVER` environment variable
-* `kubeconfig`: `KUBECONFIG_DATA` environment variable
-
-To get the `kubeconfig` value, you can run:
+Create an `ENVIRONMENT` env var with the current environment (e.g. `development`, `staging`, `production`):
 
 ```bash
-pulumi stack output kubeconfig
+export ENVIRONMENT=development
+```
+
+Show the Pulumi env var output and verify they are available:
+
+```bash
+cd infra
+bash env-vars-01.sh
+```
+
+That will print on the screen the environment variables. If it finishes without errors, you can evaluate it:
+
+```bash
+eval $(bash env-vars-01.sh)
 ```
 
 ## Kubernetes Deployment
@@ -181,17 +187,11 @@ Once you have access to the Kubernetes cluster from `kubectl` you can deploy the
 
 If you just deployed the cluster, you need to go read above and [Configure `kubectl` with AWS](#configure-kubectl-with-aws), and [Change the `kubectl` context/environment](#configure-the-kubectl-contextenvironment).
 
-Create an `ENVIRONMENT` env var:
-
-```bash
-export ENVIRONMENT=development
-```
+Run `env-vars-01.sh` above to prepare the environment variables needed.
 
 Set up the cluster:
 
 ```bash
-# Get the cluster name
-export CLUSTER_NAME=$(aws eks --region us-east-1 list-clusters --profile $ENVIRONMENT --query 'clusters[0]' --output text)
 # Configure kubectl with that cluster
 aws eks --region us-east-1 update-kubeconfig --name $CLUSTER_NAME --profile $ENVIRONMENT
 ```
@@ -202,28 +202,26 @@ Then rename the context:
 kubectl config rename-context ...
 ```
 
+### Deploy the Preivous Steps
+
+Deploy the AWS Load Balancer Controller service account and other previous steps:
+
+```bash
+cd infra
+bash deploy-01-kubectl.sh
+```
+
 ### Helm Charts
 
 Start with `infra/deploy-helm.sh`.
 
-Create an `ENVIRONMENT` env var:
-
-```bash
-export ENVIRONMENT=development
-```
-
-Create an environment variable `CLUSTER_NAME`:
-
-```bash
-# Get the cluster name
-export CLUSTER_NAME=$(aws eks --region us-east-1 list-clusters --profile $ENVIRONMENT --query 'clusters[0]' --output text)
-```
+Run `env-vars-01.sh` above to prepare the environment variables needed.
 
 Then run:
 
 ```bash
 cd infra
-bash deploy-helm.sh
+bash deploy-02-helm.sh
 ```
 
 This script will:
@@ -252,19 +250,13 @@ export CLOUDFLARE_API_TOKEN_SSL=...
 
 **Note**: this is not an account token (beta), it's a profile user token.
 
-* `REGISTRY_ID` with the AWS ECR registry ID, you can get it from [Login to AWS ECR](#login-to-aws-ecr):
-
-```bash
-export REGISTRY_ID=$(aws ecr describe-registry --profile $ENVIRONMENT --query "registryId" --output text)
-```
-
-It also expects an `ENVIRONMENT` with the name of the environment, from `development`, `staging`, or `production`. By default it is set to `development`, which is what you would use when deploying locally.
+Run `env-vars-01.sh` above to prepare the other environment variables needed.
 
 Then run:
 
 ```bash
 cd infra
-bash deploy-kubectl.sh
+bash deploy-03-kubectl.sh
 ```
 
 This script will:
@@ -276,15 +268,82 @@ This script will:
 * Install Knative Serving and Kourier as the Knative network layer. This uses Kustomize with the files and directories in `infra/k8s/knative` (described below).
 * Install the role to allow FastAPI Cloud to create Knative services.
 
-### Cloudflare DNS
+### How Knative Kustomize Works
 
-* Get the AWS Load Balancer DNS name, copy it from the command above or get it with the AWS CLI:
+Knative uses Kourier for the network. Kourier is in charge of handling the network traffic from the outside world into Knative, through Kubernetes.
+
+Kourier uses the AWS Load Balancer Controller to create an AWS Load Balancer.
+
+To explore the Knative Kustomize installation start with `infra/k8s/knative/base/kustomization.yaml`.
+
+It uses the Knative and Kourier releases from GitHub (as described in the Knative and Kourier installation instructions).
+
+Then it uses Kustomize to patch (update) several configs.
+
+* It patches Knative to make it use Kourier.
+* It patches Knative to update the default domain name for apps, to make them top-level sub-domains (e.g. of `fastapicloud.dev` or `fastapicloud.club`).
+  * That way the final customer app is something like `my-awesome-app-12acs.fastapicloud.dev`, otherwise, it would include the Kubernetes namespace by default, like `my-awesome-app-12acs.team-avengers.fastapicloud.dev`.
+  * But second level sub-domains are not allowed by Let's Encrypt for wildcard certificates, only one level of wildcard certs. Having a single wildcard certificate allows us to start serving an app right after it's deployed, without waiting for the potentially slow dance to acquire certs from Let's Encrypt.
+* It patches Kourier to make it use the AWS Load Balancer Controller so that it creates an AWS Load Balancer to communicate with the external world.
+* It patches Kourier to use the custom certificate for the Knative domain created before.
+
+#### About the Knative Kustomize Overlay
+
+The previous file is not really used directly.
+
+Instead, one of two Kustomize "overlays" is used, one for production, one for staging, and one for development.
+
+These overlays extend the `base` Kustomize configuration and add the Knative domain used for production (`fastapicloud.dev`), staging (`fastapicloud.club`), or development (`fastapicloud.site`).
+
+### Save Environment Variables
+
+Prepare the environment variables with `env-vars-01.sh` and `env-vars-02.sh`:
 
 ```bash
-aws elbv2 describe-load-balancers --profile $ENVIRONMENT --query 'LoadBalancers[*].DNSName' --output text
+bash env-vars-01.sh
+bash env-vars-02.sh
 ```
 
-We need to update the DNS records in Cloudflare manually with this AWS Load Balancer DNS name.
+If that works and all the variables are available, evaluate it:
+
+```bash
+eval $(bash env-vars-01.sh)
+eval $(bash env-vars-02.sh)
+```
+
+These GitHub secrets and variables will be set:
+
+* `KUBECONFIG_DATA`
+* `AWS_DEPLOYMENT_BUCKET`
+* `ECR_REGISTRY_URL`
+* `REDIS_SERVER`
+
+And the Cloudflare DNS will be configured.
+
+Export a variable with the GitHub token:
+
+```bash
+export GITHUB_TOKEN=deadbeef1234
+```
+
+Export a variable with the Cloudflare token:
+
+```bash
+export CLOUDFLARE_TOKEN=deadbeef1234
+```
+
+Run the script to set the variables:
+
+```bash
+cd infra
+uv run set_vars.py
+```
+
+### Cloudflare DNS - New Environment
+
+The first DNS records in a new environment need to be created manually.
+
+Afterwards, as it's just updating the DNS record for the Load Balancer, it is done with the script automatically.
 
 **Note**: for this step to work, the load balancer and cluster must be working, or must be off completely. If there's a response from the cluster but it doesn't validate the certificate (e.g. Cloudflare Origin CA certificate), configuring the Custom Hostnames might not work.
 
@@ -350,33 +409,6 @@ In `fastapicloud.com`:
 * Add the `TXT` record for validating `api.fastapicloud.com`.
 * Add a `CNAME` record pointing `customdomain.fastapicloud.com` to `customdomain-fastapicloud.fastapicloud.dev`.
 * Add a `CNAME` record pointing `api.fastapicloud.com` to `customdomain.fastapicloud.com`.
-
-### How Knative Kustomize Works
-
-Knative uses Kourier for the network. Kourier is in charge of handling the network traffic from the outside world into Knative, through Kubernetes.
-
-Kourier uses the AWS Load Balancer Controller to create an AWS Load Balancer.
-
-To explore the Knative Kustomize installation start with `infra/k8s/knative/base/kustomization.yaml`.
-
-It uses the Knative and Kourier releases from GitHub (as described in the Knative and Kourier installation instructions).
-
-Then it uses Kustomize to patch (update) several configs.
-
-* It patches Knative to make it use Kourier.
-* It patches Knative to update the default domain name for apps, to make them top-level sub-domains (e.g. of `fastapicloud.dev` or `fastapicloud.club`).
-  * That way the final customer app is something like `my-awesome-app-12acs.fastapicloud.dev`, otherwise, it would include the Kubernetes namespace by default, like `my-awesome-app-12acs.team-avengers.fastapicloud.dev`.
-  * But second level sub-domains are not allowed by Let's Encrypt for wildcard certificates, only one level of wildcard certs. Having a single wildcard certificate allows us to start serving an app right after it's deployed, without waiting for the potentially slow dance to acquire certs from Let's Encrypt.
-* It patches Kourier to make it use the AWS Load Balancer Controller so that it creates an AWS Load Balancer to communicate with the external world.
-* It patches Kourier to use the custom certificate for the Knative domain created before.
-
-#### About the Knative Kustomize Overlay
-
-The previous file is not really used directly.
-
-Instead, one of two Kustomize "overlays" is used, one for production, one for staging, and one for development.
-
-These overlays extend the `base` Kustomize configuration and add the Knative domain used for production (`fastapicloud.dev`), staging (`fastapicloud.club`), or development (`fastapicloud.site`).
 
 ## Deploy Backend and Builder
 
@@ -521,14 +553,6 @@ pulumi destroy
 ```
 
 While Pulumi is destroying the cluster, some additional steps need to be done manually for it to be able to finish.
-
-* Delete the `default` service account:
-
-```bash
-kubectl delete serviceaccounts default
-```
-
-**Note**: the service account is created automatically again, you might need to delete it again if Pulumi is not yet at that point.
 
 * Delete the ECR repositories from the AWS Console, those were created by our code. The ones created by Pulumi also need to be deleted by hand because they contain images that Pulumi doesn't delete.
 

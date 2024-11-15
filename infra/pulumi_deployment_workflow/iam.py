@@ -52,7 +52,7 @@ fastapi_cloud_admin_policy = aws.iam.Policy(
                         "s3:GetObjectVersion",
                     ],
                     "Resource": pulumi.Output.concat(
-                        s3.s3_deployment_customer_apps.arn, "/*"
+                        s3.aws_deployment_bucket.arn, "/*"
                     ),
                 },
             ],
@@ -60,11 +60,11 @@ fastapi_cloud_admin_policy = aws.iam.Policy(
     ),
 )
 
-knative_customer_apps_policy = aws.iam.Policy(
-    "knative-customer-apps-policy",
-    name="knative-customer-apps-policy",
+ecr_read_policy = aws.iam.Policy(
+    "ecr-read-policy",
+    name="ecr-read-policy",
     path="/",
-    description="Policy for Knative Customer Apps to allow EKS pull images from ECR",
+    description="Policy to allow EKS to pull images from ECR",
     policy=pulumi.Output.json_dumps(
         {
             "Version": "2012-10-17",

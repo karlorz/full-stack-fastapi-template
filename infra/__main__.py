@@ -3,7 +3,6 @@ import pulumi
 import pulumi_awsx as awsx
 import pulumi_eks as eks
 import pulumi_aws as aws
-import pulumi_kubernetes as k8s
 from pulumi_deployment_workflow import iam, s3
 from pulumi_deployment_workflow.config import (
     account_id,
@@ -151,8 +150,8 @@ aws.iam.PolicyAttachment(
 )
 
 # FastAPI Cloud Admin Service Account Role and policy attachment
-k8s_iam_fastapi_cloud_admin_role = aws.iam.Role(
-    "k8sFastAPICloudAdminServiceAccountRole",
+fastapicloud_iam_role = aws.iam.Role(
+    "fastapicloud-iam-role",
     assume_role_policy=pulumi.Output.json_dumps(
         {
             "Version": "2012-10-17",
@@ -185,14 +184,14 @@ k8s_iam_fastapi_cloud_admin_role = aws.iam.Role(
 
 
 aws.iam.RolePolicyAttachment(
-    "eksFastAPICloudAdminRolePolicyAttachment",
-    role=k8s_iam_fastapi_cloud_admin_role.name,
+    "fastapicloud-iam-role-policy-attachment",
+    role=fastapicloud_iam_role.name,
     policy_arn=iam.fastapi_cloud_admin_policy.arn,
 )
 
-# Knative Customer Apps Service Account Role and policy attachment
-k8s_iam_knative_customer_apps_role = aws.iam.Role(
-    "k8sKnativeCustomerAppsServiceAccountRole",
+# Role for default service account to allow pulling ECR images
+ecr_iam_role = aws.iam.Role(
+    "ecr-iam-role",
     assume_role_policy=pulumi.Output.json_dumps(
         {
             "Version": "2012-10-17",
@@ -224,52 +223,9 @@ k8s_iam_knative_customer_apps_role = aws.iam.Role(
 )
 
 aws.iam.RolePolicyAttachment(
-    "eksKnativeCustomerAppsRolePolicyAttachment",
-    role=k8s_iam_knative_customer_apps_role.name,
-    policy_arn=iam.knative_customer_apps_policy.arn,
-)
-
-### Kubernetes Resources ###
-
-provider = k8s.Provider("provider", kubeconfig=eks_cluster.kubeconfig)
-
-aws_load_balancer_service_account = k8s.core.v1.ServiceAccount(
-    f"{aws_load_balancer_name}-sa",
-    metadata={
-        "name": aws_load_balancer_name,
-        "namespace": "kube-system",
-        "labels": {
-            "app.kubernetes.io/component": "controller",
-            "app.kubernetes.io/name": aws_load_balancer_name,
-        },
-        "annotations": {"eks.amazonaws.com/role-arn": aws_lb_controller_role.arn},
-    },
-    opts=pulumi.ResourceOptions(provider=provider),
-)
-
-# FastAPI Labs Admin Service Account k8s annotation
-k8s.core.v1.ServiceAccount(
-    "FastAPILabsAdminServiceAccountAnnotation",
-    metadata={
-        "name": fastapi_cloud_admin_service_account_name,
-        "namespace": fastapi_cloud_namespace,
-        "annotations": {
-            "eks.amazonaws.com/role-arn": k8s_iam_fastapi_cloud_admin_role.arn
-        },
-    },
-)
-
-# Knative Customer Apps Service Account k8s annotation
-k8s.core.v1.ServiceAccount(
-    "KnativeCustomerAppServiceAccountAnnotation",
-    metadata={
-        "name": k8s_service_acount_name,
-        "namespace": eks_namespace,
-        "annotations": {
-            "eks.amazonaws.com/role-arn": k8s_iam_knative_customer_apps_role.arn
-        },
-    },
-    opts=pulumi.ResourceOptions(provider=provider),
+    "ecr-iam-role-policy-attachment",
+    role=ecr_iam_role.name,
+    policy_arn=iam.ecr_read_policy.arn,
 )
 
 cluster_name = eks_cluster.core.apply(lambda x: x.cluster.name)
@@ -339,12 +295,12 @@ repository_docker_builder = aws.ecr.Repository(
 )
 
 # Export values to use elsewhere
-pulumi.export("kubeconfig", eks_cluster.kubeconfig)
+pulumi.export("kubeconfig_data", eks_cluster.kubeconfig)
 pulumi.export("cluster_name", cluster_name)
 pulumi.export("vpc_id", eks_vpc.vpc_id)
 pulumi.export("k8s_role_arn", k8s_role_arn)
 pulumi.export("aws_lb_controller_policy", aws_lb_controller_policy.arn)
-pulumi.export("s3_deployment_customer_apps", s3.s3_deployment_customer_apps.bucket)
+pulumi.export("aws_deployment_bucket", s3.aws_deployment_bucket.bucket)
 pulumi.export("redis_backend", redis_backend.cache_nodes[0].address)
 pulumi.export(
     "ecr_registry_url",
@@ -352,3 +308,7 @@ pulumi.export(
         lambda x: f"{x}.dkr.ecr.{region}.amazonaws.com"
     ),
 )
+pulumi.export("ecr_registry_id", repository_backend.registry_id)
+pulumi.export("aws_lb_controller_role_arn", aws_lb_controller_role.arn)
+pulumi.export("fastapicloud_iam_role_arn", fastapicloud_iam_role.arn)
+pulumi.export("ecr_iam_role_arn", ecr_iam_role.arn)

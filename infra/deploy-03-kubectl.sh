@@ -8,6 +8,7 @@ set -x
 CLOUDFLARE_API_TOKEN_SSL=${CLOUDFLARE_API_TOKEN_SSL:?}
 REGISTRY_ID=${REGISTRY_ID:?}
 ENVIRONMENT=${ENVIRONMENT:-development}
+FASTAPICLOUD_IAM_ROLE_ARN=${FASTAPICLOUD_IAM_ROLE_ARN:?}
 KNATIVE_VERSION="1.16.0"
 CLOUDFLARE_ORIGIN_CA_ISSUER_VERSION="0.10.0"
 
@@ -30,6 +31,9 @@ CLOUDFLARE_ORIGIN_CA_ISSUER_VERSION="0.10.0"
 
 echo "Create fastapicloud namespace"
 kubectl apply -f k8s/fastapicloud/namespace.yaml
+
+echo "Create fastapicloud service account"
+envsubst < k8s/fastapicloud/service-account.yaml | kubectl apply -f -
 
 echo "Install Cloudflare Origin Server CA"
 
@@ -67,9 +71,6 @@ kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_
 
 echo "Install Knative Serving and Kourier"
 kubectl apply -k "k8s/knative/kustomize/overlays/${ENVIRONMENT}"
-
-echo "Create fastapicloud service account"
-kubectl apply -f k8s/fastapicloud/service-account.yaml
 
 echo "Add DNS record for Knative:"
 
