@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 import boto3
+import logfire
 import sentry_sdk
 from asyncer import syncify
 from botocore.exceptions import ClientError, NoCredentialsError
@@ -36,6 +37,7 @@ from app.core.config import (
     DepotSettings,
     MainSettings,
 )
+from app.core.db import engine
 from app.depot_py.depot.build import v1 as depot_build
 from app.models import (
     App,
@@ -47,6 +49,7 @@ from app.models import (
 )
 
 builder_settings = BuilderSettings.get_settings()
+common_settings = CommonSettings.get_settings()
 
 # aws vars
 aws_region = builder_settings.AWS_REGION
@@ -72,6 +75,16 @@ if (
 
 # FastAPI app
 app = FastAPI()
+
+if common_settings.ENVIRONMENT != "local" and builder_settings.LOGFIRE_BUILDER_TOKEN:
+    logfire.configure(
+        token=builder_settings.LOGFIRE_BUILDER_TOKEN.get_secret_value(),
+        environment=common_settings.ENVIRONMENT,
+    )
+    logfire.instrument_fastapi(app)
+    logfire.instrument_httpx()
+    logfire.instrument_sqlalchemy(engine=engine)
+    logfire.instrument_redis()
 
 
 def create_namespace_by_team(namespace: str) -> None:

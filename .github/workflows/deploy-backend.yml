@@ -130,6 +130,7 @@ jobs:
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
         EMAILABLE_KEY: "${{ secrets.EMAILABLE_KEY }}"
         BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
+        LOGFIRE_BACKEND_TOKEN: "${{ secrets.LOGFIRE_BACKEND_TOKEN }}"
     - name: Update Knative Service image
       run: uv run typer --func deploy_cloud app.docker_builder run api $IMAGE_URL --min-scale 1
       working-directory: backend
@@ -177,6 +178,7 @@ jobs:
         CLOUDFLARE_ACCOUNT_ID: "${{ vars.CLOUDFLARE_ACCOUNT_ID }}"
         CLOUDFLARE_ZONE_ID: "${{ vars.CLOUDFLARE_ZONE_ID }}"
         CLOUDFLARE_API_TOKEN_SSL: "${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}"
+        LOGFIRE_BACKEND_TOKEN: "${{ secrets.LOGFIRE_BACKEND_TOKEN }}"
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-backend:  # This job does nothing and is only used for the branch protection
     if: always()

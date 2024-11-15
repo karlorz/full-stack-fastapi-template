@@ -59,6 +59,8 @@ spec:
             value: "${AWS_DEPLOYMENT_BUCKET}"
           - name: BUILDER_SENTRY_DSN
             value: "${BUILDER_SENTRY_DSN}"
+          - name: LOGFIRE_BUILDER_TOKEN
+            value: "${LOGFIRE_BUILDER_TOKEN}"
         volumeMounts:
         - mountPath: /var/lib/docker
           name: docker-graph-storage
