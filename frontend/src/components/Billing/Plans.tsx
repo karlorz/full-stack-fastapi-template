@@ -1,25 +1,14 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Icon,
-  List,
-  Text,
-  VStack,
-  useColorModeValue,
-} from "@chakra-ui/react"
+import { Box, Button, Flex, Icon, List, Text, VStack } from "@chakra-ui/react"
+import React from "react"
 import { FaCheckCircle } from "react-icons/fa"
 import { FaCircleXmark } from "react-icons/fa6"
 
 import { items } from "./PlansData"
 
 const Plans = () => {
-  const borderColor = useColorModeValue("#e4e5eb", "#2a2a2a")
-
   const listItems = items.map(
     ({ value, title, description, price, features }) => (
       <Box
-        border={`1px solid ${borderColor}`}
         p={8}
         borderRadius="md"
         key={value}
@@ -28,7 +17,7 @@ const Plans = () => {
         mb={8}
         flex="1"
       >
-        <VStack spacing={6}>
+        <VStack gap={6}>
           <Box p={4} w="full" textAlign="center">
             <Text textTransform="uppercase" fontWeight="bold">
               {title}
@@ -41,13 +30,13 @@ const Plans = () => {
             </Text>
             <Text fontSize="sm">per month</Text>
           </Flex>
-          <List>
+          <List.Root>
             {Object.values(features).map((feature, index) => (
-              <Flex key={index} align="center">
+              <List.Item key={index}>
                 {feature.value ? (
-                  <Icon as={FaCheckCircle} color="main.dark" />
+                  <FaCheckCircle color="main.dark" />
                 ) : (
-                  <Icon as={FaCircleXmark} color="icon.base" />
+                  <FaCircleXmark color="fg.subtle" />
                 )}
                 <Text
                   fontSize="sm"
@@ -56,10 +45,10 @@ const Plans = () => {
                 >
                   {feature.name}
                 </Text>
-              </Flex>
+              </List.Item>
             ))}
-          </List>
-          <Button variant="secondary" mt={6}>
+          </List.Root>
+          <Button variant="solid" mt={6}>
             Choose Plan
           </Button>
         </VStack>

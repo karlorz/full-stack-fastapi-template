@@ -1,10 +1,11 @@
-import { Button, Center, Tooltip } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { Trash } from "@/assets/icons.tsx"
+import { type InvitationsData, InvitationsService } from "@/client/services"
+import { Tooltip } from "@/components/ui/tooltip"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
-import { type InvitationsData, InvitationsService } from "../../client/services"
+import { IconButton } from "@chakra-ui/react"
 
 const CancelInvitation = ({ id }: { id: string }) => {
   const queryClient = useQueryClient()
@@ -29,12 +30,15 @@ const CancelInvitation = ({ id }: { id: string }) => {
 
   return (
     <>
-      <Tooltip label="Cancel Invitation">
-        <Button onClick={() => handleCancel()} data-testid="cancel-invitation">
-          <Center>
-            <Trash />
-          </Center>
-        </Button>
+      <Tooltip content="Cancel Invitation">
+        <IconButton
+          variant="ghost"
+          color="inherit"
+          onClick={() => handleCancel()}
+          data-testid="cancel-invitation"
+        >
+          <Trash />
+        </IconButton>
       </Tooltip>
     </>
   )

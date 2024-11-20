@@ -1,4 +1,4 @@
-import { Heading, Icon, type IconProps, Text } from "@chakra-ui/react"
+import { Heading, type IconProps, Text } from "@chakra-ui/react"
 import type { FC } from "react"
 
 import CustomCard from "./CustomCard"
@@ -11,7 +11,11 @@ interface EmptyStateProps {
   icon: FC<IconProps>
 }
 
-const EmptyState = ({ title, description, icon }: EmptyStateProps) => {
+const EmptyState = ({
+  title,
+  description,
+  icon: IconComponent,
+}: EmptyStateProps) => {
   return (
     <CustomCard
       w={{ base: "100%", md: "60%" }}
@@ -20,8 +24,10 @@ const EmptyState = ({ title, description, icon }: EmptyStateProps) => {
       justifyContent="center"
       flexDirection="column"
     >
-      <Icon as={icon} boxSize={icon.name === "EmptyBox" ? 10 : 6} />
-      <Heading size="sm" textAlign="center">
+      <IconComponent
+        boxSize={IconComponent.displayName === "EmptyBox" ? 10 : 6}
+      />
+      <Heading size="md" textAlign="center">
         {title}
       </Heading>
       <Text>{description}</Text>

@@ -1,4 +1,4 @@
-import { Spinner, useDisclosure } from "@chakra-ui/react"
+import { Spinner } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
@@ -13,7 +13,6 @@ import TeamInvitationNoAuth from "./TeamInvitationNoAuth"
 const TeamInvitation = () => {
   const navigate = useNavigate()
   const showToast = useCustomToast()
-  const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true })
   const token = new URLSearchParams(window.location.search).get(
     "invitation_token",
   )
@@ -65,27 +64,15 @@ const TeamInvitation = () => {
     <>
       {isLoggedIn() ? (
         (currentUser?.email === invitation?.email && (
-          <AcceptInvitation
-            isOpen={isOpen}
-            onClose={onClose}
-            invitation={invitation}
-            token={token}
-          />
+          <AcceptInvitation invitation={invitation} token={token} />
         )) || (
           <NoMatchingAccount
-            isOpen={isOpen}
-            onClose={onClose}
             invitation={invitation}
             currentUser={currentUser}
           />
         )
       ) : (
-        <TeamInvitationNoAuth
-          isOpen={isOpen}
-          onClose={onClose}
-          invitation={invitation}
-          invitationToken={token}
-        />
+        <TeamInvitationNoAuth invitation={invitation} invitationToken={token} />
       )}
     </>
   )

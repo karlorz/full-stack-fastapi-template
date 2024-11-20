@@ -1,21 +1,16 @@
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  SkeletonText,
-  Stat,
-  StatGroup,
-  StatHelpText,
-  StatLabel,
-  StatNumber,
-  Text,
-} from "@chakra-ui/react"
+import { Box, Button, Container, Flex, Text } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 
-import CustomCard from "../../../components/Common/CustomCard"
-import { useCurrentUser } from "../../../hooks/useAuth"
+import CustomCard from "@/components/Common/CustomCard"
+import { SkeletonText } from "@/components/ui/skeleton"
+import {
+  StatHelpText,
+  StatLabel,
+  StatRoot,
+  StatValueText,
+} from "@/components/ui/stat"
+import { useCurrentUser } from "@/hooks/useAuth"
 
 export const Route = createFileRoute("/_layout/$team/")({
   component: Dashboard,
@@ -31,7 +26,7 @@ function Dashboard() {
   return (
     <Container maxW="full" p={0}>
       <CustomCard data-testid="result">
-        <Box fontSize="2xl" isTruncated maxWidth="250px">
+        <Box fontSize="2xl" truncate maxWidth="250px">
           Hi,{" "}
           <Suspense fallback={<SkeletonText noOfLines={1} width={20} />}>
             <CurrentUser />
@@ -44,7 +39,7 @@ function Dashboard() {
           <Text mt={2}>
             Last deployment was successful. Your app is up and running.
           </Text>
-          <Button variant="secondary" mt={4}>
+          <Button variant="outline" mt={4}>
             View Deployment
           </Button>
         </CustomCard>
@@ -52,27 +47,30 @@ function Dashboard() {
         {/* TODO: Finalize once real data is available */}
 
         <CustomCard title="Statistics" w={{ base: "100%", md: "45%" }}>
-          <StatGroup
+          <StatRoot
             mt={2}
             display="flex"
             flexDir={{ base: "column", md: "row" }}
           >
-            <Stat>
+            <StatRoot>
               <StatLabel>Deployments</StatLabel>
-              <StatNumber>34</StatNumber>
+              <StatValueText value={34} />
               <StatHelpText>Last 30 days</StatHelpText>
-            </Stat>
-            <Stat>
+            </StatRoot>
+            <StatRoot>
               <StatLabel>Errors</StatLabel>
-              <StatNumber>5</StatNumber>
+              <StatValueText value={5} />
               <StatHelpText>Last 30 days</StatHelpText>
-            </Stat>
-            <Stat>
+            </StatRoot>
+            <StatRoot>
               <StatLabel>Uptime</StatLabel>
-              <StatNumber>99.9%</StatNumber>
+              <StatValueText
+                value={99.9}
+                formatOptions={{ style: "percent" }}
+              />
               <StatHelpText>Last 30 days</StatHelpText>
-            </Stat>
-          </StatGroup>
+            </StatRoot>
+          </StatRoot>
         </CustomCard>
       </Flex>
     </Container>

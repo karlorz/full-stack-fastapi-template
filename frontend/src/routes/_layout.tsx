@@ -36,7 +36,7 @@ function Layout() {
 
   return (
     <>
-      <Flex minHeight="100vh" flexDirection="column">
+      <Flex minHeight="100vh" flexDirection="column" bg="bg.subtle">
         <Flex flex="1">
           {/* Sidebar */}
           <Box
@@ -44,8 +44,7 @@ function Layout() {
             top="0"
             left="0"
             height="100vh"
-            width={{ md: "250px" }}
-            zIndex="3"
+            width={{ md: "280px" }}
           >
             <Suspense>
               <Sidebar teams={teams} />
@@ -69,7 +68,7 @@ function Layout() {
               <Center>
                 <Image src={logo} alt="Logo" p={4} width={180} />
               </Center>
-              <Flex gap={2}>
+              <Flex gap={2} alignItems="center">
                 <Appearance />
                 <UserMenu />
               </Flex>

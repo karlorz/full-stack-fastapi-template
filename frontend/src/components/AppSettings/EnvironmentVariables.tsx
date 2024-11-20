@@ -1,29 +1,18 @@
 import { AppsService } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Grid,
-  GridItem,
-  Icon,
-  IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Tooltip,
-  useBoolean,
-} from "@chakra-ui/react"
+import { Box, Flex, Grid, GridItem, IconButton, Input } from "@chakra-ui/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Fragment, useEffect, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 
 import { EmptyBox, Eye, EyeCrossed, Restore, Trash } from "@/assets/icons"
+import { Button } from "@/components/ui/button"
+import { Field } from "@/components/ui/field"
+import { InputGroup } from "@/components/ui/input-group"
+import { Tooltip } from "@/components/ui/tooltip"
+import useToggle from "@/hooks/useToggle"
 import { z } from "zod"
 import EmptyState from "../Common/EmptyState"
 
@@ -46,7 +35,7 @@ const EnvironmentVariableFields = ({
   onDelete: () => void
   disabled: boolean
 }) => {
-  const [show, setShow] = useBoolean()
+  const [show, toggleShow] = useToggle(false)
   let [color, backgroundColor] = ["", ""]
 
   if (deleted) {
@@ -63,10 +52,7 @@ const EnvironmentVariableFields = ({
       display="contents"
       data-testid="environment-variable"
     >
-      <FormControl isInvalid={!!error?.name}>
-        <FormLabel srOnly htmlFor={`${item.id}-name`}>
-          Name
-        </FormLabel>
+      <Field invalid={!!error?.name} errorText={error?.name?.message}>
         <Input
           {...register(`environmentVariables.${index}.name`)}
           id={`${item.id}-name`}
@@ -79,15 +65,27 @@ const EnvironmentVariableFields = ({
           placeholder="MY_COOL_ENV_VAR"
           data-1p-ignore
         />
-        {error?.name ? (
-          <FormErrorMessage>{error?.name.message}</FormErrorMessage>
-        ) : null}
-      </FormControl>
-      <FormControl isInvalid={!!error?.value}>
-        <FormLabel srOnly htmlFor={`${item.id}-value`}>
-          Value
-        </FormLabel>
-        <InputGroup>
+      </Field>
+      <Field invalid={!!error?.value} errorText={error?.value?.message}>
+        <InputGroup
+          w="100%"
+          endElement={
+            !disabled && (
+              <IconButton
+                size="xs"
+                variant="ghost"
+                color="inherit"
+                onClick={() => toggleShow()}
+                aria-label={show ? "Hide password" : "Show password"}
+                _hover={{
+                  cursor: "pointer",
+                }}
+              >
+                {show ? <EyeCrossed /> : <Eye />}
+              </IconButton>
+            )
+          }
+        >
           <Input
             {...register(`environmentVariables.${index}.value`)}
             id={`${item.id}-value`}
@@ -101,34 +99,22 @@ const EnvironmentVariableFields = ({
             placeholder="My secret value"
             data-1p-ignore
           />
-          {!disabled && (
-            <InputRightElement
-              color={deleted ? "white" : "ui.dim"}
+        </InputGroup>
+      </Field>
+      <Flex gap={2} align="center">
+        {disabled ? null : (
+          <Tooltip content={deleted ? "Restore" : "Mark for deletion"}>
+            <IconButton
+              variant="ghost"
+              color="inherit"
+              aria-label={deleted ? "Restore" : "Mark for deletion"}
+              onClick={() => onDelete()}
               _hover={{
                 cursor: "pointer",
               }}
             >
-              <Icon
-                onClick={setShow.toggle}
-                aria-label={show ? "Hide password" : "Show password"}
-              >
-                {show ? <EyeCrossed /> : <Eye />}
-              </Icon>
-            </InputRightElement>
-          )}
-        </InputGroup>
-        {error?.value ? (
-          <FormErrorMessage>{error?.value.message}</FormErrorMessage>
-        ) : null}
-      </FormControl>
-      <Flex gap={2} align="center">
-        {disabled ? null : (
-          <Tooltip label={deleted ? "Restore" : "Mark for deletion"}>
-            <IconButton
-              aria-label={deleted ? "Restore" : "Mark for deletion"}
-              onClick={() => onDelete()}
-              icon={deleted ? <Restore /> : <Trash />}
-            />
+              {deleted ? <Restore /> : <Trash />}
+            </IconButton>
           </Tooltip>
         )}
       </Flex>
@@ -366,7 +352,7 @@ const EnvironmentVariables = ({
 
       {shouldShowAddEnvironmentVariable ? (
         <GridItem colSpan={3}>
-          <Button variant="secondary" type="button" onClick={handleAddNew}>
+          <Button variant="outline" type="button" onClick={handleAddNew}>
             Add Environment Variable
           </Button>
         </GridItem>
@@ -377,7 +363,8 @@ const EnvironmentVariables = ({
           {isEditing ? (
             <>
               <Button
-                variant="tertiary"
+                variant="subtle"
+                colorPalette="gray"
                 type="button"
                 onClick={() => {
                   setIsEditing(false)
@@ -387,10 +374,10 @@ const EnvironmentVariables = ({
                 Cancel
               </Button>
               <Button
-                variant="secondary"
+                variant="solid"
                 type="submit"
                 disabled={isPending}
-                isLoading={isPending}
+                loading={isPending}
               >
                 Save
               </Button>
@@ -398,7 +385,7 @@ const EnvironmentVariables = ({
           ) : (
             <>
               <Button
-                variant="text_primary"
+                variant="outline"
                 type="button"
                 onClick={() => setIsEditing(true)}
               >

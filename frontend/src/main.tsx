@@ -1,4 +1,3 @@
-import { ChakraProvider } from "@chakra-ui/react"
 import {
   MutationCache,
   QueryCache,
@@ -6,13 +5,12 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
-import React from "react"
-import { StrictMode } from "react"
+import React, { StrictMode } from "react"
 import ReactDOM from "react-dom/client"
 import { routeTree } from "./routeTree.gen"
 
 import { ApiError, OpenAPI } from "./client"
-import theme from "./theme"
+import { CustomProvider } from "./components/ui/custom-provider"
 
 OpenAPI.BASE = import.meta.env.VITE_API_URL
 OpenAPI.TOKEN = async () => {
@@ -45,10 +43,10 @@ declare module "@tanstack/react-router" {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ChakraProvider theme={theme}>
+    <CustomProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>
-    </ChakraProvider>
+    </CustomProvider>
   </StrictMode>,
 )

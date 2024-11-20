@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  Heading,
-  Icon,
-  Text,
-} from "@chakra-ui/react"
+import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
@@ -14,10 +6,11 @@ import { useState } from "react"
 import { FaExclamationTriangle } from "react-icons/fa"
 import { z } from "zod"
 
-import { LoginService } from "../../client"
-import { isLoggedIn } from "../../hooks/useAuth"
-import useCustomToast from "../../hooks/useCustomToast"
-import { handleError } from "../../utils"
+import { LoginService } from "@/client"
+import { Button } from "@/components/ui/button"
+import { isLoggedIn } from "@/hooks/useAuth"
+import useCustomToast from "@/hooks/useCustomToast"
+import { handleError } from "@/utils"
 
 const deviceSearchSchema = z.object({
   code: z.string(),
@@ -97,10 +90,9 @@ function AuthorizeDevice() {
             </Heading>
             <Text>Click the button below to authorize FastAPI CLI</Text>
             <Box bg="yellow.50" p={4} borderRadius="md" color="black">
-              <Icon
-                as={FaExclamationTriangle}
+              <FaExclamationTriangle
                 color="yellow.500"
-                verticalAlign="middle"
+                style={{ verticalAlign: "middle" }}
               />{" "}
               This authorization was requested from{" "}
               <Text fontWeight="bold" as="span" data-testid="request-ip">
@@ -114,8 +106,8 @@ function AuthorizeDevice() {
             </Box>
 
             <Button
-              variant="secondary"
-              isLoading={mutation.isPending}
+              variant="solid"
+              loading={mutation.isPending}
               onClick={() => mutation.mutate()}
             >
               Authorize

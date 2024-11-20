@@ -1,18 +1,4 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Container,
-  Flex,
-  Skeleton,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react"
+import { Badge, Box, Container, Flex, Skeleton, Table } from "@chakra-ui/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { Suspense, useState } from "react"
 import { ErrorBoundary } from "react-error-boundary"
@@ -21,6 +7,7 @@ import { useCurrentUser } from "../../hooks/useAuth"
 import { Route } from "../../routes/_layout/$team"
 import { fetchTeamBySlug, getCurrentUserRole } from "../../utils"
 import ActionsMenu from "../Common/ActionsMenu"
+import { Button } from "../ui/button"
 
 const PER_PAGE = 5
 
@@ -39,77 +26,79 @@ function Team() {
 
   const currentUserRole = getCurrentUserRole(team, currentUser)
 
-  const headers = ["Email", "Role", "Actions"]
+  const headers = ["Email", "Role"]
+  if (currentUserRole === "admin") {
+    headers.push("Actions")
+  }
 
   return (
     <Container maxW="full" p={0}>
-      <TableContainer>
-        <Table size={{ base: "sm", md: "md" }} variant="unstyled">
-          <Thead>
-            <Tr>
-              {headers.map((header) => (
-                <Th
-                  key={header}
-                  textTransform="capitalize"
-                  width={header === "Actions" ? "20%" : "40%"}
-                >
-                  {header}
-                </Th>
-              ))}
-            </Tr>
-          </Thead>
-          <ErrorBoundary
-            fallbackRender={({ error }) => (
-              <Tbody>
-                <Tr>
-                  <Td colSpan={4}>Something went wrong: {error.message}</Td>
-                </Tr>
-              </Tbody>
-            )}
-          >
-            <Suspense
-              fallback={
-                <Tbody>
-                  {new Array(3).fill(null).map((_, index) => (
-                    <Tr key={index}>
-                      <Td colSpan={5}>
-                        <Box width="100%">
-                          <Skeleton height="20px" />
-                        </Box>
-                      </Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              }
-            >
-              <Tbody>
-                {members.map(({ role, user }) => (
-                  <Tr key={user.id}>
-                    <Td isTruncated maxWidth="200px">
-                      {user.email}
-                      {currentUser?.id === user.id && <Badge ml="2">You</Badge>}
-                    </Td>
-                    <Td>{role === "admin" ? "Admin" : "Member"}</Td>
-                    <Td>
-                      <ActionsMenu
-                        userRole={role}
-                        team={team}
-                        value={user}
-                        disabled={
-                          currentUserRole === "member" ||
-                          currentUser?.id === user.id
-                            ? true
-                            : false
-                        }
-                      />
-                    </Td>
-                  </Tr>
+      <Table.Root size={{ base: "sm", md: "md" }} variant="outline">
+        <Table.Header>
+          <Table.Row>
+            {headers.map((header) => (
+              <Table.ColumnHeader
+                key={header}
+                textTransform="capitalize"
+                width={header === "Actions" ? "20%" : "40%"}
+              >
+                {header}
+              </Table.ColumnHeader>
+            ))}
+          </Table.Row>
+        </Table.Header>
+        <ErrorBoundary
+          fallbackRender={({ error }) => (
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell colSpan={4}>
+                  Something went wrong: {error.message}
+                </Table.Cell>
+              </Table.Row>
+            </Table.Body>
+          )}
+        >
+          <Suspense
+            fallback={
+              <Table.Body>
+                {new Array(3).fill(null).map((_, index) => (
+                  <Table.Row key={index}>
+                    <Table.Cell colSpan={5}>
+                      <Box width="100%">
+                        <Skeleton height="20px" />
+                      </Box>
+                    </Table.Cell>
+                  </Table.Row>
                 ))}
-              </Tbody>
-            </Suspense>
-          </ErrorBoundary>
-        </Table>
-      </TableContainer>
+              </Table.Body>
+            }
+          >
+            <Table.Body>
+              {members.map(({ role, user }) => (
+                <Table.Row key={user.id}>
+                  <Table.Cell truncate maxWidth="200px">
+                    {user.email}
+                    {currentUser?.id === user.id && <Badge ml="2">You</Badge>}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {role === "admin" ? "Admin" : "Member"}
+                  </Table.Cell>
+                  <Table.Cell
+                    display={
+                      currentUserRole === "member" ||
+                      currentUser?.id === user.id
+                        ? "none"
+                        : "block"
+                    }
+                  >
+                    <ActionsMenu userRole={role} team={team} value={user} />
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Suspense>
+        </ErrorBoundary>
+      </Table.Root>
       {(hasPreviousPage || hasNextPage) && (
         <Flex
           gap={4}
@@ -120,15 +109,12 @@ function Team() {
         >
           <Button
             onClick={() => setPage((p) => p - 1)}
-            isDisabled={!hasPreviousPage}
+            disabled={!hasPreviousPage}
           >
             Previous
           </Button>
           <span>Page {page}</span>
-          <Button
-            onClick={() => setPage((p) => p + 1)}
-            isDisabled={!hasNextPage}
-          >
+          <Button onClick={() => setPage((p) => p + 1)} disabled={!hasNextPage}>
             Next
           </Button>
         </Flex>

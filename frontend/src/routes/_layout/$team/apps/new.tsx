@@ -1,33 +1,25 @@
-import {
-  Box,
-  Button,
-  Center,
-  Container,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react"
+import { Box, Center, Container, Heading, Input, Text } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import Lottie from "lottie-react"
+import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import confetti from "../../../../assets/confetti.json"
-import warning from "../../../../assets/failed.json"
-import { type ApiError, type AppCreate, AppsService } from "../../../../client"
-import CustomCard from "../../../../components/Common/CustomCard"
-import { extractErrorMessage, fetchTeamBySlug } from "../../../../utils"
+import confetti from "@/assets/confetti.json"
+import warning from "@/assets/failed.json"
+import { type ApiError, type AppCreate, AppsService } from "@/client"
+import CustomCard from "@/components/Common/CustomCard"
+import { Button } from "@/components/ui/button"
+import {
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+} from "@/components/ui/dialog"
+import { Field } from "@/components/ui/field"
+import { extractErrorMessage, fetchTeamBySlug } from "@/utils"
 
 export const Route = createFileRoute("/_layout/$team/apps/new")({
   component: NewApp,
@@ -38,7 +30,8 @@ function NewApp() {
   const navigate = useNavigate()
   const team = Route.useLoaderData()
   const queryClient = useQueryClient()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [isOpen, setIsOpen] = useState(false)
+
   const {
     register,
     handleSubmit,
@@ -54,10 +47,10 @@ function NewApp() {
       AppsService.createApp({ requestBody: data }),
     onSuccess: () => {
       reset()
-      onOpen()
+      setIsOpen(true)
     },
     onError: () => {
-      onOpen()
+      setIsOpen(true)
     },
     onSettled: () => {
       queryClient.invalidateQueries()
@@ -68,27 +61,30 @@ function NewApp() {
     mutation.mutate({ ...data, team_id: team.id })
   }
 
+  const handleClose = () => {
+    setIsOpen(false)
+  }
+
   return (
     <Container maxW="full" p={0}>
-      <Heading size="md" textAlign={{ base: "center", md: "left" }}>
+      <Heading size="xl" textAlign={{ base: "center", md: "left" }}>
         New App
       </Heading>
-      <Box as="form" onSubmit={handleSubmit(onSubmit)} pt={10}>
+      <Box pt={10}>
         <CustomCard title="Name">
-          <FormLabel fontWeight="bold" mb={4} srOnly>
-            Name
-          </FormLabel>
-          <FormControl isInvalid={!!errors.name}>
-            <Input
-              placeholder="App Name"
-              width="auto"
-              minLength={3}
-              {...register("name", { required: "Name is required" })}
-            />
-            {errors.name && (
-              <FormErrorMessage>{errors.name.message}</FormErrorMessage>
-            )}
-          </FormControl>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Field invalid={!!errors.name} errorText={errors.name?.message}>
+              <Input
+                placeholder="App Name"
+                width="auto"
+                minLength={3}
+                {...register("name", { required: "Name is required" })}
+              />
+            </Field>
+            <Button my={4} type="submit" loading={isSubmitting} variant="solid">
+              Create App
+            </Button>
+          </form>
         </CustomCard>
         {/* TODO: Complete when integration with Github is implemented */}
         {/* <CustomCard title="Source Code">
@@ -99,21 +95,22 @@ function NewApp() {
             Connect
           </Button>
         </CustomCard> */}
-        <Button my={4} type="submit" isLoading={isSubmitting} variant="primary">
-          Create App
-        </Button>
       </Box>
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalCloseButton />
+      <DialogRoot
+        size={{ base: "xs", md: "md" }}
+        open={isOpen}
+        onOpenChange={(e) => setIsOpen(e.open)}
+        placement="center"
+      >
+        <DialogContent>
+          <DialogCloseTrigger />
           {mutation.isSuccess ? (
             <>
-              <ModalHeader data-testid="app-created-success">
+              <DialogHeader as="h2" data-testid="app-created-success">
                 App Created!
-              </ModalHeader>
-              <ModalBody>
+              </DialogHeader>
+              <DialogBody>
                 <Center>
                   <Lottie
                     animationData={confetti}
@@ -125,12 +122,12 @@ function NewApp() {
                   Your team <b>{mutation.variables?.name}</b> has been created
                   successfully. Now you can start deploying your app.
                 </Text>
-              </ModalBody>
-              <ModalFooter>
+              </DialogBody>
+              <DialogFooter>
                 <Button
-                  variant="secondary"
+                  variant="outline"
                   onClick={() => {
-                    onClose()
+                    setIsOpen(false)
                     navigate({
                       to: "/$team/apps/$app",
                       params: { team: team.slug, app: mutation.data?.slug },
@@ -140,12 +137,12 @@ function NewApp() {
                 >
                   Go to App
                 </Button>
-              </ModalFooter>
+              </DialogFooter>
             </>
           ) : mutation.isError ? (
             <>
-              <ModalHeader>App Creation Failed</ModalHeader>
-              <ModalBody>
+              <DialogHeader as="h2">App Creation Failed</DialogHeader>
+              <DialogBody>
                 <Center>
                   <Lottie
                     animationData={warning}
@@ -168,16 +165,16 @@ function NewApp() {
                   again later. If the issue persists, contact our support team
                   for assistance.
                 </Text>
-              </ModalBody>
-              <ModalFooter>
-                <Button variant="secondary" onClick={onClose} mt={4}>
+              </DialogBody>
+              <DialogFooter>
+                <Button variant="solid" onClick={handleClose} mt={4}>
                   Ok
                 </Button>
-              </ModalFooter>
+              </DialogFooter>
             </>
           ) : null}
-        </ModalContent>
-      </Modal>
+        </DialogContent>
+      </DialogRoot>
     </Container>
   )
 }

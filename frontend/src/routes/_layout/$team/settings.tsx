@@ -1,6 +1,6 @@
+import TeamInformation from "@/components/TeamSettings/TeamInformation"
 import { Container, Heading, Text } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
-import TeamInformation from "../../../components/TeamSettings/TeamInformation"
 
 // const tabsConfig = [
 //   { title: "Team", component: TeamInformation },
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_layout/$team/settings")({
 function TeamSettings() {
   return (
     <Container maxW="full" p={0}>
-      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
+      <Heading size="xl" textAlign={{ base: "center", md: "left" }} pb={2}>
         Team Settings
       </Heading>
       <Text>View and manage settings related to your team.</Text>

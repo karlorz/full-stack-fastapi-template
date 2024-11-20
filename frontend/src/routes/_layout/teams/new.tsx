@@ -1,33 +1,25 @@
-import {
-  Box,
-  Button,
-  Center,
-  Container,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react"
+import { Box, Center, Container, Heading, Input, Text } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import Lottie from "lottie-react"
+import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import confetti from "../../../assets/confetti.json"
-import warning from "../../../assets/failed.json"
-import { type ApiError, type TeamCreate, TeamsService } from "../../../client"
-import CustomCard from "../../../components/Common/CustomCard"
-import { extractErrorMessage } from "../../../utils"
+import confetti from "@/assets/confetti.json"
+import warning from "@/assets/failed.json"
+import { type ApiError, type TeamCreate, TeamsService } from "@/client"
+import CustomCard from "@/components/Common/CustomCard"
+import { Button } from "@/components/ui/button"
+import {
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+} from "@/components/ui/dialog"
+import { Field } from "@/components/ui/field"
+import { extractErrorMessage } from "@/utils"
 
 export const Route = createFileRoute("/_layout/teams/new")({
   component: NewTeam,
@@ -36,7 +28,7 @@ export const Route = createFileRoute("/_layout/teams/new")({
 function NewTeam() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [isOpen, setIsOpen] = useState(false)
 
   const {
     register,
@@ -53,10 +45,10 @@ function NewTeam() {
       TeamsService.createTeam({ requestBody: data }),
     onSuccess: () => {
       reset()
-      onOpen()
+      setIsOpen(true)
     },
     onError: () => {
-      onOpen()
+      setIsOpen(true)
     },
     onSettled: () => {
       queryClient.invalidateQueries()
@@ -67,27 +59,39 @@ function NewTeam() {
     mutation.mutate(data)
   }
 
+  const handleClose = () => {
+    setIsOpen(false)
+    navigate({ to: "/" })
+  }
+
+  const handleInviteMembers = () => {
+    setIsOpen(false)
+    navigate({
+      to: "/$team/settings",
+      params: { team: mutation.data?.slug },
+    })
+  }
+
   return (
     <Container maxW="full" p={0}>
-      <Heading size="md" textAlign={{ base: "center", md: "left" }}>
+      <Heading size="xl" textAlign={{ base: "center", md: "left" }}>
         New Team
       </Heading>
-      <Box as="form" onSubmit={handleSubmit(onSubmit)} pt={10}>
+      <Box pt={10}>
         <CustomCard title="Name">
-          <FormLabel fontWeight="bold" mb={4} srOnly>
-            Name
-          </FormLabel>
-          <FormControl isInvalid={!!errors.name}>
-            <Input
-              placeholder="Team Name"
-              width="auto"
-              minLength={3}
-              {...register("name", { required: "Name is required" })}
-            />
-            {errors.name && (
-              <FormErrorMessage>{errors.name.message}</FormErrorMessage>
-            )}
-          </FormControl>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Field invalid={!!errors.name} errorText={errors.name?.message}>
+              <Input
+                placeholder="Team Name"
+                width="auto"
+                minLength={3}
+                {...register("name", { required: "Name is required" })}
+              />
+            </Field>
+            <Button variant="solid" my={4} type="submit" loading={isSubmitting}>
+              Create Team
+            </Button>
+          </form>
         </CustomCard>
         {/* TODO: Complete when billing is implemented */}
         {/* <CustomCard title="Pricing Plan">
@@ -98,19 +102,20 @@ function NewTeam() {
             Add card
           </Button>
         </CustomCard> */}
-        <Button variant="primary" my={4} type="submit" isLoading={isSubmitting}>
-          Create Team
-        </Button>
       </Box>
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalCloseButton />
+      <DialogRoot
+        size={{ base: "xs", md: "md" }}
+        open={isOpen}
+        onOpenChange={(e) => setIsOpen(e.open)}
+        placement="center"
+      >
+        <DialogContent>
+          <DialogCloseTrigger />
           {mutation.isSuccess ? (
             <>
-              <ModalHeader>Team Created!</ModalHeader>
-              <ModalBody>
+              <DialogHeader as="h2">Team Created!</DialogHeader>
+              <DialogBody>
                 <Center>
                   <Lottie
                     animationData={confetti}
@@ -123,27 +128,17 @@ function NewTeam() {
                   successfully. Now you can invite your team members and start
                   collaborating together.
                 </Text>
-              </ModalBody>
-              <ModalFooter gap={2}>
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    onClose()
-                    navigate({
-                      to: "/$team/settings",
-                      params: { team: mutation.data.slug },
-                    })
-                  }}
-                  mt={4}
-                >
+              </DialogBody>
+              <DialogFooter gap={2}>
+                <Button variant="solid" onClick={handleInviteMembers} mt={4}>
                   Invite Members
                 </Button>
-              </ModalFooter>
+              </DialogFooter>
             </>
           ) : mutation.isError ? (
             <>
-              <ModalHeader>Team Creation Failed</ModalHeader>
-              <ModalBody>
+              <DialogHeader as="h2">Team Creation Failed</DialogHeader>
+              <DialogBody>
                 <Center>
                   <Lottie
                     animationData={warning}
@@ -166,16 +161,16 @@ function NewTeam() {
                   again later. If the issue persists, contact our support team
                   for assistance.
                 </Text>
-              </ModalBody>
-              <ModalFooter>
-                <Button variant="secondary" onClick={onClose} mt={4}>
+              </DialogBody>
+              <DialogFooter>
+                <Button variant="solid" onClick={handleClose} mt={4}>
                   Ok
                 </Button>
-              </ModalFooter>
+              </DialogFooter>
             </>
           ) : null}
-        </ModalContent>
-      </Modal>
+        </DialogContent>
+      </DialogRoot>
     </Container>
   )
 }

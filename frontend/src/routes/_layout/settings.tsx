@@ -1,7 +1,7 @@
 import { Container, Heading, Text } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
 
-import UserInformation from "../../components/UserSettings/UserInformation"
+import UserInformation from "@/components/UserSettings/UserInformation"
 
 export const Route = createFileRoute("/_layout/settings")({
   component: UserSettings,
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_layout/settings")({
 function UserSettings() {
   return (
     <Container maxW="full" p={0}>
-      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
+      <Heading size="xl" textAlign={{ base: "center", md: "left" }} pb={2}>
         User Settings
       </Heading>
       <Text>View and manage settings related to your account.</Text>

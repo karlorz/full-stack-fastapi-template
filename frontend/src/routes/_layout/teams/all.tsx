@@ -4,25 +4,18 @@ import { z } from "zod"
 import {
   Badge,
   Box,
-  Button,
   Container,
   Flex,
   Heading,
-  Link,
   Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
 } from "@chakra-ui/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { Link as RouterLink, useNavigate } from "@tanstack/react-router"
 
 import { TeamsService, UsersService } from "@/client"
 import CustomCard from "@/components/Common/CustomCard"
+import { Button } from "@/components/ui/button"
 import { isLoggedIn } from "@/hooks/useAuth"
 import { useEffect } from "react"
 
@@ -115,52 +108,45 @@ function AllTeams() {
   return (
     <Container maxW="full" p={0}>
       <Box mb={10}>
-        <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
+        <Heading size="xl" textAlign={{ base: "center", md: "left" }} pb={2}>
           Teams
         </Heading>
-
         <Text>View all your teams</Text>
       </Box>
 
       <CustomCard>
-        <TableContainer data-testid="teams-table">
-          <Table size={{ base: "sm", md: "md" }} variant="unstyled">
-            <Thead>
-              <Tr>
-                <Th textTransform="capitalize">Name</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {teams.map((team) => (
-                <Tr key={team.id}>
-                  <Td>
-                    <Link
-                      as={RouterLink}
-                      to={`/${team.slug}/`}
-                      _hover={{
-                        color: "main.dark",
-                        textDecoration: "underline",
-                      }}
-                      display="inline-block"
-                      minW="20%"
-                    >
-                      {team.name}
-                    </Link>
-                    {team.is_personal_team ? (
-                      <Badge ml={2}>Personal</Badge>
-                    ) : team.owner_id === currentUser?.id ? (
-                      <Badge ml={2} colorScheme="purple">
-                        Owner
-                      </Badge>
-                    ) : (
-                      <Badge ml={2}>Member</Badge>
-                    )}
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
+        <Table.Root
+          size={{ base: "sm", md: "md" }}
+          variant="outline"
+          data-testid="teams-table"
+        >
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader textTransform="capitalize">
+                Name
+              </Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {teams.map((team) => (
+              <Table.Row key={team.id}>
+                <Table.Cell>
+                  {/* TODO: Add hover */}
+                  <RouterLink to={`/${team.slug}/`}>{team.name}</RouterLink>
+                  {team.is_personal_team ? (
+                    <Badge ml={2}>Personal</Badge>
+                  ) : team.owner_id === currentUser?.id ? (
+                    <Badge ml={2} colorScheme="purple">
+                      Owner
+                    </Badge>
+                  ) : (
+                    <Badge ml={2}>Member</Badge>
+                  )}
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
         {(hasPreviousPage || hasNextPage) && (
           <Flex
             gap={4}
@@ -171,12 +157,12 @@ function AllTeams() {
           >
             <Button
               onClick={() => setPage(page - 1)}
-              isDisabled={!hasPreviousPage}
+              disabled={!hasPreviousPage}
             >
               Previous
             </Button>
             <span>Page {page}</span>
-            <Button isDisabled={!hasNextPage} onClick={() => setPage(page + 1)}>
+            <Button disabled={!hasNextPage} onClick={() => setPage(page + 1)}>
               Next
             </Button>
           </Flex>

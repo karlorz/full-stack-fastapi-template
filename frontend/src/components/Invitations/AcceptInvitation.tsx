@@ -1,35 +1,29 @@
-import {
-  Button,
-  Center,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-} from "@chakra-ui/react"
+import { Center, Text } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import Lottie from "lottie-react"
 
 import group from "@/assets/group.json"
 import { type InvitationPublic, InvitationsService } from "@/client"
+import { Button } from "@/components/ui/button"
+import {
+  DialogActionTrigger,
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+} from "@/components/ui/dialog"
+import { useState } from "react"
 
 interface AcceptInvitationProps {
-  isOpen: boolean
-  onClose: () => void
   token: string
   invitation: InvitationPublic | undefined
 }
 
-const AcceptInvitation = ({
-  isOpen,
-  onClose,
-  token,
-  invitation,
-}: AcceptInvitationProps) => {
+const AcceptInvitation = ({ token, invitation }: AcceptInvitationProps) => {
+  const [isOpen, setIsOpen] = useState(true)
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
@@ -46,23 +40,24 @@ const AcceptInvitation = ({
     mutation.mutate()
   }
 
+  const handleClose = () => {
+    setIsOpen(false)
+    navigate({ to: "/" })
+  }
+
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size={{ base: "sm", md: "md" }}
-      isCentered
+    <DialogRoot
+      size={{ base: "xs", md: "md" }}
+      open={isOpen}
+      onOpenChange={(e) => setIsOpen(e.open)}
+      placement="center"
     >
-      <ModalOverlay />
-      <ModalContent>
+      <DialogContent>
+        <DialogCloseTrigger />
         {mutation.isPending || mutation.isIdle ? (
           <>
-            <ModalHeader>Team Invitation</ModalHeader>
-            <ModalCloseButton
-              onClick={() => navigate({ to: "/" })}
-              aria-label="Close invitation modal"
-            />
-            <ModalBody data-testid="accept-invitation">
+            <DialogHeader as="h2">Team Invitation</DialogHeader>
+            <DialogBody data-testid="accept-invitation">
               <Text>
                 Hi <strong>{invitation?.email},</strong>
               </Text>
@@ -72,26 +67,26 @@ const AcceptInvitation = ({
                 <strong>{invitation?.team.name}</strong>. Accept to build and
                 deploy apps with the team.
               </Text>
-            </ModalBody>
-            <ModalFooter gap={3}>
-              <Button
-                variant="tertiary"
-                onClick={() => {
-                  onClose()
-                  navigate({ to: "/" })
-                }}
-              >
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={handleJoinTeam}>
+            </DialogBody>
+            <DialogFooter gap={3}>
+              <DialogActionTrigger asChild>
+                <Button
+                  variant="subtle"
+                  colorPalette="gray"
+                  onClick={handleClose}
+                >
+                  Cancel
+                </Button>
+              </DialogActionTrigger>
+              <Button variant="solid" onClick={handleJoinTeam}>
                 Join Team
               </Button>
-            </ModalFooter>
+            </DialogFooter>
           </>
         ) : mutation.isSuccess ? (
           <>
-            <ModalHeader>Invitation Accepted!</ModalHeader>
-            <ModalBody>
+            <DialogHeader as="h2">Invitation Accepted!</DialogHeader>
+            <DialogBody>
               <Center>
                 <Lottie
                   animationData={group}
@@ -103,31 +98,35 @@ const AcceptInvitation = ({
                 You are now a member of <strong>{invitation?.team.name}</strong>
                 . Now you can start building and deploying apps with the team.
               </Text>
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="primary" onClick={onClose}>
-                Ok
-              </Button>
-            </ModalFooter>
+            </DialogBody>
+            <DialogFooter>
+              <DialogActionTrigger>
+                <Button variant="solid" onClick={handleClose}>
+                  Ok
+                </Button>
+              </DialogActionTrigger>
+            </DialogFooter>
           </>
         ) : (
           <>
-            <ModalHeader>Error</ModalHeader>
-            <ModalBody>
+            <DialogHeader as="h2">Error</DialogHeader>
+            <DialogBody>
               <Text>
                 An error occurred while processing your request. Please try
                 again later.
               </Text>
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="primary" onClick={onClose}>
-                Ok
-              </Button>
-            </ModalFooter>
+            </DialogBody>
+            <DialogFooter>
+              <DialogActionTrigger asChild>
+                <Button variant="solid" onClick={handleClose}>
+                  Ok
+                </Button>
+              </DialogActionTrigger>
+            </DialogFooter>
           </>
         )}
-      </ModalContent>
-    </Modal>
+      </DialogContent>
+    </DialogRoot>
   )
 }
 

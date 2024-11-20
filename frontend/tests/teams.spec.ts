@@ -33,17 +33,16 @@ test.describe("Select and change team successfully", () => {
 
     await page.goto(`/${team.slug}`)
     await page.getByTestId("team-selector").click()
-    await page.getByRole("menuitem", { name: user.full_name }).click()
-    await expect(
-      page.getByRole("button", { name: user.full_name }),
-    ).toBeVisible()
+    await page.getByRole("link", { name: user.full_name }).click()
+    await expect(page.getByTestId("team-selector")).toContainText(
+      user.full_name,
+    )
 
     // Check if the team is visible in the team settings
 
     await page.goto(`/${team.slug}/settings`)
-    await expect(
-      page.locator("form").filter({ hasText: teamName }).getByRole("paragraph"),
-    ).toBeVisible()
+    const teamNameLocator = page.locator('[data-part="preview"]')
+    await expect(teamNameLocator).toContainText(teamName)
   })
 
   test("Change the current team from the user's list of teams", async ({
@@ -64,9 +63,8 @@ test.describe("Select and change team successfully", () => {
 
     // Check if the team is visible in the team settings
     await page.goto(`/${team.slug}/settings`)
-    await expect(
-      page.locator("form").filter({ hasText: teamName }).getByRole("paragraph"),
-    ).toBeVisible()
+    const teamNameLocator = page.locator('[data-part="preview"]')
+    await expect(teamNameLocator).toContainText(teamName)
   })
 })
 
@@ -80,15 +78,12 @@ test.describe("User with admin role can update team information", () => {
     })
 
     await page.goto(`/${team.slug}/settings`)
-    await page.getByRole("button", { name: "Edit" }).click()
-    await page.locator("#name").click()
-    await page.locator("#name").fill(newTeamName)
-    await page.getByRole("button", { name: "Save" }).click()
+    await page.getByRole("button", { name: "edit" }).click()
+    await page.getByLabel("editable input").fill(newTeamName)
+    await page.getByLabel("submit").click()
+    await expect(page.getByText("Team updated successfully")).toBeVisible()
     await expect(
-      page
-        .locator("form")
-        .filter({ hasText: newTeamName })
-        .getByRole("paragraph"),
+      page.locator("div").filter({ hasText: new RegExp(`^${newTeamName}$`) }),
     ).toBeVisible()
   })
 
@@ -102,9 +97,9 @@ test.describe("User with admin role can update team information", () => {
     })
 
     await page.goto(`/${team.slug}/settings`)
-    await page.getByRole("button", { name: "Edit" }).click()
-    await page.locator("#name").click()
-    await page.locator("#name").fill("")
+    await page.getByRole("button", { name: "edit" }).click()
+    await page.getByLabel("editable input").fill("")
+    await page.getByLabel("submit").click()
     await expect(page.getByText("Name is required")).toBeVisible()
   })
 
@@ -119,7 +114,9 @@ test.describe("User with admin role can update team information", () => {
 
     await page.getByRole("button", { name: "Delete Team" }).click()
     await expect(page.getByTestId("delete-confirmation-team")).toBeVisible()
-    await page.getByLabel("Confirmation").fill(`delete team ${team.slug}`)
+    await page
+      .getByPlaceholder(`Type "delete team ${team.slug}" to confirm`)
+      .fill(`delete team ${team.slug}`)
     await page.getByRole("button", { name: "Confirm" }).click()
     await expect(page.getByText("The team was deleted")).toBeVisible()
 

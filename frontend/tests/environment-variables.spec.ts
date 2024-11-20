@@ -54,8 +54,8 @@ test.describe("App environment variables", () => {
     await page.getByRole("button", { name: "Add environment variable" }).click()
     await expect(page.getByRole("button", { name: "Edit" })).not.toBeVisible()
 
-    const nameInput = page.getByLabel("Name")
-    const valueInput = page.getByLabel("Value")
+    const nameInput = page.getByPlaceholder("MY_COOL_ENV_VAR")
+    const valueInput = page.getByPlaceholder("My secret value")
 
     await nameInput.fill("API_KEY")
     await valueInput.fill("123456")
@@ -77,8 +77,8 @@ test.describe("App environment variables", () => {
 
     await page.goto(`/${team.slug}/apps/${app.slug}`)
 
-    const nameInput = page.getByLabel("Name")
-    const valueInput = page.getByLabel("Value")
+    const nameInput = page.getByPlaceholder("MY_COOL_ENV_VAR")
+    const valueInput = page.getByPlaceholder("My secret value")
 
     await expect(nameInput).toHaveValue("API_KEY")
     await expect(valueInput).toHaveValue("123456")
@@ -130,8 +130,10 @@ test.describe("App environment variables", () => {
     const lastEnvironmentVariable =
       environmentVariables[environmentVariables.length - 1]
 
-    const nameInput = lastEnvironmentVariable.getByLabel("Name")
-    const valueInput = lastEnvironmentVariable.getByLabel("Value")
+    const nameInput =
+      lastEnvironmentVariable.getByPlaceholder("MY_COOL_ENV_VAR")
+    const valueInput =
+      lastEnvironmentVariable.getByPlaceholder("My secret value")
 
     await nameInput.fill("NEW_KEY")
     await valueInput.fill("abcdef")

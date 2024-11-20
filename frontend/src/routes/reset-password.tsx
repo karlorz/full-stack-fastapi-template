@@ -1,11 +1,11 @@
-import { Button, Heading, LightMode, Text } from "@chakra-ui/react"
+import { Button, Heading, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { Lock } from "@/assets/icons.tsx"
+import { Lock } from "@/assets/icons"
 import CustomAuthContainer from "@/components/Auth/CustomContainer"
-import PasswordField from "@/components/Common/PasswordField"
+import { PasswordInput } from "@/components/ui/password-input"
 import { LoginService, type NewPassword } from "../client"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import { isLoggedIn } from "../hooks/useAuth"
@@ -69,32 +69,27 @@ function ResetPassword() {
   return (
     <BackgroundPanel>
       <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
-        <LightMode>
-          <Heading size="md">Reset Password</Heading>
-          <Text>
-            Please enter your new password and confirm it to reset your
-            password.
-          </Text>
-          <PasswordField
-            password="new_password"
-            errors={errors}
-            register={register}
-            options={passwordRules()}
-            placeholder="New Password"
-            icon={Lock}
-          />
-          <PasswordField
-            password="confirm_password"
-            errors={errors}
-            register={register}
-            options={confirmPasswordRules(getValues)}
-            placeholder="Confirm Password"
-            icon={Lock}
-          />
-          <Button variant="primary" type="submit" size="md">
-            Reset Password
-          </Button>
-        </LightMode>
+        <Heading>Reset Password</Heading>
+        <Text>
+          Please enter your new password and confirm it to reset your password.
+        </Text>
+        <PasswordInput
+          startElement={<Lock color="fg.subtle" />}
+          type="new_password"
+          errors={errors}
+          {...register("new_password", passwordRules())}
+          placeholder="New Password"
+        />
+        <PasswordInput
+          startElement={<Lock color="fg.subtle" />}
+          type="confirm_password"
+          errors={errors}
+          {...register("confirm_password", confirmPasswordRules(getValues))}
+          placeholder="Confirm Password"
+        />
+        <Button variant="solid" type="submit" size="md">
+          Reset Password
+        </Button>
       </CustomAuthContainer>
     </BackgroundPanel>
   )

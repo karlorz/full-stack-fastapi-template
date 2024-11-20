@@ -1,19 +1,20 @@
 import { Comment, Document, Help } from "@/assets/icons.tsx"
 import {
-  Box,
-  Button,
-  ButtonGroup,
-  Flex,
-  Input,
-  Link,
-  Popover,
   PopoverArrow,
   PopoverBody,
-  PopoverCloseButton,
   PopoverContent,
   PopoverFooter,
-  PopoverHeader,
+  PopoverRoot,
+  PopoverTitle,
   PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Box,
+  Button,
+  Flex,
+  Group,
+  Input,
+  Link,
   Text,
   Textarea,
 } from "@chakra-ui/react"
@@ -23,8 +24,8 @@ const Footer = () => {
     // TODO: Add links to help and docs once available
     <Box as="footer" w="100%" p={4}>
       <Flex justifyContent="flex-end" alignItems="center">
-        <Popover>
-          <PopoverTrigger>
+        <PopoverRoot>
+          <PopoverTrigger asChild>
             <Link mx={2} display="flex" alignItems="center" cursor="pointer">
               <Comment />
               <Box as="span" ml={1}>
@@ -34,9 +35,8 @@ const Footer = () => {
           </PopoverTrigger>
           <PopoverContent>
             <PopoverArrow />
-            <PopoverCloseButton />
-            <PopoverHeader fontWeight="semibold">Feedback</PopoverHeader>
             <PopoverBody>
+              <PopoverTitle fontWeight="semibold">Feedback</PopoverTitle>
               <Text my={3}>
                 Please let us know your thoughts and suggestions to help us
                 improve:
@@ -46,14 +46,16 @@ const Footer = () => {
             </PopoverBody>
             <PopoverFooter>
               <Flex justify="flex-end">
-                <ButtonGroup size="sm">
-                  <Button variant="tertiary">Cancel</Button>
-                  <Button variant="secondary">Submit</Button>
-                </ButtonGroup>
+                <Group>
+                  <Button variant="subtle" colorPalette="gray">
+                    Cancel
+                  </Button>
+                  <Button variant="solid">Submit</Button>
+                </Group>
               </Flex>
             </PopoverFooter>
           </PopoverContent>
-        </Popover>
+        </PopoverRoot>
         <Link mx={2} display="flex" alignItems="center">
           <Help />
           <Box as="span" ml={1}>

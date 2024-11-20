@@ -1,31 +1,31 @@
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Button,
-} from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import React from "react"
 import { useForm } from "react-hook-form"
 
 import { type TeamsData, TeamsService } from "@/client"
+import { Button } from "@/components/ui/button"
+import {
+  DialogActionTrigger,
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
+import { Trash } from "../../assets/icons"
+import { MenuItem } from "../ui/menu"
 
 interface RemoveProps {
   teamId?: string
   userId: string
-  isOpen: boolean
-  onClose: () => void
 }
 
-const RemoveUser = ({ teamId, userId, isOpen, onClose }: RemoveProps) => {
+const RemoveUser = ({ teamId, userId }: RemoveProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
-  const cancelRef = React.useRef<HTMLButtonElement | null>(null)
   const {
     handleSubmit,
     formState: { isSubmitting },
@@ -37,7 +37,6 @@ const RemoveUser = ({ teamId, userId, isOpen, onClose }: RemoveProps) => {
     },
     onSuccess: () => {
       showToast("Success", "The user was removed successfully", "success")
-      onClose()
     },
     onError: handleError.bind(showToast),
     onSettled: () => {
@@ -51,18 +50,22 @@ const RemoveUser = ({ teamId, userId, isOpen, onClose }: RemoveProps) => {
 
   return (
     <>
-      <AlertDialog
-        isOpen={isOpen}
-        onClose={onClose}
-        leastDestructiveRef={cancelRef}
-        size={{ base: "sm", md: "md" }}
-        isCentered
+      <DialogRoot
+        size={{ base: "xs", md: "md" }}
+        role="alertdialog"
+        placement="center"
       >
-        <AlertDialogOverlay>
-          <AlertDialogContent as="form" onSubmit={handleSubmit(onSubmit)}>
-            <AlertDialogHeader>Remove User</AlertDialogHeader>
-
-            <AlertDialogBody>
+        <DialogTrigger asChild>
+          <MenuItem value="remove-user" color="error.base">
+            <Trash fontSize="16px" />
+            Remove User
+          </MenuItem>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogCloseTrigger />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <DialogHeader as="h2">Remove User</DialogHeader>
+            <DialogBody>
               <>
                 <span>
                   This user will no longer have access to this team. All{" "}
@@ -75,24 +78,26 @@ const RemoveUser = ({ teamId, userId, isOpen, onClose }: RemoveProps) => {
                   again.
                 </span>
               </>
-            </AlertDialogBody>
-
-            <AlertDialogFooter gap={3}>
-              <Button
-                variant="tertiary"
-                ref={cancelRef}
-                onClick={onClose}
-                isDisabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button variant="primary" type="submit" isLoading={isSubmitting}>
-                Confirm
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+            </DialogBody>
+            <DialogFooter gap={3}>
+              <DialogActionTrigger asChild>
+                <Button
+                  variant="subtle"
+                  colorPalette="gray"
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+              </DialogActionTrigger>
+              <DialogActionTrigger asChild>
+                <Button variant="solid" type="submit" loading={isSubmitting}>
+                  Confirm
+                </Button>
+              </DialogActionTrigger>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </DialogRoot>
     </>
   )
 }

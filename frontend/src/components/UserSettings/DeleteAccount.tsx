@@ -1,20 +1,9 @@
-import {
-  Box,
-  Button,
-  Circle,
-  Container,
-  Flex,
-  Heading,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react"
+import { Box, Circle, Container, Flex, Heading, Text } from "@chakra-ui/react"
 
-import { WarningTwoIcon } from "@chakra-ui/icons"
+import { Warning } from "@/assets/icons"
 import DeleteConfirmation from "./DeleteConfirmation"
 
 const DeleteAccount = () => {
-  const confirmationModal = useDisclosure()
-
   return (
     <>
       <Container maxW="full" p={0}>
@@ -29,10 +18,10 @@ const DeleteAccount = () => {
             flexDir={{ base: "column", md: "row" }}
           >
             <Circle size="40px" bg="error.base" color="white">
-              <WarningTwoIcon boxSize="18px" />
+              <Warning boxSize="18px" />
             </Circle>
             <Box>
-              <Heading size="sm" fontWeight="bold" mb={2}>
+              <Heading size="md" fontWeight="bold" mb={2}>
                 Danger Zone
               </Heading>
               <Text>
@@ -41,20 +30,9 @@ const DeleteAccount = () => {
               </Text>
             </Box>
           </Flex>
-          <Button
-            variant="danger"
-            onClick={confirmationModal.onOpen}
-            display={{ base: "block", md: "inline-block" }}
-            mt={{ base: 4, md: 0 }}
-            alignSelf={{ base: "flex-start", md: "auto" }}
-          >
-            Delete Account
-          </Button>
+
+          <DeleteConfirmation />
         </Flex>
-        <DeleteConfirmation
-          isOpen={confirmationModal.isOpen}
-          onClose={confirmationModal.onClose}
-        />
       </Container>
     </>
   )

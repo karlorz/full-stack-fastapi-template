@@ -1,4 +1,4 @@
-import { Container, Flex, Skeleton, useDisclosure } from "@chakra-ui/react"
+import { Container, Flex } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Suspense, useState } from "react"
 
@@ -9,6 +9,8 @@ import { handleError, nameRules } from "@/utils"
 import CustomCard from "../Common/CustomCard"
 import EditableField from "../Common/EditableField"
 import UpdateEmailInfo from "../Common/UpdateEmailInfo"
+import { DialogRoot } from "../ui/dialog"
+import { Skeleton } from "../ui/skeleton"
 import ChangePassword from "./ChangePassword"
 import DeleteAccount from "./DeleteAccount"
 
@@ -16,8 +18,7 @@ const UserInformationContent = () => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const currentUser = useCurrentUser()
-  const [showUpdateEmailModal, setShowUpdateEmailModal] = useState(false)
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [isOpen, setIsOpen] = useState(false)
 
   const emailMutation = useMutation({
     mutationFn: (email: string) =>
@@ -25,8 +26,7 @@ const UserInformationContent = () => {
         requestBody: { email },
       }),
     onSuccess: () => {
-      setShowUpdateEmailModal(true)
-      onOpen()
+      setIsOpen(true)
     },
     onError: handleError.bind(showToast),
     onSettled: () => {
@@ -56,7 +56,6 @@ const UserInformationContent = () => {
             type="full_name"
             value={currentUser?.full_name ?? ""}
             onSubmit={(newFullName) => fullNameMutation.mutate(newFullName)}
-            canEdit={true}
             rules={nameRules()}
           />
         </CustomCard>
@@ -65,7 +64,6 @@ const UserInformationContent = () => {
             type="email"
             value={currentUser?.email ?? ""}
             onSubmit={(newEmail) => emailMutation.mutate(newEmail)}
-            canEdit={true}
             rules={{ required: "Email is required" }}
           />
         </CustomCard>
@@ -82,9 +80,14 @@ const UserInformationContent = () => {
           <DeleteAccount />
         </CustomCard>
       </Container>
-      {showUpdateEmailModal && (
-        <UpdateEmailInfo isOpen={isOpen} onClose={onClose} />
-      )}
+      <DialogRoot
+        size={{ base: "xs", md: "md" }}
+        open={isOpen}
+        onOpenChange={(e) => setIsOpen(e.open)}
+        placement="center"
+      >
+        <UpdateEmailInfo />
+      </DialogRoot>
     </>
   )
 }

@@ -6,16 +6,14 @@ import {
   Spacer,
   Text,
   VStack,
-  useColorModeValue,
 } from "@chakra-ui/react"
+import React from "react"
 
 const PaymentMethod = () => {
-  const borderColor = useColorModeValue("#e4e5eb", "#2a2a2a")
-
   return (
-    <Container p={8} borderRadius="md" border={`1px solid ${borderColor}`}>
+    <Container p={8} borderRadius="md">
       <HStack flexDirection={["column", "row"]}>
-        <VStack spacing={4} align="start">
+        <VStack gap={4} align="start">
           <Text fontSize="md" fontWeight="bold">
             Payment Method
           </Text>
@@ -25,13 +23,13 @@ const PaymentMethod = () => {
             src="https://1000marcas.net/wp-content/uploads/2019/12/VISA-Logo-2014.png"
             alt="Payment Method"
           />
-          <VStack spacing={0}>
+          <VStack gap={0}>
             <Text fontWeight="bold">**** **** **** 1234</Text>
             <Text>Exp Date: 06/2024</Text>
           </VStack>
         </VStack>
         <Spacer />
-        <Button variant="secondary">Update Card</Button>
+        <Button variant="outline">Update Card</Button>
       </HStack>
     </Container>
   )

@@ -1,16 +1,7 @@
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Button,
-} from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import React from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
+import { FaExchangeAlt } from "react-icons/fa"
 import {
   type app__models__Role__1 as Role,
   type TeamUpdateMember,
@@ -19,25 +10,28 @@ import {
 } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils"
+import { Button } from "../ui/button"
+import {
+  DialogActionTrigger,
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTrigger,
+} from "../ui/dialog"
+import { MenuItem } from "../ui/menu"
 
 interface ChangeRoleProps {
   userRole?: string
   teamId?: string
   user: UserPublic
-  isOpen: boolean
-  onClose: () => void
 }
 
-const ChangeRole = ({
-  userRole,
-  teamId,
-  user,
-  isOpen,
-  onClose,
-}: ChangeRoleProps) => {
+const ChangeRole = ({ userRole, teamId, user }: ChangeRoleProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
-  const cancelRef = React.useRef<HTMLButtonElement | null>(null)
   const {
     handleSubmit,
     formState: { isSubmitting },
@@ -52,7 +46,6 @@ const ChangeRole = ({
       }),
     onSuccess: () => {
       showToast("Success", "The role was updated successfully", "success")
-      onClose()
     },
     onError: handleError.bind(showToast),
     onSettled: () => {
@@ -67,18 +60,22 @@ const ChangeRole = ({
 
   return (
     <>
-      <AlertDialog
-        isOpen={isOpen}
-        onClose={onClose}
-        leastDestructiveRef={cancelRef}
-        size={{ base: "sm", md: "md" }}
-        isCentered
+      <DialogRoot
+        size={{ base: "xs", md: "md" }}
+        role="alertdialog"
+        placement="center"
       >
-        <AlertDialogOverlay>
-          <AlertDialogContent as="form" onSubmit={handleSubmit(onSubmit)}>
-            <AlertDialogHeader>Change Role</AlertDialogHeader>
-
-            <AlertDialogBody>
+        <DialogTrigger asChild>
+          <MenuItem value="change-role">
+            <FaExchangeAlt fontSize="16px" />
+            Change Role
+          </MenuItem>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogCloseTrigger />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <DialogHeader as="h2">Change Role</DialogHeader>
+            <DialogBody>
               {userRole === "member" ? (
                 <>
                   Are you sure you want to promote the user to{" "}
@@ -90,24 +87,26 @@ const ChangeRole = ({
                   <strong>Member</strong>?
                 </>
               )}
-            </AlertDialogBody>
-
-            <AlertDialogFooter gap={3}>
-              <Button
-                variant="tertiary"
-                ref={cancelRef}
-                onClick={onClose}
-                isDisabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button variant="primary" type="submit" isLoading={isSubmitting}>
-                Confirm
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+            </DialogBody>
+            <DialogFooter gap={3}>
+              <DialogActionTrigger asChild>
+                <Button
+                  variant="subtle"
+                  colorPalette="gray"
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+              </DialogActionTrigger>
+              <DialogActionTrigger asChild>
+                <Button variant="solid" type="submit" loading={isSubmitting}>
+                  Confirm
+                </Button>
+              </DialogActionTrigger>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </DialogRoot>
     </>
   )
 }

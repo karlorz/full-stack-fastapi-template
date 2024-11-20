@@ -1,18 +1,4 @@
-import {
-  Button,
-  Container,
-  Flex,
-  Heading,
-  Link,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react"
+import { Button, Container, Flex, Heading, Table, Text } from "@chakra-ui/react"
 import {
   Link as RouterLink,
   createFileRoute,
@@ -126,53 +112,55 @@ function Apps() {
 
   return (
     <Container maxW="full" p={0}>
-      <Heading size="md" textAlign={{ base: "center", md: "left" }} pb={2}>
+      <Heading size="xl" textAlign={{ base: "center", md: "left" }} pb={2}>
         Apps
       </Heading>
       <Text>View and manage apps related to your team.</Text>
       <Flex justifyContent="end">
-        <Button variant="primary" as={RouterLink} to="/$team/apps/new" mb={4}>
-          Create App
-        </Button>
+        <RouterLink to="/$team/apps/new">
+          <Button mb={4}>Create App</Button>
+        </RouterLink>
       </Flex>
       {apps?.length > 0 ? (
         <>
           <CustomCard>
-            <TableContainer>
-              <Table size={{ base: "sm", md: "md" }} variant="unstyled">
-                <Thead>
-                  <Tr>
-                    {headers.map((header) => (
-                      <Th key={header} textTransform="capitalize" w="33%">
-                        {header}
-                      </Th>
-                    ))}
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {apps.map((app) => (
-                    <Tr key={app.id}>
-                      <Td>
-                        <Link
-                          as={RouterLink}
-                          to={`/$team/apps/${app.slug}/`}
-                          _hover={{
-                            color: "main.dark",
-                            textDecoration: "underline",
-                          }}
-                          display="inline-block"
-                          minW="20%"
-                        >
-                          {app.name}
-                        </Link>
-                      </Td>
-                      <Td>{app.slug}</Td>
-                      <Td>{new Date(app.created_at).toLocaleString()}</Td>
-                    </Tr>
+            <Table.Root size={{ base: "sm", md: "md" }} variant="outline">
+              <Table.Header>
+                <Table.Row>
+                  {headers.map((header) => (
+                    <Table.ColumnHeader
+                      key={header}
+                      textTransform="capitalize"
+                      w="33%"
+                    >
+                      {header}
+                    </Table.ColumnHeader>
                   ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {apps.map((app) => (
+                  <Table.Row key={app.id}>
+                    <Table.Cell>
+                      {/* TODO: Add hover */}
+                      <RouterLink
+                        to={`/$team/apps/${app.slug}/`}
+                        style={{
+                          display: "inline-block",
+                          minWidth: "20%",
+                        }}
+                      >
+                        {app.name}
+                      </RouterLink>
+                    </Table.Cell>
+                    <Table.Cell>{app.slug}</Table.Cell>
+                    <Table.Cell>
+                      {new Date(app.created_at).toLocaleString()}
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Root>
             {(hasPreviousPage || hasNextPage) && (
               <Flex
                 gap={4}
@@ -183,14 +171,14 @@ function Apps() {
               >
                 <Button
                   onClick={() => setPage(page - 1)}
-                  isDisabled={!hasPreviousPage}
+                  disabled={!hasPreviousPage}
                 >
                   Previous
                 </Button>
                 <span>Page {page}</span>
                 <Button
-                  isDisabled={!hasNextPage}
                   onClick={() => setPage(page + 1)}
+                  disabled={!hasNextPage}
                 >
                   Next
                 </Button>

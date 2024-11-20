@@ -36,14 +36,18 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
         px={8}
         gap={4}
       >
-        <Box
-          as="svg"
+        <svg
           viewBox="0 0 1440 320"
-          position="absolute"
-          bottom="0"
-          left="0"
-          zIndex="1"
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            zIndex: 1,
+          }}
+          role="img"
+          aria-label="Wave desing background"
         >
+          <title>Wave design background</title>
           <path
             fill="#ffffff"
             fillOpacity="0.3"
@@ -59,7 +63,7 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
             fillOpacity="0.1"
             d="M0,224L48,208C96,192,192,160,288,144C384,128,480,128,576,154.7C672,181,768,235,864,245.3C960,256,1056,224,1152,213.3C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
           />
-        </Box>
+        </svg>
         <Box w={{ base: "100%", md: "55%" }}>
           <Flex
             flexDir="column"
@@ -83,19 +87,20 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
           </Flex>
         </Box>
         {children}
-        <Box
-          as="footer"
-          position="absolute"
-          bottom="0"
-          width="100%"
-          textAlign="center"
-          py={4}
-          bg="rgba(0, 0, 0, 0.5)"
-          color="white"
-          zIndex="2"
+        <footer
+          style={{
+            position: "absolute",
+            bottom: 0,
+            width: "100%",
+            textAlign: "center",
+            padding: "16px 0",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            color: "white",
+            zIndex: 2,
+          }}
         >
           © {new Date().getFullYear()} FastAPI Labs.
-        </Box>
+        </footer>
       </Flex>
     </>
   )

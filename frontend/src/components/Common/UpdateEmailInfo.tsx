@@ -1,56 +1,39 @@
+import { Button, DialogActionTrigger, Text } from "@chakra-ui/react"
+
 import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-} from "@chakra-ui/react"
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog"
 
-interface UpdateEmailVerificationProps {
-  isOpen: boolean
-  onClose: () => void
-}
-
-const UpdateEmailInfo = ({ isOpen, onClose }: UpdateEmailVerificationProps) => {
+const UpdateEmailInfo = () => {
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        size={{ base: "sm", md: "md" }}
-        isCentered
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Email Update Verification</ModalHeader>
-          <ModalCloseButton />
-
-          <ModalBody data-testid="verification-email-modal">
-            <Text>
-              Your email update is pending verification. Please check your inbox
-              (and spam folder) for a verification link to complete the update
-              process.
-            </Text>
-            <br />
-            <Text>
-              <strong>
-                Your email will not be updated until the verification is
-                completed.
-              </strong>
-            </Text>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button variant="secondary" onClick={onClose}>
-              Ok
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <DialogContent>
+        <DialogCloseTrigger />
+        <DialogHeader as="h2">Email Update Verification</DialogHeader>
+        <DialogBody data-testid="verification-email-modal">
+          <Text>
+            Your email update is pending verification. Please check your inbox
+            (and spam folder) for a verification link to complete the update
+            process.
+          </Text>
+          <br />
+          <Text>
+            <strong>
+              Your email will not be updated until the verification is
+              completed.
+            </strong>
+          </Text>
+        </DialogBody>
+        <DialogFooter>
+          <DialogActionTrigger>
+            <Button variant="solid">Ok</Button>
+          </DialogActionTrigger>
+        </DialogFooter>
+      </DialogContent>
     </>
   )
 }

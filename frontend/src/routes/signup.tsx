@@ -1,19 +1,4 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  Icon,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  LightMode,
-  Link,
-  Text,
-  Tooltip,
-} from "@chakra-ui/react"
+import { Box, Heading, Input, Text } from "@chakra-ui/react"
 import {
   Link as RouterLink,
   createFileRoute,
@@ -22,19 +7,23 @@ import {
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { Email, Lock, User } from "@/assets/icons.tsx"
+import { Email, Lock, User } from "@/assets/icons"
 import CustomAuthContainer from "@/components/Auth/CustomContainer"
-import PasswordField from "@/components/Common/PasswordField"
-import type { UserRegister } from "../client"
-import BackgroundPanel from "../components/Auth/BackgroundPanel"
-import EmailSent from "../components/Common/EmailSent"
-import useAuth, { isLoggedIn } from "../hooks/useAuth"
+import { Button } from "@/components/ui/button"
+import { Field } from "@/components/ui/field"
+import { InputGroup } from "@/components/ui/input-group"
+import { PasswordInput } from "@/components/ui/password-input"
+import { Tooltip } from "@/components/ui/tooltip"
 import {
   confirmPasswordRules,
   emailPattern,
   nameRules,
   passwordRules,
-} from "../utils"
+} from "@/utils"
+import type { UserRegister } from "../client"
+import BackgroundPanel from "../components/Auth/BackgroundPanel"
+import EmailSent from "../components/Common/EmailSent"
+import useAuth, { isLoggedIn } from "../hooks/useAuth"
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
@@ -83,109 +72,79 @@ function SignUp() {
         ) : (
           <>
             <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
-              <LightMode>
-                <Box>
-                  <Heading size="md">Sign Up</Heading>
-                  <Text>Create your account</Text>
-                </Box>
-                <FormControl id="full_name" isInvalid={!!errors.full_name}>
-                  <FormLabel htmlFor="full_name" srOnly>
-                    Full Name
-                  </FormLabel>
-                  <InputGroup>
-                    <InputLeftElement pointerEvents="none">
-                      <Icon as={User} color="icon.base" />
-                    </InputLeftElement>
-                    <Input
-                      id="full_name"
-                      minLength={3}
-                      {...register("full_name", nameRules())}
-                      placeholder="Full Name"
-                      type="text"
-                      variant="outline"
-                    />
-                  </InputGroup>
-                  {errors.full_name && (
-                    <FormErrorMessage>
-                      {errors.full_name.message}
-                    </FormErrorMessage>
-                  )}
-                </FormControl>
-                <FormControl id="email" isInvalid={!!errors.email}>
-                  <FormLabel htmlFor="username" srOnly>
-                    Email
-                  </FormLabel>
-                  <InputGroup>
-                    <InputLeftElement pointerEvents="none">
-                      <Icon as={Email} color="icon.base" />
-                    </InputLeftElement>
-                    <Input
-                      id="email"
-                      {...register("email", {
-                        required: "Email is required",
-                        pattern: emailPattern,
-                      })}
-                      placeholder="Email"
-                      required
-                      type="email"
-                      variant="outline"
-                    />
-                  </InputGroup>
-                  {errors.email && (
-                    <FormErrorMessage>{errors.email.message}</FormErrorMessage>
-                  )}
-                </FormControl>
-                <PasswordField
-                  password="password"
-                  errors={errors}
-                  register={register}
-                  options={passwordRules()}
-                  placeholder="Password"
-                  icon={Lock}
-                />
-                <PasswordField
-                  password="confirm_password"
-                  errors={errors}
-                  register={register}
-                  options={confirmPasswordRules(getValues)}
-                  placeholder="Repeat Password"
-                  icon={Lock}
-                />
-                <Tooltip label="By agreeing, you're entering the Matrix (legally).">
-                  <Text>
-                    {"By signing up, you agree to our "}
-                    <Link
-                      as={RouterLink}
-                      to="/"
-                      color="main.dark"
-                      fontWeight="bolder"
-                    >
-                      Terms
-                    </Link>
-                    {" and "}
-                    <Link
-                      as={RouterLink}
-                      to="/"
-                      color="main.dark"
-                      fontWeight="bolder"
-                    >
-                      Privacy Policy.
-                    </Link>
-                  </Text>
-                </Tooltip>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  isLoading={isSubmitting}
-                  size="md"
-                >
-                  Sign Up
-                </Button>
-                {/* <AuthOptions
+              <Box>
+                <Heading>Sign Up</Heading>
+                <Text>Create your account</Text>
+              </Box>
+              <Field
+                invalid={!!errors.full_name}
+                errorText={errors.full_name?.message}
+              >
+                <InputGroup w="100%" startElement={<User color="fg.subtle" />}>
+                  <Input
+                    id="full_name"
+                    minLength={3}
+                    {...register("full_name", nameRules())}
+                    placeholder="Full Name"
+                    type="text"
+                  />
+                </InputGroup>
+              </Field>
+              <Field invalid={!!errors.email} errorText={errors.email?.message}>
+                <InputGroup w="100%" startElement={<Email color="fg.subtle" />}>
+                  <Input
+                    id="email"
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: emailPattern,
+                    })}
+                    placeholder="Email"
+                    required
+                    type="email"
+                  />
+                </InputGroup>
+              </Field>
+              <PasswordInput
+                type="password"
+                startElement={<Lock color="fg.subtle" />}
+                {...register("password", passwordRules())}
+                placeholder="Password"
+                errors={errors}
+              />
+              <PasswordInput
+                type="confirm_password"
+                startElement={<Lock color="fg.subtle" />}
+                {...register(
+                  "confirm_password",
+                  confirmPasswordRules(getValues),
+                )}
+                placeholder="Confirm Password"
+                errors={errors}
+              />
+              <Tooltip content="By agreeing, you're entering the Matrix (legally).">
+                <Text>
+                  {"By signing up, you agree to our "}
+                  <RouterLink className="main-link" to="/">
+                    Terms
+                  </RouterLink>
+                  {" and "}
+                  <RouterLink className="main-link" to="/">
+                    Privacy Policy.
+                  </RouterLink>
+                </Text>
+              </Tooltip>
+              <Button
+                variant="solid"
+                type="submit"
+                loading={isSubmitting}
+                size="md"
+              >
+                Sign Up
+              </Button>
+              {/* <AuthOptions
                   description={"Already have an account?"}
                   path={"/login"}
                 /> */}
-              </LightMode>
             </CustomAuthContainer>
           </>
         )}

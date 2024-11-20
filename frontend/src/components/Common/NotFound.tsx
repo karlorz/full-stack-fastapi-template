@@ -1,5 +1,7 @@
-import { Button, Container, Text } from "@chakra-ui/react"
+import { Container, Text } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
+
+import { Button } from "@/components/ui/button"
 
 const NotFound = () => {
   return (
@@ -23,16 +25,11 @@ const NotFound = () => {
         </Text>
         <Text fontSize="md">Oops!</Text>
         <Text fontSize="md">Page not found.</Text>
-        <Button
-          variant="tertiary"
-          as={Link}
-          to="/"
-          color="main.dark"
-          borderColor="main.dark"
-          mt={4}
-        >
-          Go back
-        </Button>
+        <Link to="/">
+          <Button variant="outline" mt={4}>
+            Go back
+          </Button>
+        </Link>
       </Container>
     </>
   )

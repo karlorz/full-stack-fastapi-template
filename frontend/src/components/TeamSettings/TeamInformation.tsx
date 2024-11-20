@@ -1,16 +1,4 @@
-import {
-  Button,
-  Container,
-  Flex,
-  Skeleton,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react"
+import { Container, Flex, Input, Tabs, Text } from "@chakra-ui/react"
 import {
   useMutation,
   useQueryClient,
@@ -33,11 +21,14 @@ import EditableField from "../Common/EditableField"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
 import Team from "../Teams/Team"
+import { Button } from "../ui/button"
+import { DialogRoot, DialogTrigger } from "../ui/dialog"
+import { Field } from "../ui/field"
+import { Skeleton } from "../ui/skeleton"
 import DeleteTeam from "./DeleteTeam"
 import TransferTeam from "./TransferTeam"
 
 const TeamInformationContent = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const { team: teamSlug } = Route.useParams()
@@ -65,39 +56,55 @@ const TeamInformationContent = () => {
   return (
     <Container maxW="full" my={4} px={0} pt={10}>
       <CustomCard title="Team Name">
-        <EditableField
-          type="name"
-          value={team.name}
-          onSubmit={(newName) => mutation.mutate({ name: newName })}
-          canEdit={currentUserRole === "admin"}
-          rules={nameRules()}
-        />
+        {currentUserRole === "admin" ? (
+          <EditableField
+            type="name"
+            value={team.name}
+            onSubmit={(newName) => mutation.mutate({ name: newName })}
+            rules={nameRules()}
+          />
+        ) : (
+          <Field w="50%">
+            <Input value={team.name} disabled />
+          </Field>
+        )}
       </CustomCard>
       {!team.is_personal_team && (
         <>
           <CustomCard title="Team Members" data-testid="team-members">
-            <Flex justifyContent="flex-end">
-              <Button variant="primary" onClick={onOpen}>
-                New Invitation
-              </Button>
-            </Flex>
-            <NewInvitation isOpen={isOpen} onClose={onClose} teamId={team.id} />
-            <Tabs variant="enclosed" p={0} height="30rem">
-              <TabList>
-                <Tab>Active Members</Tab>
-                {currentUserRole === "admin" && <Tab>Pending Invitations</Tab>}
-              </TabList>
-              <TabPanels>
-                <TabPanel px={0}>
-                  <Team />
-                </TabPanel>
+            {currentUserRole === "admin" && (
+              <DialogRoot size={{ base: "xs", md: "md" }} placement="center">
+                <DialogTrigger asChild>
+                  <Button variant="solid" marginLeft="auto">
+                    Invite Member
+                  </Button>
+                </DialogTrigger>
+                <NewInvitation teamId={team.id} />
+              </DialogRoot>
+            )}
+            <Tabs.Root
+              variant="subtle"
+              p={0}
+              height="30rem"
+              defaultValue="active"
+            >
+              <Tabs.List>
+                <Tabs.Trigger value="active">Active Members</Tabs.Trigger>
                 {currentUserRole === "admin" && (
-                  <TabPanel px={0}>
-                    <Invitations teamId={team.id} />
-                  </TabPanel>
+                  <Tabs.Trigger value="pending">
+                    Pending Invitations
+                  </Tabs.Trigger>
                 )}
-              </TabPanels>
-            </Tabs>
+              </Tabs.List>
+              <Tabs.Content value="active" px={0}>
+                <Team />
+              </Tabs.Content>
+              {currentUserRole === "admin" && (
+                <Tabs.Content value="pending" px={0}>
+                  <Invitations teamId={team.id} />
+                </Tabs.Content>
+              )}
+            </Tabs.Root>
           </CustomCard>
           {isCurrentUserOwner && (
             <Flex

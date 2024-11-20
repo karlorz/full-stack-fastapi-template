@@ -1,4 +1,4 @@
-import { Box, Container, Link, Text } from "@chakra-ui/react"
+import { Box, Container, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { Link as RouterLink } from "@tanstack/react-router"
 import { useEffect } from "react"
@@ -55,9 +55,9 @@ const VerifyEmailUpdate = () => {
               Success!
             </Text>
             <Text>Your email address has been updated successfully.</Text>
-            <Link as={RouterLink} to="/" color="main.dark">
+            <RouterLink className="main-link" to="/">
               Go to Your Dashboard
-            </Link>
+            </RouterLink>
           </Box>
         )}
 

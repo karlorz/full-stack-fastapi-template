@@ -1,49 +1,42 @@
-import { CheckCircleIcon, WarningIcon, WarningTwoIcon } from "@chakra-ui/icons"
-import { useToast } from "@chakra-ui/react"
+"use client"
+
+import { toaster } from "@/components/ui/toaster"
 import { useCallback } from "react"
-import CustomToast from "./CustomToast"
 
 const useCustomToast = () => {
-  const toast = useToast()
-
   const showToast = useCallback(
     (
       title: string,
       description: string,
       status: "success" | "error" | "warning",
     ) => {
-      const statusColor = {
+      const statusConfig = {
         success: {
           bg: "green.50",
           color: "success.base",
-          icon: CheckCircleIcon,
         },
         error: {
           bg: "red.50",
           color: "error.base",
-          icon: WarningTwoIcon,
         },
         warning: {
           bg: "yellow.50",
           color: "warning.base",
-          icon: WarningIcon,
         },
       }
 
-      toast({
-        position: "top",
-        render: () => (
-          <CustomToast
-            title={title}
-            description={description}
-            bg={statusColor[status].bg}
-            color={statusColor[status].color}
-            icon={statusColor[status].icon}
-          />
-        ),
+      toaster.create({
+        title,
+        description,
+        type: status,
+        meta: {
+          bg: statusConfig[status].bg,
+          color: statusConfig[status].color,
+          closable: true,
+        },
       })
     },
-    [toast],
+    [],
   )
 
   return showToast

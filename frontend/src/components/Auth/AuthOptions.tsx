@@ -1,5 +1,6 @@
-import { Box, Button, Divider, Flex, HStack, Link } from "@chakra-ui/react"
+import { Box, Button, Flex, HStack, Link, Separator } from "@chakra-ui/react"
 import { Link as RouterLink } from "@tanstack/react-router"
+import React from "react"
 import { FaGithub } from "react-icons/fa"
 import { FcGoogle } from "react-icons/fc"
 
@@ -12,25 +13,26 @@ const AuthOptions = ({ description, path }: OptionsProps) => {
   return (
     <>
       <Flex align="center">
-        <Divider />
+        <Separator />
         <Box textAlign="center" px={4}>
           or
         </Box>
-        <Divider />
+        <Separator />
       </Flex>
       <HStack>
-        <Button leftIcon={<FcGoogle />} variant="outline" flex="1">
-          Google
+        <Button variant="outline" flex="1">
+          <FcGoogle /> Google
         </Button>
-        <Button leftIcon={<FaGithub />} variant="outline" flex="1">
+        <Button variant="outline" flex="1">
+          <FaGithub />
           Github
         </Button>
       </HStack>
       <Box>
         {`${description} `}
-        <Link as={RouterLink} to={path} color="main.dark" fontWeight="bolder">
+        <RouterLink className="main-link" to={path}>
           {path === "/login" ? "Log In" : "Sign Up"}
-        </Link>
+        </RouterLink>
       </Box>
     </>
   )

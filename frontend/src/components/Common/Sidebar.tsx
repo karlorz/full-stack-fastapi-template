@@ -1,19 +1,16 @@
-import {
-  Box,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerOverlay,
-  Flex,
-  IconButton,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react"
+import { Box, Flex, IconButton, Text, useDisclosure } from "@chakra-ui/react"
 import { FaBars } from "react-icons/fa"
 
 import { LogOut } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
+import {
+  DrawerBackdrop,
+  DrawerBody,
+  DrawerCloseTrigger,
+  DrawerContent,
+  DrawerRoot,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
 import useAuth from "@/hooks/useAuth"
 import { Route } from "@/routes/_layout/$team"
 import { useEffect } from "react"
@@ -21,7 +18,7 @@ import SidebarItems from "./SidebarItems"
 
 const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
   const { team } = Route.useParams()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { onClose } = useDisclosure()
   const { logout } = useAuth()
 
   const personalTeam = teams?.data.find((t) => t.is_personal_team)
@@ -41,20 +38,22 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
   return (
     <>
       {/* Mobile */}
-      <IconButton
-        icon={<FaBars />}
-        onClick={onOpen}
-        display={{ base: "flex", md: "none" }}
-        aria-label="Open Menu"
-        position="absolute"
-        fontSize="20px"
-        m={4}
-      />
-      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
-        <DrawerOverlay />
+      <DrawerRoot size="sm">
+        <DrawerBackdrop />
+        <DrawerTrigger asChild>
+          <IconButton
+            display={{ base: "flex", md: "none" }}
+            aria-label="Open Menu"
+            position="absolute"
+            fontSize="20px"
+            m={4}
+          >
+            <FaBars />
+          </IconButton>
+        </DrawerTrigger>
         <DrawerContent maxW="280px">
-          <DrawerCloseButton />
-          <DrawerBody py={8}>
+          <DrawerCloseTrigger />
+          <DrawerBody>
             <Flex flexDir="column" justify="space-between">
               <Box>
                 <SidebarItems
@@ -76,14 +75,15 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
               </Box>
             </Flex>
           </DrawerBody>
+          <DrawerCloseTrigger />
         </DrawerContent>
-      </Drawer>
+      </DrawerRoot>
 
       {/* Desktop */}
+
       <Box
+        bg="bg.panel"
         id="sidebar"
-        borderRadius="md"
-        position="sticky"
         display={{ base: "none", md: "flex" }}
         minW="280px"
         h="100vh"

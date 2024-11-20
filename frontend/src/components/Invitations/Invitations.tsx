@@ -1,25 +1,12 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Center,
-  Container,
-  Flex,
-  Skeleton,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react"
+import { Badge, Box, Center, Container, Flex, Table } from "@chakra-ui/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
 import { EmailPending } from "@/assets/icons"
 import { InvitationsService } from "@/client/services"
+import { Button } from "@/components//ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import EmptyState from "../Common/EmptyState"
 import CancelInvitation from "./CancelInvitation"
 
@@ -68,65 +55,64 @@ function Invitations({ teamId }: { teamId: string }) {
 
   return (
     <>
-      <Flex justifyContent="flex-end" mb={4} />
       {(invitationsData?.length ?? 0) > 0 ? (
         <Container maxW="full" p={0}>
-          <TableContainer>
-            <Table size={{ base: "sm", md: "md" }} variant="unstyled">
-              <Thead>
-                <Tr>
-                  {headers.map((header) => (
-                    <Th
-                      key={header}
-                      textTransform="capitalize"
-                      width={header === "Actions" ? "20%" : "40%"}
-                    >
-                      {header}
-                    </Th>
-                  ))}
-                </Tr>
-              </Thead>
-              <ErrorBoundary
-                fallbackRender={({ error }) => (
-                  <Tbody>
-                    <Tr>
-                      <Td colSpan={4}>Something went wrong: {error.message}</Td>
-                    </Tr>
-                  </Tbody>
+          <Table.Root size={{ base: "sm", md: "md" }} variant="outline">
+            <Table.Header>
+              <Table.Row>
+                {headers.map((header) => (
+                  <Table.ColumnHeader
+                    key={header}
+                    textTransform="capitalize"
+                    width={header === "Actions" ? "20%" : "40%"}
+                  >
+                    {header}
+                  </Table.ColumnHeader>
+                ))}
+              </Table.Row>
+            </Table.Header>
+            <ErrorBoundary
+              fallbackRender={({ error }) => (
+                <Table.Body>
+                  <Table.Row>
+                    <Table.Cell colSpan={4}>
+                      Something went wrong: {error.message}
+                    </Table.Cell>
+                  </Table.Row>
+                </Table.Body>
+              )}
+            >
+              <Table.Body>
+                {isLoading ? (
+                  <>
+                    {new Array(3).fill(null).map((_, index) => (
+                      <Table.Row key={index}>
+                        <Table.Cell colSpan={5}>
+                          <Box width="100%">
+                            <Skeleton height="20px" />
+                          </Box>
+                        </Table.Cell>
+                      </Table.Row>
+                    ))}
+                  </>
+                ) : (
+                  invitationsData?.map(({ id, status, email }) => (
+                    <Table.Row key={id} opacity={isPlaceholderData ? 0.5 : 1}>
+                      <Table.Cell truncate maxWidth="200px">
+                        {email}
+                      </Table.Cell>
+                      <Table.Cell textTransform="capitalize">
+                        <Badge colorScheme="orange">{status}</Badge>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <CancelInvitation id={id} />
+                      </Table.Cell>
+                    </Table.Row>
+                  ))
                 )}
-              >
-                <Tbody>
-                  {isLoading ? (
-                    <>
-                      {new Array(3).fill(null).map((_, index) => (
-                        <Tr key={index}>
-                          <Td colSpan={5}>
-                            <Box width="100%">
-                              <Skeleton height="20px" />
-                            </Box>
-                          </Td>
-                        </Tr>
-                      ))}
-                    </>
-                  ) : (
-                    invitationsData?.map(({ id, status, email }) => (
-                      <Tr key={id} opacity={isPlaceholderData ? 0.5 : 1}>
-                        <Td isTruncated maxWidth="200px">
-                          {email}
-                        </Td>
-                        <Td textTransform="capitalize">
-                          <Badge colorScheme="orange">{status}</Badge>
-                        </Td>
-                        <Td>
-                          <CancelInvitation id={id} />
-                        </Td>
-                      </Tr>
-                    ))
-                  )}
-                </Tbody>
-              </ErrorBoundary>
-            </Table>
-          </TableContainer>
+              </Table.Body>
+            </ErrorBoundary>
+          </Table.Root>
           {(hasPreviousPage || hasNextPage) && (
             <Flex
               gap={4}
@@ -137,13 +123,13 @@ function Invitations({ teamId }: { teamId: string }) {
             >
               <Button
                 onClick={() => setPage((p) => p - 1)}
-                isDisabled={!hasPreviousPage}
+                disabled={!hasPreviousPage}
               >
                 Previous
               </Button>
               <span>Page {page}</span>
               <Button
-                isDisabled={!hasNextPage}
+                disabled={!hasNextPage}
                 onClick={() => setPage((p) => p + 1)}
               >
                 Next

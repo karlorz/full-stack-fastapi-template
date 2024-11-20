@@ -1,20 +1,17 @@
-import { Center, IconButton, useColorMode } from "@chakra-ui/react"
+"use client"
 
-import { Moon, Sun } from "@/assets/icons.tsx"
+import { Center } from "@chakra-ui/react"
+import { ColorModeButton } from "../ui/color-mode"
 
 const Appearance = () => {
-  const { colorMode, toggleColorMode } = useColorMode()
-
   return (
     <>
       <Center>
-        <IconButton
+        <ColorModeButton
           bg="whiteAlpha.200"
           color="whiteAlpha.900"
           _hover={{ bg: "whiteAlpha.300" }}
           aria-label="Toggle dark mode"
-          icon={colorMode === "light" ? <Moon /> : <Sun />}
-          onClick={toggleColorMode}
         />
       </Center>
     </>

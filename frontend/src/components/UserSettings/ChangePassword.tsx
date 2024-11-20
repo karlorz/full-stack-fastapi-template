@@ -1,11 +1,13 @@
-import { Box, Button, Container, Text, VStack } from "@chakra-ui/react"
+import { Box, Container, Text, VStack } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
+import { Lock } from "@/assets/icons"
 import { type UpdatePassword, UsersService } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
 import { confirmPasswordRules, handleError, passwordRules } from "@/utils"
-import PasswordField from "../Common/PasswordField"
+import { Button } from "../ui/button"
+import { PasswordInput } from "../ui/password-input"
 
 interface UpdatePasswordForm extends UpdatePassword {
   confirm_password: string
@@ -44,35 +46,31 @@ const ChangePassword = () => {
         <Text py={2} mb={4}>
           Change your password.
         </Text>
-        <Box as="form" onSubmit={handleSubmit(onSubmit)} maxW="350px">
-          <VStack spacing={4}>
-            <PasswordField
-              password="current_password"
+        <Box as="form" onSubmit={handleSubmit(onSubmit)}>
+          <VStack gap={4} w="50%">
+            <PasswordInput
+              type="current_password"
+              startElement={<Lock color="fg.subtle" />}
+              {...register("current_password")}
+              placeholder="Current Password"
               errors={errors}
-              register={register}
-              placeholder="Current password"
             />
-            <PasswordField
-              password="new_password"
-              errors={errors}
-              register={register}
-              options={passwordRules()}
+            <PasswordInput
+              type="new_password"
+              startElement={<Lock color="fg.subtle" />}
+              {...register("new_password", passwordRules())}
               placeholder="New Password"
-            />
-            <PasswordField
-              password="confirm_password"
               errors={errors}
-              register={register}
-              options={confirmPasswordRules(getValues)}
+            />
+            <PasswordInput
+              type="confirm_password"
+              startElement={<Lock color="fg.subtle" />}
+              {...register("confirm_password", confirmPasswordRules(getValues))}
               placeholder="Confirm Password"
+              errors={errors}
             />
           </VStack>
-          <Button
-            variant="secondary"
-            mt={4}
-            type="submit"
-            isLoading={isSubmitting}
-          >
+          <Button variant="solid" mt={4} type="submit" loading={isSubmitting}>
             Save
           </Button>
         </Box>

@@ -1,30 +1,30 @@
-import { ChevronDownIcon } from "@chakra-ui/icons"
 import {
   Box,
   Button,
   Flex,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuGroup,
-  MenuItem,
-  MenuList,
+  type IconProps,
+  MenuItemGroup,
+  MenuSeparator,
   Text,
-  useColorModeValue,
-  useDisclosure,
 } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
-import type { ElementType } from "react"
-import { FaPlus } from "react-icons/fa"
 
-import { Users } from "@/assets/icons.tsx"
+import { Plus, Users } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from "@/components/ui/menu"
 import { getInitials } from "@/utils"
+import type { FC } from "react"
+import { ArrowDown } from "../../assets/icons"
 import TeamIcon from "./TeamIcon"
 
 interface MenuItemLinkProps {
   to: string
-  icon?: ElementType
+  icon?: FC<IconProps>
   initials?: string
   label: string | undefined
   onClick?: () => void
@@ -39,24 +39,21 @@ const MenuItemLink = ({
   initials,
   bg,
 }: MenuItemLinkProps) => {
-  const bgHover = useColorModeValue("#F3F3F3", "#252525")
-  const bgMenu = useColorModeValue("white", "background.dark")
-
   return (
-    <MenuItem
-      as={Link}
-      to={to}
-      gap={2}
-      px={4}
-      onClick={onClick}
-      bg={bgMenu}
-      _hover={{ bg: bgHover, borderRadius: "sm" }}
-    >
-      <TeamIcon bg={bg} icon={icon} initials={initials || ""} />
-      <Box isTruncated maxWidth="150px">
-        {label}
-      </Box>
-    </MenuItem>
+    <Link to={to}>
+      <MenuItem
+        closeOnSelect
+        value={label || ""}
+        gap={2}
+        px={4}
+        onClick={onClick}
+      >
+        <TeamIcon bg={bg} icon={icon} initials={initials || ""} />
+        <Box width="120px" truncate>
+          {label}
+        </Box>
+      </MenuItem>
+    </Link>
   )
 }
 
@@ -64,10 +61,6 @@ const TeamSelector = ({
   teams,
   currentTeamSlug,
 }: { teams: TeamsPublic; currentTeamSlug: string }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const bg = useColorModeValue("white", "background.dark")
-  const color = useColorModeValue("text.dark", "text.light")
-
   const personalTeam = teams?.data.find((t) => t.is_personal_team)
   const selectedTeam = teams?.data.find((t) => t.slug === currentTeamSlug)
   const otherTeams = teams?.data.filter(
@@ -75,105 +68,94 @@ const TeamSelector = ({
   )
 
   return (
-    <>
-      <Flex py={6} justify="center">
-        <Menu matchWidth={true} isOpen={isOpen} onClose={onClose}>
-          <MenuButton
-            as={Button}
-            py={6}
-            bg="none"
-            w="100%"
-            onClick={onOpen}
-            data-testid="team-selector"
-            _hover={{ bg: "none" }}
-            _active={{ bg: "none" }}
-          >
-            <Flex justify="space-between">
-              <Box display="flex" alignItems="center" gap={2}>
-                <TeamIcon
-                  bg={selectedTeam?.is_personal_team ? "gradient" : "main.dark"}
-                  icon={selectedTeam?.is_personal_team ? undefined : Users}
+    <Flex py={6} justify="center">
+      <MenuRoot>
+        <MenuTrigger asChild>
+          <Button py={6} bg="transparent" data-testid="team-selector">
+            <TeamIcon
+              bg={selectedTeam?.is_personal_team ? "gradient" : "main.dark"}
+              icon={selectedTeam?.is_personal_team ? undefined : Users}
+              initials={
+                selectedTeam?.is_personal_team
+                  ? getInitials(selectedTeam.name)
+                  : undefined
+              }
+            />
+            <Box mx={2} textAlign="left">
+              <Text width="120px" truncate color="fg.muted">
+                {selectedTeam?.name}
+              </Text>
+              {selectedTeam === personalTeam && (
+                <Text fontSize="sm" color="gray.500">
+                  Personal Team
+                </Text>
+              )}
+            </Box>
+            <ArrowDown color="black" />
+          </Button>
+        </MenuTrigger>
+        <MenuContent p={4} w="100%">
+          {selectedTeam !== personalTeam && (
+            <>
+              <MenuItemGroup title="Personal Team">
+                <Text fontWeight="bold" mx={4} my={2} fontSize="xs">
+                  Personal Team
+                </Text>
+                <MenuItemLink
+                  to={`/${personalTeam?.slug}/`}
+                  label={personalTeam?.name}
                   initials={
-                    selectedTeam?.is_personal_team
-                      ? getInitials(selectedTeam.name)
-                      : undefined
+                    personalTeam?.name ? getInitials(personalTeam.name) : ""
                   }
+                  bg="gradient"
                 />
-                <Box mx={2} textAlign="left">
-                  <Text isTruncated maxWidth="150px" color={color}>
-                    {selectedTeam?.name}
+              </MenuItemGroup>
+              <MenuSeparator />
+            </>
+          )}
+          {otherTeams && otherTeams.length > 0 && (
+            <>
+              <MenuItemGroup title="Teams">
+                <Flex justifyContent="space-between">
+                  <Text fontWeight="bold" mx={4} my={2} fontSize="xs">
+                    Teams
                   </Text>
-                  {selectedTeam === personalTeam && (
-                    <Text fontSize="sm" color="gray.500">
-                      Personal Team
-                    </Text>
-                  )}
-                </Box>
-              </Box>
-              <ChevronDownIcon alignSelf="center" />
-            </Flex>
-          </MenuButton>
-          <MenuList p={4} bg={bg} w="100%">
-            {selectedTeam !== personalTeam && (
-              <>
-                <MenuGroup title="Personal Team">
-                  <MenuItemLink
-                    to={`/${personalTeam?.slug}/`}
-                    label={personalTeam?.name}
-                    initials={
-                      personalTeam?.name ? getInitials(personalTeam.name) : ""
-                    }
-                    bg="gradient"
-                  />
-                </MenuGroup>
-                <MenuDivider />
-              </>
-            )}
-            {otherTeams && otherTeams.length > 0 && (
-              <>
-                <MenuGroup>
-                  <Flex justifyContent="space-between">
-                    <Text fontWeight="bold" mx={4} my={2}>
-                      Teams
-                    </Text>
-                    {otherTeams?.length > 3 && (
-                      <Box textAlign="end" my={2}>
+                  {otherTeams?.length > 3 && (
+                    <Box textAlign="end" my={2}>
+                      <Link to="/teams/all">
                         <Button
-                          variant="text_primary"
-                          as={Link}
-                          to="/teams/all"
+                          variant="ghost"
                           color="main.dark"
                           textDecoration="underline"
-                          onClick={onClose}
                         >
                           View all teams
                         </Button>
-                      </Box>
-                    )}
-                  </Flex>
-                  {otherTeams?.slice(0, 3).map((team) => (
-                    <MenuItemLink
-                      key={team.id}
-                      to={`/${team.slug}/`}
-                      icon={Users}
-                      label={team.name}
-                      bg="main.dark"
-                    />
-                  ))}
-                </MenuGroup>
-                <MenuDivider m={1} />
-              </>
-            )}
-            <MenuItemLink
-              to="/teams/new"
-              icon={FaPlus}
-              label="Add new team"
-              bg="main.light"
-            />
-          </MenuList>
-        </Menu>
-      </Flex>
-    </>
+                      </Link>
+                    </Box>
+                  )}
+                </Flex>
+                {otherTeams?.slice(0, 3).map((team) => (
+                  <MenuItemLink
+                    key={team.id}
+                    to={`/${team.slug}/`}
+                    icon={Users}
+                    label={team.name}
+                    bg="main.dark"
+                  />
+                ))}
+              </MenuItemGroup>
+              <MenuSeparator m={1} />
+            </>
+          )}
+          <MenuItemLink
+            to="/teams/new"
+            icon={Plus}
+            label="Add new team"
+            bg="main.light"
+          />
+        </MenuContent>
+      </MenuRoot>
+    </Flex>
   )
 }
 

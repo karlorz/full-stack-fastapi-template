@@ -1,18 +1,4 @@
-import {
-  Button,
-  Center,
-  FormControl,
-  FormLabel,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-} from "@chakra-ui/react"
+import { Center, Input, Text } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import Lottie from "lottie-react"
 import { type SubmitHandler, useForm } from "react-hook-form"
@@ -24,15 +10,23 @@ import {
   type InvitationCreate,
   InvitationsService,
 } from "@/client"
+import { Button } from "@/components/ui/button"
+import {
+  DialogActionTrigger,
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog"
+import { Field } from "@/components/ui/field"
 import { emailPattern, extractErrorMessage } from "@/utils"
 
 interface NewInvitationProps {
   teamId: string
-  isOpen: boolean
-  onClose: () => void
 }
 
-const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
+const NewInvitation = ({ teamId }: NewInvitationProps) => {
   const queryClient = useQueryClient()
   const {
     register,
@@ -47,15 +41,10 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
   const mutation = useMutation({
     mutationFn: (data: InvitationCreate) =>
       InvitationsService.createInvitation({ requestBody: data }),
-    onSuccess: () => {
-      reset()
-    },
-    onError: () => {
-      reset()
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["invitations"] })
-    },
+    onSuccess: () => reset(),
+    onError: () => reset(),
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["invitations"] }),
   })
 
   const onSubmit: SubmitHandler<InvitationCreate> = (data) => {
@@ -69,34 +58,25 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
 
   const handleClose = () => {
     mutation.reset()
-    onClose()
+    reset()
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleClose}
-      size={{ base: "sm", md: "md" }}
-      isCentered
-    >
-      <ModalOverlay />
-      <ModalContent
-        as="form"
-        onSubmit={handleSubmit(onSubmit)}
-        data-testid="new-invitation"
-      >
+    <DialogContent>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogCloseTrigger />
         {mutation.isPending || mutation.isIdle ? (
           <>
-            <ModalHeader>Team Invitation</ModalHeader>
-            <ModalCloseButton aria-label="Close invitation modal" />
-            <ModalBody>
+            <DialogHeader as="h2">Team Invitation</DialogHeader>
+            <DialogBody>
               <Text mb={4}>
                 Fill in the email address to invite someone to your team.
               </Text>
-              <FormControl isRequired isInvalid={!!errors.email}>
-                <FormLabel htmlFor="email" hidden>
-                  Email address
-                </FormLabel>
+              <Field
+                required
+                invalid={!!errors.email}
+                errorText={errors.email?.message}
+              >
                 <Input
                   id="email"
                   {...register("email", {
@@ -107,29 +87,23 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
                   type="email"
                   data-testid="invitation-email"
                 />
-                {errors.email && (
-                  <Text id="email-error" color="error.base" mt={2}>
-                    {errors.email.message}
-                  </Text>
-                )}
-              </FormControl>
-            </ModalBody>
-            <ModalFooter>
+              </Field>
+            </DialogBody>
+            <DialogFooter>
               <Button
-                variant="primary"
+                variant="solid"
                 type="submit"
-                isLoading={isSubmitting || mutation.isPending}
+                loading={isSubmitting || mutation.isPending}
                 mt={4}
               >
-                Send invitation
+                Send Invitation
               </Button>
-            </ModalFooter>
+            </DialogFooter>
           </>
         ) : mutation.isSuccess ? (
           <>
-            <ModalHeader>Invitation Sent!</ModalHeader>
-            <ModalCloseButton aria-label="Close invitation modal" />
-            <ModalBody>
+            <DialogHeader>Invitation Sent!</DialogHeader>
+            <DialogBody>
               <Center>
                 <Lottie
                   animationData={emailSent}
@@ -142,21 +116,22 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
                 They just need to accept it to join your team.
               </Text>
               <Text mt={2}>
-                You can manage the invitation from your team dashboard or send
+                You can manage invitations from your team dashboard or send
                 another one.
               </Text>
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="secondary" onClick={handleClose} mt={4}>
-                Ok
-              </Button>
-            </ModalFooter>
+            </DialogBody>
+            <DialogFooter>
+              <DialogActionTrigger asChild>
+                <Button variant="solid" onClick={handleClose}>
+                  Ok
+                </Button>
+              </DialogActionTrigger>
+            </DialogFooter>
           </>
         ) : (
           <>
-            <ModalHeader>Invitation Failed</ModalHeader>
-            <ModalCloseButton aria-label="Close invitation modal" />
-            <ModalBody>
+            <DialogHeader>Invitation Failed</DialogHeader>
+            <DialogBody>
               <Center>
                 <Lottie
                   animationData={warning}
@@ -176,21 +151,21 @@ const NewInvitation = ({ isOpen, onClose, teamId }: NewInvitationProps) => {
               )}
               <Text my={4}>
                 Oops! Something went wrong while sending the invitation. Please
-                try again, or double-check the information you've entered.
+                try again or double-check the information.
               </Text>
               <Text mt={2}>
                 If the problem continues, please contact our support team.
               </Text>
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="secondary" onClick={handleClose} mt={4}>
+            </DialogBody>
+            <DialogFooter>
+              <Button variant="solid" mt={4} onClick={handleClose}>
                 Ok
               </Button>
-            </ModalFooter>
+            </DialogFooter>
           </>
         )}
-      </ModalContent>
-    </Modal>
+      </form>
+    </DialogContent>
   )
 }
 

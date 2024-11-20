@@ -16,7 +16,7 @@ const CustomAuthContainer = ({
       onSubmit={onSubmit}
       maxW={{ base: "md", md: "lg" }}
       p={{ base: 8, md: 12 }}
-      color="text.dark"
+      color="fg.muted"
       h={{ base: "xl", lg: "3xl" }}
       maxH={{ base: "70vh", lg: "80vh" }}
       alignItems="stretch"
@@ -24,7 +24,7 @@ const CustomAuthContainer = ({
       gap={4}
       centerContent
       borderRadius="md"
-      bg="background.light"
+      bg="white"
       zIndex="4"
     >
       {children}

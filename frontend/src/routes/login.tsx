@@ -1,18 +1,4 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  Icon,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  LightMode,
-  Link,
-  Text,
-} from "@chakra-ui/react"
+import { Box, Heading, Input, Text } from "@chakra-ui/react"
 import {
   Link as RouterLink,
   createFileRoute,
@@ -20,14 +6,17 @@ import {
 } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { Email, Lock } from "@/assets/icons.tsx"
-import PasswordField from "@/components/Common/PasswordField"
+import { Email, Lock } from "@/assets/icons"
+import { Button } from "@/components/ui/button"
+import { Field } from "@/components/ui/field"
+import { InputGroup } from "@/components/ui/input-group"
+import { emailPattern, passwordRules } from "@/utils"
 import type { Body_login_login_access_token as AccessToken } from "../client"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import CustomAuthContainer from "../components/Auth/CustomContainer"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
+import { PasswordInput } from "../components/ui/password-input"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
-import { emailPattern, passwordRules } from "../utils"
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -73,63 +62,49 @@ function Login() {
     <>
       <BackgroundPanel>
         <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
-          <LightMode>
-            <Box>
-              <Heading size="md">Welcome!</Heading>
-              <Text>Sign in to your account</Text>
-            </Box>
-            <FormControl id="username" isInvalid={!!errors.username}>
-              <FormLabel htmlFor="username" srOnly>
-                Email
-              </FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <Icon as={Email} color="icon.base" />
-                </InputLeftElement>
-                <Input
-                  id="username"
-                  {...register("username", {
-                    pattern: emailPattern,
-                  })}
-                  placeholder="Email"
-                  type="email"
-                  required
-                  variant="outline"
-                />
-              </InputGroup>
-              {errors.username && (
-                <FormErrorMessage>{errors.username.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <PasswordField
-              password="password"
-              errors={errors}
-              register={register}
-              options={passwordRules()}
-              placeholder="Password"
-              icon={Lock}
-            />
-            <Link
-              as={RouterLink}
-              to="/recover-password"
-              color="main.dark"
-              fontWeight="bolder"
-            >
-              Forgot Password?
-            </Link>
-            <Button
-              variant="primary"
-              type="submit"
-              isLoading={isSubmitting}
-              size="md"
-            >
-              Log In
-            </Button>
-            {/* <AuthOptions
-              description={"Don't have an account?"}
-              path={"/signup"}
-            /> */}
-          </LightMode>
+          <Box>
+            <Heading>Welcome!</Heading>
+            <Text>Sign in to your account</Text>
+          </Box>
+          <Field
+            invalid={!!errors.username}
+            errorText={errors.username?.message}
+          >
+            <InputGroup w="100%" startElement={<Email color="fg.subtle" />}>
+              <Input
+                id="username"
+                {...register("username", {
+                  pattern: emailPattern,
+                })}
+                placeholder="Email"
+                type="email"
+                required
+                variant="outline"
+              />
+            </InputGroup>
+          </Field>
+          <PasswordInput
+            type="password"
+            startElement={<Lock color="fg.subtle" />}
+            {...register("password", passwordRules())}
+            placeholder="Password"
+            errors={errors}
+          />
+          <RouterLink className="main-link" to="/recover-password">
+            Forgot Password?
+          </RouterLink>
+          <Button
+            variant="solid"
+            type="submit"
+            loading={isSubmitting}
+            size="md"
+          >
+            Log In
+          </Button>
+          {/* <AuthOptions
+            description={"Don't have an account?"}
+            path={"/signup"}
+          /> */}
         </CustomAuthContainer>
       </BackgroundPanel>
       <TeamInvitation />

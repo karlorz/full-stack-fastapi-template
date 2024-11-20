@@ -1,58 +1,17 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Icon,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuList,
-  SkeletonText,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react"
+import { Box, Button, Flex, Text } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
-import { type ElementType, Suspense } from "react"
+import { Suspense } from "react"
 
 import { LogOut, Settings } from "@/assets/icons.tsx"
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuSeparator,
+  MenuTrigger,
+} from "@/components/ui/menu"
+import { SkeletonText } from "@/components/ui/skeleton"
 import useAuth, { useCurrentUser } from "@/hooks/useAuth"
-
-interface MenuItemLinkProps {
-  to?: string
-  icon: ElementType
-  label: string
-  onClick?: () => void
-  as?: ElementType
-}
-
-const MenuItemLink = ({
-  to,
-  icon,
-  label,
-  onClick,
-  as = Link,
-}: MenuItemLinkProps) => {
-  const bgHover = useColorModeValue("#F3F3F3", "#252525")
-  const bgMenu = useColorModeValue("white", "background.dark")
-
-  return (
-    <MenuItem
-      as={as}
-      to={to}
-      gap={2}
-      py={2}
-      onClick={onClick}
-      bg={bgMenu}
-      _hover={{ bg: bgHover, borderRadius: "sm" }}
-    >
-      <Icon as={icon} />
-      <Box isTruncated maxWidth="150px">
-        {label}
-      </Box>
-    </MenuItem>
-  )
-}
 
 const CurrentUserEmail = () => {
   const currentUser = useCurrentUser()
@@ -60,7 +19,6 @@ const CurrentUserEmail = () => {
 }
 
 const UserMenu = () => {
-  const bg = useColorModeValue("white", "background.dark")
   const { logout } = useAuth()
 
   const handleLogout = async () => {
@@ -71,44 +29,63 @@ const UserMenu = () => {
     <>
       {/* Desktop */}
       <Flex>
-        <Menu>
-          <MenuButton
-            bg="whiteAlpha.200"
-            color="whiteAlpha.900"
-            _hover={{ bg: "whiteAlpha.300" }}
-            _expanded={{ bg: "whiteAlpha.300" }}
-            as={Button}
-            className="navbar-button"
-            w="100%"
-            px={4}
-            data-testid="user-menu"
-          >
-            My Account
-          </MenuButton>
-          <MenuList p={4} bg={bg}>
+        <MenuRoot>
+          <MenuTrigger asChild p={2}>
+            <Button
+              bg="whiteAlpha.200"
+              color="whiteAlpha.900"
+              _hover={{ bg: "whiteAlpha.300" }}
+              _expanded={{ bg: "whiteAlpha.300" }}
+              className="navbar-button"
+              w="100%"
+              px={4}
+              data-testid="user-menu"
+            >
+              My Account
+            </Button>
+          </MenuTrigger>
+          <MenuContent p={4}>
             <Text px={4} color="gray.500">
               Logged in as:
             </Text>
             <Suspense fallback={<SkeletonText noOfLines={1} width={100} />}>
-              <Text isTruncated maxWidth="200px" px={4} py={2}>
+              <Text truncate maxWidth="200px" px={4} py={2}>
                 <CurrentUserEmail />
               </Text>
             </Suspense>
-            <MenuDivider m={1} />
-            <MenuItemLink
-              to="/settings"
-              icon={Settings}
-              label="User Settings"
-            />
-            <MenuDivider m={1} />
-            <MenuItemLink
-              as="button"
-              icon={LogOut}
-              label="Log Out"
+
+            <MenuSeparator m={1} />
+            <Link to="/settings">
+              <MenuItem
+                closeOnSelect
+                value="user-settings"
+                gap={2}
+                py={2}
+                style={{ cursor: "pointer" }}
+              >
+                <Settings />
+                <Box flex="1" truncate maxWidth="150px">
+                  User Settings
+                </Box>
+              </MenuItem>
+            </Link>
+
+            <MenuSeparator m={1} />
+            <MenuItem
+              closeOnSelect
+              value="logout"
+              gap={2}
+              py={2}
               onClick={handleLogout}
-            />
-          </MenuList>
-        </Menu>
+              style={{ cursor: "pointer" }}
+            >
+              <LogOut />
+              <Box truncate maxWidth="150px">
+                Log Out
+              </Box>
+            </MenuItem>
+          </MenuContent>
+        </MenuRoot>
       </Flex>
     </>
   )

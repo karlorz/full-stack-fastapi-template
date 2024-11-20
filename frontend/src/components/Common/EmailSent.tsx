@@ -1,7 +1,8 @@
-import { Box, Button, Container, Text } from "@chakra-ui/react"
+import { Box, Container, Text } from "@chakra-ui/react"
 import Lottie from "lottie-react"
 
 import emailSent from "@/assets/email.json"
+import { Button } from "@/components/ui/button"
 import { useRouter } from "@tanstack/react-router"
 
 const EmailSent = ({ email }: { email: string }) => {
@@ -39,7 +40,7 @@ const EmailSent = ({ email }: { email: string }) => {
             instructions. Check your spam folder if you don't see it in your
             inbox.
           </Text>
-          <Button variant="secondary" mt={4} onClick={handleOkClick}>
+          <Button variant="solid" mt={4} onClick={handleOkClick}>
             Ok
           </Button>
         </Box>

@@ -1,13 +1,4 @@
-import {
-  Center,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react"
+import { Center, Table } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 
 import { EmptyBox } from "@/assets/icons"
@@ -24,34 +15,38 @@ const Deployments = ({
     <>
       {deployments?.length > 0 ? (
         <>
-          <TableContainer>
-            <Table variant="unstyled" mt="4">
-              <Thead>
-                <Tr>
-                  {headers.map((header) => (
-                    <Th key={header} textTransform="capitalize" w="33%">
-                      {header}
-                    </Th>
-                  ))}
-                </Tr>
-              </Thead>
-              <Tbody>
-                {deployments.map((deployment: any) => (
-                  <Tr key={deployment.id}>
-                    <Td>
-                      <Link to={`./deployments/${deployment.id}`}>
-                        {deployment.id}
-                      </Link>
-                    </Td>
-                    <Td>
-                      <Status deployment={deployment} />
-                    </Td>
-                    <Td>{new Date(deployment.created_at).toLocaleString()}</Td>
-                  </Tr>
+          <Table.Root variant="outline" mt="4">
+            <Table.Header>
+              <Table.Row>
+                {headers.map((header) => (
+                  <Table.ColumnHeader
+                    key={header}
+                    textTransform="capitalize"
+                    w="33%"
+                  >
+                    {header}
+                  </Table.ColumnHeader>
                 ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {deployments.map((deployment: DeploymentPublic) => (
+                <Table.Row key={deployment.id}>
+                  <Table.Cell>
+                    <Link to={`./deployments/${deployment.id}`}>
+                      {deployment.id}
+                    </Link>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Status deployment={deployment} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    {new Date(deployment.created_at).toLocaleString()}
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Root>
         </>
       ) : (
         <Center w="full">

@@ -1,15 +1,7 @@
-import {
-  Box,
-  Flex,
-  type FlexProps,
-  Icon,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react"
+import { Box, Flex, type IconProps, Text } from "@chakra-ui/react"
 import {
   type AnyRoute,
   Link,
-  type LinkProps,
   type RegisteredRouter,
   type RoutePaths,
   type ToOptions,
@@ -18,7 +10,7 @@ import {
 
 import { Apps, Home, Settings } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
-import type { ElementType } from "react"
+import type { FC } from "react"
 import TeamSelector from "./TeamSelector"
 
 // https://github.com/TanStack/router/issues/1194#issuecomment-1956736102
@@ -33,7 +25,7 @@ export function link<
 }
 
 type Item = {
-  icon: ElementType
+  icon: FC<IconProps>
   title: string
 } & ToOptions
 
@@ -72,50 +64,32 @@ interface SidebarItemsProps {
   currentTeamSlug: string
 }
 
-// Looks like `as` doesn't do full type inference, so we created a new component
-// with the correct types for the props we want to pass to the `Link` component.
-// see this issue: https://github.com/chakra-ui/chakra-ui/issues/1582
-const FlexLink = (props: LinkProps & Omit<FlexProps, "as">) => (
-  <Flex as={Link} {...props} />
-)
-
 const SidebarItems = ({
   onClose,
   teams,
   currentTeamSlug,
 }: SidebarItemsProps) => {
-  const bgHover = useColorModeValue("#F3F3F3", "#252525")
-  const bgActive = useColorModeValue("#F3F3F3", "#252525")
-  const fontColor = useColorModeValue("#00667A", "#FAFAFA")
-
   const items = getSidebarItems({ team: currentTeamSlug })
 
-  const listItems = items.map(({ icon, title, to, params }) => (
-    <FlexLink
-      key={title}
-      to={to}
-      params={params}
-      gap={4}
-      px={4}
-      py={2}
-      _hover={{
-        background: bgHover,
-      }}
-      activeProps={{
-        style: {
-          background: bgActive,
-          color: `${fontColor}`,
-          boxShadow: "inset 5px 0 0 0 #00667A",
-        },
-      }}
-      onClick={onClose}
-      alignItems="center"
-    >
-      <Icon as={icon} boxSize={4} />
-      {title}
-    </FlexLink>
-  ))
-
+  const listItems = items.map(
+    ({ icon: IconComponent, title, to, params }, index) => (
+      <Link to={to} params={params} onClick={onClose} key={index}>
+        <Flex
+          gap={4}
+          px={4}
+          py={2}
+          _hover={{
+            background: "gray.subtle",
+          }}
+          alignItems="center"
+          fontSize="sm"
+        >
+          <IconComponent />
+          {title}
+        </Flex>
+      </Link>
+    ),
+  )
   return (
     <>
       <TeamSelector teams={teams} currentTeamSlug={currentTeamSlug} />

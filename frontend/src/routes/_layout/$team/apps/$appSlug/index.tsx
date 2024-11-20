@@ -1,13 +1,14 @@
-import { ExternalLinkIcon } from "@chakra-ui/icons"
-import { Box, Container, Heading, Link, Skeleton, Text } from "@chakra-ui/react"
+import { Box, Container, Heading, Link, Text } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 
+import { ExternalLink } from "@/assets/icons"
 import { AppsService, DeploymentsService } from "@/client"
 import DeleteApp from "@/components/AppSettings/DeleteApp"
 import Deployments from "@/components/AppSettings/Deployments"
 import EnvironmentVariables from "@/components/AppSettings/EnvironmentVariables"
 import CustomCard from "@/components/Common/CustomCard"
+import { Skeleton } from "@/components/ui/skeleton"
 import { fetchTeamBySlug } from "@/utils"
 
 export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
@@ -68,14 +69,20 @@ function AppDetail() {
 
   return (
     <Container maxW="full" p={0}>
-      <Heading size="md" pb={2}>
+      <Heading size="xl" pb={2}>
         {app?.name}
       </Heading>
       <Box pb={10}>
         {app.url && (
-          <Link href={app.url} isExternal color="main.dark" fontWeight="bold">
+          <Link
+            href={app.url}
+            color="main.dark"
+            fontWeight="bold"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {app.url}
-            <ExternalLinkIcon mx="2px" />
+            <ExternalLink mx="2px" />
           </Link>
         )}
         <Text>Last Updated: {new Date(app?.updated_at).toLocaleString()}</Text>

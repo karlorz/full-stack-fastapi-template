@@ -20,17 +20,14 @@ test.describe("Edit user full name and email successfully", () => {
     await page.goto("/settings")
     await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
-    await page.getByRole("button", { name: "Edit" }).nth(0).click()
-    await page.locator("#full_name").fill(updatedName)
-    await page.getByRole("button", { name: "Save" }).first().click()
+    await page.getByRole("button", { name: "edit" }).nth(0).click()
+    await page.getByLabel("editable input").nth(0).fill(updatedName)
+    await page.getByRole("button", { name: "submit" }).nth(0).click()
     await expect(page.getByText("Full name updated successfully")).toBeVisible()
 
     // Check if the new name is displayed on the page
     await expect(
-      page
-        .locator("form")
-        .filter({ hasText: updatedName })
-        .getByRole("paragraph"),
+      page.locator("div").filter({ hasText: new RegExp(`^${updatedName}$`) }),
     ).toBeVisible()
   })
 
@@ -49,9 +46,9 @@ test.describe("Edit user full name and email successfully", () => {
     await page.goto("/settings")
     await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
-    await page.getByRole("button", { name: "Edit" }).nth(1).click()
-    await page.locator("#email").fill(updatedEmail)
-    await page.getByRole("button", { name: "Save" }).first().click()
+    await page.getByRole("button", { name: "edit" }).nth(1).click()
+    await page.getByLabel("editable input").nth(1).fill(updatedEmail)
+    await page.getByRole("button", { name: "submit" }).click()
     await expect(page.getByTestId("verification-email-modal")).toBeVisible()
 
     // Verify email
@@ -87,19 +84,17 @@ test.describe("Edit user full name and email with invalid data", () => {
     await page.goto("/settings")
     await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
-    await page.getByRole("button", { name: "Edit" }).nth(0).click()
-    await page.locator("#full_name").fill("")
+    await page.getByRole("button", { name: "edit" }).nth(0).click()
+    await page.getByLabel("editable input").nth(0).fill("")
     await expect(page.getByText("Name is required")).toBeVisible()
   })
 
   test("Edit user email with an invalid email", async ({ page }) => {
-    const invalidEmail = ""
     await page.goto("/settings")
     await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
-    await page.getByRole("button", { name: "Edit" }).nth(1).click()
-    await page.locator("#email").fill(invalidEmail)
-    await page.locator("body").click()
+    await page.getByRole("button", { name: "edit" }).nth(1).click()
+    await page.getByLabel("editable input").nth(1).fill("")
     await expect(page.getByText("Email is required")).toBeVisible()
   })
 
@@ -108,10 +103,12 @@ test.describe("Edit user full name and email with invalid data", () => {
     await page.goto("/settings")
     await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
-    await page.getByRole("button", { name: "Edit" }).nth(0).click()
-    await page.locator("#full_name").fill(updatedName)
+    await page.getByRole("button", { name: "edit" }).nth(0).click()
+    await page.getByLabel("editable input").nth(0).fill(updatedName)
     await page.getByRole("button", { name: "Cancel" }).first().click()
-    await page.getByText("fastapi admin")
+    await expect(
+      page.locator("div").filter({ hasText: /^Test User$/ }),
+    ).toBeVisible()
   })
 
   test("Cancel edit action restores original email", async ({ page }) => {
@@ -119,14 +116,13 @@ test.describe("Edit user full name and email with invalid data", () => {
     await page.goto("/settings")
     await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
-    await page.getByRole("button", { name: "Edit" }).nth(1).click()
-    await page.locator("#email").fill(updatedEmail)
+    await page.getByRole("button", { name: "edit" }).nth(1).click()
+    await page.getByLabel("editable input").nth(1).fill(updatedEmail)
     await page.getByRole("button", { name: "Cancel" }).first().click()
     await expect(
       page
-        .locator("form")
-        .filter({ hasText: process.env.USER_EMAIL! })
-        .getByRole("paragraph"),
+        .locator("div")
+        .filter({ hasText: new RegExp(`^${process.env.USER_EMAIL!}$`) }),
     ).toBeVisible()
   })
 })
@@ -213,9 +209,11 @@ test.describe("Delete account successfully", () => {
 
     await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "Settings" }).click()
-    await page.getByRole("button", { name: "Delete" }).click()
+    await page.getByText("Delete Account").click()
     await expect(page.getByTestId("delete-confirmation-user")).toBeVisible()
-    await page.getByLabel("Confirmation").fill("delete my account")
+    await page
+      .getByPlaceholder('Type "delete my account" to confirm')
+      .fill("delete my account")
     await page.getByRole("button", { name: "Confirm" }).click()
 
     await page.waitForURL("/login")
@@ -237,26 +235,26 @@ test("User can switch from light mode to dark mode and vice versa", async ({
   // Ensure the initial state is light mode
   if (
     await page.evaluate(() =>
-      document.body.classList.contains("chakra-ui-dark"),
+      document.documentElement.classList.contains("dark"),
     )
   ) {
     await page.getByLabel("Toggle dark mode").click()
   }
 
   let isLightMode = await page.evaluate(() =>
-    document.body.classList.contains("chakra-ui-light"),
+    document.documentElement.classList.contains("light"),
   )
   expect(isLightMode).toBe(true)
 
   await page.getByLabel("Toggle dark mode").click()
   const isDarkMode = await page.evaluate(() =>
-    document.body.classList.contains("chakra-ui-dark"),
+    document.documentElement.classList.contains("dark"),
   )
   expect(isDarkMode).toBe(true)
 
   await page.getByLabel("Toggle dark mode").click()
   isLightMode = await page.evaluate(() =>
-    document.body.classList.contains("chakra-ui-light"),
+    document.documentElement.classList.contains("light"),
   )
   expect(isLightMode).toBe(true)
 })
@@ -267,20 +265,20 @@ test("Selected mode is preserved across sessions", async ({ page }) => {
   // Ensure the initial state is light mode
   if (
     await page.evaluate(() =>
-      document.body.classList.contains("chakra-ui-dark"),
+      document.documentElement.classList.contains("dark"),
     )
   ) {
     await page.getByLabel("Toggle dark mode").click()
   }
 
   const isLightMode = await page.evaluate(() =>
-    document.body.classList.contains("chakra-ui-light"),
+    document.documentElement.classList.contains("light"),
   )
   expect(isLightMode).toBe(true)
 
   await page.getByLabel("Toggle dark mode").click()
   let isDarkMode = await page.evaluate(() =>
-    document.body.classList.contains("chakra-ui-dark"),
+    document.documentElement.classList.contains("dark"),
   )
   expect(isDarkMode).toBe(true)
 
@@ -288,7 +286,7 @@ test("Selected mode is preserved across sessions", async ({ page }) => {
   await logInUser(page, "admin@example.com", "changethis")
 
   isDarkMode = await page.evaluate(() =>
-    document.body.classList.contains("chakra-ui-dark"),
+    document.documentElement.classList.contains("dark"),
   )
   expect(isDarkMode).toBe(true)
 })
