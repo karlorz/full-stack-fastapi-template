@@ -133,6 +133,7 @@
 
 ### Refactors
 
+* 🛂 Migrate to Chakra UI v3. PR [#461](https://github.com/fastapilabs/cloud/pull/461) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add LogFire. PR [#517](https://github.com/fastapilabs/cloud/pull/517) by [@tiangolo](https://github.com/tiangolo).
 * 🔊 Do not hide boto3 errors from our observability. PR [#514](https://github.com/fastapilabs/cloud/pull/514) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove TriggerMesh. PR [#510](https://github.com/fastapilabs/cloud/pull/510) by [@tiangolo](https://github.com/tiangolo).
