@@ -1,6 +1,6 @@
 import { Box, Container, Heading, Link, Text } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, notFound } from "@tanstack/react-router"
 
 import { ExternalLink } from "@/assets/icons"
 import { AppsService, DeploymentsService } from "@/client"
@@ -14,28 +14,40 @@ import { fetchTeamBySlug } from "@/utils"
 export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
   component: AppDetail,
   loader: async ({ context, params }) => {
-    const team = await fetchTeamBySlug(params.team)
+    try {
+      const team = await fetchTeamBySlug(params.team)
 
-    const apps = await AppsService.readApps({
-      teamId: team.id,
-      slug: params.appSlug,
-    })
+      const apps = await AppsService.readApps({
+        teamId: team.id,
+        slug: params.appSlug,
+      })
 
-    const deployments = await DeploymentsService.readDeployments({
-      appId: apps.data[0].id,
-      orderBy: "created_at",
-      order: "desc",
-      limit: 5,
-    })
+      if (apps.data.length === 0) {
+        throw notFound({
+          data: { appSlug: params.appSlug },
+        })
+      }
 
-    const app = apps.data[0]
+      const deployments = await DeploymentsService.readDeployments({
+        appId: apps.data[0].id,
+        orderBy: "created_at",
+        order: "desc",
+        limit: 5,
+      })
 
-    await context.queryClient.ensureQueryData({
-      queryKey: ["apps", app.id, "environmentVariables"],
-      queryFn: () => AppsService.readEnvironmentVariables({ appId: app.id }),
-    })
+      const app = apps.data[0]
 
-    return { app, deployments }
+      await context.queryClient.ensureQueryData({
+        queryKey: ["apps", app.id, "environmentVariables"],
+        queryFn: () => AppsService.readEnvironmentVariables({ appId: app.id }),
+      })
+
+      return { app, deployments }
+    } catch (error) {
+      throw notFound({
+        data: { appSlug: params.appSlug },
+      })
+    }
   },
   pendingComponent: () => (
     <Box>

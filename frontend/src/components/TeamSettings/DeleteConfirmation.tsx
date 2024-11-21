@@ -50,7 +50,8 @@ const DeleteConfirmation = ({ teamId }: DeleteProps) => {
     },
     onSuccess: () => {
       showToast("Success", "The team was deleted successfully", "success")
-      navigate({ to: "/teams/all" })
+      localStorage.removeItem("current_team")
+      navigate({ to: "/" })
     },
     onError: handleError.bind(showToast),
     onSettled: () => {

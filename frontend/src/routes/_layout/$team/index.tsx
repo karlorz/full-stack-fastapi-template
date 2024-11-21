@@ -1,6 +1,5 @@
 import { Box, Button, Container, Flex, Text } from "@chakra-ui/react"
-import { createFileRoute } from "@tanstack/react-router"
-import { Suspense } from "react"
+import { createFileRoute, notFound } from "@tanstack/react-router"
 
 import CustomCard from "@/components/Common/CustomCard"
 import { SkeletonText } from "@/components/ui/skeleton"
@@ -11,8 +10,20 @@ import {
   StatValueText,
 } from "@/components/ui/stat"
 import { useCurrentUser } from "@/hooks/useAuth"
+import { fetchTeamBySlug } from "@/utils"
+import { Suspense } from "react"
 
 export const Route = createFileRoute("/_layout/$team/")({
+  loader: async ({ params: { team } }) => {
+    try {
+      const teamData = await fetchTeamBySlug(team)
+      return { teamData }
+    } catch (error) {
+      throw notFound({
+        data: { team },
+      })
+    }
+  },
   component: Dashboard,
 })
 

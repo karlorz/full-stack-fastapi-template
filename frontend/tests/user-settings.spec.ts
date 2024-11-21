@@ -223,14 +223,14 @@ test.describe("Delete account successfully", () => {
 // Appearance
 
 test("Appearance tab is visible", async ({ page }) => {
-  await page.goto("/admin")
+  await page.goto("/")
   await expect(page.getByLabel("Toggle dark mode")).toBeVisible()
 })
 
 test("User can switch from light mode to dark mode and vice versa", async ({
   page,
 }) => {
-  await page.goto("/admin")
+  await page.goto("/")
 
   // Ensure the initial state is light mode
   if (
@@ -260,7 +260,7 @@ test("User can switch from light mode to dark mode and vice versa", async ({
 })
 
 test("Selected mode is preserved across sessions", async ({ page }) => {
-  await page.goto("/admin")
+  await page.goto("/")
 
   // Ensure the initial state is light mode
   if (
