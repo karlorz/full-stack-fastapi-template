@@ -107,6 +107,7 @@
 
 ### Fixes
 
+* 🐛 Handle invalid team or appId URLs using `notFound` utility. PR [#523](https://github.com/fastapilabs/cloud/pull/523) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix service account and permissions for our services. PR [#512](https://github.com/fastapilabs/cloud/pull/512) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Fix deployments from CI, that I broke with the env var. PR [#509](https://github.com/fastapilabs/cloud/pull/509) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Use light mode on auth pages. PR [#400](https://github.com/fastapilabs/cloud/pull/400) by [@patrick91](https://github.com/patrick91).
