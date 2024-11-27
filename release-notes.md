@@ -312,6 +312,7 @@
 
 ### Internal
 
+* ✨ Update openapi-ts. PR [#526](https://github.com/fastapilabs/cloud/pull/526) by [@patrick91](https://github.com/patrick91).
 * 🔧 Upgrade pre-commit. PR [#513](https://github.com/fastapilabs/cloud/pull/513) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Move our own apps to our own Kubernetes namespace `fastapicloud`. PR [#500](https://github.com/fastapilabs/cloud/pull/500) by [@estebanx64](https://github.com/estebanx64).
 * 👷 Add Cloudflare env vars to deployments, will be used for domains. PR [#506](https://github.com/fastapilabs/cloud/pull/506) by [@tiangolo](https://github.com/tiangolo).
