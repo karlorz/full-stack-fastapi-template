@@ -9,7 +9,7 @@
     "biome-check": "biome check --apply-unsafe --no-errors-on-unmatched --files-ignore-unknown=true ./",
     "biome-format": "biome format --write ./",
     "preview": "vite preview",
-    "generate-client": "openapi-ts --input ./openapi.json --output ./src/client --client axios --exportSchemas true"
+    "generate-client": "openapi-ts"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.1.0",
@@ -32,7 +32,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.6.1",
     "@faker-js/faker": "^8.4.1",
-    "@hey-api/openapi-ts": "^0.34.1",
+    "@hey-api/openapi-ts": "^0.57.1",
     "@playwright/test": "^1.47.0",
     "@tanstack/router-devtools": "1.19.1",
     "@tanstack/router-vite-plugin": "1.19.0",
