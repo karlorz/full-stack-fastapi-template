@@ -1,5 +1,5 @@
 import { Box, Center, Flex, Image } from "@chakra-ui/react"
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
+import { Link, Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 import { Suspense } from "react"
 
 import logo from "@/assets/logo-text-white.svg"
@@ -66,7 +66,9 @@ function Layout() {
               p={4}
             >
               <Center>
-                <Image src={logo} alt="Logo" p={4} width={180} />
+                <Link to="/">
+                  <Image src={logo} alt="Logo" p={4} width={180} />
+                </Link>
               </Center>
               <Flex gap={2} alignItems="center">
                 <Appearance />
