@@ -313,6 +313,7 @@
 
 ### Internal
 
+* ⬆ Bump astral-sh/setup-uv from 3 to 4. PR [#525](https://github.com/fastapilabs/cloud/pull/525) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ✨ Update openapi-ts. PR [#526](https://github.com/fastapilabs/cloud/pull/526) by [@patrick91](https://github.com/patrick91).
 * 🔧 Upgrade pre-commit. PR [#513](https://github.com/fastapilabs/cloud/pull/513) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Move our own apps to our own Kubernetes namespace `fastapicloud`. PR [#500](https://github.com/fastapilabs/cloud/pull/500) by [@estebanx64](https://github.com/estebanx64).
