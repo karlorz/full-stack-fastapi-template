@@ -311,6 +311,10 @@ export const $DeploymentPublic = {
       type: "string",
       isRequired: true,
     },
+    dashboard_url: {
+      type: "string",
+      isRequired: true,
+    },
   },
 } as const
 

@@ -216,6 +216,7 @@ def test_read_deployment(client: TestClient, db: Session) -> None:
     assert data["slug"] == deployment.slug
     assert data["status"] == deployment.status
     assert data["url"] == deployment.url
+    assert data["dashboard_url"] == deployment.dashboard_url
 
 
 @respx.mock
