@@ -1,9 +1,9 @@
 # /// script
 # dependencies = [
 #    "pygithub",
-#    "pydantic",
+#    "pydantic<2.10.0",
 #    "pydantic-settings",
-#    "httpx",
+#    "httpx<0.28.0",
 #    "cloudflare",
 # ]
 # ///
