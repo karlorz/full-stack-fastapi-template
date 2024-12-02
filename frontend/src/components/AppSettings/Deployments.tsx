@@ -15,7 +15,7 @@ const Deployments = ({
     <>
       {deployments?.length > 0 ? (
         <>
-          <Table.Root variant="outline" mt="4">
+          <Table.Root variant="outline" mt="4" interactive>
             <Table.Header>
               <Table.Row>
                 {headers.map((header) => (

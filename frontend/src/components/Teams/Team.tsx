@@ -1,13 +1,26 @@
-import { Badge, Box, Container, Flex, Skeleton, Table } from "@chakra-ui/react"
+import {
+  Badge,
+  Box,
+  Container,
+  Flex,
+  HStack,
+  Skeleton,
+  Table,
+} from "@chakra-ui/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { Suspense, useState } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
-import { useCurrentUser } from "../../hooks/useAuth"
-import { Route } from "../../routes/_layout/$team"
-import { fetchTeamBySlug, getCurrentUserRole } from "../../utils"
+import {
+  PaginationItems,
+  PaginationNextTrigger,
+  PaginationPrevTrigger,
+  PaginationRoot,
+} from "@/components/ui/pagination"
+import { useCurrentUser } from "@/hooks/useAuth"
+import { Route } from "@/routes/_layout/$team"
+import { fetchTeamBySlug, getCurrentUserRole } from "@/utils"
 import ActionsMenu from "../Common/ActionsMenu"
-import { Button } from "../ui/button"
 
 const PER_PAGE = 5
 
@@ -21,9 +34,7 @@ function Team() {
   })
 
   const members = team.user_links.slice((page - 1) * PER_PAGE, page * PER_PAGE)
-  const hasNextPage = team.user_links.length > page * PER_PAGE
-  const hasPreviousPage = page > 1
-
+  const membersCount = team.user_links.length
   const currentUserRole = getCurrentUserRole(team, currentUser)
 
   const headers = ["Email", "Role"]
@@ -33,7 +44,7 @@ function Team() {
 
   return (
     <Container maxW="full" p={0}>
-      <Table.Root size={{ base: "sm", md: "md" }} variant="outline">
+      <Table.Root size={{ base: "sm", md: "md" }} variant="outline" interactive>
         <Table.Header>
           <Table.Row>
             {headers.map((header) => (
@@ -99,26 +110,19 @@ function Team() {
           </Suspense>
         </ErrorBoundary>
       </Table.Root>
-      {(hasPreviousPage || hasNextPage) && (
-        <Flex
-          gap={4}
-          alignItems="center"
-          mt={4}
-          direction="row"
-          justifyContent="flex-end"
+      <Flex justifyContent="flex-end" mt={4}>
+        <PaginationRoot
+          count={membersCount}
+          pageSize={PER_PAGE}
+          onPageChange={({ page }) => setPage(page)}
         >
-          <Button
-            onClick={() => setPage((p) => p - 1)}
-            disabled={!hasPreviousPage}
-          >
-            Previous
-          </Button>
-          <span>Page {page}</span>
-          <Button onClick={() => setPage((p) => p + 1)} disabled={!hasNextPage}>
-            Next
-          </Button>
-        </Flex>
-      )}
+          <HStack>
+            <PaginationPrevTrigger />
+            <PaginationItems />
+            <PaginationNextTrigger />
+          </HStack>
+        </PaginationRoot>
+      </Flex>
     </Container>
   )
 }

@@ -24,10 +24,7 @@ const QuickStart = () => {
         </Text>
         <Text>
           You can learn more in the{" "}
-          <Link color="main.dark" fontWeight="bold">
-            FastAPI CLI documentation
-          </Link>
-          .
+          <Link className="main-link">FastAPI CLI documentation</Link>.
         </Text>
       </VStack>
     </CustomCard>

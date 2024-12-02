@@ -1,6 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { z } from "zod"
-
 import {
   Badge,
   Box,
@@ -10,14 +7,19 @@ import {
   Table,
   Text,
 } from "@chakra-ui/react"
-import { useQueryClient } from "@tanstack/react-query"
+import { createFileRoute } from "@tanstack/react-router"
 import { Link as RouterLink, useNavigate } from "@tanstack/react-router"
+import { z } from "zod"
 
 import { TeamsService, UsersService } from "@/client"
 import CustomCard from "@/components/Common/CustomCard"
-import { Button } from "@/components/ui/button"
+import {
+  PaginationItems,
+  PaginationNextTrigger,
+  PaginationPrevTrigger,
+  PaginationRoot,
+} from "@/components/ui/pagination"
 import { isLoggedIn } from "@/hooks/useAuth"
-import { useEffect } from "react"
 
 const PER_PAGE = 5
 
@@ -34,8 +36,7 @@ function getTeamsQueryOptions({
     queryFn: () =>
       TeamsService.readTeams({
         skip: (page - 1) * PER_PAGE,
-        // Fetching one extra to determine if there's a next page
-        limit: PER_PAGE + 1,
+        limit: PER_PAGE,
         orderBy,
         order,
       }),
@@ -79,8 +80,6 @@ export const Route = createFileRoute("/_layout/teams/all")({
 })
 
 function AllTeams() {
-  const queryClient = useQueryClient()
-  const { page = 1, orderBy, order } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
     navigate({
@@ -88,22 +87,11 @@ function AllTeams() {
     })
 
   const {
-    teams: { data },
+    teams: { data, count },
     currentUser,
   } = Route.useLoaderData()
 
-  const hasNextPage = data.length === PER_PAGE + 1
   const teams = data.slice(0, PER_PAGE)
-
-  const hasPreviousPage = page > 1
-
-  useEffect(() => {
-    if (hasNextPage) {
-      queryClient.prefetchQuery(
-        getTeamsQueryOptions({ page: page + 1, orderBy, order }),
-      )
-    }
-  }, [page, queryClient, hasNextPage, orderBy, order])
 
   return (
     <Container maxW="full" p={0}>
@@ -119,6 +107,7 @@ function AllTeams() {
           size={{ base: "sm", md: "md" }}
           variant="outline"
           data-testid="teams-table"
+          interactive
         >
           <Table.Header>
             <Table.Row>
@@ -131,7 +120,6 @@ function AllTeams() {
             {teams.map((team) => (
               <Table.Row key={team.id}>
                 <Table.Cell>
-                  {/* TODO: Add hover */}
                   <RouterLink to={`/${team.slug}/`}>{team.name}</RouterLink>
                   {team.is_personal_team ? (
                     <Badge ml={2}>Personal</Badge>
@@ -147,26 +135,19 @@ function AllTeams() {
             ))}
           </Table.Body>
         </Table.Root>
-        {(hasPreviousPage || hasNextPage) && (
-          <Flex
-            gap={4}
-            alignItems="center"
-            mt={4}
-            direction="row"
-            justifyContent="flex-end"
+        <Flex justifyContent="flex-end" mt={4}>
+          <PaginationRoot
+            count={count}
+            pageSize={PER_PAGE}
+            onPageChange={({ page }) => setPage(page)}
           >
-            <Button
-              onClick={() => setPage(page - 1)}
-              disabled={!hasPreviousPage}
-            >
-              Previous
-            </Button>
-            <span>Page {page}</span>
-            <Button disabled={!hasNextPage} onClick={() => setPage(page + 1)}>
-              Next
-            </Button>
-          </Flex>
-        )}
+            <Flex>
+              <PaginationPrevTrigger />
+              <PaginationItems />
+              <PaginationNextTrigger />
+            </Flex>
+          </PaginationRoot>
+        </Flex>
       </CustomCard>
     </Container>
   )

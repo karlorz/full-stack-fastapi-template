@@ -24,7 +24,7 @@ function BillingTableBody() {
         ]
 
         return (
-          <Table.Root key={id}>
+          <Table.Root key={id} interactive>
             {data.map((item, index) => (
               <Table.Cell key={index}>{item}</Table.Cell>
             ))}

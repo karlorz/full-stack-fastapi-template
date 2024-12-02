@@ -6,14 +6,17 @@ import {
 } from "@tanstack/react-router"
 import { z } from "zod"
 
-import CustomCard from "@/components/Common/CustomCard"
-import { useQueryClient } from "@tanstack/react-query"
-import { useEffect } from "react"
-
 import { EmptyBox } from "@/assets/icons"
 import { AppsService } from "@/client"
+import CustomCard from "@/components/Common/CustomCard"
 import EmptyState from "@/components/Common/EmptyState"
 import QuickStart from "@/components/Common/QuickStart"
+import {
+  PaginationItems,
+  PaginationNextTrigger,
+  PaginationPrevTrigger,
+  PaginationRoot,
+} from "@/components/ui/pagination"
 import { fetchTeamBySlug } from "@/utils"
 
 const appsSearchSchema = z.object({
@@ -39,8 +42,7 @@ function getAppsQueryOptions({
     queryFn: () =>
       AppsService.readApps({
         skip: (page - 1) * PER_PAGE,
-        // Fetching one extra to determine if there's a next page
-        limit: PER_PAGE + 1,
+        limit: PER_PAGE,
         orderBy,
         order,
         teamId,
@@ -79,36 +81,17 @@ export const Route = createFileRoute("/_layout/$team/apps/")({
 
 function Apps() {
   const headers = ["name", "slug", "created at"]
-  const { page = 1, order, orderBy } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
     navigate({
       search: (prev: { [key: string]: string }) => ({ ...prev, page }),
     })
-  const queryClient = useQueryClient()
 
   const {
-    apps: { data },
-    team,
+    apps: { data, count },
   } = Route.useLoaderData()
 
-  const hasNextPage = data.length === PER_PAGE + 1
   const apps = data.slice(0, PER_PAGE)
-
-  const hasPreviousPage = page > 1
-
-  useEffect(() => {
-    if (hasNextPage) {
-      queryClient.prefetchQuery(
-        getAppsQueryOptions({
-          page: page + 1,
-          orderBy,
-          order,
-          teamId: team.id,
-        }),
-      )
-    }
-  }, [page, queryClient, hasNextPage, order, orderBy, team.id])
 
   return (
     <Container maxW="full" p={0}>
@@ -124,7 +107,11 @@ function Apps() {
       {apps?.length > 0 ? (
         <>
           <CustomCard>
-            <Table.Root size={{ base: "sm", md: "md" }} variant="outline">
+            <Table.Root
+              size={{ base: "sm", md: "md" }}
+              variant="outline"
+              interactive
+            >
               <Table.Header>
                 <Table.Row>
                   {headers.map((header) => (
@@ -139,51 +126,40 @@ function Apps() {
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {apps.map((app) => (
-                  <Table.Row key={app.id}>
+                {apps.map(({ id, name, slug, created_at }) => (
+                  <Table.Row key={id}>
                     <Table.Cell>
-                      {/* TODO: Add hover */}
                       <RouterLink
-                        to={`/$team/apps/${app.slug}/`}
+                        to={`/$team/apps/${slug}/`}
                         style={{
                           display: "inline-block",
                           minWidth: "20%",
                         }}
                       >
-                        {app.name}
+                        {name}
                       </RouterLink>
                     </Table.Cell>
-                    <Table.Cell>{app.slug}</Table.Cell>
+                    <Table.Cell>{slug}</Table.Cell>
                     <Table.Cell>
-                      {new Date(app.created_at).toLocaleString()}
+                      {new Date(created_at).toLocaleString()}
                     </Table.Cell>
                   </Table.Row>
                 ))}
               </Table.Body>
             </Table.Root>
-            {(hasPreviousPage || hasNextPage) && (
-              <Flex
-                gap={4}
-                alignItems="center"
-                mt={4}
-                direction="row"
-                justifyContent="flex-end"
+            <Flex justifyContent="flex-end" mt={4}>
+              <PaginationRoot
+                count={count}
+                pageSize={PER_PAGE}
+                onPageChange={({ page }) => setPage(page)}
               >
-                <Button
-                  onClick={() => setPage(page - 1)}
-                  disabled={!hasPreviousPage}
-                >
-                  Previous
-                </Button>
-                <span>Page {page}</span>
-                <Button
-                  onClick={() => setPage(page + 1)}
-                  disabled={!hasNextPage}
-                >
-                  Next
-                </Button>
-              </Flex>
-            )}
+                <Flex>
+                  <PaginationPrevTrigger />
+                  <PaginationItems />
+                  <PaginationNextTrigger />
+                </Flex>
+              </PaginationRoot>
+            </Flex>
           </CustomCard>
         </>
       ) : (
