@@ -136,6 +136,7 @@
 
 ### Refactors
 
+* 🔧 Update Sentry DSN. PR [#538](https://github.com/fastapilabs/cloud/pull/538) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor pagination. PR [#527](https://github.com/fastapilabs/cloud/pull/527) by [@alejsdev](https://github.com/alejsdev).
 * 🛂 Migrate to Chakra UI v3. PR [#461](https://github.com/fastapilabs/cloud/pull/461) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add LogFire. PR [#517](https://github.com/fastapilabs/cloud/pull/517) by [@tiangolo](https://github.com/tiangolo).
