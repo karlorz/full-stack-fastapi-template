@@ -95,14 +95,12 @@ jobs:
       working-directory: backend
       env:
         # Env vars for the app
-        DOMAIN: "${{ vars.DOMAIN }}"
         FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
         API_HOST: "${{ vars.API_HOST }}"
         API_DOMAIN: "${{ vars.API_DOMAIN }}"
         DEPLOYMENTS_DOMAIN: "${{ vars.DEPLOYMENTS_DOMAIN }}"
         ENVIRONMENT: ${{ matrix.environment }}
         PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
-        STACK_NAME: "${{ vars.STACK_NAME }}"
         BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"
         FIRST_SUPERUSER: "${{ vars.FIRST_SUPERUSER }}"
         FIRST_SUPERUSER_FULL_NAME: "${{ vars.FIRST_SUPERUSER_FULL_NAME }}"
@@ -138,14 +136,12 @@ jobs:
         IMAGE_URL: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}
 
         # Env vars for the app
-        DOMAIN: "${{ vars.DOMAIN }}"
         FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
         API_HOST: "${{ vars.API_HOST }}"
         API_DOMAIN: "${{ vars.API_DOMAIN }}"
         DEPLOYMENTS_DOMAIN: "${{ vars.DEPLOYMENTS_DOMAIN }}"
         ENVIRONMENT: ${{ matrix.environment }}
         PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
-        STACK_NAME: "${{ vars.STACK_NAME }}"
         BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"
         FIRST_SUPERUSER: "${{ vars.FIRST_SUPERUSER }}"
         FIRST_SUPERUSER_FULL_NAME: "${{ vars.FIRST_SUPERUSER_FULL_NAME }}"

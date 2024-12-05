@@ -127,7 +127,7 @@ class MainSettings(SettingsEnv):
             self.FRONTEND_HOST
         ]
 
-    PROJECT_NAME: str
+    PROJECT_NAME: str = "FastAPI Cloud"
     RESERVED_APP_NAMES: Annotated[list[str] | str, BeforeValidator(parse_list_or_str)]
     SENTRY_DSN: HttpUrl | None = None
 
