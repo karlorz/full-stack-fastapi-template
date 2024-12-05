@@ -9,7 +9,6 @@ from pydantic import (
     HttpUrl,
     PlainSerializer,
     PostgresDsn,
-    SecretStr,
     computed_field,
     model_validator,
 )
@@ -71,6 +70,7 @@ class CommonSettings(SettingsEnv):
     ENVIRONMENT: Literal["local", "development", "staging", "production"] = "local"
     BUILDER_API_KEY: str
     AWS_DEPLOYMENT_BUCKET: str
+    LOGFIRE_TOKEN: str | None = None
 
 
 class DBSettings(SettingsEnv):
@@ -130,8 +130,6 @@ class MainSettings(SettingsEnv):
     PROJECT_NAME: str
     RESERVED_APP_NAMES: Annotated[list[str] | str, BeforeValidator(parse_list_or_str)]
     SENTRY_DSN: HttpUrl | None = None
-
-    LOGFIRE_BACKEND_TOKEN: SecretStr | None = None
 
     REDIS_SERVER: str
     REDIS_PORT: int = 6379
@@ -200,7 +198,6 @@ class BuilderSettings(SettingsEnv):
     ECR_REGISTRY_URL: str
     AWS_REGION: str
     BUILDER_SENTRY_DSN: HttpUrl | None = None
-    LOGFIRE_BUILDER_TOKEN: SecretStr | None = None
 
 
 class DepotSettings(SettingsEnv):

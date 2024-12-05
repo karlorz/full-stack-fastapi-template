@@ -32,10 +32,11 @@ app = FastAPI(
     generate_unique_id_function=custom_generate_unique_id,
 )
 
-if common_settings.ENVIRONMENT != "local" and settings.LOGFIRE_BACKEND_TOKEN:
+if common_settings.ENVIRONMENT != "local" and common_settings.LOGFIRE_TOKEN:
     logfire.configure(
-        token=settings.LOGFIRE_BACKEND_TOKEN.get_secret_value(),
+        token=common_settings.LOGFIRE_TOKEN,
         environment=common_settings.ENVIRONMENT,
+        service_name="backend",
     )
     logfire.instrument_fastapi(app)
     logfire.instrument_httpx()

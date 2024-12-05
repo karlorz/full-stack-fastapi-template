@@ -93,6 +93,7 @@ export type DeploymentPublic = {
   updated_at: string
   status: DeploymentStatus
   url: string
+  dashboard_url: string
 }
 
 export type DeploymentsPublic = {

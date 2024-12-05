@@ -76,10 +76,11 @@ if (
 # FastAPI app
 app = FastAPI()
 
-if common_settings.ENVIRONMENT != "local" and builder_settings.LOGFIRE_BUILDER_TOKEN:
+if common_settings.ENVIRONMENT != "local" and common_settings.LOGFIRE_TOKEN:
     logfire.configure(
-        token=builder_settings.LOGFIRE_BUILDER_TOKEN.get_secret_value(),
+        token=common_settings.LOGFIRE_TOKEN,
         environment=common_settings.ENVIRONMENT,
+        service_name="builder",
     )
     logfire.instrument_fastapi(app)
     logfire.instrument_httpx()
@@ -240,22 +241,24 @@ def create_custom_domain(*, namespace: str, domain: str, service_name: str) -> N
 def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
     namespace = "fastapicloud"
 
-    main_settings = MainSettings.get_settings().model_dump(
+    main_settings_data = MainSettings.get_settings().model_dump(
         mode="json", exclude_unset=True, exclude={"all_cors_origins"}
     )
-    common_settings = CommonSettings.get_settings().model_dump(
+    common_settings_data = CommonSettings.get_settings().model_dump(
         mode="json", exclude_unset=True
     )
-    db_settings = DBSettings.get_settings().model_dump(mode="json", exclude_unset=True)
-    cloudflare_settings = CloudflareSettings.get_settings().model_dump(
+    db_settings_data = DBSettings.get_settings().model_dump(
+        mode="json", exclude_unset=True
+    )
+    cloudflare_settings_data = CloudflareSettings.get_settings().model_dump(
         mode="json", exclude_unset=True
     )
 
     env_data = {
-        **main_settings,
-        **common_settings,
-        **db_settings,
-        **cloudflare_settings,
+        **main_settings_data,
+        **common_settings_data,
+        **db_settings_data,
+        **cloudflare_settings_data,
     }
 
     env_strs = {k: str(v) for k, v in env_data.items()}
