@@ -136,6 +136,7 @@
 
 ### Refactors
 
+* ♻️ Use a single LogFire project to link traces. PR [#540](https://github.com/fastapilabs/cloud/pull/540) by [@tiangolo](https://github.com/tiangolo).
 * 🔧 Update Sentry DSN. PR [#538](https://github.com/fastapilabs/cloud/pull/538) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor pagination. PR [#527](https://github.com/fastapilabs/cloud/pull/527) by [@alejsdev](https://github.com/alejsdev).
 * 🛂 Migrate to Chakra UI v3. PR [#461](https://github.com/fastapilabs/cloud/pull/461) by [@alejsdev](https://github.com/alejsdev).
