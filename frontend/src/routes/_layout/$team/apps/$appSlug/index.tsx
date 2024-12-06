@@ -17,6 +17,12 @@ export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
     try {
       const team = await fetchTeamBySlug(params.team)
 
+      if (!team) {
+        throw notFound({
+          data: { teamSlug: params.team },
+        })
+      }
+
       const apps = await AppsService.readApps({
         teamId: team.id,
         slug: params.appSlug,
@@ -31,7 +37,6 @@ export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
       const deployments = await DeploymentsService.readDeployments({
         appId: apps.data[0].id,
         orderBy: "created_at",
-        order: "desc",
         limit: 5,
       })
 
@@ -67,7 +72,6 @@ function AppDetail() {
       DeploymentsService.readDeployments({
         appId: app.id,
         orderBy: "created_at",
-        order: "desc",
         limit: 5,
       }),
     initialData: initialDeployments,

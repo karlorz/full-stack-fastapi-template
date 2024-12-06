@@ -1,5 +1,9 @@
 import { Box, Button, Container, Flex, Text } from "@chakra-ui/react"
-import { createFileRoute, notFound } from "@tanstack/react-router"
+import {
+  Link as RouterLink,
+  createFileRoute,
+  notFound,
+} from "@tanstack/react-router"
 
 import CustomCard from "@/components/Common/CustomCard"
 import { SkeletonText } from "@/components/ui/skeleton"
@@ -10,14 +14,27 @@ import {
   StatValueText,
 } from "@/components/ui/stat"
 import { useCurrentUser } from "@/hooks/useAuth"
-import { fetchTeamBySlug } from "@/utils"
+import {
+  deploymentStatusMessage,
+  fetchLastApp,
+  fetchLastAppsInLast30Days,
+  fetchTeamBySlug,
+  getLastDeploymentStatus,
+} from "@/utils"
 import { Suspense } from "react"
 
 export const Route = createFileRoute("/_layout/$team/")({
   loader: async ({ params: { team } }) => {
     try {
       const teamData = await fetchTeamBySlug(team)
-      return { teamData }
+
+      const apps = await fetchLastAppsInLast30Days(teamData.id)
+      const lastApp = await fetchLastApp(teamData.id)
+      const lastDeploymentStatus = lastApp?.id
+        ? await getLastDeploymentStatus(lastApp.id)
+        : null
+
+      return { apps, lastApp, lastDeploymentStatus }
     } catch (error) {
       throw notFound({
         data: { team },
@@ -34,6 +51,8 @@ const CurrentUser = () => {
 }
 
 function Dashboard() {
+  const { apps, lastApp, lastDeploymentStatus } = Route.useLoaderData()
+
   return (
     <Container maxW="full" p={0}>
       <CustomCard data-testid="result">
@@ -46,16 +65,16 @@ function Dashboard() {
         <Text>Welcome back, nice to see you again!</Text>
       </CustomCard>
       <Flex direction={{ base: "column", md: "row" }} gap={4}>
-        <CustomCard title="Last Deployment" w={{ base: "100%", md: "55%" }}>
-          <Text mt={2}>
-            Last deployment was successful. Your app is up and running.
-          </Text>
-          <Button variant="outline" mt={4}>
-            View Deployment
-          </Button>
+        <CustomCard title={lastApp?.name} w={{ base: "100%", md: "55%" }}>
+          <Text>{deploymentStatusMessage(lastDeploymentStatus)}</Text>
+          <RouterLink to={`/$team/apps/${lastApp?.slug}/`}>
+            {lastApp && (
+              <Button variant="outline" mt={4}>
+                View App
+              </Button>
+            )}
+          </RouterLink>
         </CustomCard>
-
-        {/* TODO: Finalize once real data is available */}
 
         <CustomCard title="Statistics" w={{ base: "100%", md: "45%" }}>
           <StatRoot
@@ -64,21 +83,8 @@ function Dashboard() {
             flexDir={{ base: "column", md: "row" }}
           >
             <StatRoot>
-              <StatLabel>Deployments</StatLabel>
-              <StatValueText value={34} />
-              <StatHelpText>Last 30 days</StatHelpText>
-            </StatRoot>
-            <StatRoot>
-              <StatLabel>Errors</StatLabel>
-              <StatValueText value={5} />
-              <StatHelpText>Last 30 days</StatHelpText>
-            </StatRoot>
-            <StatRoot>
-              <StatLabel>Uptime</StatLabel>
-              <StatValueText
-                value={99.9}
-                formatOptions={{ style: "percent" }}
-              />
+              <StatLabel>Apps</StatLabel>
+              <StatValueText value={apps.length} />
               <StatHelpText>Last 30 days</StatHelpText>
             </StatRoot>
           </StatRoot>

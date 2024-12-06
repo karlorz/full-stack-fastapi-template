@@ -31,7 +31,7 @@ def read_deployments(
     skip: int = 0,
     limit: int = 100,
     order_by: Literal["created_at"] | None = None,
-    order: Literal["asc", "desc"] = "asc",
+    order: Literal["asc", "desc"] = "desc",
 ) -> Any:
     """
     Retrieve a list of deployments for the provided app.

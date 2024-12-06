@@ -30,7 +30,7 @@ const PER_PAGE = 5
 function getAppsQueryOptions({
   page,
   orderBy = "created_at",
-  order = "desc",
+  order,
   teamId,
 }: {
   page: number

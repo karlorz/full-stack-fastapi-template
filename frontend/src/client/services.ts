@@ -696,7 +696,7 @@ export class TeamsService {
       skip = 0,
       limit = 100,
       orderBy,
-      order = "asc",
+      order = "desc",
       owner = false,
       slug,
     } = data
@@ -1187,7 +1187,14 @@ export class AppsService {
   public static readApps(
     data: AppsData["ReadApps"],
   ): CancelablePromise<AppsPublic> {
-    const { teamId, skip = 0, limit = 100, slug, orderBy, order = "asc" } = data
+    const {
+      teamId,
+      skip = 0,
+      limit = 100,
+      slug,
+      orderBy,
+      order = "desc",
+    } = data
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/apps/",
@@ -1281,7 +1288,7 @@ export class DeploymentsService {
   public static readDeployments(
     data: DeploymentsData["ReadDeployments"],
   ): CancelablePromise<DeploymentsPublic> {
-    const { appId, skip = 0, limit = 100, orderBy, order = "asc" } = data
+    const { appId, skip = 0, limit = 100, orderBy, order = "desc" } = data
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/apps/{app_id}/deployments/",

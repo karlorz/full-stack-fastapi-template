@@ -26,7 +26,7 @@ const PER_PAGE = 5
 function getTeamsQueryOptions({
   page,
   orderBy = "created_at",
-  order = "desc",
+  order,
 }: {
   page: number
   orderBy?: "created_at"

@@ -24,7 +24,7 @@ def read_apps(
     limit: int = 100,
     slug: str | None = None,
     order_by: Literal["created_at"] | None = None,
-    order: Literal["asc", "desc"] = "asc",
+    order: Literal["asc", "desc"] = "desc",
 ) -> Any:
     """
     Retrieve a list of apps for the provided team.
