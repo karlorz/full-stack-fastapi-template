@@ -2,11 +2,16 @@
   <mj-head>
     <mj-font name="Ubuntu" href="https://fonts.googleapis.com/css?family=Ubuntu" />
     <mj-font name="Arial, Helvetica, sans-serif" href="https://fonts.googleapis.com/css?family=Arial" />
+        <mj-style>
+      .gradient-bg {
+        background: linear-gradient(90deg, #00667A 0%, #3B2174 100%);
+      }
+    </mj-style>
   </mj-head>
   <mj-body background-color="#f0f0f0">
-    <mj-section background-color="#ffffff" padding="0px">
+    <mj-section css-class="gradient-bg" padding="20px">
       <mj-column>
-        <mj-image src="{{ server_host }}/assets/images/banner.png" align="center"></mj-image>
+        <mj-image src="{{ server_host }}/assets/images/logo.svg" align="center" width="150px"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section background-color="#ffffff" padding="40px 20px">
@@ -14,15 +19,15 @@
         <mj-text align="center" padding="35px" font-size="20px" font-family="Arial, Helvetica, sans-serif" color="#333">{{ team_name }} - Invitation</mj-text>
         <mj-text font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><span>Hello {{ email_to }},</span></mj-text>
         <mj-text font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555">You've been invited to join {{ team_name }} by {{ email_from }}. To accept the invitation, please click the button below:</mj-text>
-        <mj-button align="center" font-size="18px" background-color="#009688" border-radius="8px" color="#fff" href="{{ link }}" padding="15px 30px">View Invitation</mj-button>
+        <mj-button align="center" font-size="18px" background-color="#00667A" border-radius="8px" color="#fff" href="{{ link }}" padding="15px 30px">View Invitation</mj-button>
         <mj-text font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555">If you prefer, you can copy and paste the following link into your browser:</mj-text>
         <mj-text font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><a href="{{ link }}">{{ link }}</a></mj-text>
         <mj-text font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555">Please note that this invitation will expire in seven days.</mj-text>
       </mj-column>
     </mj-section>
-    <mj-section background-color="#009688" padding="20px">
+    <mj-section background-color="#00667A" padding="10px">
       <mj-column>
-        <mj-text align="center" font-size="14px" color="#ffffff" font-family="Arial, Helvetica, sans-serif">© 2024 FastAPI Cloud</mj-text>
+        <mj-text align="center" color="white" font-size="14px" font-family="Ubuntu">© 2024 FastAPI Cloud</mj-text>
       </mj-column>
     </mj-section>
   </mj-body>

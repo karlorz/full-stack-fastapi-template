@@ -1,11 +1,16 @@
 <mjml>
   <mj-head>
     <mj-font name="Ubuntu" href="https://fonts.googleapis.com/css?family=Ubuntu" />
+    <mj-style>
+      .gradient-bg {
+        background: linear-gradient(90deg, #00667A 0%, #3B2174 100%);
+      }
+    </mj-style>
   </mj-head>
   <mj-body background-color="#f0f0f0">
-      <mj-section background-color="#ffffff" padding="0px">
+    <mj-section css-class="gradient-bg" padding="20px">
       <mj-column>
-        <mj-image src="{{ server_host }}/assets/images/banner.png" align="center"></mj-image>
+        <mj-image src="{{ server_host }}/assets/images/logo.svg" align="center" width="150px"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section background-color="#ffffff" padding="40px 20px">
@@ -17,9 +22,9 @@
         <mj-text font-size="16px" padding="25px" font-family="Ubuntu" color="#555">This link will expire in 48 hours for security reasons. If you did not create an account using this email address, please ignore this message or contact our support team.</mj-text>
       </mj-column>
     </mj-section>
-    <mj-section background-color="#009688" padding="20px">
+    <mj-section background-color="#00667A" padding="10px">
       <mj-column>
-        <mj-text align="center" font-size="14px" color="#ffffff" font-family="Ubuntu">© 2024 FastAPI Cloud</mj-text>
+        <mj-text align="center" color="white" font-size="14px" font-family="Ubuntu">© 2024 FastAPI Cloud</mj-text>
       </mj-column>
     </mj-section>
   </mj-body>
