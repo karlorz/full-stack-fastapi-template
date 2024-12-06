@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✨ Cards on the main dashboard page. PR [#539](https://github.com/fastapilabs/cloud/pull/539) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Expose dashboard url on deployment api. PR [#521](https://github.com/fastapilabs/cloud/pull/521) by [@patrick91](https://github.com/patrick91).
 * ✨ Add link to home page on logo. PR [#529](https://github.com/fastapilabs/cloud/pull/529) by [@patrick91](https://github.com/patrick91).
 * ✨ Add support for our custom domains for the API, same domain as dashboard. PR [#508](https://github.com/fastapilabs/cloud/pull/508) by [@tiangolo](https://github.com/tiangolo).
