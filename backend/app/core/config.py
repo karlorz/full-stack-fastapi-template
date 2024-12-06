@@ -172,21 +172,17 @@ class MainSettings(SettingsEnv):
         "alejandra@fastapilabs.com",
         "sebastian@fastapilabs.com",
         "patrick@fastapilabs.com",
+        "testing@fastapilabs.com",
     ]
 
     ALLOWED_EMAIL_RECIPIENT_DOMAINS: list[str] = ["fastapilabs.com"]
 
     # TODO: update type to EmailStr when sqlmodel supports it
     EMAIL_TEST_USER: str = "test@example.com"
-    # TODO: update type to EmailStr when sqlmodel supports it
-    FIRST_SUPERUSER: str
-    FIRST_SUPERUSER_PASSWORD: str
-    FIRST_SUPERUSER_FULL_NAME: str
 
     @model_validator(mode="after")
     def _enforce_non_default_secrets(self) -> Self:
         _check_default_secret("SECRET_KEY", self.SECRET_KEY)
-        _check_default_secret("FIRST_SUPERUSER_PASSWORD", self.FIRST_SUPERUSER_PASSWORD)
 
         return self
 

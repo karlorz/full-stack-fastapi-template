@@ -261,16 +261,9 @@ def test_read_team(client: TestClient, db: Session) -> None:
         assert "full_name" in item["user"]
 
 
-def test_read_team_not_found(client: TestClient) -> None:
-    user_auth_headers = user_authentication_headers(
-        client=client,
-        email=settings.FIRST_SUPERUSER,
-        password=settings.FIRST_SUPERUSER_PASSWORD,
-    )
-
-    response = client.get(
+def test_read_team_not_found(logged_in_client: TestClient) -> None:
+    response = logged_in_client.get(
         f"{settings.API_V1_STR}/teams/00000000-0000-0000-0000-000000000000",
-        headers=user_auth_headers,
     )
 
     assert response.status_code == 404
@@ -278,17 +271,11 @@ def test_read_team_not_found(client: TestClient) -> None:
     assert data["detail"] == "Team not found for the current user"
 
 
-def test_create_team(client: TestClient, db: Session) -> None:
-    user_auth_headers = user_authentication_headers(
-        client=client,
-        email=settings.FIRST_SUPERUSER,
-        password=settings.FIRST_SUPERUSER_PASSWORD,
-    )
-
+def test_create_team(logged_in_client: TestClient, db: Session) -> None:
     team_in = {"name": "test", "description": "test description"}
-    response = client.post(
+
+    response = logged_in_client.post(
         f"{settings.API_V1_STR}/teams/",
-        headers=user_auth_headers,
         json=team_in,
     )
 
@@ -307,14 +294,10 @@ def test_create_team(client: TestClient, db: Session) -> None:
     assert team_db.description == team_in["description"]
 
 
-def test_create_team_name_exists_new_created(client: TestClient, db: Session) -> None:
+def test_create_team_name_exists_new_created(
+    logged_in_client: TestClient, db: Session
+) -> None:
     user = create_random_user(db)
-
-    user_auth_headers = user_authentication_headers(
-        client=client,
-        email=settings.FIRST_SUPERUSER,
-        password=settings.FIRST_SUPERUSER_PASSWORD,
-    )
 
     team = Team(
         name="test copy",
@@ -326,9 +309,8 @@ def test_create_team_name_exists_new_created(client: TestClient, db: Session) ->
     db.commit()
 
     team_in = {"name": "test-copy", "description": "test description"}
-    response = client.post(
+    response = logged_in_client.post(
         f"{settings.API_V1_STR}/teams/",
-        headers=user_auth_headers,
         json=team_in,
     )
 
@@ -350,17 +332,11 @@ def test_create_team_name_exists_new_created(client: TestClient, db: Session) ->
     )  # just to verify the dot slash and characters were added
 
 
-def test_create_team_with_empty_name(client: TestClient) -> None:
-    user_auth_headers = user_authentication_headers(
-        client=client,
-        email=settings.FIRST_SUPERUSER,
-        password=settings.FIRST_SUPERUSER_PASSWORD,
-    )
-
+def test_create_team_with_empty_name(logged_in_client: TestClient) -> None:
     team_in = {"name": "", "description": "test description"}
-    response = client.post(
+
+    response = logged_in_client.post(
         f"{settings.API_V1_STR}/teams/",
-        headers=user_auth_headers,
         json=team_in,
     )
 
@@ -404,20 +380,14 @@ def test_update_team(client: TestClient, db: Session) -> None:
     assert team.description == team_in["description"]
 
 
-def test_update_team_not_found(client: TestClient) -> None:
-    user_auth_headers = user_authentication_headers(
-        client=client,
-        email=settings.FIRST_SUPERUSER,
-        password=settings.FIRST_SUPERUSER_PASSWORD,
-    )
-
+def test_update_team_not_found(logged_in_client: TestClient) -> None:
     team_in = {
         "name": "test updated",
         "description": "test description updated",
     }
-    response = client.put(
+
+    response = logged_in_client.put(
         f"{settings.API_V1_STR}/teams/00000000-0000-0000-0000-000000000000",
-        headers=user_auth_headers,
         json=team_in,
     )
 
@@ -493,16 +463,9 @@ def test_delete_team(client: TestClient, db: Session) -> None:
     assert team_db is None
 
 
-def test_delete_team_not_found(client: TestClient) -> None:
-    user_auth_headers = user_authentication_headers(
-        client=client,
-        email=settings.FIRST_SUPERUSER,
-        password=settings.FIRST_SUPERUSER_PASSWORD,
-    )
-
-    response = client.delete(
+def test_delete_team_not_found(logged_in_client: TestClient) -> None:
+    response = logged_in_client.delete(
         f"{settings.API_V1_STR}/teams/00000000-0000-0000-0000-000000000000",
-        headers=user_auth_headers,
     )
 
     assert response.status_code == 404

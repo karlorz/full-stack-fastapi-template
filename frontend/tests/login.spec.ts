@@ -58,18 +58,18 @@ test("Forgot Password link is visible", async ({ page }) => {
 test("Log in with valid email and password ", async ({ page }) => {
   await page.goto("/login")
 
-  await fillForm(page, "admin@example.com", "changethis")
+  await fillForm(page, "sebastian@fastapilabs.com", "secretsecret")
   await page.getByRole("button", { name: "Log In" }).click()
 
   await page.waitForURL("/")
 
-  await expect(page.getByTestId("result")).toContainText("Hi, fastapi admin")
+  await expect(page.getByTestId("result")).toContainText("Hi, Sebastian")
 })
 
 test("Log in with invalid email", async ({ page }) => {
   await page.goto("/login")
 
-  await fillForm(page, "invalidemail", "changethis")
+  await fillForm(page, "invalidemail", "secretsecret")
   await page.getByRole("button", { name: "Log In" }).click()
 
   await expect(page.getByText("Invalid email address")).toBeVisible()
@@ -78,7 +78,7 @@ test("Log in with invalid email", async ({ page }) => {
 test("Log in with invalid password", async ({ page }) => {
   await page.goto("/login")
 
-  await fillForm(page, "admin@example.com", "changethat")
+  await fillForm(page, "sebastian@fastapilabs.com", "changethat")
   await page.getByRole("button", { name: "Log In" }).click()
 
   await expect(page.getByText("Incorrect email or password")).toBeVisible()
@@ -89,12 +89,12 @@ test("Log in with invalid password", async ({ page }) => {
 test("Successful log out", async ({ page }) => {
   await page.goto("/login")
 
-  await fillForm(page, "admin@example.com", "changethis")
+  await fillForm(page, "sebastian@fastapilabs.com", "secretsecret")
   await page.getByRole("button", { name: "Log In" }).click()
 
   await page.waitForURL("/")
 
-  await expect(page.getByTestId("result")).toContainText("Hi, fastapi admin")
+  await expect(page.getByTestId("result")).toContainText("Hi, Sebastian")
 
   await page.getByTestId("user-menu").click()
   await page.getByRole("menuitem", { name: "Log out" }).click()
@@ -105,12 +105,12 @@ test("Successful log out", async ({ page }) => {
 test("Logged-out user cannot access protected routes", async ({ page }) => {
   await page.goto("/login")
 
-  await fillForm(page, "admin@example.com", "changethis")
+  await fillForm(page, "sebastian@fastapilabs.com", "secretsecret")
   await page.getByRole("button", { name: "Log In" }).click()
 
   await page.waitForURL("/")
 
-  await expect(page.getByTestId("result")).toContainText("Hi, fastapi admin")
+  await expect(page.getByTestId("result")).toContainText("Hi, Sebastian")
 
   await page.getByTestId("user-menu").click()
   await page.getByRole("menuitem", { name: "Log out" }).click()

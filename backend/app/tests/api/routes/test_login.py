@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from sqlmodel import Session, select
+from sqlmodel import Session
 
 from app.core.config import MainSettings
 from app.core.security import verify_password
@@ -10,10 +10,10 @@ from app.utils import generate_password_reset_token
 settings = MainSettings.get_settings()
 
 
-def test_get_access_token(client: TestClient) -> None:
+def test_get_access_token(client: TestClient, user: User) -> None:
     login_data = {
-        "username": settings.FIRST_SUPERUSER,
-        "password": settings.FIRST_SUPERUSER_PASSWORD,
+        "username": user.email,
+        "password": "secretsecret",
     }
     r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
     tokens = r.json()
@@ -22,27 +22,25 @@ def test_get_access_token(client: TestClient) -> None:
     assert tokens["access_token"]
 
 
-def test_get_access_token_incorrect_password(client: TestClient) -> None:
+def test_get_access_token_incorrect_password(client: TestClient, user: User) -> None:
     login_data = {
-        "username": settings.FIRST_SUPERUSER,
+        "username": user.email,
         "password": "incorrect",
     }
     r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
     assert r.status_code == 400
 
 
-def test_use_access_token(
-    client: TestClient, superuser_token_headers: dict[str, str]
-) -> None:
-    r = client.post(
+def test_use_access_token(logged_in_client: TestClient) -> None:
+    r = logged_in_client.post(
         f"{settings.API_V1_STR}/login/test-token",
-        headers=superuser_token_headers,
     )
     result = r.json()
     assert r.status_code == 200
     assert "email" in result
 
 
+# TODO: why is this using normal_user_token_headers?
 def test_recovery_password(
     client: TestClient, normal_user_token_headers: dict[str, str]
 ) -> None:
@@ -66,32 +64,25 @@ def test_recovery_password_user_not_exits(
     assert r.status_code == 404
 
 
-def test_reset_password(
-    client: TestClient, superuser_token_headers: dict[str, str], db: Session
-) -> None:
-    token = generate_password_reset_token(email=settings.FIRST_SUPERUSER)
+def test_reset_password(logged_in_client: TestClient, db: Session, user: User) -> None:
+    token = generate_password_reset_token(email=user.email)
     data = {"new_password": "changethis", "token": token}
-    r = client.post(
+    r = logged_in_client.post(
         f"{settings.API_V1_STR}/reset-password/",
-        headers=superuser_token_headers,
         json=data,
     )
     assert r.status_code == 200
     assert r.json() == {"message": "Password updated successfully"}
 
-    user_query = select(User).where(User.email == settings.FIRST_SUPERUSER)
-    user = db.exec(user_query).first()
+    db.refresh(user)
     assert user
     assert verify_password(data["new_password"], user.hashed_password)
 
 
-def test_reset_password_invalid_token(
-    client: TestClient, superuser_token_headers: dict[str, str]
-) -> None:
+def test_reset_password_invalid_token(logged_in_client: TestClient) -> None:
     data = {"new_password": "changethis", "token": "invalid"}
-    r = client.post(
+    r = logged_in_client.post(
         f"{settings.API_V1_STR}/reset-password/",
-        headers=superuser_token_headers,
         json=data,
     )
     response = r.json()

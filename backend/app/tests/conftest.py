@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from datetime import timedelta
 from typing import Any
 
 import pytest
@@ -7,8 +8,9 @@ from redis import Redis
 from sqlmodel import Session, delete
 
 from app.api.deps import get_redis
+from app.core import security
 from app.core.config import CommonSettings, MainSettings
-from app.core.db import engine, init_db
+from app.core.db import engine, init_db, initialize_user
 from app.main import app
 from app.models import (
     App,
@@ -20,7 +22,6 @@ from app.models import (
     WaitingListUser,
 )
 from app.tests.utils.user import authentication_token_from_email
-from app.tests.utils.utils import get_superuser_token_headers
 
 settings = MainSettings.get_settings()
 
@@ -48,14 +49,23 @@ def db() -> Generator[Session, None, None]:
 
 
 @pytest.fixture(scope="module")
+def user(db: Session) -> User:
+    return initialize_user("test-user@example.com", db)
+
+
+@pytest.fixture(scope="module")
 def client() -> Generator[TestClient, None, None]:
     with TestClient(app) as c:
         yield c
 
 
 @pytest.fixture(scope="module")
-def superuser_token_headers(client: TestClient) -> dict[str, str]:
-    return get_superuser_token_headers(client)
+def logged_in_client(client: TestClient, user: User) -> TestClient:
+    access_token = security.create_access_token(user.id, timedelta(minutes=30))
+
+    client.headers.update({"Authorization": f"Bearer {access_token}"})
+
+    return client
 
 
 @pytest.fixture(scope="module")

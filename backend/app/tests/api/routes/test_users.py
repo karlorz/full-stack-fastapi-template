@@ -52,52 +52,46 @@ def test_update_user_me_full_name(
 
 
 def test_update_password_me(
-    client: TestClient, superuser_token_headers: dict[str, str], db: Session
+    user: User, logged_in_client: TestClient, db: Session
 ) -> None:
     new_password = random_lower_string()
     data = {
-        "current_password": settings.FIRST_SUPERUSER_PASSWORD,
+        "current_password": "secretsecret",
         "new_password": new_password,
     }
-    r = client.patch(
+    r = logged_in_client.patch(
         f"{settings.API_V1_STR}/users/me/password",
-        headers=superuser_token_headers,
         json=data,
     )
     assert r.status_code == 200
     updated_user = r.json()
     assert updated_user["message"] == "Password updated successfully"
 
-    user_query = select(User).where(User.email == settings.FIRST_SUPERUSER)
-    user_db = db.exec(user_query).first()
-    assert user_db
-    assert user_db.email == settings.FIRST_SUPERUSER
-    assert verify_password(new_password, user_db.hashed_password)
+    db.refresh(user)
+    assert verify_password(new_password, user.hashed_password)
 
     # Revert to the old password to keep consistency in test
     old_data = {
         "current_password": new_password,
-        "new_password": settings.FIRST_SUPERUSER_PASSWORD,
+        "new_password": "secretsecret",
     }
-    r = client.patch(
+
+    r = logged_in_client.patch(
         f"{settings.API_V1_STR}/users/me/password",
-        headers=superuser_token_headers,
         json=old_data,
     )
-    db.refresh(user_db)
+
+    db.refresh(user)
 
     assert r.status_code == 200
-    assert verify_password(settings.FIRST_SUPERUSER_PASSWORD, user_db.hashed_password)
+    assert verify_password("secretsecret", user.hashed_password)
 
 
-def test_update_password_me_incorrect_password(
-    client: TestClient, superuser_token_headers: dict[str, str]
-) -> None:
+def test_update_password_me_incorrect_password(logged_in_client: TestClient) -> None:
     new_password = random_lower_string()
     data = {"current_password": new_password, "new_password": new_password}
-    r = client.patch(
+    r = logged_in_client.patch(
         f"{settings.API_V1_STR}/users/me/password",
-        headers=superuser_token_headers,
         json=data,
     )
     assert r.status_code == 400
@@ -175,18 +169,17 @@ def test_update_user_email_me(client: TestClient, db: Session) -> None:
     assert user_db
 
 
-def test_update_password_me_same_password_error(
-    client: TestClient, superuser_token_headers: dict[str, str]
-) -> None:
+def test_update_password_me_same_password_error(logged_in_client: TestClient) -> None:
     data = {
-        "current_password": settings.FIRST_SUPERUSER_PASSWORD,
-        "new_password": settings.FIRST_SUPERUSER_PASSWORD,
+        "current_password": "secretsecret",
+        "new_password": "secretsecret",
     }
-    r = client.patch(
+
+    r = logged_in_client.patch(
         f"{settings.API_V1_STR}/users/me/password",
-        headers=superuser_token_headers,
         json=data,
     )
+
     assert r.status_code == 400
     updated_user = r.json()
     assert (
@@ -474,7 +467,7 @@ def test_add_to_waiting_list_email_already_registered_in_system(
         ),
     ):
         user_in = UserCreate(
-            email="alejandra@fastapilabs.com",
+            email="existing@fastapilabs.com",
             password="totally-legit",
             full_name="John Doe",
             is_active=True,
@@ -508,7 +501,7 @@ def test_signup_with_waiting_list_email_allowed(
         patch("app.utils.send_email", return_value=None),
         patch.object(MainSettings, "get_settings", return_value=test_settings),
     ):
-        user_in = WaitingListUserCreate(email="sebastian@fastapilabs.com")
+        user_in = WaitingListUserCreate(email="testing@fastapilabs.com")
         user = crud.add_to_waiting_list(session=db, user_in=user_in)
         user.allowed_at = datetime.now()
         db.add(user)
@@ -524,7 +517,7 @@ def test_signup_with_waiting_list_email_allowed(
         assert r.status_code == 200
         response = r.json()
 
-        assert response["email"] == "sebastian@fastapilabs.com"
+        assert response["email"] == "testing@fastapilabs.com"
         assert response["full_name"] == "John Doe"
 
 

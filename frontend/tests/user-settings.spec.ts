@@ -283,7 +283,7 @@ test("Selected mode is preserved across sessions", async ({ page }) => {
   expect(isDarkMode).toBe(true)
 
   await logOutUser(page)
-  await logInUser(page, "admin@example.com", "changethis")
+  await logInUser(page, "sebastian@fastapilabs.com", "secretsecret")
 
   isDarkMode = await page.evaluate(() =>
     document.documentElement.classList.contains("dark"),
