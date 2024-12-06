@@ -319,6 +319,7 @@
 
 ### Internal
 
+* ♻️ Remove unused code. PR [#546](https://github.com/fastapilabs/cloud/pull/546) by [@patrick91](https://github.com/patrick91).
 * 🔨 Update script to set vars in GitHub And Cloudflare, pin dependencies. PR [#536](https://github.com/fastapilabs/cloud/pull/536) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Update httpx requirement from <0.28.0,>=0.27.0 to >=0.27.0,<0.29.0. PR [#535](https://github.com/fastapilabs/cloud/pull/535) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump astral-sh/setup-uv from 3 to 4. PR [#525](https://github.com/fastapilabs/cloud/pull/525) by [@dependabot[bot]](https://github.com/apps/dependabot).
