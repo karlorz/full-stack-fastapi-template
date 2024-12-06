@@ -464,12 +464,6 @@ export type InvitationsVerifyInvitationData = {
 
 export type InvitationsVerifyInvitationResponse = InvitationPublic
 
-export type InvitationsInvitationHtmlContentData = {
-  invitationId: string
-}
-
-export type InvitationsInvitationHtmlContentResponse = string
-
 export type InvitationsDeleteInvitationData = {
   invId: string
 }
@@ -519,12 +513,6 @@ export type LoginResetPasswordData = {
 }
 
 export type LoginResetPasswordResponse = Message
-
-export type LoginRecoverPasswordHtmlContentData = {
-  email: string
-}
-
-export type LoginRecoverPasswordHtmlContentResponse = string
 
 export type PrivateCreateUserData = {
   requestBody: CreateUser
@@ -653,22 +641,10 @@ export type UsersVerifyEmailTokenData = {
 
 export type UsersVerifyEmailTokenResponse = unknown
 
-export type UsersVerifyEmailHtmlContentData = {
-  email: string
-}
-
-export type UsersVerifyEmailHtmlContentResponse = string
-
 export type UsersAddToWaitingListData = {
   requestBody: WaitingListUserCreate
 }
 
 export type UsersAddToWaitingListResponse = Message
-
-export type UtilsTestEmailData = {
-  emailTo: string
-}
-
-export type UtilsTestEmailResponse = Message
 
 export type UtilsHealthCheckResponse = HealthCheckResponse

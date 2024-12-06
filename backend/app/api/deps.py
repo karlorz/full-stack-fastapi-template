@@ -79,17 +79,6 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
-def get_first_superuser(current_user: CurrentUser) -> User:
-    settings = MainSettings.get_settings()
-    if current_user.email != settings.FIRST_SUPERUSER:
-        raise HTTPException(
-            status_code=403,
-            detail="The user doesn't have enough permissions to execute this action",
-        )
-
-    return current_user
-
-
 def _rate_limit_per_minute(request: Request, redis: RedisDep, limit: int) -> None:
     host_ip = request.client and request.client.host or "unknown"
     current_path = request.url.path

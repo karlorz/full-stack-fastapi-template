@@ -3,14 +3,12 @@ from typing import Any
 
 import emailable  # type: ignore
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import HTMLResponse
 from sqlmodel import select
 
 from app import crud
 from app.api.deps import (
     CurrentUser,
     SessionDep,
-    get_first_superuser,
     rate_limit_5_per_minute,
 )
 from app.api.utils.teams import generate_team_slug_name
@@ -234,30 +232,6 @@ def verify_email_token(session: SessionDep, payload: EmailVerificationToken) -> 
     session.add(user_team_link)
     session.commit()
     return Message(message="Email successfully verified")
-
-
-@router.post(
-    "/verify-email-html-content/{email}",
-    dependencies=[Depends(get_first_superuser)],
-    response_class=HTMLResponse,
-)
-def verify_email_html_content(email: str, session: SessionDep) -> Any:
-    """
-    HTML Content for Email verification email
-    """
-    user = crud.get_user_by_email(session=session, email=email)
-
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="The user with this username does not exist in the system.",
-        )
-
-    token = generate_verification_email_token(email=email)
-    email_data = generate_verification_email(email_to=email, token=token)
-    return HTMLResponse(
-        content=email_data.html_content, headers={"subject:": email_data.subject}
-    )
 
 
 @router.post("/waiting-list", dependencies=[Depends(rate_limit_5_per_minute)])

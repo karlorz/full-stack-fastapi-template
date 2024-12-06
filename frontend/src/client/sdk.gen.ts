@@ -46,8 +46,6 @@ import type {
   InvitationsAcceptInvitationResponse,
   InvitationsVerifyInvitationData,
   InvitationsVerifyInvitationResponse,
-  InvitationsInvitationHtmlContentData,
-  InvitationsInvitationHtmlContentResponse,
   InvitationsDeleteInvitationData,
   InvitationsDeleteInvitationResponse,
   LoginLoginAccessTokenData,
@@ -65,8 +63,6 @@ import type {
   LoginRecoverPasswordResponse,
   LoginResetPasswordData,
   LoginResetPasswordResponse,
-  LoginRecoverPasswordHtmlContentData,
-  LoginRecoverPasswordHtmlContentResponse,
   PrivateCreateUserData,
   PrivateCreateUserResponse,
   PrivateCreateTeamData,
@@ -107,12 +103,8 @@ import type {
   UsersRegisterUserResponse,
   UsersVerifyEmailTokenData,
   UsersVerifyEmailTokenResponse,
-  UsersVerifyEmailHtmlContentData,
-  UsersVerifyEmailHtmlContentResponse,
   UsersAddToWaitingListData,
   UsersAddToWaitingListResponse,
-  UtilsTestEmailData,
-  UtilsTestEmailResponse,
   UtilsHealthCheckResponse,
 } from "./types.gen"
 
@@ -648,29 +640,6 @@ export class InvitationsService {
   }
 
   /**
-   * Invitation Html Content
-   * HTML Content for Invitation email
-   * @param data The data for the request.
-   * @param data.invitationId
-   * @returns string Successful Response
-   * @throws ApiError
-   */
-  public static invitationHtmlContent(
-    data: InvitationsInvitationHtmlContentData,
-  ): CancelablePromise<InvitationsInvitationHtmlContentResponse> {
-    return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/invitations/team-invitation-html-content/{invitation_id}",
-      path: {
-        invitation_id: data.invitationId,
-      },
-      errors: {
-        422: "Validation Error",
-      },
-    })
-  }
-
-  /**
    * Delete Invitation
    * Delete an invitation.
    * @param data The data for the request.
@@ -856,29 +825,6 @@ export class LoginService {
       url: "/api/v1/reset-password/",
       body: data.requestBody,
       mediaType: "application/json",
-      errors: {
-        422: "Validation Error",
-      },
-    })
-  }
-
-  /**
-   * Recover Password Html Content
-   * HTML Content for Password Recovery
-   * @param data The data for the request.
-   * @param data.email
-   * @returns string Successful Response
-   * @throws ApiError
-   */
-  public static recoverPasswordHtmlContent(
-    data: LoginRecoverPasswordHtmlContentData,
-  ): CancelablePromise<LoginRecoverPasswordHtmlContentResponse> {
-    return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/password-recovery-html-content/{email}",
-      path: {
-        email: data.email,
-      },
       errors: {
         422: "Validation Error",
       },
@@ -1363,29 +1309,6 @@ export class UsersService {
   }
 
   /**
-   * Verify Email Html Content
-   * HTML Content for Email verification email
-   * @param data The data for the request.
-   * @param data.email
-   * @returns string Successful Response
-   * @throws ApiError
-   */
-  public static verifyEmailHtmlContent(
-    data: UsersVerifyEmailHtmlContentData,
-  ): CancelablePromise<UsersVerifyEmailHtmlContentResponse> {
-    return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/users/verify-email-html-content/{email}",
-      path: {
-        email: data.email,
-      },
-      errors: {
-        422: "Validation Error",
-      },
-    })
-  }
-
-  /**
    * Add To Waiting List
    * Add user to waiting list
    * @param data The data for the request.
@@ -1409,29 +1332,6 @@ export class UsersService {
 }
 
 export class UtilsService {
-  /**
-   * Test Email
-   * Test emails.
-   * @param data The data for the request.
-   * @param data.emailTo
-   * @returns Message Successful Response
-   * @throws ApiError
-   */
-  public static testEmail(
-    data: UtilsTestEmailData,
-  ): CancelablePromise<UtilsTestEmailResponse> {
-    return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/utils/test-email/",
-      query: {
-        email_to: data.emailTo,
-      },
-      errors: {
-        422: "Validation Error",
-      },
-    })
-  }
-
   /**
    * Health Check
    * Health check.

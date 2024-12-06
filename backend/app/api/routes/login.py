@@ -2,7 +2,6 @@ from datetime import timedelta
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
-from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 
@@ -11,7 +10,6 @@ from app.api.deps import (
     CurrentUser,
     RedisDep,
     SessionDep,
-    get_first_superuser,
     rate_limit_5_per_minute,
     rate_limit_20_per_minute,
 )
@@ -266,29 +264,3 @@ def reset_password(session: SessionDep, body: NewPassword) -> Message:
     session.add(user)
     session.commit()
     return Message(message="Password updated successfully")
-
-
-@router.post(
-    "/password-recovery-html-content/{email}",
-    dependencies=[Depends(get_first_superuser)],
-    response_class=HTMLResponse,
-)
-def recover_password_html_content(email: str, session: SessionDep) -> Any:
-    """
-    HTML Content for Password Recovery
-    """
-    user = crud.get_user_by_email(session=session, email=email)
-
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="The user with this username does not exist in the system.",
-        )
-    password_reset_token = generate_password_reset_token(email=email)
-    email_data = generate_reset_password_email(
-        email_to=user.email, email=email, token=password_reset_token
-    )
-
-    return HTMLResponse(
-        content=email_data.html_content, headers={"subject:": email_data.subject}
-    )
