@@ -102,7 +102,7 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
           </>
         ) : mutation.isSuccess ? (
           <>
-            <DialogHeader>Invitation Sent!</DialogHeader>
+            <DialogHeader as="h2">Invitation Sent!</DialogHeader>
             <DialogBody>
               <Center>
                 <Lottie

@@ -1,5 +1,5 @@
-import { Center, Table } from "@chakra-ui/react"
-import { Link } from "@tanstack/react-router"
+import { Center, Flex, Separator, Text } from "@chakra-ui/react"
+import { Link as RouterLink } from "@tanstack/react-router"
 
 import { EmptyBox } from "@/assets/icons"
 import type { DeploymentPublic } from "@/client"
@@ -9,44 +9,38 @@ import EmptyState from "../Common/EmptyState"
 const Deployments = ({
   deployments,
 }: { deployments: Array<DeploymentPublic> }) => {
-  const headers = ["Deployment ID", "Status", "Created At"]
-
   return (
     <>
       {deployments?.length > 0 ? (
         <>
-          <Table.Root variant="outline" mt="4" interactive>
-            <Table.Header>
-              <Table.Row>
-                {headers.map((header) => (
-                  <Table.ColumnHeader
-                    key={header}
-                    textTransform="capitalize"
-                    w="33%"
-                  >
-                    {header}
-                  </Table.ColumnHeader>
-                ))}
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {deployments.map((deployment: DeploymentPublic) => (
-                <Table.Row key={deployment.id}>
-                  <Table.Cell>
-                    <Link to={`./deployments/${deployment.id}`}>
-                      {deployment.id}
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Status deployment={deployment} />
-                  </Table.Cell>
-                  <Table.Cell>
-                    {new Date(deployment.created_at).toLocaleString()}
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table.Root>
+          {deployments.map((deployment: DeploymentPublic) => (
+            <>
+              <RouterLink to={`./deployments/${deployment.id}`}>
+                <Flex
+                  key={deployment.id}
+                  align="center"
+                  justify="space-between"
+                  mb={2}
+                  p={4}
+                  cursor="pointer"
+                >
+                  <Flex justify="space-between" width="100%">
+                    <Flex direction="column">
+                      <Text className="main-link">{deployment.id}</Text>
+                      <Text fontSize="xs">
+                        <Status deployment={deployment} />
+                      </Text>
+                    </Flex>
+                    <Text fontSize="xs" color="gray.500">
+                      Created At:{" "}
+                      {new Date(deployment.created_at).toLocaleString()}
+                    </Text>
+                  </Flex>
+                </Flex>
+              </RouterLink>
+              <Separator />
+            </>
+          ))}
         </>
       ) : (
         <Center w="full">

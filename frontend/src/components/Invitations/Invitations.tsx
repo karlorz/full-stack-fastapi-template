@@ -63,6 +63,7 @@ function Invitations({ teamId }: { teamId: string }) {
             size={{ base: "sm", md: "md" }}
             variant="outline"
             interactive
+            borderRadius={4}
           >
             <Table.Header>
               <Table.Row>

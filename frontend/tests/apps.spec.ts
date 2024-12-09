@@ -89,7 +89,7 @@ test.describe("User can manage apps succesfully", () => {
     await page.goto(`/${team.slug}/apps`)
 
     for (const appName of appNames) {
-      await expect(page.getByRole("cell", { name: appName })).toBeVisible()
+      await expect(page.getByRole("link", { name: appName })).toBeVisible()
     }
   })
 
@@ -114,7 +114,7 @@ test.describe("User can manage apps succesfully", () => {
     await createApp(page, team.slug, appName)
 
     await page.goto(`/${team.slug}/apps`)
-    await expect(page.getByRole("cell", { name: appName })).toBeVisible()
+    await expect(page.getByRole("link", { name: appName })).toBeVisible()
 
     await page.getByRole("link", { name: appName }).click()
     await page.goto(`/${team.slug}/apps/${appSlug}`)

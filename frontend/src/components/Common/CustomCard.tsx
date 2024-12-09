@@ -9,6 +9,7 @@ interface CustomCardProps extends BoxProps {
 const CustomCard = ({ title, children, ...props }: CustomCardProps) => {
   return (
     <Box
+      zIndex="auto"
       id="card"
       borderRadius="md"
       px={8}

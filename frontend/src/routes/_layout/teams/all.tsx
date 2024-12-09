@@ -4,7 +4,7 @@ import {
   Container,
   Flex,
   Heading,
-  Table,
+  Separator,
   Text,
 } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
@@ -103,24 +103,18 @@ function AllTeams() {
       </Box>
 
       <CustomCard>
-        <Table.Root
-          size={{ base: "sm", md: "md" }}
-          variant="outline"
-          data-testid="teams-table"
-          interactive
-        >
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeader textTransform="capitalize">
-                Name
-              </Table.ColumnHeader>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {teams.map((team) => (
-              <Table.Row key={team.id}>
-                <Table.Cell>
-                  <RouterLink to={`/${team.slug}/`}>{team.name}</RouterLink>
+        <Flex direction="column" data-testid="teams">
+          {teams.map((team) => (
+            <>
+              <RouterLink to={`/${team.slug}/`}>
+                <Flex
+                  key={team.id}
+                  align="center"
+                  mb={2}
+                  py={4}
+                  cursor="pointer"
+                >
+                  <Text>{team.name}</Text>
                   {team.is_personal_team ? (
                     <Badge ml={2}>Personal</Badge>
                   ) : team.owner_id === currentUser?.id ? (
@@ -130,11 +124,12 @@ function AllTeams() {
                   ) : (
                     <Badge ml={2}>Member</Badge>
                   )}
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
+                </Flex>
+              </RouterLink>
+              <Separator />
+            </>
+          ))}
+        </Flex>
         <Flex justifyContent="flex-end" mt={4}>
           <PaginationRoot
             count={count}

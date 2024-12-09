@@ -38,13 +38,18 @@ function Team() {
   const currentUserRole = getCurrentUserRole(team, currentUser)
 
   const headers = ["Email", "Role"]
-  if (currentUserRole === "admin") {
+  if (currentUserRole === "member") {
     headers.push("Actions")
   }
 
   return (
     <Container maxW="full" p={0}>
-      <Table.Root size={{ base: "sm", md: "md" }} variant="outline" interactive>
+      <Table.Root
+        size={{ base: "sm", md: "md" }}
+        variant="outline"
+        interactive
+        borderRadius={4}
+      >
         <Table.Header>
           <Table.Row>
             {headers.map((header) => (

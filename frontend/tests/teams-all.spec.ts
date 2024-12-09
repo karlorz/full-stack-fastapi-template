@@ -9,7 +9,7 @@ test("All teams is visible", async ({ page }) => {
 
 test("All teams table is visible", async ({ page }) => {
   await page.goto("/teams/all")
-  await expect(page.getByTestId("teams-table")).toBeVisible()
+  await expect(page.getByTestId("teams")).toBeVisible()
 })
 
 test("User can see all teams they belong to", async ({ page }) => {
@@ -22,6 +22,6 @@ test("User can see all teams they belong to", async ({ page }) => {
   await page.goto("/teams/all")
 
   for (const teamName of teamsName) {
-    await expect(page.getByRole("cell", { name: teamName })).toBeVisible()
+    await expect(page.getByRole("link", { name: teamName })).toBeVisible()
   }
 })

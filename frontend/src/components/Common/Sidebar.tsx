@@ -38,10 +38,12 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
   return (
     <>
       {/* Mobile */}
-      <DrawerRoot size="sm">
+      <DrawerRoot size="sm" placement="start">
         <DrawerBackdrop />
         <DrawerTrigger asChild>
           <IconButton
+            variant="ghost"
+            color="inherit"
             display={{ base: "flex", md: "none" }}
             aria-label="Open Menu"
             position="absolute"

@@ -1,4 +1,11 @@
-import { Button, Container, Flex, Heading, Table, Text } from "@chakra-ui/react"
+import {
+  Button,
+  Container,
+  Flex,
+  Heading,
+  Separator,
+  Text,
+} from "@chakra-ui/react"
 import {
   Link as RouterLink,
   createFileRoute,
@@ -80,7 +87,6 @@ export const Route = createFileRoute("/_layout/$team/apps/")({
 })
 
 function Apps() {
-  const headers = ["name", "slug", "created at"]
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
     navigate({
@@ -107,46 +113,33 @@ function Apps() {
       {apps?.length > 0 ? (
         <>
           <CustomCard>
-            <Table.Root
-              size={{ base: "sm", md: "md" }}
-              variant="outline"
-              interactive
-            >
-              <Table.Header>
-                <Table.Row>
-                  {headers.map((header) => (
-                    <Table.ColumnHeader
-                      key={header}
-                      textTransform="capitalize"
-                      w="33%"
+            <Flex direction="column">
+              {apps.map(({ id, name, slug, created_at }) => (
+                <>
+                  <RouterLink to={`/$team/apps/${slug}/`}>
+                    <Flex
+                      key={id}
+                      align="center"
+                      display="column"
+                      mb={2}
+                      py={4}
+                      cursor="pointer"
                     >
-                      {header}
-                    </Table.ColumnHeader>
-                  ))}
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {apps.map(({ id, name, slug, created_at }) => (
-                  <Table.Row key={id}>
-                    <Table.Cell>
-                      <RouterLink
-                        to={`/$team/apps/${slug}/`}
-                        style={{
-                          display: "inline-block",
-                          minWidth: "20%",
-                        }}
-                      >
-                        {name}
-                      </RouterLink>
-                    </Table.Cell>
-                    <Table.Cell>{slug}</Table.Cell>
-                    <Table.Cell>
-                      {new Date(created_at).toLocaleString()}
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table.Root>
+                      <Flex justify="space-between" width="100%">
+                        <Flex direction="column">
+                          <Text className="main-link">{name}</Text>
+                          <Text fontSize="xs">{slug}</Text>
+                        </Flex>
+                        <Text fontSize="xs" color="gray.500">
+                          Created At: {new Date(created_at).toLocaleString()}
+                        </Text>
+                      </Flex>
+                    </Flex>
+                  </RouterLink>
+                  <Separator />
+                </>
+              ))}
+            </Flex>
             <Flex justifyContent="flex-end" mt={4}>
               <PaginationRoot
                 count={count}

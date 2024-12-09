@@ -21,6 +21,11 @@ export const system = createSystem(defaultConfig, {
       borderColor: "main.light",
       outline: "none",
     },
+    h2: {
+      fontSize: "1.2rem",
+      fontFamily: "heading",
+      fontWeight: "bold",
+    },
   },
   theme: {
     tokens: {
