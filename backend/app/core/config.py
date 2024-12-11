@@ -55,7 +55,14 @@ def _get_single_settings_instance(cls: type[TSettingsEnv]) -> TSettingsEnv:
 class SettingsEnv(BaseSettings):
     model_config = SettingsConfigDict(
         # Use top level .env file (one level above ./backend/)
-        env_file="../.env",
+        env_file=(
+            # Called from cloud/
+            ".env",
+            ".env.override",
+            # Called from cloud/backend
+            "../.env",
+            "../.env.override",
+        ),
         env_ignore_empty=True,
         extra="ignore",
     )

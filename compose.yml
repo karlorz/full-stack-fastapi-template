@@ -49,6 +49,8 @@ services:
     command: bash scripts/prestart.sh
     env_file:
       - .env
+      - path: .env.override
+        required: false
     environment:
       - POSTGRES_SERVER=db
       - REDIS_SERVER=redis
@@ -89,10 +91,13 @@ services:
       - "app/main.py"
     env_file:
       - .env
+      - path: .env.override
+        required: false
     environment:
       - POSTGRES_SERVER=db
       - REDIS_SERVER=redis
       - SMTP_HOST=mailcatcher
+      - BUILDER_API_URL=http://builder:8080
     develop:
       watch:
         - path: ./backend
@@ -116,9 +121,12 @@ services:
     privileged: true
     env_file:
       - .env
+      - path: .env.override
+        required: false
     environment:
       - CI=true
       - POSTGRES_SERVER=db
+      - BUILDER_API_URL=http://builder:8080
     develop:
       watch:
         - path: ./backend

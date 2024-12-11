@@ -121,6 +121,7 @@ jobs:
         DOCKER_IMAGE_FRONTEND: "${{ vars.DOCKER_IMAGE_FRONTEND }}"
         AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
         ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
+        AWS_SQS_BUILDER_QUEUE_NAME: "${{ vars.AWS_SQS_BUILDER_QUEUE_NAME }}"
         BUILDER_API_URL: "${{ vars.BUILDER_API_URL }}"
         SECRET_KEY: "${{ secrets.SECRET_KEY }}"
         FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
@@ -129,6 +130,8 @@ jobs:
         EMAILABLE_KEY: "${{ secrets.EMAILABLE_KEY }}"
         BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
         LOGFIRE_TOKEN: "${{ secrets.LOGFIRE_TOKEN }}"
+        # Override .env
+        AWS_ENDPOINT_URL: ""
     - name: Update Knative Service image
       run: uv run typer --func deploy_cloud app.docker_builder run api $IMAGE_URL --min-scale 1
       working-directory: backend

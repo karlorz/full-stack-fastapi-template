@@ -51,6 +51,8 @@ spec:
             value: "${POSTGRES_PASSWORD}"
           - name: BUILDER_API_KEY
             value: "${BUILDER_API_KEY}"
+          - name: BUILDER_API_URL
+            value: "${BUILDER_API_URL}"
           - name: DEPOT_PROJECT_ID
             value: "${DEPOT_PROJECT_ID}"
           - name: DEPOT_TOKEN
