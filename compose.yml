@@ -97,6 +97,7 @@ services:
       - POSTGRES_SERVER=db
       - REDIS_SERVER=redis
       - SMTP_HOST=mailcatcher
+      - AWS_ENDPOINT_URL=http://localstack:4566
       - BUILDER_API_URL=http://builder:8080
     develop:
       watch:
@@ -126,6 +127,7 @@ services:
     environment:
       - CI=true
       - POSTGRES_SERVER=db
+      - AWS_ENDPOINT_URL=http://localstack:4566
       - BUILDER_API_URL=http://builder:8080
     develop:
       watch:
@@ -148,6 +150,41 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+
+  messenger:
+    build:
+      context: ./backend
+    depends_on:
+      localstack:
+        condition: service_healthy
+        restart: true
+      aws-cli:
+        condition: service_completed_successfully
+    # command: sleep infinity  # Infinite loop to keep container alive doing nothing
+    command:
+      - python
+      - -m
+      - app.messenger
+    env_file:
+      - .env
+      - path: .env.override
+        required: false
+    environment:
+      - POSTGRES_SERVER=db
+      - REDIS_SERVER=redis
+      - SMTP_HOST=mailcatcher
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - BUILDER_API_URL=http://builder:8080
+    develop:
+      watch:
+        - path: ./backend
+          action: sync
+          target: /app
+          ignore:
+            - ./backend/.venv
+            - .venv
+        - path: ./backend/pyproject.toml
+          action: rebuild
 
   frontend:
     build:
@@ -181,6 +218,52 @@ services:
     ports:
       - 9323:9323
 
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME:-localstack-main}"
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
+      - DEBUG=${DEBUG:-0}
+    volumes:
+      # Default LocalStack suggested config
+      # - "${LOCALSTACK_VOLUME_DIR:-./localstack-volume}:/var/lib/localstack"
+      # Custom LocalStack config to avoid extra files in repo
+      - localstack-volume:/var/lib/localstack
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://localhost:4566/_localstack/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # To setup localstack
+  aws-cli:
+    image: amazon/aws-cli
+    depends_on:
+      localstack:
+        condition: service_healthy
+        restart: true
+    env_file:
+      - .env
+      - path: .env.override
+        required: false
+    entrypoint: []
+    command: >
+      bash -c "
+      aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket "${AWS_DEPLOYMENT_BUCKET}" --region us-east-1
+      && aws --endpoint-url=http://localstack:4566 sqs create-queue --queue-name "${AWS_SQS_BUILDER_QUEUE_NAME}" --attributes VisibilityTimeout=600
+      "
+
 volumes:
   app-db-data:
   app-redis-data:
+  localstack-volume:

@@ -9,12 +9,11 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
-import boto3
 import logfire
 import sentry_sdk
 from asyncer import syncify
 from botocore.exceptions import ClientError, NoCredentialsError
-from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from kubernetes import client as k8s
 from kubernetes.client.rest import ApiException as K8sApiException
 from pydantic import BaseModel
@@ -22,6 +21,7 @@ from sqlalchemy.orm import joinedload
 from sqlmodel import select
 
 from app import depot_client
+from app.aws_utils import get_ecr_client, get_s3_client
 from app.builder_utils import (
     SessionDep,
     ensure_deployment_is_buildable,
@@ -51,18 +51,15 @@ from app.models import (
 builder_settings = BuilderSettings.get_settings()
 common_settings = CommonSettings.get_settings()
 
-# aws vars
-aws_region = builder_settings.AWS_REGION
 
 # AWS S3 client
-s3 = boto3.client("s3", region_name=aws_region)
+s3 = get_s3_client()
 
 # AWS ECR client
-ecr = boto3.client("ecr", region_name=aws_region)
+ecr = get_ecr_client()
 
 
 # Sentry
-
 if (
     builder_settings.BUILDER_SENTRY_DSN
     and CommonSettings.get_settings().ENVIRONMENT != "local"
@@ -568,11 +565,9 @@ def event_service_handler(event: dict[str, Any], session: SessionDep) -> Any:
 
 
 @app.post("/apps/depot/build", dependencies=[Depends(validate_api_key)])
-async def app_depot_build(
-    message: SendDeploy, session: SessionDep, background_tasks: BackgroundTasks
-) -> Message:
+def app_depot_build(message: SendDeploy, session: SessionDep) -> Message:
     ensure_deployment_is_buildable(message.deployment_id, "api", session)
-    background_tasks.add_task(_app_process_build, message.deployment_id, session)
+    _app_process_build(message.deployment_id, session)
     return Message(message="OK")
 
 
@@ -622,7 +617,3 @@ class HealthCheckResponse(BaseModel):
 @app.get("/health-check/", response_model=HealthCheckResponse)
 def health_check() -> Any:
     return HealthCheckResponse(message="OK")
-
-
-# dump comment
-# TODO: separate service accounts for better security

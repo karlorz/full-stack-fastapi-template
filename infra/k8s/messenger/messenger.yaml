@@ -1,0 +1,75 @@
+# Reference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messenger
+  namespace: fastapicloud
+spec:
+  selector:
+    matchLabels:
+      app: messenger
+  template:
+    metadata:
+      labels:
+        app: messenger
+    spec:
+      serviceAccountName: fastapicloud
+      containers:
+      - name: messenger
+        image: ${IMAGE}
+        command:
+          - python
+          - -m
+          - app.messenger
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        env:
+          - name: ENVIRONMENT
+            value: "${ENVIRONMENT}"
+          - name: AWS_REGION
+            value: "${AWS_REGION}"
+          - name: AWS_DEPLOYMENT_BUCKET
+            value: "${AWS_DEPLOYMENT_BUCKET}"
+          - name: AWS_SQS_BUILDER_QUEUE_NAME
+            value: "${AWS_SQS_BUILDER_QUEUE_NAME}"
+          - name: BUILDER_API_KEY
+            value: "${BUILDER_API_KEY}"
+          - name: BUILDER_API_URL
+            value: "${BUILDER_API_URL}"
+          - name: MESSENGER_SENTRY_DSN
+            value: "${MESSENGER_SENTRY_DSN}"
+          - name: LOGFIRE_TOKEN
+            value: "${LOGFIRE_TOKEN}"
+
+---
+# Reference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: messenger-hpa
+  namespace: fastapicloud
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: messenger
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80

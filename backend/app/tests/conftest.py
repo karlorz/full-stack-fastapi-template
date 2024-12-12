@@ -87,6 +87,7 @@ def common_settings() -> CommonSettings:
         DEPLOYMENTS_DOMAIN="fastapicloud.club",
         BUILDER_API_KEY="peWaQz7UE5uqQcAUpchvq1tyDyq918zaCed84tJJEB8=",
         AWS_DEPLOYMENT_BUCKET="fastapicloud-deployments",
+        BUILDER_API_URL="http://localhost:8088",
     )
 
 

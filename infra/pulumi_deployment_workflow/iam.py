@@ -1,5 +1,6 @@
 import pulumi
 import pulumi_aws as aws
+from pulumi_deployment_workflow import sqs
 from pulumi_deployment_workflow import s3
 from pulumi_deployment_workflow.config import account_id, region
 
@@ -54,6 +55,25 @@ fastapi_cloud_admin_policy = aws.iam.Policy(
                     "Resource": pulumi.Output.concat(
                         s3.aws_deployment_bucket.arn, "/*"
                     ),
+                },
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "sqs:GetQueueAttributes",
+                        "sqs:GetQueueUrl",
+                        "sqs:ListDeadLetterSourceQueues",
+                        "sqs:ListMessageMoveTasks",
+                        "sqs:ListQueues",
+                        "sqs:ListQueueTags",
+                        "sqs:ReceiveMessage",
+                        "sqs:CancelMessageMoveTask",
+                        "sqs:ChangeMessageVisibility",
+                        "sqs:DeleteMessage",
+                        "sqs:SendMessage",
+                        "sqs:StartMessageMoveTask",
+                        "sqs:SetQueueAttributes",
+                    ],
+                    "Resource": sqs.sqs_builder_queue.arn,
                 },
             ],
         }

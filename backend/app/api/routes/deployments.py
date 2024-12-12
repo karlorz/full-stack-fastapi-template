@@ -8,7 +8,8 @@ from sqlmodel import and_, col, select
 
 from app.api.deps import CurrentUser, SessionDep
 from app.api.utils.aws_s3 import generate_presigned_url_post
-from app.core.config import CommonSettings, MainSettings
+from app.aws_utils import get_sqs_client
+from app.core.config import CommonSettings
 from app.crud import get_user_team_link
 from app.models import (
     App,
@@ -20,6 +21,7 @@ from app.models import (
     Message,
 )
 
+sqs = get_sqs_client()
 router = APIRouter()
 
 
@@ -184,6 +186,7 @@ def redeploy_deployment(
     """
     Send to builder to redeploy the deployment.
     """
+    common_settings = CommonSettings.get_settings()
     deployment = session.exec(
         select(Deployment).where(Deployment.id == deployment_id)
     ).first()
@@ -203,8 +206,8 @@ def redeploy_deployment(
         )
 
     response = httpx.post(
-        f"{MainSettings.get_settings().BUILDER_API_URL}/send/deploy",
-        headers={"X-API-KEY": CommonSettings.get_settings().BUILDER_API_KEY},
+        f"{common_settings.BUILDER_API_URL}/send/deploy",
+        headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
         json={"deployment_id": str(deployment_id)},
     )
 
@@ -249,18 +252,9 @@ def upload_complete(
     deployment.status = DeploymentStatus.ready_for_build
     session.commit()
 
-    response = httpx.post(
-        f"{MainSettings.get_settings().BUILDER_API_URL}/apps/depot/build",
-        headers={"X-API-KEY": CommonSettings.get_settings().BUILDER_API_KEY},
-        json={"deployment_id": str(deployment_id)},
-    )
-
-    if response.status_code != 200:
-        try:
-            data = response.json()
-            detail = data.get("detail", "Unknown error")
-        except Exception:
-            detail = "Unknown error"
-        raise HTTPException(status_code=500, detail=detail)
+    queue_url = sqs.get_queue_url(
+        QueueName=CommonSettings.get_settings().AWS_SQS_BUILDER_QUEUE_NAME
+    )["QueueUrl"]
+    sqs.send_message(QueueUrl=queue_url, MessageBody=str(deployment_id))
 
     return Message(message="OK")

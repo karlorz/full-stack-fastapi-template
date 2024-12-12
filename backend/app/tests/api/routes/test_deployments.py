@@ -1,11 +1,10 @@
 import uuid
+from unittest.mock import patch
 
-import respx
 from fastapi.testclient import TestClient
-from httpx import Response
 from sqlmodel import Session, select
 
-from app.core.config import MainSettings
+from app.core.config import CommonSettings, MainSettings
 from app.crud import add_user_to_team
 from app.models import Deployment, Role
 from app.tests.utils.apps import create_deployment_for_app, create_random_app
@@ -14,6 +13,7 @@ from app.tests.utils.user import create_user, user_authentication_headers
 from app.tests.utils.utils import random_email
 
 settings = MainSettings.get_settings()
+common_settings = CommonSettings.get_settings()
 
 
 def test_read_deployments(client: TestClient, db: Session) -> None:
@@ -219,7 +219,6 @@ def test_read_deployment(client: TestClient, db: Session) -> None:
     assert data["dashboard_url"] == deployment.dashboard_url
 
 
-@respx.mock
 def test_upload_complete(client: TestClient, db: Session) -> None:
     user = create_user(
         session=db,
@@ -234,63 +233,23 @@ def test_upload_complete(client: TestClient, db: Session) -> None:
     app = create_random_app(db, team=team)
     deployment = create_deployment_for_app(db, app=app)
 
-    respx.post(
-        f"{MainSettings.get_settings().BUILDER_API_URL}/apps/depot/build",
-        json={"deployment_id": str(deployment.id)},
-    )
-
     user_auth_headers = user_authentication_headers(
         client=client,
         email=user.email,
         password="password12345",
     )
 
-    response = client.post(
-        f"{settings.API_V1_STR}/deployments/{deployment.id}/upload-complete",
-        headers=user_auth_headers,
-    )
+    from app.api.routes.deployments import sqs
 
+    with patch.object(sqs, "send_message") as mock:
+        response = client.post(
+            f"{settings.API_V1_STR}/deployments/{deployment.id}/upload-complete",
+            headers=user_auth_headers,
+        )
+    assert mock.called
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "OK"
-
-
-@respx.mock
-def test_upload_complete_return_500_if_depot_is_erroring(
-    client: TestClient, db: Session
-) -> None:
-    user = create_user(
-        session=db,
-        email=random_email(),
-        password="password12345",
-        full_name="Test User",
-        is_verified=True,
-    )
-    team = create_random_team(db, owner_id=user.id)
-    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
-
-    app = create_random_app(db, team=team)
-    deployment = create_deployment_for_app(db, app=app)
-
-    respx.post(
-        f"{MainSettings.get_settings().BUILDER_API_URL}/apps/depot/build",
-        json={"deployment_id": str(deployment.id)},
-    ).mock(return_value=Response(500))
-
-    user_auth_headers = user_authentication_headers(
-        client=client,
-        email=user.email,
-        password="password12345",
-    )
-
-    response = client.post(
-        f"{settings.API_V1_STR}/deployments/{deployment.id}/upload-complete",
-        headers=user_auth_headers,
-    )
-
-    assert response.status_code == 500
-    data = response.json()
-    assert data["detail"] == "Unknown error"
 
 
 def test_upload_complete_returns_404_if_deployment_not_found(

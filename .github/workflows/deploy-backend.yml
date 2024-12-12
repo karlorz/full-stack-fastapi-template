@@ -165,6 +165,7 @@ jobs:
         DOCKER_IMAGE_FRONTEND: "${{ vars.DOCKER_IMAGE_FRONTEND }}"
         AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
         ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
+        AWS_SQS_BUILDER_QUEUE_NAME: "${{ vars.AWS_SQS_BUILDER_QUEUE_NAME }}"
         DEPOT_PROJECT_ID: "${{ vars.DEPOT_PROJECT_ID }}"
         BUILDER_API_URL: "${{ vars.BUILDER_API_URL }}"
         SECRET_KEY: "${{ secrets.SECRET_KEY }}"
@@ -178,6 +179,8 @@ jobs:
         CLOUDFLARE_ZONE_ID: "${{ vars.CLOUDFLARE_ZONE_ID }}"
         CLOUDFLARE_API_TOKEN_SSL: "${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}"
         LOGFIRE_TOKEN: "${{ secrets.LOGFIRE_TOKEN }}"
+        # Override .env
+        AWS_ENDPOINT_URL: ""
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-backend:  # This job does nothing and is only used for the branch protection
     if: always()

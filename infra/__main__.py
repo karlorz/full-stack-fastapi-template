@@ -3,7 +3,7 @@ import pulumi
 import pulumi_awsx as awsx
 import pulumi_eks as eks
 import pulumi_aws as aws
-from pulumi_deployment_workflow import iam, s3
+from pulumi_deployment_workflow import iam, s3, sqs
 from pulumi_deployment_workflow.config import (
     account_id,
     region,
@@ -294,6 +294,14 @@ repository_docker_builder = aws.ecr.Repository(
     },
 )
 
+repository_messenger = aws.ecr.Repository(
+    "repository-messenger",
+    name="fastapicloud-messenger",
+    image_scanning_configuration={
+        "scan_on_push": True,
+    },
+)
+
 # Export values to use elsewhere
 pulumi.export("kubeconfig_data", eks_cluster.kubeconfig)
 pulumi.export("cluster_name", cluster_name)
@@ -312,3 +320,4 @@ pulumi.export("ecr_registry_id", repository_backend.registry_id)
 pulumi.export("aws_lb_controller_role_arn", aws_lb_controller_role.arn)
 pulumi.export("fastapicloud_iam_role_arn", fastapicloud_iam_role.arn)
 pulumi.export("ecr_iam_role_arn", ecr_iam_role.arn)
+pulumi.export("sqs_builder_queue_name", sqs.sqs_builder_queue.name)

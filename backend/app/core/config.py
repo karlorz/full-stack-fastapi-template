@@ -78,6 +78,10 @@ class CommonSettings(SettingsEnv):
     BUILDER_API_KEY: str
     AWS_DEPLOYMENT_BUCKET: str
     LOGFIRE_TOKEN: str | None = None
+    AWS_ENDPOINT_URL: str | None = None
+    AWS_SQS_BUILDER_QUEUE_NAME: str = "fastapicloud-builder"
+    AWS_REGION: str = "us-east-1"
+    BUILDER_API_URL: str
 
 
 class DBSettings(SettingsEnv):
@@ -194,13 +198,16 @@ class MainSettings(SettingsEnv):
         return self
 
     EMAILABLE_KEY: str
-    BUILDER_API_URL: str
 
 
 class BuilderSettings(SettingsEnv):
     ECR_REGISTRY_URL: str
     AWS_REGION: str
     BUILDER_SENTRY_DSN: HttpUrl | None = None
+
+
+class MessengerSettings(SettingsEnv):
+    MESSENGER_SENTRY_DSN: HttpUrl | None = None
 
 
 class DepotSettings(SettingsEnv):

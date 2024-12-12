@@ -61,7 +61,7 @@ jobs:
         with:
           limit-access-to-actor: true
       - run: docker compose down -v --remove-orphans
-      - run: docker compose up -d db redis mailcatcher
+      - run: docker compose up -d db redis mailcatcher aws-cli
       - name: Migrate DB
         run: uv run bash scripts/prestart.sh
         working-directory: backend
