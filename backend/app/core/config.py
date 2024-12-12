@@ -78,10 +78,18 @@ class CommonSettings(SettingsEnv):
     BUILDER_API_KEY: str
     AWS_DEPLOYMENT_BUCKET: str
     LOGFIRE_TOKEN: str | None = None
-    AWS_ENDPOINT_URL: str | None = None
+    LOCALSTACK_HOST_NAME: str | None = None
+    ENABLE_LOCALSTACK: bool = False
     AWS_SQS_BUILDER_QUEUE_NAME: str = "fastapicloud-builder"
     AWS_REGION: str = "us-east-1"
     BUILDER_API_URL: str
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def aws_endpoint_url(self) -> str | None:
+        if self.ENABLE_LOCALSTACK and self.LOCALSTACK_HOST_NAME:
+            return f"http://{self.LOCALSTACK_HOST_NAME}:4566"
+        return None
 
 
 class DBSettings(SettingsEnv):

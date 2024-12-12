@@ -97,7 +97,7 @@ services:
       - POSTGRES_SERVER=db
       - REDIS_SERVER=redis
       - SMTP_HOST=mailcatcher
-      - AWS_ENDPOINT_URL=http://localstack:4566
+      - LOCALSTACK_HOST_NAME=localstack
       - BUILDER_API_URL=http://builder:8080
     develop:
       watch:
@@ -127,7 +127,7 @@ services:
     environment:
       - CI=true
       - POSTGRES_SERVER=db
-      - AWS_ENDPOINT_URL=http://localstack:4566
+      - LOCALSTACK_HOST_NAME=localstack
       - BUILDER_API_URL=http://builder:8080
     develop:
       watch:
@@ -173,7 +173,7 @@ services:
       - POSTGRES_SERVER=db
       - REDIS_SERVER=redis
       - SMTP_HOST=mailcatcher
-      - AWS_ENDPOINT_URL=http://localstack:4566
+      - LOCALSTACK_HOST_NAME=localstack
       - BUILDER_API_URL=http://builder:8080
     develop:
       watch:

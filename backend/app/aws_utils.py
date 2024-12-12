@@ -14,7 +14,7 @@ common_settings = CommonSettings.get_settings()
 def get_s3_client() -> S3Client:
     return boto3.client(
         "s3",
-        endpoint_url=common_settings.AWS_ENDPOINT_URL,
+        endpoint_url=common_settings.aws_endpoint_url,
         region_name=common_settings.AWS_REGION,
     )
 
@@ -33,6 +33,6 @@ def get_ecr_client() -> ECRClient:
 def get_sqs_client() -> SQSClient:
     return boto3.client(
         "sqs",
-        endpoint_url=common_settings.AWS_ENDPOINT_URL,
+        endpoint_url=common_settings.aws_endpoint_url,
         region_name=common_settings.AWS_REGION,
     )
