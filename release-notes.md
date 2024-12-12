@@ -111,6 +111,7 @@
 
 ### Fixes
 
+* 👷 Fix localstack config with env vars for CI deployments. PR [#554](https://github.com/fastapilabs/cloud/pull/554) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Handle invalid team or appId URLs using `notFound` utility. PR [#523](https://github.com/fastapilabs/cloud/pull/523) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix service account and permissions for our services. PR [#512](https://github.com/fastapilabs/cloud/pull/512) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Fix deployments from CI, that I broke with the env var. PR [#509](https://github.com/fastapilabs/cloud/pull/509) by [@tiangolo](https://github.com/tiangolo).
