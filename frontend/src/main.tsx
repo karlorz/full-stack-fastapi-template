@@ -9,6 +9,7 @@ import React, { StrictMode } from "react"
 import ReactDOM from "react-dom/client"
 import { routeTree } from "./routeTree.gen"
 
+import * as Sentry from "@sentry/react"
 import { ApiError, OpenAPI } from "./client"
 import { CustomProvider } from "./components/ui/custom-provider"
 
@@ -39,6 +40,13 @@ declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router
   }
+}
+
+if (process.env.NODE_ENV === "production") {
+  Sentry.init({
+    dsn: "https://75a90282fd5039a35d27d87f0e024476@o4506985151856640.ingest.us.sentry.io/4506985170599936",
+    integrations: [Sentry.tanstackRouterBrowserTracingIntegration(router)],
+  })
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
