@@ -323,6 +323,7 @@
 
 ### Internal
 
+* ✨ Add Sentry to frontend. PR [#555](https://github.com/fastapilabs/cloud/pull/555) by [@patrick91](https://github.com/patrick91).
 * ♻️ Remove unused code. PR [#546](https://github.com/fastapilabs/cloud/pull/546) by [@patrick91](https://github.com/patrick91).
 * 🔨 Update script to set vars in GitHub And Cloudflare, pin dependencies. PR [#536](https://github.com/fastapilabs/cloud/pull/536) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Update httpx requirement from <0.28.0,>=0.27.0 to >=0.27.0,<0.29.0. PR [#535](https://github.com/fastapilabs/cloud/pull/535) by [@dependabot[bot]](https://github.com/apps/dependabot).
