@@ -18,9 +18,9 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 settings = MainSettings.get_settings()
 common_settings = CommonSettings.get_settings()
 
-if settings.SENTRY_DSN and common_settings.ENVIRONMENT != "local":
+if settings.BACKEND_SENTRY_DSN and common_settings.ENVIRONMENT != "local":
     sentry_sdk.init(
-        dsn=str(settings.SENTRY_DSN),
+        dsn=str(settings.BACKEND_SENTRY_DSN),
         enable_tracing=True,
         environment=common_settings.ENVIRONMENT,
     )

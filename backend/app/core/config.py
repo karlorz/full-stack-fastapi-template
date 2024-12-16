@@ -148,7 +148,7 @@ class MainSettings(SettingsEnv):
 
     PROJECT_NAME: str = "FastAPI Cloud"
     RESERVED_APP_NAMES: Annotated[list[str] | str, BeforeValidator(parse_list_or_str)]
-    SENTRY_DSN: HttpUrl | None = None
+    BACKEND_SENTRY_DSN: HttpUrl | None = None
 
     REDIS_SERVER: str
     REDIS_PORT: int = 6379
