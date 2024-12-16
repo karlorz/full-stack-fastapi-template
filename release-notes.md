@@ -323,6 +323,7 @@
 
 ### Internal
 
+* ♻️ Add `BACKEND_` prefix to `SENTRY_DSN` environment variable. PR [#557](https://github.com/fastapilabs/cloud/pull/557) by [@patrick91](https://github.com/patrick91).
 * ✨ Add Sentry to frontend. PR [#555](https://github.com/fastapilabs/cloud/pull/555) by [@patrick91](https://github.com/patrick91).
 * ♻️ Remove unused code. PR [#546](https://github.com/fastapilabs/cloud/pull/546) by [@patrick91](https://github.com/patrick91).
 * 🔨 Update script to set vars in GitHub And Cloudflare, pin dependencies. PR [#536](https://github.com/fastapilabs/cloud/pull/536) by [@tiangolo](https://github.com/tiangolo).
