@@ -308,7 +308,7 @@ eval $(bash env-vars-02.sh)
 These GitHub secrets and variables will be set:
 
 * `KUBECONFIG_DATA`
-* `AWS_DEPLOYMENT_BUCKET`
+* `DEPLOYMENTS_BUCKET_NAME`
 * `ECR_REGISTRY_URL`
 * `REDIS_SERVER`
 

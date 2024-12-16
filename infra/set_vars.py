@@ -31,7 +31,7 @@ class GitHubSettings(BaseSettings):
 
     github_token: SecretStr
     kubeconfig_data: str
-    aws_deployment_bucket: str
+    deployments_bucket_name: str
     ecr_registry_url: str
     redis_server: str
     aws_sqs_builder_queue_name: str
@@ -50,10 +50,10 @@ def main():
     environment = repo.get_environment(common_settings.environment)
     logging.info("Updating KUBECONFIG_DATA")
     environment.create_secret("KUBECONFIG_DATA", github_settings.kubeconfig_data)
-    logging.info("Updating AWS_DEPLOYMENT_BUCKET")
-    environment.delete_variable("AWS_DEPLOYMENT_BUCKET")
+    logging.info("Updating DEPLOYMENTS_BUCKET_NAME")
+    environment.delete_variable("DEPLOYMENTS_BUCKET_NAME")
     environment.create_variable(
-        "AWS_DEPLOYMENT_BUCKET", github_settings.aws_deployment_bucket
+        "DEPLOYMENTS_BUCKET_NAME", github_settings.deployments_bucket_name
     )
     logging.info("Updating ECR_REGISTRY_URL")
     environment.delete_variable("ECR_REGISTRY_URL")

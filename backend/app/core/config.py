@@ -76,7 +76,7 @@ class CommonSettings(SettingsEnv):
     DEPLOYMENTS_DOMAIN: str = "fastapicloud.club"
     ENVIRONMENT: Literal["local", "development", "staging", "production"] = "local"
     BUILDER_API_KEY: str
-    AWS_DEPLOYMENT_BUCKET: str
+    DEPLOYMENTS_BUCKET_NAME: str
     LOGFIRE_TOKEN: str | None = None
     LOCALSTACK_HOST_NAME: str | None = None
     ENABLE_LOCALSTACK: bool = False

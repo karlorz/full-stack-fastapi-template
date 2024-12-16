@@ -90,7 +90,7 @@ jobs:
         IMAGE: ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}
         ENVIRONMENT: ${{ matrix.environment }}
         AWS_REGION: "${{ vars.AWS_REGION }}"
-        AWS_DEPLOYMENT_BUCKET: "${{ vars.AWS_DEPLOYMENT_BUCKET }}"
+        DEPLOYMENTS_BUCKET_NAME: "${{ vars.DEPLOYMENTS_BUCKET_NAME }}"
         AWS_SQS_BUILDER_QUEUE_NAME: "${{ vars.AWS_SQS_BUILDER_QUEUE_NAME }}"
         BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
         BUILDER_API_URL: "${{ vars.BUILDER_API_URL }}"

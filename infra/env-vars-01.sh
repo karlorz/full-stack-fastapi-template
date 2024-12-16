@@ -28,9 +28,9 @@ FASTAPICLOUD_IAM_ROLE_ARN="$(pulumi stack output fastapicloud_iam_role_arn --sta
 export FASTAPICLOUD_IAM_ROLE_ARN
 echo "export FASTAPICLOUD_IAM_ROLE_ARN='${FASTAPICLOUD_IAM_ROLE_ARN}'"
 
-AWS_DEPLOYMENT_BUCKET="$(pulumi stack output aws_deployment_bucket --stack fastapilabs/$ENVIRONMENT)"
-export AWS_DEPLOYMENT_BUCKET
-echo "export AWS_DEPLOYMENT_BUCKET='${AWS_DEPLOYMENT_BUCKET}'"
+DEPLOYMENTS_BUCKET_NAME="$(pulumi stack output deployments_bucket_name --stack fastapilabs/$ENVIRONMENT)"
+export DEPLOYMENTS_BUCKET_NAME
+echo "export DEPLOYMENTS_BUCKET_NAME='${DEPLOYMENTS_BUCKET_NAME}'"
 
 ECR_REGISTRY_URL="$(pulumi stack output ecr_registry_url --stack fastapilabs/$ENVIRONMENT)"
 export ECR_REGISTRY_URL

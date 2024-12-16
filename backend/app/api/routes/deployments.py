@@ -166,7 +166,7 @@ def upload_deployment_artifact(
     object_name = f"{app.id}/{deployment.id}.tar"
 
     presigned_url = generate_presigned_url_post(
-        bucket_name=CommonSettings.get_settings().AWS_DEPLOYMENT_BUCKET,
+        bucket_name=CommonSettings.get_settings().DEPLOYMENTS_BUCKET_NAME,
         object_name=object_name,
     )
 

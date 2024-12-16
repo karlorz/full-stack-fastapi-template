@@ -57,8 +57,8 @@ spec:
             value: "${DEPOT_PROJECT_ID}"
           - name: DEPOT_TOKEN
             value: "${DEPOT_TOKEN}"
-          - name: AWS_DEPLOYMENT_BUCKET
-            value: "${AWS_DEPLOYMENT_BUCKET}"
+          - name: DEPLOYMENTS_BUCKET_NAME
+            value: "${DEPLOYMENTS_BUCKET_NAME}"
           - name: BUILDER_SENTRY_DSN
             value: "${BUILDER_SENTRY_DSN}"
           - name: LOGFIRE_TOKEN

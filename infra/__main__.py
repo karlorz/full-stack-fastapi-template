@@ -308,7 +308,7 @@ pulumi.export("cluster_name", cluster_name)
 pulumi.export("vpc_id", eks_vpc.vpc_id)
 pulumi.export("k8s_role_arn", k8s_role_arn)
 pulumi.export("aws_lb_controller_policy", aws_lb_controller_policy.arn)
-pulumi.export("aws_deployment_bucket", s3.aws_deployment_bucket.bucket)
+pulumi.export("deployments_bucket_name", s3.deployments_bucket.bucket)
 pulumi.export("redis_backend", redis_backend.cache_nodes[0].address)
 pulumi.export(
     "ecr_registry_url",

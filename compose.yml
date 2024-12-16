@@ -259,7 +259,7 @@ services:
     entrypoint: []
     command: >
       bash -c "
-      aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket "${AWS_DEPLOYMENT_BUCKET}" --region us-east-1
+      aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket "${DEPLOYMENTS_BUCKET_NAME}" --region us-east-1
       && aws --endpoint-url=http://localstack:4566 sqs create-queue --queue-name "${AWS_SQS_BUILDER_QUEUE_NAME}" --attributes VisibilityTimeout=600
       "
 

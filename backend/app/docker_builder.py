@@ -468,7 +468,7 @@ def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
 
 def _app_process_build(deployment_id: uuid.UUID, session: SessionDep) -> None:
     registry_url = BuilderSettings.get_settings().ECR_REGISTRY_URL
-    bucket_name = CommonSettings.get_settings().AWS_DEPLOYMENT_BUCKET
+    bucket_name = CommonSettings.get_settings().DEPLOYMENTS_BUCKET_NAME
 
     deployment_with_team = session.exec(
         select(Deployment)

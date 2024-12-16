@@ -53,7 +53,7 @@ fastapi_cloud_admin_policy = aws.iam.Policy(
                         "s3:GetObjectVersion",
                     ],
                     "Resource": pulumi.Output.concat(
-                        s3.aws_deployment_bucket.arn, "/*"
+                        s3.deployments_bucket.arn, "/*"
                     ),
                 },
                 {
