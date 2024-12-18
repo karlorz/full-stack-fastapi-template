@@ -111,6 +111,7 @@
 
 ### Fixes
 
+* 🐛 Remove `https` prefix from `dashboard_url`. PR [#561](https://github.com/fastapilabs/cloud/pull/561) by [@patrick91](https://github.com/patrick91).
 * 👷 Fix localstack config with env vars for CI deployments. PR [#554](https://github.com/fastapilabs/cloud/pull/554) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Handle invalid team or appId URLs using `notFound` utility. PR [#523](https://github.com/fastapilabs/cloud/pull/523) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix service account and permissions for our services. PR [#512](https://github.com/fastapilabs/cloud/pull/512) by [@tiangolo](https://github.com/tiangolo).
