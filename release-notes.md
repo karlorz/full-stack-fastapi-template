@@ -323,6 +323,7 @@
 
 ### Internal
 
+* ♻️ Rename `AWS_SQS_BUILDER_QUEUE_NAME` to `BUILDER_QUEUE_NAME`. PR [#559](https://github.com/fastapilabs/cloud/pull/559) by [@patrick91](https://github.com/patrick91).
 * ♻️ Rename `AWS_DEPLOYMENT_BUCKET` to `DEPLOYMENTS_BUCKET_NAME`. PR [#558](https://github.com/fastapilabs/cloud/pull/558) by [@patrick91](https://github.com/patrick91).
 * ♻️ Add `BACKEND_` prefix to `SENTRY_DSN` environment variable. PR [#557](https://github.com/fastapilabs/cloud/pull/557) by [@patrick91](https://github.com/patrick91).
 * ✨ Add Sentry to frontend. PR [#555](https://github.com/fastapilabs/cloud/pull/555) by [@patrick91](https://github.com/patrick91).
