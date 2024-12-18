@@ -35,8 +35,8 @@ spec:
             value: "${AWS_REGION}"
           - name: DEPLOYMENTS_BUCKET_NAME
             value: "${DEPLOYMENTS_BUCKET_NAME}"
-          - name: AWS_SQS_BUILDER_QUEUE_NAME
-            value: "${AWS_SQS_BUILDER_QUEUE_NAME}"
+          - name: BUILDER_QUEUE_NAME
+            value: "${BUILDER_QUEUE_NAME}"
           - name: BUILDER_API_KEY
             value: "${BUILDER_API_KEY}"
           - name: BUILDER_API_URL

@@ -47,7 +47,7 @@ async def process_message(
         response.raise_for_status()
         with logfire.span("Delete message"):
             await asyncify(sqs.delete_message)(
-                QueueUrl=common_settings.AWS_SQS_BUILDER_QUEUE_NAME,
+                QueueUrl=common_settings.BUILDER_QUEUE_NAME,
                 ReceiptHandle=receipt_handle,
             )
 
@@ -55,11 +55,9 @@ async def process_message(
 async def main() -> None:
     # Run in asyncify to not block the event loop, in case we call this function
     # concurrently later
-    with logfire.span(
-        "Process queue: {name}", name=common_settings.AWS_SQS_BUILDER_QUEUE_NAME
-    ):
+    with logfire.span("Process queue: {name}", name=common_settings.BUILDER_QUEUE_NAME):
         queue_url_response = await asyncify(sqs.get_queue_url)(
-            QueueName=common_settings.AWS_SQS_BUILDER_QUEUE_NAME
+            QueueName=common_settings.BUILDER_QUEUE_NAME
         )
         queue_url = queue_url_response.get("QueueUrl")
         assert queue_url

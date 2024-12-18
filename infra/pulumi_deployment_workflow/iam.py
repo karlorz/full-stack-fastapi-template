@@ -73,7 +73,7 @@ fastapi_cloud_admin_policy = aws.iam.Policy(
                         "sqs:StartMessageMoveTask",
                         "sqs:SetQueueAttributes",
                     ],
-                    "Resource": sqs.sqs_builder_queue.arn,
+                    "Resource": sqs.builder_queue.arn,
                 },
             ],
         }

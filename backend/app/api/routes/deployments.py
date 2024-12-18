@@ -253,7 +253,7 @@ def upload_complete(
     session.commit()
 
     queue_url = sqs.get_queue_url(
-        QueueName=CommonSettings.get_settings().AWS_SQS_BUILDER_QUEUE_NAME
+        QueueName=CommonSettings.get_settings().BUILDER_QUEUE_NAME
     )["QueueUrl"]
     sqs.send_message(QueueUrl=queue_url, MessageBody=str(deployment_id))
 

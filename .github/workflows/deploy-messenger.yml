@@ -92,6 +92,7 @@ jobs:
         AWS_REGION: "${{ vars.AWS_REGION }}"
         DEPLOYMENTS_BUCKET_NAME: "${{ vars.DEPLOYMENTS_BUCKET_NAME }}"
         AWS_SQS_BUILDER_QUEUE_NAME: "${{ vars.AWS_SQS_BUILDER_QUEUE_NAME }}"
+        BUILDER_QUEUE_NAME: "${{ vars.BUILDER_QUEUE_NAME }}"
         BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
         BUILDER_API_URL: "${{ vars.BUILDER_API_URL }}"
         MESSENGER_SENTRY_DSN: "${{ secrets.MESSENGER_SENTRY_DSN }}"

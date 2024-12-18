@@ -80,7 +80,7 @@ class CommonSettings(SettingsEnv):
     LOGFIRE_TOKEN: str | None = None
     LOCALSTACK_HOST_NAME: str | None = None
     ENABLE_LOCALSTACK: bool = False
-    AWS_SQS_BUILDER_QUEUE_NAME: str = "fastapicloud-builder"
+    BUILDER_QUEUE_NAME: str = "fastapicloud-builder"
     AWS_REGION: str = "us-east-1"
     BUILDER_API_URL: str
 

@@ -40,8 +40,8 @@ REDIS_SERVER="$(pulumi stack output redis_backend --stack fastapilabs/$ENVIRONME
 export REDIS_SERVER
 echo "export REDIS_SERVER='${REDIS_SERVER}'"
 
-AWS_SQS_BUILDER_QUEUE_NAME="$(pulumi stack output sqs_builder_queue_name --stack fastapilabs/$ENVIRONMENT)"
-export AWS_SQS_BUILDER_QUEUE_NAME
-echo "export AWS_SQS_BUILDER_QUEUE_NAME='${AWS_SQS_BUILDER_QUEUE_NAME}'"
+BUILDER_QUEUE_NAME="$(pulumi stack output builder_queue_name --stack fastapilabs/$ENVIRONMENT)"
+export BUILDER_QUEUE_NAME
+echo "export BUILDER_QUEUE_NAME='${BUILDER_QUEUE_NAME}'"
 
 echo '# Once this works, run it with: eval $(bash env-vars-01.sh)'

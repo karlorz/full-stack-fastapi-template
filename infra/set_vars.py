@@ -34,7 +34,7 @@ class GitHubSettings(BaseSettings):
     deployments_bucket_name: str
     ecr_registry_url: str
     redis_server: str
-    aws_sqs_builder_queue_name: str
+    builder_queue_name: str
 
 
 def main():
@@ -61,10 +61,10 @@ def main():
     logging.info("Updating REDIS_SERVER")
     environment.delete_variable("REDIS_SERVER")
     environment.create_variable("REDIS_SERVER", github_settings.redis_server)
-    logging.info("Updating AWS_SQS_BUILDER_QUEUE_NAME")
-    environment.delete_variable("AWS_SQS_BUILDER_QUEUE_NAME")
+    logging.info("Updating BUILDER_QUEUE_NAME")
+    environment.delete_variable("BUILDER_QUEUE_NAME")
     environment.create_variable(
-        "AWS_SQS_BUILDER_QUEUE_NAME", github_settings.aws_sqs_builder_queue_name
+        "BUILDER_QUEUE_NAME", github_settings.builder_queue_name
     )
 
     cloudflare = Cloudflare(
