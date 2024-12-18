@@ -333,7 +333,7 @@ class Deployment(SQLModel, table=True):
 
     @computed_field
     def dashboard_url(self) -> str:
-        return f"https://{MainSettings.get_settings().FRONTEND_HOST}/{self.app.team.slug}/apps/{self.app.slug}/deployments/{self.id}"
+        return f"{MainSettings.get_settings().FRONTEND_HOST}/{self.app.team.slug}/apps/{self.app.slug}/deployments/{self.id}"
 
 
 class DeploymentPublic(SQLModel):
