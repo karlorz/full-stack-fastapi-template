@@ -29,6 +29,7 @@ interface MenuItemLinkProps {
   label: string | undefined
   onClick?: () => void
   bg: string
+  slug?: string
 }
 
 const MenuItemLink = ({
@@ -38,12 +39,13 @@ const MenuItemLink = ({
   onClick,
   initials,
   bg,
+  slug,
 }: MenuItemLinkProps) => {
   return (
     <Link to={to}>
       <MenuItem
         closeOnSelect
-        value={label || ""}
+        value={slug || ""}
         gap={2}
         px={4}
         onClick={onClick}
@@ -51,6 +53,11 @@ const MenuItemLink = ({
         <TeamIcon bg={bg} icon={icon} initials={initials || ""} />
         <Box width="120px" truncate>
           {label}
+          {slug && (
+            <Text fontSize="2xs" color="gray.600">
+              /{slug}
+            </Text>
+          )}
         </Box>
       </MenuItem>
     </Link>
@@ -64,7 +71,7 @@ const TeamSelector = ({
   const personalTeam = teams?.data.find((t) => t.is_personal_team)
   const selectedTeam = teams?.data.find((t) => t.slug === currentTeamSlug)
   const otherTeams = teams?.data.filter(
-    (t) => !t.is_personal_team && t.name !== selectedTeam?.name,
+    (t) => !t.is_personal_team && t.slug !== selectedTeam?.slug,
   )
 
   return (
@@ -108,12 +115,13 @@ const TeamSelector = ({
                     personalTeam?.name ? getInitials(personalTeam.name) : ""
                   }
                   bg="gradient"
+                  slug={personalTeam?.slug}
                 />
               </MenuItemGroup>
               <MenuSeparator />
             </>
           )}
-          {otherTeams && otherTeams.length > 0 && (
+          {otherTeams?.length > 0 && (
             <>
               <MenuItemGroup title="Teams">
                 <Flex justifyContent="space-between">
@@ -141,6 +149,7 @@ const TeamSelector = ({
                     icon={Users}
                     label={team.name}
                     bg="main.dark"
+                    slug={team.slug}
                   />
                 ))}
               </MenuItemGroup>
