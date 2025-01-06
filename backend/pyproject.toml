@@ -46,6 +46,7 @@ dev-dependencies = [
     "types-docker<8.0.0.0,>=7.1.0.20240827",
     "kubernetes-typed<19.0.0,>=18.20.2",
     "respx>=0.21.1",
+    "pytest-asyncio>=0.23.8",
 ]
 
 [build-system]
