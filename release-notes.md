@@ -325,6 +325,7 @@
 
 ### Internal
 
+* ⬆️ Update Dockerfile to use uv version 0.5.11. PR [#569](https://github.com/fastapilabs/cloud/pull/569) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Add tests for process message. PR [#570](https://github.com/fastapilabs/cloud/pull/570) by [@patrick91](https://github.com/patrick91).
 * ⬆ Bump astral-sh/setup-uv from 4 to 5. PR [#564](https://github.com/fastapilabs/cloud/pull/564) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ♻️ Rename `AWS_SQS_BUILDER_QUEUE_NAME` to `BUILDER_QUEUE_NAME`. PR [#559](https://github.com/fastapilabs/cloud/pull/559) by [@patrick91](https://github.com/patrick91).
