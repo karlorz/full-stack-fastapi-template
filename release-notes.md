@@ -141,6 +141,7 @@
 
 ### Refactors
 
+* ♻️ Refactor builder at port 80001, for local development, support for local debugger for builder and messenger. PR [#574](https://github.com/fastapilabs/cloud/pull/574) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor builder to allow running it locally, using remote Depot, local Docker, registry, Kubernetes/Knative. PR [#560](https://github.com/fastapilabs/cloud/pull/560) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor usage of dotenv files, allow a local override, include backend deploy extra env vars for next PR. PR [#553](https://github.com/fastapilabs/cloud/pull/553) by [@tiangolo](https://github.com/tiangolo).
 * 🎨 UI tweaks. PR [#547](https://github.com/fastapilabs/cloud/pull/547) by [@alejsdev](https://github.com/alejsdev).
