@@ -18,6 +18,19 @@ ENV UV_COMPILE_BYTECODE=1
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#caching
 ENV UV_LINK_MODE=copy
 
+# Install Docker ClI, only needed for local development
+# Ref: https://docs.docker.com/engine/install/debian/
+RUN apt-get update && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+        apt-get update && \
+        apt-get install -y docker-ce-cli
+
 # Set up user
 RUN useradd --create-home -r user -u 1000
 # Set user by non-root ID for Knative security compatibility

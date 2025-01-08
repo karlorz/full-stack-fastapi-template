@@ -55,6 +55,8 @@ services:
       - POSTGRES_SERVER=db
       - REDIS_SERVER=redis
       - SMTP_HOST=mailcatcher
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
   backend:
     build:
@@ -112,6 +114,8 @@ services:
     # TODO: remove once coverage is done locally
     volumes:
       - ./backend/htmlcov:/app/htmlcov
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
   builder:
     build:
@@ -129,6 +133,16 @@ services:
       - POSTGRES_SERVER=db
       - LOCALSTACK_HOST_NAME=localstack
       - BUILDER_API_URL=http://builder:8080
+    group_add:
+      # To allow internal user to access Docker for development
+      - root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Kubernetes local kubeconfig
+      - ~/.kube/config:/home/user/.kube/config
+    networks:
+      - default
+      - kind
     develop:
       watch:
         - path: ./backend
@@ -150,6 +164,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
   messenger:
     build:
@@ -175,6 +191,8 @@ services:
       - SMTP_HOST=mailcatcher
       - LOCALSTACK_HOST_NAME=localstack
       - BUILDER_API_URL=http://builder:8080
+      # To run the builder in the local debugger
+      # - BUILDER_API_URL=http://host.docker.internal:8001
     develop:
       watch:
         - path: ./backend
@@ -185,6 +203,8 @@ services:
             - .venv
         - path: ./backend/pyproject.toml
           action: rebuild
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
   frontend:
     build:
@@ -217,6 +237,8 @@ services:
       - ./frontend/test-results:/app/test-results
     ports:
       - 9323:9323
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
   localstack:
     container_name: "${LOCALSTACK_DOCKER_NAME:-localstack-main}"
@@ -232,7 +254,7 @@ services:
       # - "${LOCALSTACK_VOLUME_DIR:-./localstack-volume}:/var/lib/localstack"
       # Custom LocalStack config to avoid extra files in repo
       - localstack-volume:/var/lib/localstack
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - /var/run/docker.sock:/var/run/docker.sock
     healthcheck:
       test:
         [
@@ -267,3 +289,8 @@ volumes:
   app-db-data:
   app-redis-data:
   localstack-volume:
+
+networks:
+  default:
+  kind:
+    external: true

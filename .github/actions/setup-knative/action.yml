@@ -1,0 +1,39 @@
+name: Knative on Kind
+description: Set up Knative on Kind
+
+runs:
+  using: composite
+  steps:
+    - name: Install Kind
+      uses: helm/kind-action@v1
+      with:
+        install_only: true
+        version: v0.26.0
+    - name: Install Knative
+      shell: bash
+      run: |
+        curl -sL https://github.com/knative/client/releases/latest/download/kn-linux-amd64 -o kn
+        chmod +x kn
+        mkdir -p ~/.local/bin
+        mv kn ~/.local/bin/
+    - name: Install Knative Quickstart plugin
+      shell: bash
+      run: |
+        curl -sL https://github.com/knative-extensions/kn-plugin-quickstart/releases/latest/download/kn-quickstart-linux-amd64 -o kn-quickstart
+        chmod +x kn-quickstart
+        mv kn-quickstart ~/.local/bin/
+    - name: Install Knative Quickstart on Kind
+      shell: bash
+      # run: kn quickstart kind --install-serving --registry
+      # Try to install Knative on Kind 10 times, if there's an error, retry
+      run: |
+        for i in {1..10}; do
+          echo "=== Install Knative on Kind attempt $i of 10 ==="
+          kn quickstart kind --install-serving --registry && break || sleep 1
+          kind delete cluster --name knative
+        done
+    - name: Configure local Knative
+      shell: bash
+      run: |
+        kubectl -n knative-serving patch configmap config-network --type merge -p '{"data":{"domain-template":"{{.Name}}.{{.Domain}}"}}'
+        kubectl -n knative-serving patch configmap config-domain --type json -p='[{"op": "remove", "path": "/data/127.0.0.1.sslip.io"}, {"op": "add", "path": "/data/localfastapicloud.space", "value": ""}]'

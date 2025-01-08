@@ -1,0 +1,9 @@
+{
+    "yaml.schemas": {
+        "kubernetes": [
+            "**/k8s/*.yaml",
+            "**/kubernetes/*.yaml"
+        ]
+    },
+    "python.envFile": "${workspaceFolder}/.env.vscode"
+}

@@ -46,6 +46,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - uses: depot/setup-action@v1
+      # Enable when testing Knative deployments
+      # - uses: ./.github/actions/setup-knative
+      - run: docker network create kind
       # - run: docker compose build
       - run: depot bake --load
         env:

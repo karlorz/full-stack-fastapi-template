@@ -1,5 +1,58 @@
 # FastAPI Cloud - Development
 
+## Install
+
+* Docker: https://www.docker.com/
+    * On Mac or Windows: Docker Desktop.
+        * You might need to enable a setting in Docker Desktop: Advanced -> Allow the default Docker socket to be used.
+    * On Linux, plain Docker is probably better, more efficient on resources, performance, etc. as it doesn't install a virtual machine on top. For example in Ubuntu: https://docs.docker.com/engine/install/ubuntu/
+    * A modern version of Docker comes already with Docker Compose.
+
+## Install the Local Cluster
+
+🚀 These options are only needed if you want to run apps deployed locally in the local cluster in your computer.
+
+💡 If you are only working on the frontend and backend, without deploying anything locally, you don't need to install all this. It will only show an error when trying to deploy an app, but the other parts will work.
+
+* A local Kubernetes:
+    * If you're on Windows or Mac, you would have Docker Desktop with Kubernetes (or an equivalent), that should be enough.
+    * If you're on Linux, install Kind (Kubernetes in Docker): https://kind.sigs.k8s.io/docs/user/quick-start/
+
+Installing Kind (only on Linux) probably looks something like:
+
+```bash
+# For AMD64 / x86_64
+[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.26.0/kind-linux-amd64
+# For ARM64
+[ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.26.0/kind-linux-arm64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+```
+
+* Install `kubectl`: https://kubernetes.io/docs/tasks/tools/install-kubectl/
+* Install the Knative CLI: https://knative.dev/docs/install/quickstart-install/#install-the-knative-cli
+* Install the Knative Quickstart plugin with the registry: https://knative.dev/docs/install/quickstart-install/#install-the-knative-quickstart-plugin
+
+```bash
+kn quickstart kind --install-serving --registry
+```
+
+* Configure the Knative domain template:
+
+```bash
+kubectl -n knative-serving patch configmap config-network --type merge -p '{"data":{"domain-template":"{{.Name}}.{{.Domain}}"}}'
+```
+
+* Configure the local Knative domain to use `*.localfastapicloud.space`:
+
+```bash
+kubectl -n knative-serving patch configmap config-domain --type json -p='[{"op": "remove", "path": "/data/127.0.0.1.sslip.io"}, {"op": "add", "path": "/data/localfastapicloud.space", "value": ""}]'
+```
+
+## Depot Building
+
+The builder in the local development connects to Depot. It needs to have a `DEPOT_TOKEN=`, you can ask @tiangolo for it and put it on a file `.env.override` in the root of the project.
+
 ## Docker Compose
 
 Start the local stack with:

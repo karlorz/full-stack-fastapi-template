@@ -63,6 +63,9 @@ jobs:
       with:
         python-version: '3.10'
     - uses: depot/setup-action@v1
+    # Enable when testing Knative deployments
+    # - uses: ./.github/actions/setup-knative
+    - run: docker network create kind
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
       if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}

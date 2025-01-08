@@ -209,7 +209,7 @@ class MainSettings(SettingsEnv):
 
 
 class BuilderSettings(SettingsEnv):
-    ECR_REGISTRY_URL: str
+    ECR_REGISTRY_URL: str | None = None
     AWS_REGION: str
     BUILDER_SENTRY_DSN: HttpUrl | None = None
 

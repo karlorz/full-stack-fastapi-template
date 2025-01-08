@@ -3,6 +3,7 @@ import os
 import shutil
 import subprocess
 import tarfile
+import tempfile
 import uuid
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -58,6 +59,7 @@ s3 = get_s3_client()
 # AWS ECR client
 ecr = get_ecr_client()
 
+code_path = Path(__file__).parent.parent.resolve()
 
 # Sentry
 if (
@@ -277,7 +279,7 @@ def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
 
 def deploy_to_kubernetes(
     service_name: str,
-    image_url: str,
+    full_image_tag: str,
     namespace: str,
     min_scale: int = 0,
     env: dict[str, str] | None = None,
@@ -301,7 +303,7 @@ def deploy_to_kubernetes(
                 "spec": {
                     "containers": [
                         {
-                            "image": f"{image_url}",
+                            "image": f"{full_image_tag}",
                             "env": [
                                 {"name": str(k), "value": str(v)}
                                 for k, v in use_env.items()
@@ -332,26 +334,29 @@ def deploy_to_kubernetes(
 
 
 @contextmanager
-def docker_login(registry_url: str) -> Iterator[None]:
-    try:
-        # Get ECR authorization token
-        response = ecr.get_authorization_token()
-    except NoCredentialsError:
-        print("Credentials not available")
-        raise
-    token = response["authorizationData"][0].get("authorizationToken")
-    assert token, "No authorization token available"
-    docker_config_path = Path.home().joinpath(".docker/config.json")
-    docker_config_path.parent.mkdir(parents=True, exist_ok=True)
-    docker_config_path.write_text(
-        json.dumps({"auths": {registry_url: {"auth": token}}})
-    )
-    try:
+def docker_login() -> Iterator[None]:
+    if builder_settings.ECR_REGISTRY_URL:
+        try:
+            # Get ECR authorization token
+            response = ecr.get_authorization_token()
+        except NoCredentialsError:
+            print("Credentials not available")
+            raise
+        token = response["authorizationData"][0].get("authorizationToken")
+        assert token, "No authorization token available"
+        docker_config_path = Path.home().joinpath(".docker/config.json")
+        docker_config_path.parent.mkdir(parents=True, exist_ok=True)
+        docker_config_path.write_text(
+            json.dumps({"auths": {builder_settings.ECR_REGISTRY_URL: {"auth": token}}})
+        )
+        try:
+            yield
+        finally:
+            # After finishing with this build, remove the Docker config file
+            # login should be done again for the next build
+            docker_config_path.unlink()
+    else:
         yield
-    finally:
-        # After finishing with this build, remove the Docker config file
-        # login should be done again for the next build
-        docker_config_path.unlink()
 
 
 def repository_exists(repository_name: str) -> bool:
@@ -381,26 +386,39 @@ def create_ecr_repository(repository_name: str) -> dict[str, Any]:
         raise
 
 
+def get_image_name(*, app_id: uuid.UUID, deployment_id: uuid.UUID) -> str:
+    image_tag = f"{app_id}_{deployment_id}"
+    return image_tag
+
+
+def get_full_image_name(image_tag: str) -> str:
+    if builder_settings.ECR_REGISTRY_URL:
+        return f"{builder_settings.ECR_REGISTRY_URL}/{image_tag}"
+    if common_settings.ENVIRONMENT == "local":
+        return f"localhost:5001/{image_tag}"
+    return image_tag
+
+
 def download_and_extract_tar(
-    bucket_name: str, object_key: str, object_id: str, extract_to: str
+    *, bucket_name: str, object_key: str, object_id: str, extract_to: str
 ) -> None:
-    tar_path = f"/tmp/{object_id}/code.tar"
-    s3.download_file(bucket_name, object_key, tar_path)
+    with tempfile.TemporaryDirectory(prefix=f"download-tar-{object_id}-") as tar_dir:
+        print(f"Download directory: {tar_dir}")
+        tar_path = f"{tar_dir}/code.tar"
+        s3.download_file(bucket_name, object_key, tar_path)
 
-    extract_to_path = Path(extract_to).resolve()
+        extract_to_path = Path(extract_to).resolve()
 
-    with tarfile.open(tar_path, "r") as tar_ref:
-        for member in tar_ref.getmembers():
-            member_path = extract_to_path.joinpath(member.name).resolve()
-            if extract_to_path in member_path.parents:
-                tar_ref.extract(member, extract_to, filter="data")
-            else:
-                raise RuntimeError(
-                    f"Attempted to extract file outside of target directory: {member.name}",
-                    f"From bucket: {bucket_name}, object: {object_key}",
-                )
-
-    os.remove(tar_path)
+        with tarfile.open(tar_path, "r") as tar_ref:
+            for member in tar_ref.getmembers():
+                member_path = extract_to_path.joinpath(member.name).resolve()
+                if extract_to_path in member_path.parents:
+                    tar_ref.extract(member, extract_to, filter="data")
+                else:
+                    raise RuntimeError(
+                        f"Attempted to extract file outside of target directory: {member.name}",
+                        f"From bucket: {bucket_name}, object: {object_key}",
+                    )
 
 
 def depot_build_exec(
@@ -436,11 +454,11 @@ def depot_build_exec(
 
 
 def build_and_push_docker_image(
-    *, registry_url: str, image_tag: str, docker_context_path: str
+    *, full_image_tag: str, docker_context_path: str
 ) -> None:
     depot_settings = DepotSettings.get_settings()
     # Docker login
-    with docker_login(registry_url):
+    with docker_login():
         build_request = syncify(depot_client.build().create_build)(
             create_build_request=depot_build.CreateBuildRequest(
                 project_id=depot_settings.DEPOT_PROJECT_ID
@@ -448,16 +466,26 @@ def build_and_push_docker_image(
         )
         print(f"Build request created: {build_request.build_id}")
 
-        full_image_name = f"{registry_url}/{image_tag}"
         result = depot_build_exec(
             context_dir=Path(docker_context_path),
-            image_full_name=full_image_name,
+            image_full_name=full_image_tag,
             # TODO: one project per app
             project_id=depot_settings.DEPOT_PROJECT_ID,
             build_id=build_request.build_id,
             build_token=build_request.build_token,
         )
-        print(result.stdout)
+        if common_settings.ENVIRONMENT == "local":
+            # Save to local registry so Knative can use it
+            result = subprocess.run(
+                [
+                    "docker",
+                    "push",
+                    full_image_tag,
+                ],
+                check=True,
+                capture_output=True,
+            )
+            print(result.stdout)
 
 
 def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
@@ -467,7 +495,6 @@ def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
 
 
 def _app_process_build(deployment_id: uuid.UUID, session: SessionDep) -> None:
-    registry_url = BuilderSettings.get_settings().ECR_REGISTRY_URL
     bucket_name = CommonSettings.get_settings().DEPLOYMENTS_BUCKET_NAME
 
     deployment_with_team = session.exec(
@@ -483,52 +510,58 @@ def _app_process_build(deployment_id: uuid.UUID, session: SessionDep) -> None:
     session.commit()
 
     team = deployment_with_team.app.team
-    image_tag = f"{deployment_with_team.app.id}_{deployment_with_team.id}"
+    image_tag = get_image_name(
+        app_id=deployment_with_team.app.id, deployment_id=deployment_with_team.id
+    )
     object_key = f"{deployment_with_team.app.id}/{deployment_with_team.id}.tar"
     env_vars = get_env_vars(deployment_with_team.app_id, session)
     app_name = deployment_with_team.slug
 
-    build_context = f"/tmp/{deployment_with_team.id}/build_context"
-    if os.path.exists(build_context):
-        shutil.rmtree(build_context)
-    os.makedirs(build_context)
+    context_name_prefix = f"build-context-{deployment_with_team.id}-"
+    with tempfile.TemporaryDirectory(prefix=context_name_prefix) as build_context:
+        print(f"Build context: {build_context}")
 
-    # Download and extract the tar file
-    download_and_extract_tar(
-        bucket_name, object_key, str(deployment_with_team.id), extract_to=build_context
-    )
+        # Download and extract the tar file
+        download_and_extract_tar(
+            bucket_name=bucket_name,
+            object_id=str(deployment_with_team.id),
+            object_key=object_key,
+            extract_to=build_context,
+        )
 
-    # Create ECR repository if it doesn't exist
-    create_ecr_repository(image_tag)
+        # Create ECR repository if it doesn't exist
+        if builder_settings.ECR_REGISTRY_URL:
+            create_ecr_repository(image_tag)
 
-    # Copy Dockerfile to build context
-    build_files = os.listdir(build_context)
-    if "requirements.txt" in build_files:
-        shutil.copy("/app/Dockerfile.requirements", f"{build_context}/Dockerfile")
-    else:
-        shutil.copy("/app/Dockerfile.standard", f"{build_context}/Dockerfile")
+        # Copy Dockerfile to build context
+        build_files = os.listdir(build_context)
+        if "requirements.txt" in build_files:
+            shutil.copy(
+                code_path / "Dockerfile.requirements", f"{build_context}/Dockerfile"
+            )
+        else:
+            shutil.copy(
+                code_path / "Dockerfile.standard", f"{build_context}/Dockerfile"
+            )
 
-    # Build and push Docker image
-    build_and_push_docker_image(
-        registry_url=registry_url,
-        image_tag=image_tag,
-        docker_context_path=build_context,
-    )
+        full_image_tag = get_full_image_name(image_tag)
+        # Build and push Docker image
+        build_and_push_docker_image(
+            full_image_tag=full_image_tag,
+            docker_context_path=build_context,
+        )
 
-    # Update status to deploying
-    deployment_with_team.status = DeploymentStatus.deploying
-    session.commit()
+        # Update status to deploying
+        deployment_with_team.status = DeploymentStatus.deploying
+        session.commit()
 
-    # Deploy to Kubernetes
-    deploy_to_kubernetes(
-        service_name=app_name,
-        image_url=f"{registry_url}/{image_tag}",
-        namespace=f"team-{team.id}",
-        env=env_vars,
-    )
-
-    # Clean up the build context
-    shutil.rmtree(build_context)
+        # Deploy to Kubernetes
+        deploy_to_kubernetes(
+            service_name=app_name,
+            full_image_tag=full_image_tag,
+            namespace=f"team-{team.id}",
+            env=env_vars,
+        )
 
     # Update status to success
     deployment_with_team.status = DeploymentStatus.success
@@ -597,12 +630,13 @@ def send_deploy(
     team = app.team
 
     image_tag = f"{app.id}_{deployment.id}"
-    registry_url = BuilderSettings.get_settings().ECR_REGISTRY_URL
+    image_tag = get_image_name(app_id=app.id, deployment_id=deployment.id)
+    full_image_tag = get_full_image_name(image_tag)
     env_vars = get_env_vars(app.id, session)
 
     deploy_to_kubernetes(
         service_name=deployment.slug,
-        image_url=f"{registry_url}/{image_tag}",
+        full_image_tag=full_image_tag,
         namespace=f"team-{team.id}",
         env=env_vars,
     )

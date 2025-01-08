@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug FastAPI Project backend: Python Debugger",
+            "name": "Debug backend",
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
@@ -15,7 +15,20 @@
             ],
             "cwd": "${workspaceFolder}/backend",
             "jinja": true,
-            "envFile": "${workspaceFolder}/.env",
+        },
+        {
+            "name": "Debug builder",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "fastapi",
+            "args": [
+                "run",
+                "app/docker_builder.py",
+                "--port",
+                "8001"
+            ],
+            "cwd": "${workspaceFolder}/backend",
+            "jinja": true,
         },
         {
             "type": "chrome",
