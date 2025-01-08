@@ -31,6 +31,14 @@
             "jinja": true,
         },
         {
+            "name": "Debug mesenger",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "app.messenger",
+            "cwd": "${workspaceFolder}/backend",
+            "jinja": true,
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "Debug Frontend: Launch Chrome against http://localhost:5173",

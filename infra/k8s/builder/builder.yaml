@@ -18,7 +18,7 @@ spec:
       - name: docker
         image: ${IMAGE}
         ports:
-        - containerPort: 8080
+        - containerPort: 8001
         securityContext:
           privileged: true
         resources:
@@ -83,7 +83,7 @@ spec:
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 8080
+    targetPort: 8001
 
 ---
 # Reference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/

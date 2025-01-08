@@ -20,7 +20,7 @@ common_settings = CommonSettings.get_settings()
 
 
 def load_kube_config() -> None:
-    if CommonSettings.get_settings().ENVIRONMENT == "local" or os.getenv("CI"):
+    if common_settings.ENVIRONMENT == "local" or os.getenv("CI"):
         client_config = Configuration()
         contexts = config.list_kube_config_contexts()[0]
         knative_kind_context_name = "kind-knative"
@@ -30,7 +30,11 @@ def load_kube_config() -> None:
                 context=knative_kind_context_name,
                 client_configuration=client_config,
             )
-            client_config.host = "https://knative-control-plane:6443"
+            # Override the host to the Knative service host, by default it will be on
+            # http://127.0.0.1:xxxx, but that's not available inside of Docker
+            if builder_settings.KUBERNETES_HOST:
+                # In Docker Compose, override the host using the provided host name
+                client_config.host = builder_settings.KUBERNETES_HOST
             Configuration.set_default(client_config)
         else:
             config.load_kube_config()

@@ -100,7 +100,7 @@ services:
       - REDIS_SERVER=redis
       - SMTP_HOST=mailcatcher
       - LOCALSTACK_HOST_NAME=localstack
-      - BUILDER_API_URL=http://builder:8080
+      - BUILDER_API_URL=http://builder:8001
     develop:
       watch:
         - path: ./backend
@@ -122,7 +122,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.builder
     ports:
-      - "8088:8080"
+      - "8001:8001"
     privileged: true
     env_file:
       - .env
@@ -132,7 +132,8 @@ services:
       - CI=true
       - POSTGRES_SERVER=db
       - LOCALSTACK_HOST_NAME=localstack
-      - BUILDER_API_URL=http://builder:8080
+      - BUILDER_API_URL=http://builder:8001
+      - KUBERNETES_HOST=https://knative-control-plane:6443
     group_add:
       # To allow internal user to access Docker for development
       - root
@@ -159,7 +160,7 @@ services:
           "CMD",
           "curl",
           "-f",
-          "http://localhost:8080/health-check/",
+          "http://localhost:8001/health-check/",
         ]
       interval: 30s
       timeout: 10s
@@ -190,7 +191,7 @@ services:
       - REDIS_SERVER=redis
       - SMTP_HOST=mailcatcher
       - LOCALSTACK_HOST_NAME=localstack
-      - BUILDER_API_URL=http://builder:8080
+      - BUILDER_API_URL=http://builder:8001
       # To run the builder in the local debugger
       # - BUILDER_API_URL=http://host.docker.internal:8001
     develop:

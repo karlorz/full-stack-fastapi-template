@@ -212,6 +212,7 @@ class BuilderSettings(SettingsEnv):
     ECR_REGISTRY_URL: str | None = None
     AWS_REGION: str
     BUILDER_SENTRY_DSN: HttpUrl | None = None
+    KUBERNETES_HOST: str | None = None
 
 
 class MessengerSettings(SettingsEnv):

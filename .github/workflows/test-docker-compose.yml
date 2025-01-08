@@ -58,7 +58,7 @@ jobs:
       - name: Test backend is up
         run: curl http://localhost:8000/api/v1/utils/health-check
       - name: Test builder is up
-        run: curl http://localhost:8088/health-check
+        run: curl http://localhost:8001/health-check
       - name: Test frontend is up
         run: curl http://localhost:5173
       - run: docker compose down -v --remove-orphans
