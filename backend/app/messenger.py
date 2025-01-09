@@ -52,6 +52,39 @@ async def process_message(
             )
 
 
+async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
+    with logfire.span("Receive messages"):
+        # Run in asyncify to not block the event loop
+        messages = await asyncify(sqs.receive_message)(
+            QueueUrl=queue_url, MaxNumberOfMessages=10, WaitTimeSeconds=20
+        )
+        # Create an async task group so all messages are processed concurrently
+        async with asyncer.create_task_group() as tg:
+            for message in messages.get("Messages", []):
+                deployment_id = message.get("Body")
+                receipt_handle = message.get("ReceiptHandle")
+                if not deployment_id:
+                    logfire.error("No deployment_id in message")
+                    if receipt_handle:
+                        logfire.info("Delete message")
+                        sqs.delete_message(
+                            QueueUrl=queue_url, ReceiptHandle=receipt_handle
+                        )
+                    continue
+                assert receipt_handle
+                # Schedule processing this message concurrently. By the end of the
+                # async with block for the task group it would have finished
+                logfire.info(
+                    "Schedule process deployment_id: {deployment_id}",
+                    deployment_id=deployment_id,
+                )
+                tg.soonify(process_message)(
+                    deployment_id=deployment_id,
+                    receipt_handle=receipt_handle,
+                    client=client,
+                )
+
+
 async def main() -> None:
     # Run in asyncify to not block the event loop, in case we call this function
     # concurrently later
@@ -64,36 +97,7 @@ async def main() -> None:
         # Create a single HTTPX client that we can reuse
         async with httpx.AsyncClient() as client:
             while True:
-                with logfire.span("Receive messages"):
-                    # Run in asyncify to not block the event loop
-                    messages = await asyncify(sqs.receive_message)(
-                        QueueUrl=queue_url, MaxNumberOfMessages=10, WaitTimeSeconds=20
-                    )
-                    # Create an async task group so all messages are processed concurrently
-                    async with asyncer.create_task_group() as tg:
-                        for message in messages.get("Messages", []):
-                            deployment_id = message.get("Body")
-                            receipt_handle = message.get("ReceiptHandle")
-                            if not deployment_id:
-                                logfire.error("No deployment_id in message")
-                                if receipt_handle:
-                                    logfire.info("Delete message")
-                                    sqs.delete_message(
-                                        QueueUrl=queue_url, ReceiptHandle=receipt_handle
-                                    )
-                                continue
-                            assert receipt_handle
-                            # Schedule processing this message concurrently. By the end of the
-                            # async with block for the task group it would have finished
-                            logfire.info(
-                                "Schedule process deployment_id: {deployment_id}",
-                                deployment_id=deployment_id,
-                            )
-                            tg.soonify(process_message)(
-                                deployment_id=deployment_id,
-                                receipt_handle=receipt_handle,
-                                client=client,
-                            )
+                await _process_messages(queue_url, client)
 
 
 if __name__ == "__main__":

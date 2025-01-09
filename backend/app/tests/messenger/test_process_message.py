@@ -1,5 +1,4 @@
-from collections.abc import Generator
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import httpx
 import pytest
@@ -9,12 +8,6 @@ from app.core.config import CommonSettings
 from app.messenger import process_message
 
 common_settings = CommonSettings.get_settings()
-
-
-@pytest.fixture
-def mock_sqs() -> Generator[MagicMock, None, None]:
-    with patch("app.messenger.sqs") as mock:
-        yield mock
 
 
 @pytest.mark.respx(base_url=common_settings.BUILDER_API_URL)
