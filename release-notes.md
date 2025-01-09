@@ -328,6 +328,7 @@
 
 ### Internal
 
+* ✨ Add retries in messenger. PR [#572](https://github.com/fastapilabs/cloud/pull/572) by [@patrick91](https://github.com/patrick91).
 * ✅ Add test for messenger's main function. PR [#571](https://github.com/fastapilabs/cloud/pull/571) by [@patrick91](https://github.com/patrick91).
 * ⬆️ Update Dockerfile to use uv version 0.5.11. PR [#569](https://github.com/fastapilabs/cloud/pull/569) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Add tests for process message. PR [#570](https://github.com/fastapilabs/cloud/pull/570) by [@patrick91](https://github.com/patrick91).
