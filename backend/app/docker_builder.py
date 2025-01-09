@@ -75,16 +75,16 @@ if (
 # FastAPI app
 app = FastAPI()
 
-if common_settings.ENVIRONMENT != "local" and common_settings.LOGFIRE_TOKEN:
-    logfire.configure(
-        token=common_settings.LOGFIRE_TOKEN,
-        environment=common_settings.ENVIRONMENT,
-        service_name="builder",
-    )
-    logfire.instrument_fastapi(app)
-    logfire.instrument_httpx()
-    logfire.instrument_sqlalchemy(engine=engine)
-    logfire.instrument_redis()
+logfire.configure(
+    token=common_settings.LOGFIRE_TOKEN,
+    environment=common_settings.ENVIRONMENT,
+    service_name="builder",
+    send_to_logfire="if-token-present",
+)
+logfire.instrument_fastapi(app)
+logfire.instrument_httpx()
+logfire.instrument_sqlalchemy(engine=engine)
+logfire.instrument_redis()
 
 
 def create_namespace_by_team(namespace: str) -> None:

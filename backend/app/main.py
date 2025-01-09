@@ -25,23 +25,22 @@ if settings.BACKEND_SENTRY_DSN and common_settings.ENVIRONMENT != "local":
         environment=common_settings.ENVIRONMENT,
     )
 
-
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
 )
 
-if common_settings.ENVIRONMENT != "local" and common_settings.LOGFIRE_TOKEN:
-    logfire.configure(
-        token=common_settings.LOGFIRE_TOKEN,
-        environment=common_settings.ENVIRONMENT,
-        service_name="backend",
-    )
-    logfire.instrument_fastapi(app)
-    logfire.instrument_httpx()
-    logfire.instrument_sqlalchemy(engine=engine)
-    logfire.instrument_redis()
+logfire.configure(
+    token=common_settings.LOGFIRE_TOKEN,
+    environment=common_settings.ENVIRONMENT,
+    service_name="backend",
+    send_to_logfire="if-token-present",
+)
+logfire.instrument_fastapi(app)
+logfire.instrument_httpx()
+logfire.instrument_sqlalchemy(engine=engine)
+logfire.instrument_redis()
 
 
 @app.exception_handler(OAuth2Exception)

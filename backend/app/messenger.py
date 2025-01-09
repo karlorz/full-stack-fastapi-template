@@ -19,13 +19,13 @@ if messenger_settings.MESSENGER_SENTRY_DSN and common_settings.ENVIRONMENT != "l
         environment=common_settings.ENVIRONMENT,
     )
 
-if common_settings.ENVIRONMENT != "local" and common_settings.LOGFIRE_TOKEN:
-    logfire.configure(
-        token=common_settings.LOGFIRE_TOKEN,
-        environment=common_settings.ENVIRONMENT,
-        service_name="messenger",
-    )
-    logfire.instrument_httpx()
+logfire.configure(
+    token=common_settings.LOGFIRE_TOKEN,
+    environment=common_settings.ENVIRONMENT,
+    service_name="messenger",
+    send_to_logfire="if-token-present",
+)
+logfire.instrument_httpx()
 
 
 async def process_message(
