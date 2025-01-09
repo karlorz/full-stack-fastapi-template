@@ -69,7 +69,6 @@ async def test_process_messages_with_message_but_no_body(
     async with httpx.AsyncClient() as client:
         await _process_messages(queue_url, client)
 
-    # TODO: we might want to send them to sentry
     mock_sqs.delete_message.assert_called_once_with(
         QueueUrl=queue_url, ReceiptHandle="456"
     )

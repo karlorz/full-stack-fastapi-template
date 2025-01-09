@@ -110,6 +110,7 @@ async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
                 receipt_handle = message.get("ReceiptHandle")
                 if not deployment_id:
                     logfire.error("No deployment_id in message")
+                    sentry_sdk.capture_message("No deployment_id in message")
                     if receipt_handle:
                         logfire.info("Delete message")
                         sqs.delete_message(
