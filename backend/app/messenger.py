@@ -1,8 +1,11 @@
 import asyncer
+import botocore
 import httpx
 import logfire
 import sentry_sdk
+import stamina
 from asyncer import asyncify
+from stamina import AsyncRetryingCaller
 
 from app.aws_utils import get_sqs_client
 from app.core.config import CommonSettings, MessengerSettings
@@ -28,6 +31,42 @@ logfire.configure(
 logfire.instrument_httpx()
 
 
+def retry_only_on_real_errors(exc: Exception) -> bool:
+    """Retry only on real errors.
+
+    This avoids retries on errors that are not likely to be resolved by retrying (e.g.
+    authentication errors, etc).
+    """
+    if isinstance(exc, httpx.HTTPStatusError):
+        return exc.response.status_code >= 500
+
+    return isinstance(exc, httpx.HTTPError)
+
+
+def retry_only_on_sqs_errors(exc: Exception) -> bool:
+    """Retry only on SQS errors.
+
+    This avoids retries on errors that are not likely to be resolved by retrying (e.g.
+    authentication errors, etc).
+    """
+
+    if isinstance(exc, botocore.exceptions.ClientError):
+        error_code = exc.response.get("Error", {}).get("Code", "")
+
+        return error_code not in [
+            "QueueDoesNotExist",
+            "InvalidIdFormat",
+            "ReceiptHandleIsInvalid",
+        ]
+
+    return False
+
+
+# Create reusable retry caller for SQS operations
+sqs_retry = AsyncRetryingCaller().on(retry_only_on_sqs_errors)
+
+
+@stamina.retry(on=retry_only_on_real_errors)
 async def process_message(
     *, deployment_id: str, receipt_handle: str, client: httpx.AsyncClient
 ) -> None:
@@ -45,8 +84,10 @@ async def process_message(
             "Response status code: {status_code}", status_code=response.status_code
         )
         response.raise_for_status()
+
         with logfire.span("Delete message"):
-            await asyncify(sqs.delete_message)(
+            await sqs_retry(
+                asyncify(sqs.delete_message),
                 QueueUrl=common_settings.BUILDER_QUEUE_NAME,
                 ReceiptHandle=receipt_handle,
             )
@@ -55,9 +96,13 @@ async def process_message(
 async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
     with logfire.span("Receive messages"):
         # Run in asyncify to not block the event loop
-        messages = await asyncify(sqs.receive_message)(
-            QueueUrl=queue_url, MaxNumberOfMessages=10, WaitTimeSeconds=20
+        messages = await sqs_retry(
+            asyncify(sqs.receive_message),
+            QueueUrl=queue_url,
+            MaxNumberOfMessages=10,
+            WaitTimeSeconds=20,
         )
+
         # Create an async task group so all messages are processed concurrently
         async with asyncer.create_task_group() as tg:
             for message in messages.get("Messages", []):
@@ -94,6 +139,7 @@ async def main() -> None:
         )
         queue_url = queue_url_response.get("QueueUrl")
         assert queue_url
+
         # Create a single HTTPX client that we can reuse
         async with httpx.AsyncClient() as client:
             while True:
