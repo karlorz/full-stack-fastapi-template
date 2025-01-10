@@ -20,6 +20,7 @@
 
 ### Features
 
+* ✨ Add new statuses to deployment. PR [#578](https://github.com/fastapilabs/cloud/pull/578) by [@patrick91](https://github.com/patrick91).
 * ✨ Use SQS to communicate to builder, includes localstack, and new messenger. PR [#548](https://github.com/fastapilabs/cloud/pull/548) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Cards on the main dashboard page. PR [#539](https://github.com/fastapilabs/cloud/pull/539) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Expose dashboard url on deployment api. PR [#521](https://github.com/fastapilabs/cloud/pull/521) by [@patrick91](https://github.com/patrick91).
