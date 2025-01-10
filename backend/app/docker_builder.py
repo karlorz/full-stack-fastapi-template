@@ -568,35 +568,6 @@ def _app_process_build(deployment_id: uuid.UUID, session: SessionDep) -> None:
     session.commit()
 
 
-# ! Deprecated, will be removed to use the new endpoint /apps/depot/build
-@app.post("/apps")
-def event_service_handler(event: dict[str, Any], session: SessionDep) -> Any:
-    message = event["Body"]["Records"][0].get("s3", {})
-    try:
-        # Extract deployment id from the message
-        _object = message.get("object", {})
-        object_key = _object.get("key")
-        object_name = object_key.split("/")[-1]
-        deployment_id = object_name.split(".")[0]
-        ensure_deployment_is_buildable(deployment_id, "sqs", session)
-        _app_process_build(deployment_id, session)
-    except Exception as e:
-        deployment_id = (
-            message.get("object", {}).get("key").split("/")[-1].split(".")[0]
-        )
-        smt = select(Deployment).where(Deployment.id == deployment_id)
-        deployment = session.exec(smt).first()
-        if deployment is None:
-            raise RuntimeError("Deployment not found")
-
-        deployment.status = DeploymentStatus.failed
-        session.commit()
-        sentry_sdk.capture_exception(e)
-        raise e
-
-    return {"message": "OK"}
-
-
 @app.post("/apps/depot/build", dependencies=[Depends(validate_api_key)])
 def app_depot_build(message: SendDeploy, session: SessionDep) -> Message:
     ensure_deployment_is_buildable(message.deployment_id, "api", session)
