@@ -312,6 +312,8 @@ class DeploymentStatus(str, Enum):
     waiting_upload = "waiting_upload"
     ready_for_build = "ready_for_build"
     building = "building"
+    extracting = "extracting"
+    building_image = "building_image"
     deploying = "deploying"
     success = "success"
     failed = "failed"

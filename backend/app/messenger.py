@@ -83,6 +83,7 @@ async def process_message(
         logfire.info(
             "Response status code: {status_code}", status_code=response.status_code
         )
+
         response.raise_for_status()
 
         with logfire.span("Delete message"):

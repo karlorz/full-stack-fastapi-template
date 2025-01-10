@@ -105,6 +105,8 @@ export type DeploymentStatus =
   | "waiting_upload"
   | "ready_for_build"
   | "building"
+  | "extracting"
+  | "building_image"
   | "deploying"
   | "success"
   | "failed"

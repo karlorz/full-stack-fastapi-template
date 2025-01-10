@@ -509,63 +509,74 @@ def _app_process_build(deployment_id: uuid.UUID, session: SessionDep) -> None:
     deployment_with_team.status = DeploymentStatus.building
     session.commit()
 
-    team = deployment_with_team.app.team
-    image_tag = get_image_name(
-        app_id=deployment_with_team.app.id, deployment_id=deployment_with_team.id
-    )
-    object_key = f"{deployment_with_team.app.id}/{deployment_with_team.id}.tar"
-    env_vars = get_env_vars(deployment_with_team.app_id, session)
-    app_name = deployment_with_team.slug
-
-    context_name_prefix = f"build-context-{deployment_with_team.id}-"
-    with tempfile.TemporaryDirectory(prefix=context_name_prefix) as build_context:
-        print(f"Build context: {build_context}")
-
-        # Download and extract the tar file
-        download_and_extract_tar(
-            bucket_name=bucket_name,
-            object_id=str(deployment_with_team.id),
-            object_key=object_key,
-            extract_to=build_context,
+    try:
+        team = deployment_with_team.app.team
+        image_tag = get_image_name(
+            app_id=deployment_with_team.app.id, deployment_id=deployment_with_team.id
         )
+        object_key = f"{deployment_with_team.app.id}/{deployment_with_team.id}.tar"
+        env_vars = get_env_vars(deployment_with_team.app_id, session)
+        app_name = deployment_with_team.slug
 
-        # Create ECR repository if it doesn't exist
-        if builder_settings.ECR_REGISTRY_URL:
-            create_ecr_repository(image_tag)
+        context_name_prefix = f"build-context-{deployment_with_team.id}-"
+        with tempfile.TemporaryDirectory(prefix=context_name_prefix) as build_context:
+            print(f"Build context: {build_context}")
 
-        # Copy Dockerfile to build context
-        build_files = os.listdir(build_context)
-        if "requirements.txt" in build_files:
-            shutil.copy(
-                code_path / "Dockerfile.requirements", f"{build_context}/Dockerfile"
-            )
-        else:
-            shutil.copy(
-                code_path / "Dockerfile.standard", f"{build_context}/Dockerfile"
+            deployment_with_team.status = DeploymentStatus.extracting
+            session.commit()
+
+            # Download and extract the tar file
+            download_and_extract_tar(
+                bucket_name=bucket_name,
+                object_id=str(deployment_with_team.id),
+                object_key=object_key,
+                extract_to=build_context,
             )
 
-        full_image_tag = get_full_image_name(image_tag)
-        # Build and push Docker image
-        build_and_push_docker_image(
-            full_image_tag=full_image_tag,
-            docker_context_path=build_context,
-        )
+            # Create ECR repository if it doesn't exist
+            if builder_settings.ECR_REGISTRY_URL:
+                create_ecr_repository(image_tag)
 
-        # Update status to deploying
-        deployment_with_team.status = DeploymentStatus.deploying
+            # Copy Dockerfile to build context
+            build_files = os.listdir(build_context)
+            if "requirements.txt" in build_files:
+                shutil.copy(
+                    code_path / "Dockerfile.requirements", f"{build_context}/Dockerfile"
+                )
+            else:
+                shutil.copy(
+                    code_path / "Dockerfile.standard", f"{build_context}/Dockerfile"
+                )
+
+            deployment_with_team.status = DeploymentStatus.building_image
+            session.commit()
+
+            full_image_tag = get_full_image_name(image_tag)
+            # Build and push Docker image
+            build_and_push_docker_image(
+                full_image_tag=full_image_tag,
+                docker_context_path=build_context,
+            )
+
+            # Update status to deploying
+            deployment_with_team.status = DeploymentStatus.deploying
+            session.commit()
+
+            # Deploy to Kubernetes
+            deploy_to_kubernetes(
+                service_name=app_name,
+                full_image_tag=full_image_tag,
+                namespace=f"team-{team.id}",
+                env=env_vars,
+            )
+
+        # Update status to success
+        deployment_with_team.status = DeploymentStatus.success
         session.commit()
-
-        # Deploy to Kubernetes
-        deploy_to_kubernetes(
-            service_name=app_name,
-            full_image_tag=full_image_tag,
-            namespace=f"team-{team.id}",
-            env=env_vars,
-        )
-
-    # Update status to success
-    deployment_with_team.status = DeploymentStatus.success
-    session.commit()
+    except Exception as e:
+        deployment_with_team.status = DeploymentStatus.failed
+        session.commit()
+        raise e
 
 
 @app.post("/apps/depot/build", dependencies=[Depends(validate_api_key)])
