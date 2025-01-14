@@ -331,6 +331,7 @@
 
 ### Internal
 
+* 👷 Add NATS env vars to Kubernetes manifests. PR [#590](https://github.com/fastapilabs/cloud/pull/590) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Fix messenger sending Sentry events. PR [#589](https://github.com/fastapilabs/cloud/pull/589) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add Redis config to messenger Kubernetes manifest. PR [#588](https://github.com/fastapilabs/cloud/pull/588) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add Redis deployment env vars in CI. PR [#584](https://github.com/fastapilabs/cloud/pull/584) by [@tiangolo](https://github.com/tiangolo).
