@@ -63,6 +63,8 @@ spec:
             value: "${BUILDER_SENTRY_DSN}"
           - name: LOGFIRE_TOKEN
             value: "${LOGFIRE_TOKEN}"
+          - name: REDIS_SERVER
+            value: "${REDIS_SERVER}"
         volumeMounts:
         - mountPath: /var/lib/docker
           name: docker-graph-storage
