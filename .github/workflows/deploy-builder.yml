@@ -104,6 +104,7 @@ jobs:
         CLOUDFLARE_ZONE_ID: "${{ vars.CLOUDFLARE_ZONE_ID }}"
         CLOUDFLARE_API_TOKEN_SSL: "${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}"
         LOGFIRE_TOKEN: "${{ secrets.LOGFIRE_TOKEN }}"
+        NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"
 
         # Secrets for the builder
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"

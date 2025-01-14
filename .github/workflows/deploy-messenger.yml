@@ -97,6 +97,7 @@ jobs:
         BUILDER_API_URL: "${{ vars.BUILDER_API_URL }}"
         MESSENGER_SENTRY_DSN: "${{ secrets.MESSENGER_SENTRY_DSN }}"
         LOGFIRE_TOKEN: "${{ secrets.LOGFIRE_TOKEN }}"
+        NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"
 
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-messenger:  # This job does nothing and is only used for the branch protection
