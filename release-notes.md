@@ -331,6 +331,7 @@
 
 ### Internal
 
+* 👷 Add Redis config to messenger Kubernetes manifest. PR [#588](https://github.com/fastapilabs/cloud/pull/588) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add Redis deployment env vars in CI. PR [#584](https://github.com/fastapilabs/cloud/pull/584) by [@tiangolo](https://github.com/tiangolo).
 * 👷 Add NATS hostname env vars to deployments. PR [#583](https://github.com/fastapilabs/cloud/pull/583) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove deprecated code. PR [#577](https://github.com/fastapilabs/cloud/pull/577) by [@patrick91](https://github.com/patrick91).
