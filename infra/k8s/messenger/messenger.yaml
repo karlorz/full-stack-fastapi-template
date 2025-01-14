@@ -47,6 +47,8 @@ spec:
             value: "${LOGFIRE_TOKEN}"
           - name: REDIS_SERVER
             value: "${REDIS_SERVER}"
+          - name: NATS_HOST_NAME
+            value: "${NATS_HOST_NAME}"
 
 ---
 # Reference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
