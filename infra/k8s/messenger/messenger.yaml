@@ -45,6 +45,8 @@ spec:
             value: "${MESSENGER_SENTRY_DSN}"
           - name: LOGFIRE_TOKEN
             value: "${LOGFIRE_TOKEN}"
+          - name: REDIS_SERVER
+            value: "${REDIS_SERVER}"
 
 ---
 # Reference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
