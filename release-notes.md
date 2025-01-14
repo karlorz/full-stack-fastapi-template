@@ -330,6 +330,7 @@
 
 ### Internal
 
+* 👷 Add NATS hostname env vars to deployments. PR [#583](https://github.com/fastapilabs/cloud/pull/583) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove deprecated code. PR [#577](https://github.com/fastapilabs/cloud/pull/577) by [@patrick91](https://github.com/patrick91).
 * 🥅 Send message to sentry when messenger message is wrong. PR [#573](https://github.com/fastapilabs/cloud/pull/573) by [@patrick91](https://github.com/patrick91).
 * ✨ Add retries in messenger. PR [#572](https://github.com/fastapilabs/cloud/pull/572) by [@patrick91](https://github.com/patrick91).
