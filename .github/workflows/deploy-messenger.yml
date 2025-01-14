@@ -98,6 +98,7 @@ jobs:
         MESSENGER_SENTRY_DSN: "${{ secrets.MESSENGER_SENTRY_DSN }}"
         LOGFIRE_TOKEN: "${{ secrets.LOGFIRE_TOKEN }}"
         NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"
+        REDIS_SERVER: "${{ vars.REDIS_SERVER }}"
 
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-messenger:  # This job does nothing and is only used for the branch protection
