@@ -84,6 +84,16 @@ class CommonSettings(SettingsEnv):
     AWS_REGION: str = "us-east-1"
     BUILDER_API_URL: str
 
+    REDIS_SERVER: str
+    REDIS_PORT: int = 6379
+    REDIS_PASSWORD: str | None = None
+    REDIS_DB: int = 0
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def REDIS_URI(self) -> str:
+        return f"redis://{self.REDIS_SERVER}:{self.REDIS_PORT}/{self.REDIS_DB}"
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def aws_endpoint_url(self) -> str | None:
@@ -149,16 +159,6 @@ class MainSettings(SettingsEnv):
     PROJECT_NAME: str = "FastAPI Cloud"
     RESERVED_APP_NAMES: Annotated[list[str] | str, BeforeValidator(parse_list_or_str)]
     BACKEND_SENTRY_DSN: HttpUrl | None = None
-
-    REDIS_SERVER: str
-    REDIS_PORT: int = 6379
-    REDIS_PASSWORD: str | None = None
-    REDIS_DB: int = 0
-
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def REDIS_URI(self) -> str:
-        return f"redis://{self.REDIS_SERVER}:{self.REDIS_PORT}/{self.REDIS_DB}"
 
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False

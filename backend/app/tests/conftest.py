@@ -88,6 +88,7 @@ def common_settings() -> CommonSettings:
         BUILDER_API_KEY="peWaQz7UE5uqQcAUpchvq1tyDyq918zaCed84tJJEB8=",
         DEPLOYMENTS_BUCKET_NAME="fastapicloud-deployments",
         BUILDER_API_URL="http://localhost:8001",
+        REDIS_SERVER="localhost",
     )
 
 

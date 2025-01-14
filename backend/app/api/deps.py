@@ -10,9 +10,7 @@ from pydantic import ValidationError
 from sqlmodel import Session
 
 from app.core import security
-from app.core.config import (
-    MainSettings,
-)
+from app.core.config import CommonSettings, MainSettings
 from app.core.db import engine
 from app.models import TokenPayload, User
 from app.utils import TokenType
@@ -32,13 +30,8 @@ TokenDep = Annotated[str, Depends(reusable_oauth2)]
 
 
 def get_redis() -> Generator["redis.Redis[Any]", None, None]:
-    settings = MainSettings.get_settings()
-    pool = redis.ConnectionPool(
-        host=settings.REDIS_SERVER,
-        port=settings.REDIS_PORT,
-        db=settings.REDIS_DB,
-        password=settings.REDIS_PASSWORD,
-    )
+    settings = CommonSettings.get_settings()
+    pool = redis.ConnectionPool.from_url(settings.REDIS_URI)
 
     redis_instance = redis.Redis(connection_pool=pool)
 

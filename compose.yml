@@ -131,6 +131,7 @@ services:
     environment:
       - CI=true
       - POSTGRES_SERVER=db
+      - REDIS_SERVER=redis
       - LOCALSTACK_HOST_NAME=localstack
       - BUILDER_API_URL=http://builder:8001
       - KUBERNETES_HOST=https://knative-control-plane:6443
