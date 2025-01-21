@@ -1,7 +1,10 @@
+import random
 import uuid
+from datetime import datetime
 from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 from sqlmodel import col, func, select
 
 from app.api.deps import CurrentUser, SessionDep
@@ -108,6 +111,64 @@ def read_app(session: SessionDep, current_user: CurrentUser, app_id: uuid.UUID) 
         )
 
     return app
+
+
+class Log(BaseModel):
+    app: str
+    timestamp: datetime
+    message: str
+
+
+class LogsResponse(BaseModel):
+    logs: list[Log]
+
+
+# TODO: Remove when logs implementation is completed
+
+
+def generate_mock_logs(app_id: uuid.UUID, count: int = 1000) -> list[Log]:
+    log_levels = ["INFO", "WARNING", "ERROR"]
+
+    mock_logs = []
+
+    for i in range(count):
+        log_time = datetime.now()
+        mock_logs.append(
+            Log(
+                app=str(app_id),
+                timestamp=log_time,
+                message=f"{random.choice(log_levels)}: Sample log message #{i + 1}",
+            )
+        )
+
+    return mock_logs
+
+
+@router.get("/{app_id}/logs")
+def read_app_logs(
+    session: SessionDep, current_user: CurrentUser, app_id: uuid.UUID
+) -> LogsResponse:
+    """
+    Fetch last logs for an app.
+    """
+    app = session.exec(select(App).where(App.id == app_id)).first()
+
+    if not app:
+        raise HTTPException(status_code=404, detail="App not found")
+
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=app.team_id
+    )
+    if not user_team_link:
+        raise HTTPException(
+            status_code=404, detail="Team not found for the current user"
+        )
+
+    all_logs = generate_mock_logs(app_id)
+
+    return LogsResponse(
+        logs=all_logs,
+    )
 
 
 @router.delete("/{app_id}", response_model=Message)

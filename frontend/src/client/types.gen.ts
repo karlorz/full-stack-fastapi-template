@@ -205,6 +205,16 @@ export type InvitationToken = {
   token: string
 }
 
+export type Log = {
+  app: string
+  timestamp: string
+  message: string
+}
+
+export type LogsResponse = {
+  logs: Array<Log>
+}
+
 export type Message = {
   message: string
 }
@@ -383,6 +393,12 @@ export type AppsDeleteAppData = {
 }
 
 export type AppsDeleteAppResponse = Message
+
+export type AppsReadAppLogsData = {
+  appId: string
+}
+
+export type AppsReadAppLogsResponse = LogsResponse
 
 export type DeploymentsReadDeploymentsData = {
   appId: string

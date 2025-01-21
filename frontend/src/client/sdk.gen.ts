@@ -22,6 +22,8 @@ import type {
   AppsReadAppResponse,
   AppsDeleteAppData,
   AppsDeleteAppResponse,
+  AppsReadAppLogsData,
+  AppsReadAppLogsResponse,
   DeploymentsReadDeploymentsData,
   DeploymentsReadDeploymentsResponse,
   DeploymentsCreateDeploymentData,
@@ -329,6 +331,29 @@ export class AppsService {
     return __request(OpenAPI, {
       method: "DELETE",
       url: "/api/v1/apps/{app_id}",
+      path: {
+        app_id: data.appId,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Read App Logs
+   * Fetch last logs for an app.
+   * @param data The data for the request.
+   * @param data.appId
+   * @returns LogsResponse Successful Response
+   * @throws ApiError
+   */
+  public static readAppLogs(
+    data: AppsReadAppLogsData,
+  ): CancelablePromise<AppsReadAppLogsResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/apps/{app_id}/logs",
       path: {
         app_id: data.appId,
       },
