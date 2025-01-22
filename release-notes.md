@@ -333,6 +333,7 @@
 
 ### Internal
 
+* 🚨 Run pre-commit on all files. PR [#600](https://github.com/fastapilabs/cloud/pull/600) by [@patrick91](https://github.com/patrick91).
 * 💚 Add biome to pre-commit-config. PR [#599](https://github.com/fastapilabs/cloud/pull/599) by [@patrick91](https://github.com/patrick91).
 * ✨ Add retry on create build on depot. PR [#576](https://github.com/fastapilabs/cloud/pull/576) by [@patrick91](https://github.com/patrick91).
 * 👷 Add NATS env vars to Kubernetes manifests. PR [#590](https://github.com/fastapilabs/cloud/pull/590) by [@tiangolo](https://github.com/tiangolo).
