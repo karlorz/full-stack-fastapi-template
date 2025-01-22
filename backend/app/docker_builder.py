@@ -26,7 +26,6 @@ from app import depot_client
 from app.aws_utils import get_ecr_client, get_s3_client
 from app.builder_utils import (
     SessionDep,
-    ensure_deployment_is_buildable,
     get_kubernetes_client_core_v1,
     get_kubernetes_client_custom_objects,
     validate_api_key,
@@ -609,7 +608,18 @@ def _app_process_build(deployment_id: uuid.UUID, session: SessionDep) -> None:
 
 @app.post("/apps/depot/build", dependencies=[Depends(validate_api_key)])
 def app_depot_build(message: SendDeploy, session: SessionDep) -> Message:
-    ensure_deployment_is_buildable(message.deployment_id, "api", session)
+    smt = select(Deployment).where(Deployment.id == message.deployment_id)
+    deployment = session.exec(smt).first()
+    if not deployment:
+        raise HTTPException(status_code=404, detail="Deployment not found")
+    if deployment.status == DeploymentStatus.waiting_upload:
+        raise HTTPException(
+            status_code=500,
+            detail="Deployment is waiting for upload, the build should have not been triggered",
+        )
+    if deployment.status != DeploymentStatus.ready_for_build:
+        return Message(message="Already being processed")
+
     _app_process_build(message.deployment_id, session)
     return Message(message="OK")
 

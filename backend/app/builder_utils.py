@@ -1,19 +1,17 @@
 import os
-import uuid
 from collections.abc import Generator
 from functools import lru_cache
-from typing import Annotated, Literal
+from typing import Annotated
 
 from fastapi import Depends, HTTPException
 from fastapi.security import APIKeyHeader
 from kubernetes import client as k8s
 from kubernetes import config
 from kubernetes.client import Configuration
-from sqlmodel import Session, select
+from sqlmodel import Session
 
 from app.core.config import BuilderSettings, CommonSettings
 from app.core.db import engine
-from app.models import Deployment, DeploymentStatus
 
 builder_settings = BuilderSettings.get_settings()
 common_settings = CommonSettings.get_settings()
@@ -67,40 +65,3 @@ def validate_api_key(api_key: Annotated[str, Depends(api_key_header)]) -> str:
     if api_key != common_settings.BUILDER_API_KEY:
         raise HTTPException(status_code=401, detail="Invalid API key")
     return api_key
-
-
-def ensure_deployment_is_buildable(
-    deployment_id: uuid.UUID, source: Literal["sqs", "api"], session: SessionDep
-) -> None:
-    smt = select(Deployment).where(Deployment.id == deployment_id)
-    deployment = session.exec(smt).first()
-    if not deployment:
-        raise HTTPException(status_code=404, detail="Deployment not found")
-
-    match deployment.status:
-        case DeploymentStatus.ready_for_build:
-            return
-        case DeploymentStatus.waiting_upload if source == "sqs":
-            return
-        case DeploymentStatus.waiting_upload:
-            raise HTTPException(
-                status_code=400,
-                detail="Deployment is waiting for upload",
-            )
-        case DeploymentStatus.building | DeploymentStatus.deploying:
-            raise HTTPException(
-                status_code=400,
-                detail="Deployment is being processed",
-            )
-        case DeploymentStatus.success:
-            raise HTTPException(
-                status_code=400,
-                detail="Deployment is already processed",
-            )
-        case DeploymentStatus.failed:
-            raise HTTPException(
-                status_code=400,
-                detail="Deployment failed",
-            )
-        case _:
-            raise RuntimeError("Deployment is in unknown state")
