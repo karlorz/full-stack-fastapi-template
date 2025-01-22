@@ -12,6 +12,7 @@ from typing import Any
 
 import logfire
 import sentry_sdk
+import stamina
 from asyncer import syncify
 from botocore.exceptions import ClientError, NoCredentialsError
 from fastapi import Depends, FastAPI, HTTPException
@@ -453,17 +454,44 @@ def depot_build_exec(
     return result
 
 
+def retry_on_grpc_error(exc: Exception) -> bool:
+    from grpclib import GRPCError, Status
+    from grpclib.exceptions import StreamTerminatedError
+
+    RETRYABLE_GRPC_STATUS_CODES = [
+        Status.DEADLINE_EXCEEDED,
+        Status.UNAVAILABLE,
+        Status.CANCELLED,
+        Status.INTERNAL,
+    ]
+
+    if isinstance(exc, GRPCError) and exc.status in RETRYABLE_GRPC_STATUS_CODES:
+        return True
+
+    return isinstance(exc, (StreamTerminatedError))
+
+
+@stamina.retry(on=retry_on_grpc_error)
+def _create_build(
+    depot_client: depot_build.BuildServiceStub,
+    depot_settings: DepotSettings,
+) -> depot_build.CreateBuildResponse:
+    return syncify(depot_client.create_build)(
+        create_build_request=depot_build.CreateBuildRequest(
+            project_id=depot_settings.DEPOT_PROJECT_ID
+        ),
+    )
+
+
 def build_and_push_docker_image(
     *, full_image_tag: str, docker_context_path: str
 ) -> None:
     depot_settings = DepotSettings.get_settings()
+
     # Docker login
     with docker_login():
-        build_request = syncify(depot_client.build().create_build)(
-            create_build_request=depot_build.CreateBuildRequest(
-                project_id=depot_settings.DEPOT_PROJECT_ID
-            ),
-        )
+        build_request = _create_build(depot_client.build(), depot_settings)
+
         print(f"Build request created: {build_request.build_id}")
 
         result = depot_build_exec(
