@@ -11,8 +11,7 @@ from app.depot_py.depot.core import v1 as depot_core
 
 # The Channel expects an asyincio event loop (in its thread), so this function needs
 # to be async
-@lru_cache
-async def channel() -> Channel:
+async def make_channel() -> Channel:
     depot_channel = Channel(
         host=DepotSettings.get_settings().DEPOT_HOSTNAME, port=443, ssl=True
     )
@@ -20,8 +19,13 @@ async def channel() -> Channel:
 
 
 @lru_cache
+def channel() -> Channel:
+    return syncify(make_channel)()
+
+
+@lru_cache
 def build() -> depot_build.BuildServiceStub:
-    depot_channel = syncify(channel)()
+    depot_channel = channel()
     return depot_build.BuildServiceStub(
         depot_channel,
         metadata={
@@ -32,7 +36,7 @@ def build() -> depot_build.BuildServiceStub:
 
 @lru_cache
 def core_build() -> depot_core.BuildServiceStub:
-    depot_channel = syncify(channel)()
+    depot_channel = channel()
     return depot_core.BuildServiceStub(
         depot_channel,
         metadata={
@@ -43,7 +47,7 @@ def core_build() -> depot_core.BuildServiceStub:
 
 @lru_cache
 def core_project() -> depot_core.ProjectServiceStub:
-    depot_channel = syncify(channel)()
+    depot_channel = channel()
     return depot_core.ProjectServiceStub(
         depot_channel,
         metadata={
@@ -54,7 +58,7 @@ def core_project() -> depot_core.ProjectServiceStub:
 
 @lru_cache
 def buildkit() -> depot_buildkit.BuildKitServiceStub:
-    depot_channel = syncify(channel)()
+    depot_channel = channel()
     return depot_buildkit.BuildKitServiceStub(
         depot_channel,
         metadata={
