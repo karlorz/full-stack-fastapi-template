@@ -114,6 +114,7 @@
 
 ### Fixes
 
+* 🐛 Fix team name not being updated in sidebar. PR [#598](https://github.com/fastapilabs/cloud/pull/598) by [@patrick91](https://github.com/patrick91).
 * 🐛 Remove team from local storage when there's an error. PR [#597](https://github.com/fastapilabs/cloud/pull/597) by [@patrick91](https://github.com/patrick91).
 * 🐛 Fix bug when hovering a team with a duplicated name in the team selector. PR [#562](https://github.com/fastapilabs/cloud/pull/562) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Remove `https` prefix from `dashboard_url`. PR [#561](https://github.com/fastapilabs/cloud/pull/561) by [@patrick91](https://github.com/patrick91).
