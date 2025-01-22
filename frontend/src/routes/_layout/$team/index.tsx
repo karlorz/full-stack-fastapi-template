@@ -36,6 +36,10 @@ export const Route = createFileRoute("/_layout/$team/")({
 
       return { apps, lastApp, lastDeploymentStatus }
     } catch (error) {
+      if (localStorage.getItem("current_team") === team) {
+        localStorage.removeItem("current_team")
+      }
+
       throw notFound({
         data: { team },
       })
