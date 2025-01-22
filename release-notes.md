@@ -147,6 +147,7 @@
 
 ### Refactors
 
+* ♻️ Do not use a single span/trace for the entire run of the messenger. PR [#603](https://github.com/fastapilabs/cloud/pull/603) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Update builder to error out only on server error states. PR [#601](https://github.com/fastapilabs/cloud/pull/601) by [@tiangolo](https://github.com/tiangolo).
 * ♻️  Add redis to common settings. PR [#580](https://github.com/fastapilabs/cloud/pull/580) by [@patrick91](https://github.com/patrick91).
 * ♻️ Update LogFire to show logs on local development. PR [#575](https://github.com/fastapilabs/cloud/pull/575) by [@tiangolo](https://github.com/tiangolo).
