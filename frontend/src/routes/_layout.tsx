@@ -4,6 +4,7 @@ import { Suspense } from "react"
 
 import logo from "@/assets/logo-text-white.svg"
 import { TeamsService } from "@/client"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import Footer from "../components/Common/Footer"
 import Sidebar from "../components/Common/Sidebar"
 import UserMenu from "../components/Common/UserMenu"
@@ -22,17 +23,18 @@ export const Route = createFileRoute("/_layout")({
     }
   },
   loader: async ({ context }) => {
-    const teams = await context.queryClient.fetchQuery({
+    await context.queryClient.ensureQueryData({
       queryFn: () => TeamsService.readTeams({}),
       queryKey: ["teams"],
     })
-
-    return { teams }
   },
 })
 
 function Layout() {
-  const { teams } = Route.useLoaderData()
+  const { data: teams } = useSuspenseQuery({
+    queryKey: ["teams"],
+    queryFn: () => TeamsService.readTeams({}),
+  })
 
   return (
     <>

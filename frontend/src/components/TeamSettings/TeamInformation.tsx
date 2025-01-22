@@ -55,7 +55,7 @@ const TeamInformationContent = () => {
 
   return (
     <Container maxW="full" my={4} px={0} pt={10}>
-      <CustomCard title="Team Name">
+      <CustomCard title="Team Name" data-testid="team-name-card">
         {currentUserRole === "admin" ? (
           <EditableField
             type="name"

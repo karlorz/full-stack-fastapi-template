@@ -82,9 +82,8 @@ test.describe("User with admin role can update team information", () => {
     await page.getByLabel("editable input").fill(newTeamName)
     await page.getByLabel("submit").click()
     await expect(page.getByText("Team updated successfully")).toBeVisible()
-    await expect(
-      page.locator("div").filter({ hasText: new RegExp(`^${newTeamName}$`) }),
-    ).toBeVisible()
+    await expect(page.getByTestId("team-selector")).toContainText(newTeamName)
+    await expect(page.getByTestId("team-name-card")).toContainText(newTeamName)
   })
 
   test("Validation messages are displayed for missing team name", async ({
