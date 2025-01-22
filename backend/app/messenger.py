@@ -135,17 +135,17 @@ async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
 async def main() -> None:
     # Run in asyncify to not block the event loop, in case we call this function
     # concurrently later
-    with logfire.span("Process queue: {name}", name=common_settings.BUILDER_QUEUE_NAME):
-        queue_url_response = await asyncify(sqs.get_queue_url)(
-            QueueName=common_settings.BUILDER_QUEUE_NAME
-        )
-        queue_url = queue_url_response.get("QueueUrl")
-        assert queue_url
+    logfire.info("Process queue: {name}", name=common_settings.BUILDER_QUEUE_NAME)
+    queue_url_response = await asyncify(sqs.get_queue_url)(
+        QueueName=common_settings.BUILDER_QUEUE_NAME
+    )
+    queue_url = queue_url_response.get("QueueUrl")
+    assert queue_url
 
-        # Create a single HTTPX client that we can reuse
-        async with httpx.AsyncClient() as client:
-            while True:
-                await _process_messages(queue_url, client)
+    # Create a single HTTPX client that we can reuse
+    async with httpx.AsyncClient() as client:
+        while True:
+            await _process_messages(queue_url, client)
 
 
 if __name__ == "__main__":
