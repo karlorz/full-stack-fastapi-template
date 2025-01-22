@@ -114,6 +114,7 @@
 
 ### Fixes
 
+* 🐛 Remove team from local storage when there's an error. PR [#597](https://github.com/fastapilabs/cloud/pull/597) by [@patrick91](https://github.com/patrick91).
 * 🐛 Fix bug when hovering a team with a duplicated name in the team selector. PR [#562](https://github.com/fastapilabs/cloud/pull/562) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Remove `https` prefix from `dashboard_url`. PR [#561](https://github.com/fastapilabs/cloud/pull/561) by [@patrick91](https://github.com/patrick91).
 * 👷 Fix localstack config with env vars for CI deployments. PR [#554](https://github.com/fastapilabs/cloud/pull/554) by [@tiangolo](https://github.com/tiangolo).
