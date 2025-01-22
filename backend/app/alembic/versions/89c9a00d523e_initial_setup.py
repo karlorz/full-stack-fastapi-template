@@ -1,7 +1,7 @@
 """Initial setup
 
 Revision ID: 89c9a00d523e
-Revises: 
+Revises:
 Create Date: 2024-07-18 22:25:02.356343
 
 """
