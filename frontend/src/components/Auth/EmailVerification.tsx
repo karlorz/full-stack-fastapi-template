@@ -21,7 +21,7 @@ const EmailVerification = () => {
     mutationFn: verifyEmail,
   })
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies(a): Including the mutation in the dependencies would cause an infinite loop
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Including the mutation in the dependencies would cause an infinite loop
   useEffect(() => {
     // using a timeout here to prevent the mutation from firing multiple
     // times on StrictMode in dev

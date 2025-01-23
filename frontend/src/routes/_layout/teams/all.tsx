@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
 import { Link as RouterLink, useNavigate } from "@tanstack/react-router"
+import { Fragment } from "react"
 import { z } from "zod"
 
 import { TeamsService, UsersService } from "@/client"
@@ -105,7 +106,7 @@ function AllTeams() {
       <CustomCard>
         <Flex direction="column" data-testid="teams">
           {teams.map((team) => (
-            <>
+            <Fragment key={team.id}>
               <RouterLink to={`/${team.slug}/`}>
                 <Flex
                   key={team.id}
@@ -127,7 +128,7 @@ function AllTeams() {
                 </Flex>
               </RouterLink>
               <Separator />
-            </>
+            </Fragment>
           ))}
         </Flex>
         <Flex justifyContent="flex-end" mt={4}>

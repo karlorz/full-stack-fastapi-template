@@ -52,7 +52,6 @@ jobs:
     - name: Format frontend
       run: |
         npm run biome-check
-        npm run biome-format
       working-directory: frontend
     - name: Add changes to git
       run: |
@@ -69,7 +68,7 @@ jobs:
     - name: Check changes
       if: ( github.event_name == 'pull_request' && github.secret_source != 'Actions' )
       run: |
-        git diff --staged --quiet || (echo "Changes detected in, run npm run biome-check and npm run biome-format and commit the changes" && exit 1)
+        git diff --staged --quiet || (echo "Changes detected in, run npm run biome-check --write and commit the changes" && exit 1)
 
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-format-frontend:  # This job does nothing and is only used for the branch protection

@@ -1,9 +1,9 @@
 @font-face {
-    font-family: 'Open Sans';
-    src: url('/assets/fonts/open-sans/OpenSans-Regular.ttf') format('truetype');
+  font-family: "Open Sans";
+  src: url("/assets/fonts/open-sans/OpenSans-Regular.ttf") format("truetype");
 }
 
 @font-face {
-    font-family: 'Raleway Bold';
-    src: url('/assets/fonts/raleway/Raleway-Bold.ttf') format('truetype');
+  font-family: "Raleway Bold";
+  src: url("/assets/fonts/raleway/Raleway-Bold.ttf") format("truetype");
 }

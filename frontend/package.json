@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "biome-check": "biome check --apply-unsafe --no-errors-on-unmatched --files-ignore-unknown=true ./",
+    "biome-check": "biome check --write --unsafe --no-errors-on-unmatched --files-ignore-unknown=true ./",
     "biome-format": "biome format --write ./",
     "preview": "vite preview",
     "generate-client": "openapi-ts"
@@ -33,7 +33,7 @@
     "react-icons": "^5.3.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.1",
+    "@biomejs/biome": "1.9.4",
     "@faker-js/faker": "^8.4.1",
     "@hey-api/openapi-ts": "^0.57.1",
     "@playwright/test": "^1.47.0",

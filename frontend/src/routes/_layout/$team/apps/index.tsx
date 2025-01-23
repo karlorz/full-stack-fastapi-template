@@ -11,6 +11,7 @@ import {
   createFileRoute,
   useNavigate,
 } from "@tanstack/react-router"
+import { Fragment } from "react"
 import { z } from "zod"
 
 import { EmptyBox } from "@/assets/icons"
@@ -115,7 +116,7 @@ function Apps() {
           <CustomCard>
             <Flex direction="column">
               {apps.map(({ id, name, slug, created_at }) => (
-                <>
+                <Fragment key={id}>
                   <RouterLink to={`/$team/apps/${slug}/`}>
                     <Flex
                       key={id}
@@ -137,7 +138,7 @@ function Apps() {
                     </Flex>
                   </RouterLink>
                   <Separator />
-                </>
+                </Fragment>
               ))}
             </Flex>
             <Flex justifyContent="flex-end" mt={4}>
