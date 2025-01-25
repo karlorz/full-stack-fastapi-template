@@ -337,6 +337,7 @@
 
 ### Internal
 
+* 👷 Add logs collection with Vector, sending to NATS. PR [#581](https://github.com/fastapilabs/cloud/pull/581) by [@tiangolo](https://github.com/tiangolo).
 * ⬆️ Upgrade biomejs to latest. PR [#608](https://github.com/fastapilabs/cloud/pull/608) by [@patrick91](https://github.com/patrick91).
 * 🚨 Run pre-commit on all files. PR [#600](https://github.com/fastapilabs/cloud/pull/600) by [@patrick91](https://github.com/patrick91).
 * 💚 Add biome to pre-commit-config. PR [#599](https://github.com/fastapilabs/cloud/pull/599) by [@patrick91](https://github.com/patrick91).
