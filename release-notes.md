@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Add backend to create NATS JetStream for logs and read them. PR [#582](https://github.com/fastapilabs/cloud/pull/582) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Logs UI. PR [#594](https://github.com/fastapilabs/cloud/pull/594) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add new statuses to deployment. PR [#578](https://github.com/fastapilabs/cloud/pull/578) by [@patrick91](https://github.com/patrick91).
 * ✨ Use SQS to communicate to builder, includes localstack, and new messenger. PR [#548](https://github.com/fastapilabs/cloud/pull/548) by [@tiangolo](https://github.com/tiangolo).
