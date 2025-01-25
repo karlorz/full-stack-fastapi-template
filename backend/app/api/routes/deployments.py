@@ -2,6 +2,7 @@ import uuid
 from typing import Any, Literal
 
 import httpx
+import logfire
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import func
 from sqlmodel import and_, col, select
@@ -19,6 +20,13 @@ from app.models import (
     DeploymentStatus,
     DeploymentUploadOut,
     Message,
+)
+from app.nats import (
+    JetStreamDep,
+    LogsResponse,
+    get_jetstream_deployment_logs_subject,
+    get_jetstream_logs_stream_name,
+    get_logs,
 )
 
 sqs = get_sqs_client()
@@ -104,6 +112,51 @@ def read_deployment(
         raise HTTPException(status_code=404, detail="Deployment not found")
 
     return deployment
+
+
+@router.get("/deployments/{deployment_id}/logs")
+def read_deployment_logs(
+    session: SessionDep,
+    current_user: CurrentUser,
+    jetstream: JetStreamDep,
+    deployment_id: uuid.UUID,
+) -> LogsResponse:
+    """
+    Get the logs for a deployment.
+    """
+
+    deployment = session.get(Deployment, deployment_id)
+
+    if not deployment:
+        raise HTTPException(status_code=404, detail="Deployment not found")
+
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=deployment.app.team_id
+    )
+    if not user_team_link:
+        raise HTTPException(
+            status_code=404, detail="Team not found for the current user"
+        )
+
+    stream_name = get_jetstream_logs_stream_name(
+        team_slug=deployment.app.team.slug, app_slug=deployment.app.slug
+    )
+    deployment_subject = get_jetstream_deployment_logs_subject(
+        team_slug=deployment.app.team.slug,
+        app_slug=deployment.app.slug,
+        deployment_id=deployment_id,
+    )
+
+    logfire.info("Using jetstream stream_name {stream_name}", stream_name=stream_name)
+    logfire.info(
+        "Using jetstream deployment_subject {deployment_subject}",
+        deployment_subject=deployment_subject,
+    )
+    return get_logs(
+        jetstream=jetstream,
+        stream_name=stream_name,
+        subject=deployment_subject,
+    )
 
 
 @router.post(

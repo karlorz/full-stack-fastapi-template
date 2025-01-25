@@ -1,5 +1,6 @@
 import secrets
 import warnings
+from collections import UserString
 from functools import lru_cache
 from typing import Annotated, Any, Literal, TypeVar
 
@@ -83,6 +84,17 @@ class CommonSettings(SettingsEnv):
     BUILDER_QUEUE_NAME: str = "fastapicloud-builder"
     AWS_REGION: str = "us-east-1"
     BUILDER_API_URL: str
+    NATS_HOST_NAME: str = "localhost"
+    # The NATS client can take the literal creds content if it's an instance of a UserString
+    # otherwise, it will expect a file path
+    NATS_CREDS: (
+        Annotated[
+            UserString,
+            BeforeValidator(lambda x: UserString(x)),
+            PlainSerializer(str, when_used="json"),
+        ]
+        | None
+    ) = None
 
     REDIS_SERVER: str
     REDIS_PORT: int = 6379

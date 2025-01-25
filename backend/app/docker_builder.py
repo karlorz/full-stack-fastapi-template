@@ -18,6 +18,8 @@ from botocore.exceptions import ClientError, NoCredentialsError
 from fastapi import Depends, FastAPI, HTTPException
 from kubernetes import client as k8s
 from kubernetes.client.rest import ApiException as K8sApiException
+from nats.js import JetStreamContext
+from nats.js.api import StreamConfig
 from pydantic import BaseModel
 from sqlalchemy.orm import joinedload
 from sqlmodel import select
@@ -47,6 +49,11 @@ from app.models import (
     EnvironmentVariable,
     Message,
     SendDeploy,
+)
+from app.nats import (
+    JetStreamDep,
+    get_jetstream_app_logs_subscribe_subject,
+    get_jetstream_logs_stream_name,
 )
 
 builder_settings = BuilderSettings.get_settings()
@@ -284,8 +291,10 @@ def deploy_to_kubernetes(
     min_scale: int = 0,
     env: dict[str, str] | None = None,
     service_account: str | None = None,
+    labels: dict[str, str] | None = None,
 ) -> None:
     use_env = env or {}
+    use_labels = labels or {}
     knative_service: dict[str, Any] = {
         "apiVersion": "serving.knative.dev/v1",
         "kind": "Service",
@@ -299,6 +308,7 @@ def deploy_to_kubernetes(
                     "annotations": {
                         "autoscaling.knative.dev/minScale": str(min_scale),
                     },
+                    "labels": use_labels,
                 },
                 "spec": {
                     "containers": [
@@ -521,7 +531,9 @@ def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
     return {env_var.name: env_var.value for env_var in env_vars}
 
 
-def _app_process_build(deployment_id: uuid.UUID, session: SessionDep) -> None:
+def _app_process_build(
+    deployment_id: uuid.UUID, session: SessionDep, jetstream: JetStreamContext
+) -> None:
     bucket_name = CommonSettings.get_settings().DEPLOYMENTS_BUCKET_NAME
 
     deployment_with_team = session.exec(
@@ -589,12 +601,43 @@ def _app_process_build(deployment_id: uuid.UUID, session: SessionDep) -> None:
             deployment_with_team.status = DeploymentStatus.deploying
             session.commit()
 
+            # Create NATS JetStream context
+            with logfire.span(
+                "create_jetstream_context team: {team_slug} app: {app_slug}",
+                team_slug=team.slug,
+                app_slug=deployment_with_team.app.slug,
+            ):
+                stream_name = get_jetstream_logs_stream_name(
+                    team_slug=team.slug, app_slug=deployment_with_team.app.slug
+                )
+                subscribe_subject = get_jetstream_app_logs_subscribe_subject(
+                    team_slug=team.slug, app_slug=deployment_with_team.app.slug
+                )
+                jetstream_info = syncify(jetstream.add_stream)(
+                    config=StreamConfig(
+                        name=stream_name,
+                        subjects=[subscribe_subject],
+                        # A max_bytes value is required by Synadia Cloud
+                        # This space is reserved, so keep it at 100MB
+                        max_bytes=100_000_000,
+                        max_msgs_per_subject=1_000,
+                    )
+                )
+                logfire.info(
+                    "JetStream info: {jetstream_info}", jetstream_info=jetstream_info
+                )
+
             # Deploy to Kubernetes
             deploy_to_kubernetes(
                 service_name=app_name,
                 full_image_tag=full_image_tag,
                 namespace=f"team-{team.id}",
                 env=env_vars,
+                labels={
+                    "fastapicloud_team": team.slug,
+                    "fastapicloud_app": deployment_with_team.app.slug,
+                    "fastapicloud_deployment": str(deployment_with_team.id),
+                },
             )
 
         # Update status to success
@@ -607,7 +650,9 @@ def _app_process_build(deployment_id: uuid.UUID, session: SessionDep) -> None:
 
 
 @app.post("/apps/depot/build", dependencies=[Depends(validate_api_key)])
-def app_depot_build(message: SendDeploy, session: SessionDep) -> Message:
+def app_depot_build(
+    message: SendDeploy, session: SessionDep, jetstream: JetStreamDep
+) -> Message:
     smt = select(Deployment).where(Deployment.id == message.deployment_id)
     deployment = session.exec(smt).first()
     if not deployment:
@@ -620,7 +665,9 @@ def app_depot_build(message: SendDeploy, session: SessionDep) -> Message:
     if deployment.status != DeploymentStatus.ready_for_build:
         return Message(message="Already being processed")
 
-    _app_process_build(message.deployment_id, session)
+    _app_process_build(
+        deployment_id=message.deployment_id, session=session, jetstream=jetstream
+    )
     return Message(message="OK")
 
 
@@ -634,31 +681,22 @@ def send_deploy(
     ).first()
     if not deployment:
         raise HTTPException(status_code=404, detail="Deployment not found")
-    # TODO: handle this after Depot
-    # if not deployment.image_hash:
-    #     raise HTTPException(
-    #         status_code=400,
-    #         detail="Deployment image hash not found, please build first",
-    #     )
 
-    app = session.exec(select(App).where(App.id == deployment.app_id)).first()
-    if not app:
-        raise HTTPException(
-            status_code=404, detail="App associated with the deployment not found"
-        )
-
-    team = app.team
-
-    image_tag = f"{app.id}_{deployment.id}"
-    image_tag = get_image_name(app_id=app.id, deployment_id=deployment.id)
+    image_tag = f"{deployment.app.id}_{deployment.id}"
+    image_tag = get_image_name(app_id=deployment.app.id, deployment_id=deployment.id)
     full_image_tag = get_full_image_name(image_tag)
-    env_vars = get_env_vars(app.id, session)
+    env_vars = get_env_vars(deployment.app.id, session)
 
     deploy_to_kubernetes(
         service_name=deployment.slug,
         full_image_tag=full_image_tag,
-        namespace=f"team-{team.id}",
+        namespace=f"team-{deployment.app.team.id}",
         env=env_vars,
+        labels={
+            "fastapicloud_team": deployment.app.team.slug,
+            "fastapicloud_app": deployment.app.slug,
+            "fastapicloud_deployment": str(deployment.id),
+        },
     )
 
     return Message(message="OK")

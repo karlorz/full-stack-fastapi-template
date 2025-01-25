@@ -1,16 +1,21 @@
-import random
 import uuid
-from datetime import datetime
 from typing import Any, Literal
 
+import logfire
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 from sqlmodel import col, func, select
 
 from app.api.deps import CurrentUser, SessionDep
 from app.api.utils.teams import generate_app_slug_name
 from app.crud import get_user_team_link
 from app.models import App, AppCreate, AppPublic, AppsPublic, Message
+from app.nats import (
+    JetStreamDep,
+    LogsResponse,
+    get_jetstream_app_logs_subscribe_subject,
+    get_jetstream_logs_stream_name,
+    get_logs,
+)
 
 from .environment_variables import router as environment_variables_router
 
@@ -113,40 +118,12 @@ def read_app(session: SessionDep, current_user: CurrentUser, app_id: uuid.UUID) 
     return app
 
 
-class Log(BaseModel):
-    app: str
-    timestamp: datetime
-    message: str
-
-
-class LogsResponse(BaseModel):
-    logs: list[Log]
-
-
-# TODO: Remove when logs implementation is completed
-
-
-def generate_mock_logs(app_id: uuid.UUID, count: int = 1000) -> list[Log]:
-    log_levels = ["INFO", "WARNING", "ERROR"]
-
-    mock_logs = []
-
-    for i in range(count):
-        log_time = datetime.now()
-        mock_logs.append(
-            Log(
-                app=str(app_id),
-                timestamp=log_time,
-                message=f"{random.choice(log_levels)}: Sample log message #{i + 1}",
-            )
-        )
-
-    return mock_logs
-
-
 @router.get("/{app_id}/logs")
 def read_app_logs(
-    session: SessionDep, current_user: CurrentUser, app_id: uuid.UUID
+    session: SessionDep,
+    current_user: CurrentUser,
+    jetstream: JetStreamDep,
+    app_id: uuid.UUID,
 ) -> LogsResponse:
     """
     Fetch last logs for an app.
@@ -164,10 +141,20 @@ def read_app_logs(
             status_code=404, detail="Team not found for the current user"
         )
 
-    all_logs = generate_mock_logs(app_id)
+    subscribe_subject = get_jetstream_app_logs_subscribe_subject(
+        team_slug=app.team.slug, app_slug=app.slug
+    )
+    stream_name = get_jetstream_logs_stream_name(
+        team_slug=app.team.slug, app_slug=app.slug
+    )
 
-    return LogsResponse(
-        logs=all_logs,
+    logfire.info(
+        "Using jetstream subscribe subject {subscribe_subject}",
+        subscribe_subject=subscribe_subject,
+    )
+    logfire.info("Using jetstream stream name {stream_name}", stream_name=stream_name)
+    return get_logs(
+        jetstream=jetstream, stream_name=stream_name, subject=subscribe_subject
     )
 
 

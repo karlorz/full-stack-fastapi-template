@@ -27,6 +27,8 @@ import type {
   DeploymentsCreateDeploymentData,
   DeploymentsCreateDeploymentResponse,
   DeploymentsReadDeploymentData,
+  DeploymentsReadDeploymentLogsData,
+  DeploymentsReadDeploymentLogsResponse,
   DeploymentsReadDeploymentResponse,
   DeploymentsReadDeploymentsData,
   DeploymentsReadDeploymentsResponse,
@@ -438,6 +440,29 @@ export class DeploymentsService {
       url: "/api/v1/apps/{app_id}/deployments/{deployment_id}",
       path: {
         app_id: data.appId,
+        deployment_id: data.deploymentId,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Read Deployment Logs
+   * Get the logs for a deployment.
+   * @param data The data for the request.
+   * @param data.deploymentId
+   * @returns LogsResponse Successful Response
+   * @throws ApiError
+   */
+  public static readDeploymentLogs(
+    data: DeploymentsReadDeploymentLogsData,
+  ): CancelablePromise<DeploymentsReadDeploymentLogsResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/deployments/{deployment_id}/logs",
+      path: {
         deployment_id: data.deploymentId,
       },
       errors: {

@@ -206,7 +206,9 @@ export type InvitationToken = {
 }
 
 export type Log = {
-  app: string
+  team?: string | null
+  app?: string | null
+  deployment?: string | null
   timestamp: string
   message: string
 }
@@ -422,6 +424,12 @@ export type DeploymentsReadDeploymentData = {
 }
 
 export type DeploymentsReadDeploymentResponse = DeploymentPublic
+
+export type DeploymentsReadDeploymentLogsData = {
+  deploymentId: string
+}
+
+export type DeploymentsReadDeploymentLogsResponse = LogsResponse
 
 export type DeploymentsUploadDeploymentArtifactData = {
   deploymentId: string
