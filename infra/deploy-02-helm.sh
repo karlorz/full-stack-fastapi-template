@@ -17,6 +17,9 @@ helm repo add eks https://aws.github.io/eks-charts --force-update
 echo "Add Helm repo: jetstack, for Cert Manager"
 helm repo add jetstack https://charts.jetstack.io --force-update
 
+echo "Add Helm repo: vector"
+helm repo add vector https://helm.vector.dev --force-update
+
 # TODO: remove ingress-nginx if we end up not using it at all
 # echo "Add Helm repo: ingress-nginx, for Ingress Controller"
 # helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx --force-update
@@ -38,6 +41,18 @@ helm upgrade --install cert-manager jetstack/cert-manager \
   --create-namespace \
   --version "${CERT_MANAGER_VERSION}" \
   --set crds.enabled=true
+
+echo "Install Vector Agent"
+helm upgrade --install vector-agent vector/vector \
+  --namespace vector-agent \
+  --create-namespace \
+  --values helm-values/vector-agent-values.yaml
+
+echo "Install Vector Aggregator"
+helm upgrade --install vector-aggregator vector/vector \
+  --namespace vector-aggregator \
+  --create-namespace \
+  --values helm-values/vector-aggregator-values.yaml
 
 # TODO: remove ingress-nginx if we end up not using it at all
 # echo "Install Ingress Nginx Controller"

@@ -131,6 +131,7 @@ jobs:
         BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
         LOGFIRE_TOKEN: "${{ secrets.LOGFIRE_TOKEN }}"
         NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"
+        NATS_CREDS: "${{ secrets.NATS_CREDS }}"
         ENABLE_LOCALSTACK: "False"
     - name: Update Knative Service image
       run: uv run typer --func deploy_cloud app.docker_builder run api $IMAGE_URL --min-scale 1
@@ -180,6 +181,7 @@ jobs:
         CLOUDFLARE_API_TOKEN_SSL: "${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}"
         LOGFIRE_TOKEN: "${{ secrets.LOGFIRE_TOKEN }}"
         NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"
+        NATS_CREDS: "${{ secrets.NATS_CREDS }}"
         ENABLE_LOCALSTACK: "False"
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-backend:  # This job does nothing and is only used for the branch protection

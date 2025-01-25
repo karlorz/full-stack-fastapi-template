@@ -105,6 +105,7 @@ jobs:
         CLOUDFLARE_API_TOKEN_SSL: "${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}"
         LOGFIRE_TOKEN: "${{ secrets.LOGFIRE_TOKEN }}"
         NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"
+        NATS_CREDS_JSON_STR: "${{ secrets.NATS_CREDS_JSON_STR }}"
         REDIS_SERVER: "${{ vars.REDIS_SERVER }}"
 
         # Secrets for the builder

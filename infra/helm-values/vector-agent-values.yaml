@@ -1,0 +1,32 @@
+role: Agent
+
+# Specify custom contents for the Vector config
+# ref: https://vector.dev/docs/reference/configuration/
+# Note a complete and valid configuration is required. If used, the deprecated
+# configuration keys will be ignored. More information can be found at:
+# https://vector.dev/highlights/2021-07-13-helm-customconfig
+customConfig:
+  data_dir: "/vector-data-dir"
+  sources:
+    host_metrics:
+      type: host_metrics
+      filesystem:
+        devices:
+          excludes: ["binfmt_misc"]
+        filesystems:
+          excludes: ["binfmt_misc"]
+        mountpoints:
+          excludes: ["*/proc/sys/fs/binfmt_misc"]
+    internal_metrics:
+      type: internal_metrics
+    kubernetes_logs:
+      type: kubernetes_logs
+  sinks:
+    prometheus_sink:
+      type: prometheus_exporter
+      inputs: ["host_metrics", "internal_metrics"]
+      address: 0.0.0.0:9090
+    vector_aggregator:
+      type: vector
+      inputs: ["host_metrics", "internal_metrics", "kubernetes_logs"]
+      address: vector-aggregator.vector-aggregator.svc.cluster.local:6000

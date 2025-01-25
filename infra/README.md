@@ -200,7 +200,15 @@ Then rename the context:
 kubectl config rename-context ...
 ```
 
-### Deploy the Preivous Steps
+## Select the Kubernetes Context
+
+Select the Kubernetes context for the AWS environment:
+
+```bash
+kubectl config use-context $ENVIRONMENT
+```
+
+### Deploy the Previous Steps
 
 Deploy the AWS Load Balancer Controller service account and other previous steps:
 
@@ -236,7 +244,19 @@ After having the Helm Charts installed, install other non-Helm Kubernetes resour
 
 This script expects some environment variables to be set. If running on the GitHub Action, they are set automatically. If running locally, set them manually.
 
-* `CLOUDFLARE_API_TOKEN_SSL` with the Cloudflare SSL user API token for Knative serving:
+Set the NATS environment variables from a downloaded credentials file:
+
+```bash
+export NATS_LOGS_WRITE_CREDS="$(cat ./NGS-fastapicloud-logs.creds)"
+```
+
+Confirm the env var has contents:
+
+```bash
+echo $NATS_LOGS_WRITE_CREDS
+```
+
+Set `CLOUDFLARE_API_TOKEN_SSL` with the Cloudflare SSL user API token for Knative serving:
 
 ```bash
 export CLOUDFLARE_API_TOKEN_SSL=...

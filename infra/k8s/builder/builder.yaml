@@ -67,6 +67,8 @@ spec:
             value: "${REDIS_SERVER}"
           - name: NATS_HOST_NAME
             value: "${NATS_HOST_NAME}"
+          - name: NATS_CREDS
+            value: "${NATS_CREDS_JSON_STR}"
         volumeMounts:
         - mountPath: /var/lib/docker
           name: docker-graph-storage

@@ -49,6 +49,8 @@ spec:
             value: "${REDIS_SERVER}"
           - name: NATS_HOST_NAME
             value: "${NATS_HOST_NAME}"
+          - name: NATS_CREDS
+            value: "${NATS_CREDS_JSON_STR}"
 
 ---
 # Reference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
