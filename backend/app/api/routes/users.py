@@ -41,6 +41,7 @@ from app.utils import (
     generate_waiting_list_update_email,
     is_signup_allowed,
     send_email,
+    validate_email_deliverability,
     verify_email_verification_token,
     verify_update_email_verification_token,
 )
@@ -239,8 +240,7 @@ def add_to_waiting_list(session: SessionDep, user_in: WaitingListUserCreate) -> 
     """
     Add user to waiting list
     """
-    email_response = emailable_client.verify(email=user_in.email)
-    if email_response.state != "deliverable":
+    if not validate_email_deliverability(user_in.email):
         raise HTTPException(
             status_code=400,
             detail="This email is not valid",

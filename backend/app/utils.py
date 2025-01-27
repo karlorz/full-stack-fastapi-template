@@ -8,6 +8,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Literal
 
+import emailable  # type: ignore
 import emails  # type: ignore
 import jwt
 from jinja2 import Template
@@ -507,3 +508,16 @@ def query_pending_users_to_send_invitation(session: Session) -> None:
         )
         user.invitation_sent_at = get_datetime_utc()
         session.commit()
+
+
+def validate_email_deliverability(email: str) -> bool:
+    """
+    Validate email deliverability using emailable service.
+    Returns True if email is deliverable, False otherwise.
+    """
+    settings = MainSettings.get_settings()
+    emailable_client = emailable.Client(settings.EMAILABLE_KEY)
+    email_response = emailable_client.verify(email=email)
+    if email_response.state == "deliverable":
+        return True
+    return False

@@ -372,13 +372,10 @@ def test_add_to_waiting_list(client: TestClient) -> None:
         SMTP_HOST="smtp.example.com",
         SMTP_USER="admin@example.com",
     )
-    email_response = EmailResponse(state="deliverable")
     with (
         patch("app.utils.send_email", return_value=None),
         patch.object(MainSettings, "get_settings", return_value=test_settings),
-        patch(
-            "app.api.routes.users.emailable_client.verify", return_value=email_response
-        ),
+        patch("app.api.routes.users.validate_email_deliverability", return_value=True),
     ):
         email = "test@fastapilabs.com"
         data = {
@@ -400,13 +397,10 @@ def test_update_waiting_list_user(client: TestClient) -> None:
         SMTP_HOST="smtp.example.com",
         SMTP_USER="admin@example.com",
     )
-    email_response = EmailResponse(state="deliverable")
     with (
         patch("app.utils.send_email", return_value=None),
         patch.object(MainSettings, "get_settings", return_value=test_settings),
-        patch(
-            "app.api.routes.users.emailable_client.verify", return_value=email_response
-        ),
+        patch("app.api.routes.users.validate_email_deliverability", return_value=True),
     ):
         email = "test@fastapilabs.com"
         data = {
@@ -429,13 +423,10 @@ def test_add_to_waiting_list_invalid_email(client: TestClient) -> None:
         SMTP_HOST="smtp.example.com",
         SMTP_USER="admin@example.com",
     )
-    email_response = EmailResponse(state="undeliverable")
     with (
         patch("app.utils.send_email", return_value=None),
         patch.object(MainSettings, "get_settings", return_value=test_settings),
-        patch(
-            "app.api.routes.users.emailable_client.verify", return_value=email_response
-        ),
+        patch("app.api.routes.users.validate_email_deliverability", return_value=False),
     ):
         email = "test@test.com"
         data = {
@@ -458,13 +449,10 @@ def test_add_to_waiting_list_email_already_registered_in_system(
         SMTP_HOST="smtp.example.com",
         SMTP_USER="admin@example.com",
     )
-    email_response = EmailResponse(state="deliverable")
     with (
         patch("app.utils.send_email", return_value=None),
         patch.object(MainSettings, "get_settings", return_value=test_settings),
-        patch(
-            "app.api.routes.users.emailable_client.verify", return_value=email_response
-        ),
+        patch("app.api.routes.users.validate_email_deliverability", return_value=True),
     ):
         user_in = UserCreate(
             email="existing@fastapilabs.com",
