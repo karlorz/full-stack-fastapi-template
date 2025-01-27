@@ -148,6 +148,7 @@
 
 ### Refactors
 
+* ♻️ Refactor NATS to use one single JetStream for logs for all apps. PR [#611](https://github.com/fastapilabs/cloud/pull/611) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Do not use a single span/trace for the entire run of the messenger. PR [#603](https://github.com/fastapilabs/cloud/pull/603) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Update builder to error out only on server error states. PR [#601](https://github.com/fastapilabs/cloud/pull/601) by [@tiangolo](https://github.com/tiangolo).
 * ♻️  Add redis to common settings. PR [#580](https://github.com/fastapilabs/cloud/pull/580) by [@patrick91](https://github.com/patrick91).
