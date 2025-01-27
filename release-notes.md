@@ -116,6 +116,7 @@
 
 ### Fixes
 
+* 🚨 Fix `suppression comment has no effect` . PR [#612](https://github.com/fastapilabs/cloud/pull/612) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Do not lru_cache the async depot functions. PR [#602](https://github.com/fastapilabs/cloud/pull/602) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Fix team name not being updated in sidebar. PR [#598](https://github.com/fastapilabs/cloud/pull/598) by [@patrick91](https://github.com/patrick91).
 * 🐛 Remove team from local storage when there's an error. PR [#597](https://github.com/fastapilabs/cloud/pull/597) by [@patrick91](https://github.com/patrick91).
