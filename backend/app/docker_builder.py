@@ -568,15 +568,10 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
                 create_ecr_repository(image_tag)
 
             # Copy Dockerfile to build context
-            build_files = os.listdir(build_context)
-            if "requirements.txt" in build_files:
-                shutil.copy(
-                    code_path / "Dockerfile.requirements", f"{build_context}/Dockerfile"
-                )
-            else:
-                shutil.copy(
-                    code_path / "Dockerfile.standard", f"{build_context}/Dockerfile"
-                )
+            # TODO: maybe rename this file?
+            shutil.copy(
+                code_path / "Dockerfile.standard", f"{build_context}/Dockerfile"
+            )
 
             deployment_with_team.status = DeploymentStatus.building_image
             session.commit()

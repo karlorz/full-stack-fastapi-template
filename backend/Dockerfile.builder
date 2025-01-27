@@ -56,7 +56,6 @@ COPY --chown=user:user ./pyproject.toml ./uv.lock ./alembic.ini /app/
 COPY --chown=user:user ./app /app/app
 
 COPY --chown=user:user Dockerfile.standard /app/Dockerfile.standard
-COPY --chown=user:user Dockerfile.requirements /app/Dockerfile.requirements
 
 # Sync the project
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
