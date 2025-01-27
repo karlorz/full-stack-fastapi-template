@@ -535,6 +535,16 @@ Configure it not to suspend.
 
 Configure it to use connection pool.
 
+### nats - Synadia Cloud
+
+Create a new Synadia Cloud "account" for the new environment.
+
+Create a new JetStream called `logs-apps` with the subject `logs.apps.>`.
+
+Max days, 30.
+
+Max messages per subject, 1000.
+
 ### GitHub Environment
 
 Add GitHub Environment secrets and variables copying from another environment and updating.

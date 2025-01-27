@@ -1,3 +1,4 @@
+import asyncio
 import secrets
 from collections.abc import AsyncGenerator
 from datetime import datetime
@@ -24,10 +25,6 @@ async def make_nats_client() -> Client:
         name=f"fastapicloud-{secrets.token_hex(4)}",
     )
     return nc
-
-
-def get_jetstream_logs_stream_name(*, team_slug: str, app_slug: str) -> str:
-    return f"logs-apps-{team_slug}-{app_slug}"
 
 
 def get_jetstream_app_logs_subscribe_subject(*, team_slug: str, app_slug: str) -> str:
@@ -85,11 +82,9 @@ class LogsResponse(BaseModel):
     logs: list[Log]
 
 
-def get_logs(
-    *, jetstream: JetStreamContext, stream_name: str, subject: str
-) -> LogsResponse:
+def get_logs(*, jetstream: JetStreamContext, subject: str) -> LogsResponse:
     subscription = syncify(jetstream.pull_subscribe)(
-        subject=subject, stream=stream_name
+        subject=subject, stream=common_settings.NATS_JETSTREAM_NAME
     )
     # The default timeout of 5 seconds would mean it would keep trying, waiting to
     # get the entire batch size of messages (which might not exist), so it would wait
@@ -97,7 +92,7 @@ def get_logs(
     # timeout before getting the first message.
     try:
         messages = syncify(subscription.fetch)(batch=1000, timeout=0.5)
-    except FetchTimeoutError:
+    except (FetchTimeoutError, asyncio.TimeoutError):
         messages = []
 
     logs: list[Log] = []

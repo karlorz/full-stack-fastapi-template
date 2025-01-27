@@ -18,8 +18,6 @@ from botocore.exceptions import ClientError, NoCredentialsError
 from fastapi import Depends, FastAPI, HTTPException
 from kubernetes import client as k8s
 from kubernetes.client.rest import ApiException as K8sApiException
-from nats.js import JetStreamContext
-from nats.js.api import StreamConfig
 from pydantic import BaseModel
 from sqlalchemy.orm import joinedload
 from sqlmodel import select
@@ -49,11 +47,6 @@ from app.models import (
     EnvironmentVariable,
     Message,
     SendDeploy,
-)
-from app.nats import (
-    JetStreamDep,
-    get_jetstream_app_logs_subscribe_subject,
-    get_jetstream_logs_stream_name,
 )
 
 builder_settings = BuilderSettings.get_settings()
@@ -531,9 +524,7 @@ def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
     return {env_var.name: env_var.value for env_var in env_vars}
 
 
-def _app_process_build(
-    deployment_id: uuid.UUID, session: SessionDep, jetstream: JetStreamContext
-) -> None:
+def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None:
     bucket_name = CommonSettings.get_settings().DEPLOYMENTS_BUCKET_NAME
 
     deployment_with_team = session.exec(
@@ -601,32 +592,6 @@ def _app_process_build(
             deployment_with_team.status = DeploymentStatus.deploying
             session.commit()
 
-            # Create NATS JetStream context
-            with logfire.span(
-                "create_jetstream_context team: {team_slug} app: {app_slug}",
-                team_slug=team.slug,
-                app_slug=deployment_with_team.app.slug,
-            ):
-                stream_name = get_jetstream_logs_stream_name(
-                    team_slug=team.slug, app_slug=deployment_with_team.app.slug
-                )
-                subscribe_subject = get_jetstream_app_logs_subscribe_subject(
-                    team_slug=team.slug, app_slug=deployment_with_team.app.slug
-                )
-                jetstream_info = syncify(jetstream.add_stream)(
-                    config=StreamConfig(
-                        name=stream_name,
-                        subjects=[subscribe_subject],
-                        # A max_bytes value is required by Synadia Cloud
-                        # This space is reserved, so keep it at 100MB
-                        max_bytes=100_000_000,
-                        max_msgs_per_subject=1_000,
-                    )
-                )
-                logfire.info(
-                    "JetStream info: {jetstream_info}", jetstream_info=jetstream_info
-                )
-
             # Deploy to Kubernetes
             deploy_to_kubernetes(
                 service_name=app_name,
@@ -650,9 +615,7 @@ def _app_process_build(
 
 
 @app.post("/apps/depot/build", dependencies=[Depends(validate_api_key)])
-def app_depot_build(
-    message: SendDeploy, session: SessionDep, jetstream: JetStreamDep
-) -> Message:
+def app_depot_build(message: SendDeploy, session: SessionDep) -> Message:
     smt = select(Deployment).where(Deployment.id == message.deployment_id)
     deployment = session.exec(smt).first()
     if not deployment:
@@ -665,9 +628,7 @@ def app_depot_build(
     if deployment.status != DeploymentStatus.ready_for_build:
         return Message(message="Already being processed")
 
-    _app_process_build(
-        deployment_id=message.deployment_id, session=session, jetstream=jetstream
-    )
+    _app_process_build(deployment_id=message.deployment_id, session=session)
     return Message(message="OK")
 
 

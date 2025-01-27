@@ -95,6 +95,7 @@ class CommonSettings(SettingsEnv):
         ]
         | None
     ) = None
+    NATS_JETSTREAM_NAME: str = "logs-apps"
 
     REDIS_SERVER: str
     REDIS_PORT: int = 6379

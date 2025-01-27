@@ -25,7 +25,6 @@ from app.nats import (
     JetStreamDep,
     LogsResponse,
     get_jetstream_deployment_logs_subject,
-    get_jetstream_logs_stream_name,
     get_logs,
 )
 
@@ -138,23 +137,17 @@ def read_deployment_logs(
             status_code=404, detail="Team not found for the current user"
         )
 
-    stream_name = get_jetstream_logs_stream_name(
-        team_slug=deployment.app.team.slug, app_slug=deployment.app.slug
-    )
     deployment_subject = get_jetstream_deployment_logs_subject(
         team_slug=deployment.app.team.slug,
         app_slug=deployment.app.slug,
         deployment_id=deployment_id,
     )
-
-    logfire.info("Using jetstream stream_name {stream_name}", stream_name=stream_name)
     logfire.info(
         "Using jetstream deployment_subject {deployment_subject}",
         deployment_subject=deployment_subject,
     )
     return get_logs(
         jetstream=jetstream,
-        stream_name=stream_name,
         subject=deployment_subject,
     )
 

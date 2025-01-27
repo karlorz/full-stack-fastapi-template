@@ -13,7 +13,6 @@ from app.nats import (
     JetStreamDep,
     LogsResponse,
     get_jetstream_app_logs_subscribe_subject,
-    get_jetstream_logs_stream_name,
     get_logs,
 )
 
@@ -144,18 +143,11 @@ def read_app_logs(
     subscribe_subject = get_jetstream_app_logs_subscribe_subject(
         team_slug=app.team.slug, app_slug=app.slug
     )
-    stream_name = get_jetstream_logs_stream_name(
-        team_slug=app.team.slug, app_slug=app.slug
-    )
-
     logfire.info(
         "Using jetstream subscribe subject {subscribe_subject}",
         subscribe_subject=subscribe_subject,
     )
-    logfire.info("Using jetstream stream name {stream_name}", stream_name=stream_name)
-    return get_logs(
-        jetstream=jetstream, stream_name=stream_name, subject=subscribe_subject
-    )
+    return get_logs(jetstream=jetstream, subject=subscribe_subject)
 
 
 @router.delete("/{app_id}", response_model=Message)
