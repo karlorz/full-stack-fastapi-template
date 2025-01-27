@@ -26,7 +26,6 @@ function BillingTableBody() {
         return (
           <Table.Root key={id} interactive>
             {data.map((item, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: this is fine
               <Table.Cell key={index}>{item}</Table.Cell>
             ))}
           </Table.Root>
