@@ -150,6 +150,7 @@
 
 ### Refactors
 
+* ♻️ Change team size to be an enum. PR [#604](https://github.com/fastapilabs/cloud/pull/604) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor NATS to use one single JetStream for logs for all apps. PR [#611](https://github.com/fastapilabs/cloud/pull/611) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Do not use a single span/trace for the entire run of the messenger. PR [#603](https://github.com/fastapilabs/cloud/pull/603) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Update builder to error out only on server error states. PR [#601](https://github.com/fastapilabs/cloud/pull/601) by [@tiangolo](https://github.com/tiangolo).
