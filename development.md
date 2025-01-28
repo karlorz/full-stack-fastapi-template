@@ -205,3 +205,41 @@ If it's running and you want to use instead your local development server, you c
 ```bash
 docker compose stop frontend
 ```
+
+## CLI Deploy
+
+Once you have created a new FastAPI demo application, you can deploy it to FastAPI Cloud using the CLI deploy tool.
+
+* **Install Required Packages**
+
+  * Run the following command to install the necessary packages:
+
+     ```sh
+     pip install --upgrade --index-url https://pypi.fastapicloud.com/simple --extra-index-url https://pypi.python.org/simple fastapi-cli fastapi-cloud-cli
+     ```
+
+* **Configure the Environment**
+
+  * Run the script `use_env.py` to configure the environment for deploying the demo FastAPI app. This script will modify `~/.config/fastapi/fastapi-cli/cli.json`, which is used by `fastapi-cli`. The environment can be `local` (your local development environment) or one of the three AWS environments (`development`, `staging`, and `production`).
+
+     ```sh
+     python use_env.py development
+     ```
+
+* **Log In to FastAPI Cloud**
+
+  * Run the command to log in:
+
+     ```sh
+     fastapi login
+     ```
+
+* **Deploy the Application**
+
+  * Deploy your application using the following command:
+
+     ```sh
+     fastapi deploy
+     ```
+
+**Note:** If you are having trouble deploying your application, e.g: "app not found", delete the `.fastapi` directory in the root of your project and try again.
