@@ -567,9 +567,8 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
             if builder_settings.ECR_REGISTRY_URL:
                 create_ecr_repository(image_tag)
 
-            # Copy Dockerfile to build context
-            shutil.copy(
-                code_path / "builder/Dockerfile.standard", f"{build_context}/Dockerfile"
+            shutil.copytree(
+                code_path / "builder-context", build_context, dirs_exist_ok=True
             )
 
             deployment_with_team.status = DeploymentStatus.building_image
