@@ -240,6 +240,8 @@ export type TeamPublic = {
   owner_id: string
 }
 
+export type TeamSize = "myself" | "small" | "medium" | "large" | "enterprise"
+
 export type TeamsPublic = {
   data: Array<TeamPublic>
   count: number
@@ -325,7 +327,7 @@ export type WaitingListUserCreate = {
   name?: string | null
   organization?: string | null
   role?: string | null
-  team_size?: number | null
+  team_size?: TeamSize | null
   country?: string | null
   use_case?: string | null
 }

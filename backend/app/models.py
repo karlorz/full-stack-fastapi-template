@@ -24,6 +24,14 @@ class InvitationStatus(str, Enum):
     accepted = "accepted"
 
 
+class TeamSize(str, Enum):
+    myself = "myself"
+    small = "small"
+    medium = "medium"
+    large = "large"
+    enterprise = "enterprise"
+
+
 class UserTeamLink(SQLModel, table=True):
     user_id: uuid.UUID = Field(
         foreign_key="user.id", primary_key=True, ondelete="CASCADE"
@@ -405,7 +413,7 @@ class WaitingListUserBase(SQLModel):
     name: str | None = Field(default=None, max_length=255)
     organization: str | None = Field(default=None, max_length=255)
     role: str | None = Field(default=None, max_length=255)
-    team_size: int | None = Field(default=None, index=True)
+    team_size: TeamSize | None = Field(default=None)
     country: str | None = Field(default=None, max_length=255)
     use_case: str | None = Field(default=None, max_length=255)
 

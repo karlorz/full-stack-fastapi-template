@@ -5,7 +5,7 @@ from sqlmodel import Session
 
 from app import crud
 from app.core.config import MainSettings
-from app.models import UserCreate, WaitingListUser
+from app.models import TeamSize, UserCreate, WaitingListUser
 from app.utils import query_pending_users_to_send_invitation
 
 
@@ -37,7 +37,9 @@ def test_query_pending_users_to_send_invitation(db: Session) -> None:
             allowed_at=datetime.now(),
         )
         user2 = WaitingListUser(
-            email="demo02@fastapilabs.com", country="France", team_size=10
+            email="demo02@fastapilabs.com",
+            country="France",
+            team_size=TeamSize.small.value,
         )
         user3 = WaitingListUser(
             email="demo03@fastapilabs.com",
@@ -45,12 +47,14 @@ def test_query_pending_users_to_send_invitation(db: Session) -> None:
             invitation_sent_at=datetime.now(),
         )
         user4 = WaitingListUser(
-            email="demo04@fastapilabs.com", role="developer", team_size=2
+            email="demo04@fastapilabs.com",
+            role="developer",
+            team_size=TeamSize.myself.value,
         )
         user5 = WaitingListUser(
             email="demo05@fastapilabs.com",
             role="CEO",
-            team_size=22,
+            team_size=TeamSize.medium.value,
             country="USA",
             organization="AWS",
             allowed_at=datetime.now(),

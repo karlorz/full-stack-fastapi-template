@@ -8,7 +8,7 @@ from sqlmodel import Session, select
 from app import crud
 from app.core.config import MainSettings
 from app.core.security import verify_password
-from app.models import Role, User, UserCreate, WaitingListUserCreate
+from app.models import Role, TeamSize, User, UserCreate, WaitingListUserCreate
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 from app.tests.utils.utils import random_email, random_lower_string
@@ -381,7 +381,7 @@ def test_add_to_waiting_list(client: TestClient) -> None:
         data = {
             "email": email,
             "name": "John Doe",
-            "team_size": 1,
+            "team_size": TeamSize.myself.value,
             "organization": "FastAPI Labs",
             "role": "developer",
             "country": "US",
@@ -406,7 +406,7 @@ def test_update_waiting_list_user(client: TestClient) -> None:
         data = {
             "email": email,
             "name": "John Doe",
-            "team_size": 1,
+            "team_size": TeamSize.myself.value,
             "organization": "FastAPI Labs",
             "role": "developer",
             "country": "US",
@@ -432,7 +432,7 @@ def test_add_to_waiting_list_invalid_email(client: TestClient) -> None:
         data = {
             "email": email,
             "name": "John Doe",
-            "team_size": 1,
+            "team_size": TeamSize.myself.value,
             "organization": "FastAPI Labs",
             "role": "developer",
             "country": "US",
@@ -467,7 +467,7 @@ def test_add_to_waiting_list_email_already_registered_in_system(
         data = {
             "email": user.email,
             "name": "John Doe",
-            "team_size": 1,
+            "team_size": TeamSize.myself.value,
             "organization": "FastAPI Labs",
         }
 
