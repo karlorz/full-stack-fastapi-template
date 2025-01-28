@@ -515,9 +515,15 @@ def validate_email_deliverability(email: str) -> bool:
     Validate email deliverability using emailable service.
     Returns True if email is deliverable, False otherwise.
     """
-    settings = MainSettings.get_settings()
-    emailable_client = emailable.Client(settings.EMAILABLE_KEY)
-    email_response = emailable_client.verify(email=email)
-    if email_response.state == "deliverable":
-        return True
-    return False
+    common_settings = CommonSettings.get_settings()
+
+    if common_settings.ENVIRONMENT == "production":
+        settings = MainSettings.get_settings()
+        emailable_client = emailable.Client(settings.EMAILABLE_KEY)
+        email_response = emailable_client.verify(email=email)
+
+        if email_response.state == "deliverable":
+            return True
+        return False
+
+    return True
