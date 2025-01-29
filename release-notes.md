@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Add waitlist signup page. PR [#607](https://github.com/fastapilabs/cloud/pull/607) by [@patrick91](https://github.com/patrick91).
 * ✨ Add support for requirements.txt, pyproject.toml and nothing using single docker file. PR [#593](https://github.com/fastapilabs/cloud/pull/593) by [@patrick91](https://github.com/patrick91).
 * ✨ Add backend to create NATS JetStream for logs and read them. PR [#582](https://github.com/fastapilabs/cloud/pull/582) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Logs UI. PR [#594](https://github.com/fastapilabs/cloud/pull/594) by [@alejsdev](https://github.com/alejsdev).
