@@ -346,6 +346,7 @@
 
 ### Internal
 
+* 🔥 Remove `query_pending_users_to_send_invitation`. PR [#616](https://github.com/fastapilabs/cloud/pull/616) by [@patrick91](https://github.com/patrick91).
 * 📝 Add CLI deployment instructions and environment configuration script. PR [#614](https://github.com/fastapilabs/cloud/pull/614) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Disable email check when not in production. PR [#606](https://github.com/fastapilabs/cloud/pull/606) by [@patrick91](https://github.com/patrick91).
 * ♻️  Move email check to utils. PR [#605](https://github.com/fastapilabs/cloud/pull/605) by [@patrick91](https://github.com/patrick91).
