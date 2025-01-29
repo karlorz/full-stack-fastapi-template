@@ -5,7 +5,7 @@ import subprocess
 import tarfile
 import tempfile
 import uuid
-from collections.abc import Iterator
+from collections.abc import Generator, Iterator
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
@@ -431,11 +431,12 @@ def depot_build_exec(
     project_id: str,
     build_id: str,
     build_token: str,
-) -> subprocess.CompletedProcess[bytes]:
+) -> Generator[str, None, None]:
     push_load_flag = (
         "--load" if CommonSettings.get_settings().ENVIRONMENT == "local" else "--push"
     )
-    result = subprocess.run(
+
+    process = subprocess.Popen(
         [
             "depot",
             "build",
@@ -450,10 +451,22 @@ def depot_build_exec(
             "DEPOT_TOKEN": build_token,
             "DEPOT_PROJECT_ID": project_id,
         },
-        check=True,
-        capture_output=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        bufsize=1,
+        universal_newlines=True,
     )
-    return result
+
+    # depot build sends build logs to stderr
+    if process.stderr:
+        yield from process.stderr
+
+    process.wait()
+    status = process.poll()
+
+    if status is not None and status != 0:
+        raise subprocess.CalledProcessError(status, process.args)
 
 
 def retry_on_grpc_error(exc: Exception) -> bool:
@@ -487,7 +500,7 @@ def _create_build(
 
 def build_and_push_docker_image(
     *, full_image_tag: str, docker_context_path: str
-) -> None:
+) -> Generator[str, None, None]:
     depot_settings = DepotSettings.get_settings()
 
     # Docker login
@@ -496,7 +509,7 @@ def build_and_push_docker_image(
 
         print(f"Build request created: {build_request.build_id}")
 
-        result = depot_build_exec(
+        yield from depot_build_exec(
             context_dir=Path(docker_context_path),
             image_full_name=full_image_tag,
             # TODO: one project per app
@@ -506,7 +519,7 @@ def build_and_push_docker_image(
         )
         if common_settings.ENVIRONMENT == "local":
             # Save to local registry so Knative can use it
-            result = subprocess.run(
+            local_result = subprocess.run(
                 [
                     "docker",
                     "push",
@@ -515,7 +528,7 @@ def build_and_push_docker_image(
                 check=True,
                 capture_output=True,
             )
-            print(result.stdout)
+            print(local_result.stdout)
 
 
 def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
@@ -575,11 +588,12 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
             session.commit()
 
             full_image_tag = get_full_image_name(image_tag)
-            # Build and push Docker image
-            build_and_push_docker_image(
+
+            for line in build_and_push_docker_image(
                 full_image_tag=full_image_tag,
                 docker_context_path=build_context,
-            )
+            ):
+                print(line)
 
             # Update status to deploying
             deployment_with_team.status = DeploymentStatus.deploying
