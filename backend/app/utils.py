@@ -18,7 +18,7 @@ from redis import Redis
 from sqlmodel import Session, col, select
 
 from app.core.config import CommonSettings, MainSettings
-from app.models import User, WaitingListUser
+from app.models import WaitingListUser
 
 
 @dataclass
@@ -485,29 +485,6 @@ def authorize_device_code(
         data.model_dump_json(),
         ex=settings.DEVICE_AUTH_TTL_MINUTES * 60,
     )
-
-
-def query_pending_users_to_send_invitation(session: Session) -> None:
-    statement = select(WaitingListUser).where(
-        col(WaitingListUser.allowed_at) != None,  # noqa: E711
-        col(WaitingListUser.invitation_sent_at) == None,  # noqa: E711
-    )
-    users_to_send_invitation = session.exec(statement).all()
-
-    for user in users_to_send_invitation:
-        user_obj = session.exec(select(User).where(User.email == user.email)).first()
-        if user_obj:
-            continue
-        email_data = generate_invitation_email_for_waiting_list_user(
-            email_to=user.email
-        )
-        send_email(
-            email_to=user.email,
-            subject=email_data.subject,
-            html_content=email_data.html_content,
-        )
-        user.invitation_sent_at = get_datetime_utc()
-        session.commit()
 
 
 def validate_email_deliverability(email: str) -> bool:
