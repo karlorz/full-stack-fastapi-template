@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as WaitlistImport } from './routes/waitlist'
 import { Route as VerifyUpdateEmailImport } from './routes/verify-update-email'
 import { Route as VerifyEmailImport } from './routes/verify-email'
 import { Route as TeamInvitationImport } from './routes/team-invitation'
@@ -32,6 +33,11 @@ import { Route as LayoutTeamAppsAppSlugIndexImport } from './routes/_layout/$tea
 import { Route as LayoutTeamAppsAppSlugDeploymentsDeploymentIdImport } from './routes/_layout/$team/apps/$appSlug/deployments/$deploymentId'
 
 // Create/Update Routes
+
+const WaitlistRoute = WaitlistImport.update({
+  path: '/waitlist',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const VerifyUpdateEmailRoute = VerifyUpdateEmailImport.update({
   path: '/verify-update-email',
@@ -167,6 +173,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyUpdateEmailImport
       parentRoute: typeof rootRoute
     }
+    '/waitlist': {
+      preLoaderRoute: typeof WaitlistImport
+      parentRoute: typeof rootRoute
+    }
     '/_layout/device': {
       preLoaderRoute: typeof LayoutDeviceImport
       parentRoute: typeof LayoutImport
@@ -237,6 +247,7 @@ export const routeTree = rootRoute.addChildren([
   TeamInvitationRoute,
   VerifyEmailRoute,
   VerifyUpdateEmailRoute,
+  WaitlistRoute,
 ])
 
 /* prettier-ignore-end */

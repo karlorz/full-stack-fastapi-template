@@ -8,7 +8,6 @@ export const system = createSystem(defaultConfig, {
       fontSize: "16px",
     },
     body: {
-      color: "fg.muted",
       fontSize: "0.875rem",
       margin: 0,
       padding: 0,
@@ -20,6 +19,10 @@ export const system = createSystem(defaultConfig, {
     "input:focus": {
       borderColor: "main.light",
       outline: "none",
+    },
+    // TODO: Remove this later. ref: https://github.com/chakra-ui/chakra-ui/pull/9523
+    "input::placeholder": {
+      color: "fg.muted",
     },
     h2: {
       fontSize: "1.2rem",
