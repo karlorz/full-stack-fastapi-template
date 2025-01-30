@@ -74,6 +74,16 @@ function Waitlist() {
   const [submittedEmail, setSubmittedEmail] = useState("")
   const showToast = useCustomToast()
 
+  const teamSizes = createListCollection({
+    items: [
+      { label: "Myself", value: "myself" },
+      { label: "<10 people", value: "small" },
+      { label: "10-50 people", value: "medium" },
+      { label: "50-200 people", value: "large" },
+      { label: "200+ people", value: "enterprise" },
+    ],
+  })
+
   const onSubmit: SubmitHandler<WaitlistForm> = async (data) => {
     if (isSubmitting) return
 
@@ -193,15 +203,7 @@ function Waitlist() {
                 render={({ field }) => (
                   <SelectRoot
                     w="100%"
-                    collection={createListCollection({
-                      items: [
-                        { label: "Myself", value: "myself" },
-                        { label: "<10 people", value: "small" },
-                        { label: "10-50 people", value: "medium" },
-                        { label: "50-200 people", value: "large" },
-                        { label: "200+ people", value: "enterprise" },
-                      ],
-                    })}
+                    collection={teamSizes}
                     value={field.value ? [field.value] : []}
                     onValueChange={({ value }) => field.onChange(value[0])}
                     onBlur={field.onBlur}
@@ -214,24 +216,11 @@ function Waitlist() {
                       </Group>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem item={{ label: "1-5", value: "1" }}>
-                        1-5
-                      </SelectItem>
-                      <SelectItem item={{ label: "6-10", value: "6" }}>
-                        6-10
-                      </SelectItem>
-                      <SelectItem item={{ label: "11-25", value: "11" }}>
-                        11-25
-                      </SelectItem>
-                      <SelectItem item={{ label: "26-50", value: "26" }}>
-                        26-50
-                      </SelectItem>
-                      <SelectItem item={{ label: "51-100", value: "51" }}>
-                        51-100
-                      </SelectItem>
-                      <SelectItem item={{ label: "100+", value: "100" }}>
-                        100+
-                      </SelectItem>
+                      {teamSizes.items.map((item) => (
+                        <SelectItem item={item} key={item.value}>
+                          {item.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </SelectRoot>
                 )}
