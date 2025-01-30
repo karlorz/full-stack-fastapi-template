@@ -117,6 +117,7 @@
 
 ### Fixes
 
+* 🐛 Fix bug with waitlist team size select. PR [#621](https://github.com/fastapilabs/cloud/pull/621) by [@patrick91](https://github.com/patrick91).
 * 🚨 Fix `<div>` cannot appear as a descendant of `<p>`. PR [#620](https://github.com/fastapilabs/cloud/pull/620) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Include install_dependencies.sh in Docker context directory for building. PR [#613](https://github.com/fastapilabs/cloud/pull/613) by [@tiangolo](https://github.com/tiangolo).
 * 🚨 Fix `suppression comment has no effect` . PR [#612](https://github.com/fastapilabs/cloud/pull/612) by [@alejsdev](https://github.com/alejsdev).
