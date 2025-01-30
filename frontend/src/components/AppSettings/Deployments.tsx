@@ -27,9 +27,7 @@ const Deployments = ({
                   <Flex justify="space-between" width="100%">
                     <Flex direction="column">
                       <Text className="main-link">{deployment.id}</Text>
-                      <Text fontSize="xs">
-                        <Status deployment={deployment} />
-                      </Text>
+                      <Status deployment={deployment} />
                     </Flex>
                     <Text fontSize="xs" color="gray.500">
                       Created At:{" "}

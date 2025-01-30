@@ -52,7 +52,7 @@ export function Status({
         autoplay={true}
         style={{ width: 20, height: 20 }}
       />
-      <Text>{statusText}</Text>
+      <Text fontSize="xs">{statusText}</Text>
     </Flex>
   )
 }
