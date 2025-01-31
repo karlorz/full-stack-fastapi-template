@@ -154,6 +154,7 @@
 
 ### Refactors
 
+* ♻️ Logs tweaks. PR [#623](https://github.com/fastapilabs/cloud/pull/623) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor logs. PR [#617](https://github.com/fastapilabs/cloud/pull/617) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add NATS config for local development. PR [#622](https://github.com/fastapilabs/cloud/pull/622) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Stream logs from depot build. PR [#586](https://github.com/fastapilabs/cloud/pull/586) by [@patrick91](https://github.com/patrick91).
