@@ -1,3 +1,4 @@
+import type { Log } from "@/client"
 import { Box, Text } from "@chakra-ui/react"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import React from "react"
@@ -9,7 +10,7 @@ interface LogLineProps {
 }
 
 interface LogsProps {
-  logs?: any
+  logs: Log[]
 }
 
 const LogLine = ({ time, message }: LogLineProps) => {

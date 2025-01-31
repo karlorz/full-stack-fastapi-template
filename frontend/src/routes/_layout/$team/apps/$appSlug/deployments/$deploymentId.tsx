@@ -23,7 +23,7 @@ export const Route = createFileRoute(
         deploymentId: params.deploymentId,
       })
 
-      const logs = await DeploymentsService.readDeploymentLogs({
+      const { logs } = await DeploymentsService.readDeploymentLogs({
         deploymentId: deployment.id,
       })
 
@@ -56,7 +56,7 @@ function DeploymentDetail() {
       </Box>
 
       <Box pt={10}>
-        <Logs logs={logs.logs} />
+        <Logs logs={logs} />
       </Box>
     </Container>
   )
