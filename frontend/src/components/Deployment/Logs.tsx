@@ -1,6 +1,4 @@
-import { AppsService } from "@/client"
 import { Box, Text } from "@chakra-ui/react"
-import { useQuery } from "@tanstack/react-query"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import React from "react"
 import CustomCard from "../Common/CustomCard"
@@ -11,40 +9,28 @@ interface LogLineProps {
 }
 
 interface LogsProps {
-  appId: string
+  logs?: any
 }
 
 const LogLine = ({ time, message }: LogLineProps) => {
+  const timestamp = new Date(time).toLocaleString()
   return (
-    <Box
-      fontFamily="mono"
-      fontSize="sm"
-      py={1}
-      _hover={{ bg: "whiteAlpha.50" }}
-      transition="background 0.2s"
-    >
-      <Text as="span" color="gray.500">
-        [{time}]
+    <Box _hover={{ bg: "whiteAlpha.50" }} transition="background 0.2s">
+      <Text as="span" color="gray.400">
+        [{timestamp}]
       </Text>{" "}
       <Text as="span">{message}</Text>
     </Box>
   )
 }
 
-const Logs = ({ appId }: LogsProps) => {
+const Logs = ({ logs }: LogsProps) => {
   const parentRef = React.useRef(null)
-  const { data } = useQuery({
-    queryKey: ["logs"],
-    queryFn: () =>
-      AppsService.readAppLogs({
-        appId: appId,
-      }),
-  })
 
   const rowVirtualizer = useVirtualizer({
-    count: data?.logs.length || 0,
+    count: logs.length || 0,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 35,
+    estimateSize: () => 22,
   })
 
   return (
@@ -53,52 +39,69 @@ const Logs = ({ appId }: LogsProps) => {
         <Box
           ref={parentRef}
           h="400px"
+          p={6}
           overflowY="auto"
           borderRadius="md"
-          p={4}
+          bg="gray.950"
+          color="white"
+          fontFamily="monospace"
+          fontSize="sm"
           css={{
             "&::-webkit-scrollbar": {
               borderRadius: "8px",
               width: "16px",
-              backgroundColor: "rgba(0, 0, 0, 0.05)",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
             },
             "&::-webkit-scrollbar-thumb": {
               borderRadius: "8px",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(255, 255, 255, 0.2)",
             },
             "&::-webkit-scrollbar-corner": {
-              backgroundColor: "rgba(0, 0, 0, 0.05)",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
             },
           }}
         >
-          <div
-            style={{
-              height: `${rowVirtualizer.getTotalSize()}px`,
-              width: "100%",
-              position: "relative",
-            }}
-          >
-            {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-              const log = data?.logs[virtualItem.index]
-              return (
-                <div
-                  key={virtualItem.key}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: `${virtualItem.size}px`,
-                    transform: `translateY(${virtualItem.start}px)`,
-                  }}
-                >
-                  {log && (
-                    <LogLine time={log.timestamp} message={log.message} />
-                  )}
-                </div>
-              )
-            })}
-          </div>
+          {logs.length === 0 ? (
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              height="100%"
+            >
+              <Text>No logs to show</Text>
+              <Text>New logs will appear here when available</Text>
+            </Box>
+          ) : (
+            <div
+              style={{
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                width: "100%",
+                position: "relative",
+              }}
+            >
+              {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+                const log = logs[virtualItem.index]
+                return (
+                  <div
+                    key={virtualItem.key}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: `${virtualItem.size}px`,
+                      transform: `translateY(${virtualItem.start}px)`,
+                    }}
+                  >
+                    {log && (
+                      <LogLine time={log.timestamp} message={log.message} />
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </Box>
       </CustomCard>
     </>

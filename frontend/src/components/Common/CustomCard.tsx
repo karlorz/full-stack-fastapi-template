@@ -17,7 +17,7 @@ const CustomCard = ({ title, children, ...props }: CustomCardProps) => {
       mb={8}
       {...props}
       gap={2}
-      bg="bg"
+      bg="bg.panel"
     >
       <Heading size="md" fontWeight="bold" mb={4}>
         {title}

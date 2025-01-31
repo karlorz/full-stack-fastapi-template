@@ -3,35 +3,45 @@ import Logs from "@/components/Deployment/Logs"
 import { Status } from "@/components/Deployment/Status"
 import { fetchTeamBySlug } from "@/utils"
 import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, notFound } from "@tanstack/react-router"
 
 export const Route = createFileRoute(
   "/_layout/$team/apps/$appSlug/deployments/$deploymentId",
 )({
   component: DeploymentDetail,
   loader: async ({ params }) => {
-    const team = await fetchTeamBySlug(params.team)
-    const apps = await AppsService.readApps({
-      teamId: team.id,
-      slug: params.appSlug,
-    })
-    const app = apps.data[0]
-    const deployment = await DeploymentsService.readDeployment({
-      appId: app.id,
-      deploymentId: params.deploymentId,
-    })
-    return { deployment, app }
+    try {
+      const team = await fetchTeamBySlug(params.team)
+      const apps = await AppsService.readApps({
+        teamId: team.id,
+        slug: params.appSlug,
+      })
+      const app = apps.data[0]
+
+      const deployment = await DeploymentsService.readDeployment({
+        appId: app.id,
+        deploymentId: params.deploymentId,
+      })
+
+      const logs = await DeploymentsService.readDeploymentLogs({
+        deploymentId: deployment.id,
+      })
+
+      return { deployment, logs }
+    } catch (error) {
+      throw notFound()
+    }
   },
 })
 
 function DeploymentDetail() {
-  const { deployment, app } = Route.useLoaderData()
+  const { deployment, logs } = Route.useLoaderData()
 
   return (
     <Container maxW="full" p={0}>
       <Flex alignItems="center">
         <Heading size="xl" pb={2}>
-          Deployment details
+          Deployment Details
         </Heading>
       </Flex>
 
@@ -45,8 +55,8 @@ function DeploymentDetail() {
         </Flex>
       </Box>
 
-      <Box pt={8}>
-        <Logs appId={app.id} />
+      <Box pt={10}>
+        <Logs logs={logs.logs} />
       </Box>
     </Container>
   )
