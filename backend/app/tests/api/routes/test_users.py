@@ -1,7 +1,9 @@
+from collections.abc import Generator
 from dataclasses import dataclass
 from datetime import datetime
-from unittest.mock import patch
+from unittest.mock import ANY, MagicMock, patch
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
@@ -18,6 +20,12 @@ from app.utils import (
 )
 
 settings = MainSettings.get_settings()
+
+
+@pytest.fixture
+def send_email_mock() -> Generator[MagicMock]:
+    with patch("app.api.routes.users.send_email", return_value=None) as send_mock:
+        yield send_mock
 
 
 def test_get_users_normal_user_me(
@@ -187,68 +195,64 @@ def test_update_password_me_same_password_error(logged_in_client: TestClient) ->
     )
 
 
-def test_register_user(client: TestClient, db: Session) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="localhost",
-        SMTP_USER="admin@example.com",
+def test_register_user(
+    client: TestClient, db: Session, send_email_mock: MagicMock
+) -> None:
+    username = f"{random_lower_string()}@example.com"
+    password = random_lower_string()
+    full_name = random_lower_string()
+    data = {"email": username, "password": password, "full_name": full_name}
+    r = client.post(
+        f"{settings.API_V1_STR}/users/signup",
+        json=data,
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-        patch("app.utils.generate_verification_email", return_value=None),
-    ):
-        username = f"{random_lower_string()}@example.com"
-        password = random_lower_string()
-        full_name = random_lower_string()
-        data = {"email": username, "password": password, "full_name": full_name}
-        r = client.post(
-            f"{settings.API_V1_STR}/users/signup",
-            json=data,
-        )
-        assert r.status_code == 200
-        created_user = r.json()
-        assert created_user["email"] == username
-        assert created_user["full_name"] == full_name
+    assert r.status_code == 200
+    created_user = r.json()
+    assert created_user["email"] == username
+    assert created_user["full_name"] == full_name
 
-        user_query = select(User).where(User.email == username)
-        user_db = db.exec(user_query).first()
-        assert user_db
-        assert user_db.email == username
-        assert user_db.full_name == full_name
-        assert verify_password(password, user_db.hashed_password)
+    user_query = select(User).where(User.email == username)
+    user_db = db.exec(user_query).first()
+    assert user_db
+    assert user_db.email == username
+    assert user_db.full_name == full_name
+    assert verify_password(password, user_db.hashed_password)
 
-
-def test_register_user_already_exists_error(client: TestClient) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="localhost",
-        SMTP_USER="admin@example.com",
+    send_email_mock.assert_called_once_with(
+        email_to=username, subject=ANY, html_content=ANY
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-    ):
-        username = f"{random_lower_string()}@example.com"
-        password = random_lower_string()
-        full_name = random_lower_string()
-        data = {
-            "email": username,
-            "password": password,
-            "full_name": full_name,
-        }
-        r = client.post(
-            f"{settings.API_V1_STR}/users/signup",
-            json=data,
-        )
-        assert r.status_code == 200
-        r = client.post(
-            f"{settings.API_V1_STR}/users/signup",
-            json=data,
-        )
-        assert r.status_code == 400
-        assert (
-            r.json()["detail"]
-            == "The user with this email already exists in the system"
-        )
+
+
+def test_register_user_already_exists_error(
+    client: TestClient, send_email_mock: MagicMock, db: Session
+) -> None:
+    email = f"{random_lower_string()}@example.com"
+    password = random_lower_string()
+    full_name = random_lower_string()
+
+    create_user(
+        session=db,
+        email=email,
+        password=password,
+        full_name=full_name,
+        is_verified=True,
+    )
+
+    data = {
+        "email": email,
+        "password": password,
+        "full_name": full_name,
+    }
+
+    r = client.post(
+        f"{settings.API_V1_STR}/users/signup",
+        json=data,
+    )
+
+    assert r.status_code == 400
+    assert r.json()["detail"] == "The user with this email already exists in the system"
+
+    send_email_mock.assert_not_called()
 
 
 def test_register_user_empty_full_name(client: TestClient) -> None:
@@ -367,199 +371,170 @@ class EmailResponse:
     state: str
 
 
-def test_add_to_waiting_list(client: TestClient) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
+def test_add_to_waiting_list(client: TestClient, send_email_mock: MagicMock) -> None:
+    email = "test@fastapilabs.com"
+    data = {
+        "email": email,
+        "name": "John Doe",
+        "team_size": TeamSize.myself.value,
+        "organization": "FastAPI Labs",
+        "role": "developer",
+        "country": "US",
+    }
+    r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
+    assert r.status_code == 200
+    response = r.json()
+    assert response["message"] == "User added to waiting list"
+
+    send_email_mock.assert_called_once_with(
+        email_to=email, subject=ANY, html_content=ANY
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-        patch("app.api.routes.users.validate_email_deliverability", return_value=True),
-    ):
-        email = "test@fastapilabs.com"
-        data = {
-            "email": email,
-            "name": "John Doe",
-            "team_size": TeamSize.myself.value,
-            "organization": "FastAPI Labs",
-            "role": "developer",
-            "country": "US",
-        }
-        r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
-        assert r.status_code == 200
-        response = r.json()
-        assert response["message"] == "User added to waiting list"
 
 
-def test_update_waiting_list_user(client: TestClient) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
+def test_update_waiting_list_user(
+    client: TestClient, send_email_mock: MagicMock
+) -> None:
+    email = "test@fastapilabs.com"
+    data = {
+        "email": email,
+        "name": "John Doe",
+        "team_size": TeamSize.myself.value,
+        "organization": "FastAPI Labs",
+        "role": "developer",
+        "country": "US",
+        "use_case": "I want to build a web app",
+    }
+    r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
+    assert r.status_code == 200
+    response = r.json()
+    assert response["message"] == "User updated in waiting list"
+
+    send_email_mock.assert_called_once_with(
+        email_to=email,
+        subject="Your data has been updated 🤓",
+        html_content=ANY,
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-        patch("app.api.routes.users.validate_email_deliverability", return_value=True),
-    ):
-        email = "test@fastapilabs.com"
-        data = {
-            "email": email,
-            "name": "John Doe",
-            "team_size": TeamSize.myself.value,
-            "organization": "FastAPI Labs",
-            "role": "developer",
-            "country": "US",
-            "use_case": "I want to build a web app",
-        }
-        r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
-        assert r.status_code == 200
-        response = r.json()
-        assert response["message"] == "User updated in waiting list"
 
 
-def test_add_to_waiting_list_invalid_email(client: TestClient) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
-    )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-        patch("app.api.routes.users.validate_email_deliverability", return_value=False),
+def test_add_to_waiting_list_invalid_email(
+    client: TestClient, send_email_mock: MagicMock
+) -> None:
+    email = "test@test.com"
+    data = {
+        "email": email,
+        "name": "John Doe",
+        "team_size": TeamSize.myself.value,
+        "organization": "FastAPI Labs",
+        "role": "developer",
+        "country": "US",
+    }
+    with patch(
+        "app.api.routes.users.validate_email_deliverability", return_value=False
     ):
-        email = "test@test.com"
-        data = {
-            "email": email,
-            "name": "John Doe",
-            "team_size": TeamSize.myself.value,
-            "organization": "FastAPI Labs",
-            "role": "developer",
-            "country": "US",
-        }
         r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
-        assert r.status_code == 400
-        assert r.json()["detail"] == "This email is not valid"
+    assert r.status_code == 400
+    assert r.json()["detail"] == "This email is not valid"
+
+    send_email_mock.assert_not_called()
 
 
 def test_add_to_waiting_list_email_already_registered_in_system(
-    client: TestClient, db: Session
+    client: TestClient, db: Session, send_email_mock: MagicMock
 ) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
+    user_in = UserCreate(
+        email="existing@fastapilabs.com",
+        password="totally-legit",
+        full_name="John Doe",
+        is_active=True,
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-        patch("app.api.routes.users.validate_email_deliverability", return_value=True),
-    ):
-        user_in = UserCreate(
-            email="existing@fastapilabs.com",
-            password="totally-legit",
-            full_name="John Doe",
-            is_active=True,
-        )
-        user = crud.create_user(session=db, user_create=user_in, is_verified=True)
-        db.add(user)
-        db.commit()
+    user = crud.create_user(session=db, user_create=user_in, is_verified=True)
+    db.add(user)
+    db.commit()
 
-        data = {
-            "email": user.email,
-            "name": "John Doe",
-            "team_size": TeamSize.myself.value,
-            "organization": "FastAPI Labs",
-        }
+    data = {
+        "email": user.email,
+        "name": "John Doe",
+        "team_size": TeamSize.myself.value,
+        "organization": "FastAPI Labs",
+    }
 
-        r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
-        assert r.status_code == 409
-        response = r.json()
+    r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
+    assert r.status_code == 409
+    response = r.json()
 
-        assert response["detail"] == "This email is already registered in the system"
+    assert response["detail"] == "This email is already registered in the system"
+
+    send_email_mock.assert_not_called()
 
 
 def test_signup_with_waiting_list_email_allowed(
-    client: TestClient, db: Session
+    client: TestClient, db: Session, send_email_mock: MagicMock
 ) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
+    user_in = WaitingListUserCreate(email="testing@fastapilabs.com")
+    user = crud.add_to_waiting_list(session=db, user_in=user_in)
+    user.allowed_at = datetime.now()
+    db.add(user)
+    db.commit()
+
+    data = {
+        "email": user.email,
+        "password": "totally-legit",
+        "full_name": "John Doe",
+    }
+
+    r = client.post(f"{settings.API_V1_STR}/users/signup", json=data)
+    assert r.status_code == 200
+    response = r.json()
+
+    assert response["email"] == "testing@fastapilabs.com"
+    assert response["full_name"] == "John Doe"
+
+    send_email_mock.assert_called_once_with(
+        email_to=user.email, subject=ANY, html_content=ANY
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-    ):
-        user_in = WaitingListUserCreate(email="testing@fastapilabs.com")
-        user = crud.add_to_waiting_list(session=db, user_in=user_in)
-        user.allowed_at = datetime.now()
-        db.add(user)
-        db.commit()
-
-        data = {
-            "email": user.email,
-            "password": "totally-legit",
-            "full_name": "John Doe",
-        }
-
-        r = client.post(f"{settings.API_V1_STR}/users/signup", json=data)
-        assert r.status_code == 200
-        response = r.json()
-
-        assert response["email"] == "testing@fastapilabs.com"
-        assert response["full_name"] == "John Doe"
 
 
 def test_signup_with_waiting_list_email_not_allowed(
-    client: TestClient, db: Session
+    client: TestClient, db: Session, send_email_mock: MagicMock
 ) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
+    user_in = WaitingListUserCreate(email="esteban@fastapilabs.com")
+    user = crud.add_to_waiting_list(session=db, user_in=user_in)
+    db.add(user)
+    db.commit()
+
+    data = {
+        "email": user.email,
+        "password": "totally-legit",
+        "full_name": "John Doe",
+    }
+
+    r = client.post(f"{settings.API_V1_STR}/users/signup", json=data)
+    assert r.status_code == 400
+    assert (
+        r.json()["detail"]
+        == "This email has not yet been invited to join FastAPI Cloud"
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-    ):
-        user_in = WaitingListUserCreate(email="esteban@fastapilabs.com")
-        user = crud.add_to_waiting_list(session=db, user_in=user_in)
-        db.add(user)
-        db.commit()
 
-        data = {
-            "email": user.email,
-            "password": "totally-legit",
-            "full_name": "John Doe",
-        }
-
-        r = client.post(f"{settings.API_V1_STR}/users/signup", json=data)
-        assert r.status_code == 400
-        assert (
-            r.json()["detail"]
-            == "This email has not yet been invited to join FastAPI Cloud"
-        )
+    send_email_mock.assert_not_called()
 
 
-def test_signup_with_waiting_list_email_not_in_db(client: TestClient) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
+def test_signup_with_waiting_list_email_not_in_db(
+    client: TestClient, send_email_mock: MagicMock
+) -> None:
+    data = {
+        "email": "demo211@fastapilabs.com",
+        "password": "totally-legit",
+        "full_name": "John Doe",
+    }
+
+    r = client.post(f"{settings.API_V1_STR}/users/signup", json=data)
+    assert r.status_code == 400
+    assert (
+        r.json()["detail"]
+        == "This email has not yet been invited to join FastAPI Cloud"
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-    ):
-        data = {
-            "email": "demo211@fastapilabs.com",
-            "password": "totally-legit",
-            "full_name": "John Doe",
-        }
 
-        r = client.post(f"{settings.API_V1_STR}/users/signup", json=data)
-        assert r.status_code == 400
-        assert (
-            r.json()["detail"]
-            == "This email has not yet been invited to join FastAPI Cloud"
-        )
+    send_email_mock.assert_not_called()
 
 
 def test_rate_limit_on_waiting_list(client: TestClient) -> None:

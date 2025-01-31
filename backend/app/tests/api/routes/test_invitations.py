@@ -1,7 +1,9 @@
 import uuid
+from collections.abc import Generator
 from datetime import timedelta
-from unittest.mock import patch
+from unittest.mock import ANY, MagicMock, patch
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
@@ -15,6 +17,12 @@ from app.tests.utils.user import create_user, user_authentication_headers
 from app.utils import get_datetime_utc
 
 settings = MainSettings.get_settings()
+
+
+@pytest.fixture
+def send_email_mock() -> Generator[MagicMock]:
+    with patch("app.api.utils.invitations.send_email", return_value=None) as send_mock:
+        yield send_mock
 
 
 # ** GET /invitations/me **
@@ -544,348 +552,335 @@ def test_read_invitations_team_not_found_current_user(
 
 
 # ** POST /invitations **
-def test_create_invitation_success(client: TestClient, db: Session) -> None:
-    with patch("app.utils.send_email", return_value=None):
-        team1 = create_random_team(db)
-        user1 = create_user(
-            session=db,
-            email="test27@fastapi.com",
-            password="test12345",
-            full_name="test27",
-            is_verified=True,
-        )
-        user2 = create_user(
-            session=db,
-            email="test28@example.com",
-            password="test12345",
-            full_name="test28",
-            is_verified=True,
-        )
-        add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
+def test_create_invitation_success(
+    client: TestClient, db: Session, send_email_mock: MagicMock
+) -> None:
+    team1 = create_random_team(db)
+    user1 = create_user(
+        session=db,
+        email="test27@fastapi.com",
+        password="test12345",
+        full_name="test27",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test28@example.com",
+        password="test12345",
+        full_name="test28",
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
-        user_auth_headers = user_authentication_headers(
-            client=client, email=user1.email, password="test12345"
-        )
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1.email, password="test12345"
+    )
 
-        payload = {
-            "team_id": str(team1.id),
-            "email": user2.email,
-            "role": "member",
-        }
+    payload = {
+        "team_id": str(team1.id),
+        "email": user2.email,
+        "role": "member",
+    }
 
-        response = client.post(
-            f"{settings.API_V1_STR}/invitations/",
-            headers=user_auth_headers,
-            json=payload,
-        )
+    response = client.post(
+        f"{settings.API_V1_STR}/invitations/",
+        headers=user_auth_headers,
+        json=payload,
+    )
 
-        # Assert the response and the expected behavior
-        assert response.status_code == 200
-        data = response.json()
-        assert data["team_id"] == str(team1.id)
-        assert data["email"] == user2.email
-        assert data["role"] == "member"
-        assert data["sender"]["id"] == str(user1.id)
+    # Assert the response and the expected behavior
+    assert response.status_code == 200
+    data = response.json()
+    assert data["team_id"] == str(team1.id)
+    assert data["email"] == user2.email
+    assert data["role"] == "member"
+    assert data["sender"]["id"] == str(user1.id)
+
+    send_email_mock.assert_called_once_with(
+        email_to=user2.email, subject=ANY, html_content=ANY
+    )
 
 
 def test_create_invitation_team_not_found_current_user(
-    client: TestClient, db: Session
+    client: TestClient, db: Session, send_email_mock: MagicMock
 ) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
+    team1 = create_random_team(db)
+    user1 = create_user(
+        session=db,
+        email="test29@fastapi.com",
+        password="test12345",
+        full_name="test29",
+        is_verified=True,
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-    ):
-        team1 = create_random_team(db)
-        user1 = create_user(
-            session=db,
-            email="test29@fastapi.com",
-            password="test12345",
-            full_name="test29",
-            is_verified=True,
-        )
-        user2 = create_user(
-            session=db,
-            email="test30@example.com",
-            password="test12345",
-            full_name="test30",
-            is_verified=True,
-        )
-        add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
+    user2 = create_user(
+        session=db,
+        email="test30@example.com",
+        password="test12345",
+        full_name="test30",
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
-        user_auth_headers = user_authentication_headers(
-            client=client, email=user1.email, password="test12345"
-        )
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1.email, password="test12345"
+    )
 
-        payload = {
-            "team_id": "00000000-0000-0000-0000-000000000000",
-            "email": user2.email,
-            "role": "member",
-        }
+    payload = {
+        "team_id": "00000000-0000-0000-0000-000000000000",
+        "email": user2.email,
+        "role": "member",
+    }
 
-        response = client.post(
-            f"{settings.API_V1_STR}/invitations/",
-            headers=user_auth_headers,
-            json=payload,
-        )
+    response = client.post(
+        f"{settings.API_V1_STR}/invitations/",
+        headers=user_auth_headers,
+        json=payload,
+    )
 
-        assert response.status_code == 404
-        data = response.json()
-        assert data["detail"] == "Team not found for the current user"
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "Team not found for the current user"
+
+    send_email_mock.assert_not_called()
 
 
 def test_create_invitation_not_enough_permissions(
-    client: TestClient, db: Session
+    client: TestClient, db: Session, send_email_mock: MagicMock
 ) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
+    team1 = create_random_team(db)
+    user1 = create_user(
+        session=db,
+        email="test31@fastapi.com",
+        password="test12345",
+        full_name="test31",
+        is_verified=True,
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-    ):
-        team1 = create_random_team(db)
-        user1 = create_user(
-            session=db,
-            email="test31@fastapi.com",
-            password="test12345",
-            full_name="test31",
-            is_verified=True,
-        )
-        user2 = create_user(
-            session=db,
-            email="test32@example.com",
-            password="test12345",
-            full_name="test32",
-            is_verified=True,
-        )
-        add_user_to_team(session=db, user=user1, team=team1, role=Role.member)
-
-        user_auth_headers = user_authentication_headers(
-            client=client, email=user1.email, password="test12345"
-        )
-
-        payload = {
-            "team_id": str(team1.id),
-            "email": user2.email,
-            "role": "member",
-        }
-
-        response = client.post(
-            f"{settings.API_V1_STR}/invitations/",
-            headers=user_auth_headers,
-            json=payload,
-        )
-
-        assert response.status_code == 400
-        data = response.json()
-        assert data["detail"] == "Not enough permissions to execute this action"
-
-
-def test_create_invitation_already_exists(client: TestClient, db: Session) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
+    user2 = create_user(
+        session=db,
+        email="test32@example.com",
+        password="test12345",
+        full_name="test32",
+        is_verified=True,
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-    ):
-        team1 = create_random_team(db)
-        user1 = create_user(
-            session=db,
-            email="test33@fastapi.com",
-            password="test12345",
-            full_name="test33",
-            is_verified=True,
-        )
-        user2 = create_user(
-            session=db,
-            email="test34@example.com",
-            password="test12345",
-            full_name="test34",
-            is_verified=True,
-        )
-        add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
+    add_user_to_team(session=db, user=user1, team=team1, role=Role.member)
 
-        user_auth_headers = user_authentication_headers(
-            client=client, email=user1.email, password="test12345"
-        )
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1.email, password="test12345"
+    )
 
-        invitation_to_create = InvitationCreate(
-            team_id=team1.id,
-            email=user2.email,
-            role=Role.member,
-        )
-        create_invitation(
-            session=db,
-            invitation_in=invitation_to_create,
-            invited_by=user1,
-            invitation_status=InvitationStatus.pending,
-        )
+    payload = {
+        "team_id": str(team1.id),
+        "email": user2.email,
+        "role": "member",
+    }
 
-        payload = {
-            "team_id": str(team1.id),
-            "email": user2.email,
-            "role": "member",
-        }
+    response = client.post(
+        f"{settings.API_V1_STR}/invitations/",
+        headers=user_auth_headers,
+        json=payload,
+    )
 
-        response = client.post(
-            f"{settings.API_V1_STR}/invitations/",
-            headers=user_auth_headers,
-            json=payload,
-        )
+    assert response.status_code == 400
+    data = response.json()
+    assert data["detail"] == "Not enough permissions to execute this action"
 
-        assert response.status_code == 400
-        data = response.json()
-        assert data["detail"] == "Invitation already exists for this user"
+    send_email_mock.assert_not_called()
+
+
+def test_create_invitation_already_exists(
+    client: TestClient, db: Session, send_email_mock: MagicMock
+) -> None:
+    team1 = create_random_team(db)
+    user1 = create_user(
+        session=db,
+        email="test33@fastapi.com",
+        password="test12345",
+        full_name="test33",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test34@example.com",
+        password="test12345",
+        full_name="test34",
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1.email, password="test12345"
+    )
+
+    invitation_to_create = InvitationCreate(
+        team_id=team1.id,
+        email=user2.email,
+        role=Role.member,
+    )
+    create_invitation(
+        session=db,
+        invitation_in=invitation_to_create,
+        invited_by=user1,
+        invitation_status=InvitationStatus.pending,
+    )
+
+    payload = {
+        "team_id": str(team1.id),
+        "email": user2.email,
+        "role": "member",
+    }
+
+    response = client.post(
+        f"{settings.API_V1_STR}/invitations/",
+        headers=user_auth_headers,
+        json=payload,
+    )
+
+    assert response.status_code == 400
+    data = response.json()
+    assert data["detail"] == "Invitation already exists for this user"
+
+    send_email_mock.assert_not_called()
 
 
 def test_create_invitation_user_already_in_team(
-    client: TestClient, db: Session
+    client: TestClient, db: Session, send_email_mock: MagicMock
 ) -> None:
-    test_settings = MainSettings(  # type: ignore
-        SMTP_HOST="smtp.example.com",
-        SMTP_USER="admin@example.com",
+    team1 = create_random_team(db)
+    user1 = create_user(
+        session=db,
+        email="test35@fastapi.com",
+        password="test12345",
+        full_name="test35",
+        is_verified=True,
     )
-    with (
-        patch("app.utils.send_email", return_value=None),
-        patch.object(MainSettings, "get_settings", return_value=test_settings),
-    ):
-        team1 = create_random_team(db)
-        user1 = create_user(
-            session=db,
-            email="test35@fastapi.com",
-            password="test12345",
-            full_name="test35",
-            is_verified=True,
-        )
-        user2 = create_user(
-            session=db,
-            email="test36@example.com",
-            password="test12345",
-            full_name="test36",
-            is_verified=True,
-        )
-        add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
-        add_user_to_team(session=db, user=user2, team=team1, role=Role.member)
+    user2 = create_user(
+        session=db,
+        email="test36@example.com",
+        password="test12345",
+        full_name="test36",
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
+    add_user_to_team(session=db, user=user2, team=team1, role=Role.member)
 
-        user_auth_headers = user_authentication_headers(
-            client=client, email=user1.email, password="test12345"
-        )
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1.email, password="test12345"
+    )
 
-        invitation_to_create = InvitationCreate(
-            team_id=team1.id,
-            email=user2.email,
-            role=Role.member,
-        )
-        create_invitation(
-            session=db,
-            invitation_in=invitation_to_create,
-            invited_by=user1,
-            invitation_status=InvitationStatus.accepted,
-        )
+    invitation_to_create = InvitationCreate(
+        team_id=team1.id,
+        email=user2.email,
+        role=Role.member,
+    )
+    create_invitation(
+        session=db,
+        invitation_in=invitation_to_create,
+        invited_by=user1,
+        invitation_status=InvitationStatus.accepted,
+    )
 
-        payload = {
-            "team_id": str(team1.id),
-            "email": user2.email,
-            "role": "member",
-        }
+    payload = {
+        "team_id": str(team1.id),
+        "email": user2.email,
+        "role": "member",
+    }
 
-        response = client.post(
-            f"{settings.API_V1_STR}/invitations/",
-            headers=user_auth_headers,
-            json=payload,
-        )
+    response = client.post(
+        f"{settings.API_V1_STR}/invitations/",
+        headers=user_auth_headers,
+        json=payload,
+    )
 
-        assert response.status_code == 400
-        data = response.json()
-        assert data["detail"] == "The user is already in the team"
+    assert response.status_code == 400
+    data = response.json()
+    assert data["detail"] == "The user is already in the team"
+
+    send_email_mock.assert_not_called()
 
 
 def test_create_invitation_user_to_invite_not_found(
-    client: TestClient, db: Session
+    client: TestClient, db: Session, send_email_mock: MagicMock
 ) -> None:
-    with patch("app.utils.send_email", return_value=None):
-        team1 = create_random_team(db)
-        user1 = create_user(
-            session=db,
-            email="test3734@fastapi.com",
-            password="test12345",
-            full_name="test3734",
-            is_verified=True,
-        )
-        add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
+    team1 = create_random_team(db)
+    user1 = create_user(
+        session=db,
+        email="test3734@fastapi.com",
+        password="test12345",
+        full_name="test3734",
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
 
-        user_auth_headers = user_authentication_headers(
-            client=client, email=user1.email, password="test12345"
-        )
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1.email, password="test12345"
+    )
 
-        payload = {
-            "team_id": str(team1.id),
-            "email": "not-found@fastapi.com",
-            "role": "member",
-        }
+    payload = {
+        "team_id": str(team1.id),
+        "email": "not-found@fastapi.com",
+        "role": "member",
+    }
 
-        response = client.post(
-            f"{settings.API_V1_STR}/invitations/",
-            headers=user_auth_headers,
-            json=payload,
-        )
+    response = client.post(
+        f"{settings.API_V1_STR}/invitations/",
+        headers=user_auth_headers,
+        json=payload,
+    )
 
-        assert response.status_code == 200
-        data = response.json()
-        assert data["team_id"] == str(team1.id)
-        assert data["email"] == "not-found@fastapi.com"
-        assert data["role"] == "member"
-        assert data["sender"]["id"] == str(user1.id)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["team_id"] == str(team1.id)
+    assert data["email"] == "not-found@fastapi.com"
+    assert data["role"] == "member"
+    assert data["sender"]["id"] == str(user1.id)
+
+    send_email_mock.assert_called_once_with(
+        email_to="not-found@fastapi.com", subject=ANY, html_content=ANY
+    )
 
 
 def test_create_invitation_user_already_in_team_without_invitation(
-    client: TestClient, db: Session
+    client: TestClient, db: Session, send_email_mock: MagicMock
 ) -> None:
-    with patch("app.utils.send_email", return_value=None):
-        team1 = create_random_team(db)
-        user1 = create_user(
-            session=db,
-            email="test335@fastapi.com",
-            password="test12345",
-            full_name="test335",
-            is_verified=True,
-        )
-        user2 = create_user(
-            session=db,
-            email="test336@example.com",
-            password="test12345",
-            full_name="test336",
-            is_verified=True,
-        )
-        add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
-        add_user_to_team(session=db, user=user2, team=team1, role=Role.member)
+    team1 = create_random_team(db)
+    user1 = create_user(
+        session=db,
+        email="test335@fastapi.com",
+        password="test12345",
+        full_name="test335",
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email="test336@example.com",
+        password="test12345",
+        full_name="test336",
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user1, team=team1, role=Role.admin)
+    add_user_to_team(session=db, user=user2, team=team1, role=Role.member)
 
-        user_auth_headers = user_authentication_headers(
-            client=client, email=user1.email, password="test12345"
-        )
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1.email, password="test12345"
+    )
 
-        payload = {
-            "team_id": str(team1.id),
-            "email": user2.email,
-            "role": "member",
-        }
+    payload = {
+        "team_id": str(team1.id),
+        "email": user2.email,
+        "role": "member",
+    }
 
-        response = client.post(
-            f"{settings.API_V1_STR}/invitations/",
-            headers=user_auth_headers,
-            json=payload,
-        )
+    response = client.post(
+        f"{settings.API_V1_STR}/invitations/",
+        headers=user_auth_headers,
+        json=payload,
+    )
 
-        assert response.status_code == 400
-        data = response.json()
-        assert data["detail"] == "The user is already in the team"
+    assert response.status_code == 400
+    data = response.json()
+    assert data["detail"] == "The user is already in the team"
+
+    send_email_mock.assert_not_called()
 
 
 # ** POST /invitations/{inv_id}/accept **
