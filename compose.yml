@@ -23,6 +23,12 @@ services:
     volumes:
       - app-redis-data:/data
 
+  nats:
+    image: nats:2
+    ports:
+      - 4222:4222
+    command: -js
+
   adminer:
     image: adminer
     ports:
@@ -46,7 +52,7 @@ services:
       db:
         condition: service_healthy
         restart: true
-    command: bash scripts/prestart.sh
+    command: bash scripts/prestart-local.sh
     env_file:
       - .env
       - path: .env.override
@@ -54,6 +60,7 @@ services:
     environment:
       - POSTGRES_SERVER=db
       - REDIS_SERVER=redis
+      - NATS_HOST_NAME=nats
       - SMTP_HOST=mailcatcher
     extra_hosts:
       - host.docker.internal:host-gateway
@@ -71,6 +78,8 @@ services:
       prestart:
         condition: service_completed_successfully
       redis:
+        condition: service_started
+      nats:
         condition: service_started
       mailcatcher:
         condition: service_started
@@ -98,6 +107,7 @@ services:
     environment:
       - POSTGRES_SERVER=db
       - REDIS_SERVER=redis
+      - NATS_HOST_NAME=nats
       - SMTP_HOST=mailcatcher
       - LOCALSTACK_HOST_NAME=localstack
       - BUILDER_API_URL=http://builder:8001
