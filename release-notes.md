@@ -154,6 +154,7 @@
 
 ### Refactors
 
+* ♻️ Add NATS config for local development. PR [#622](https://github.com/fastapilabs/cloud/pull/622) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Stream logs from depot build. PR [#586](https://github.com/fastapilabs/cloud/pull/586) by [@patrick91](https://github.com/patrick91).
 * ♻️  Move builder's Dockerfile to its own folder. PR [#595](https://github.com/fastapilabs/cloud/pull/595) by [@patrick91](https://github.com/patrick91).
 * ♻️ Change team size to be an enum. PR [#604](https://github.com/fastapilabs/cloud/pull/604) by [@patrick91](https://github.com/patrick91).
