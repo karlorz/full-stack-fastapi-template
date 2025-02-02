@@ -154,6 +154,7 @@
 
 ### Refactors
 
+* 🔥 Remove unnecessary styles. PR [#625](https://github.com/fastapilabs/cloud/pull/625) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Actually check if we are sending (or not) emails. PR [#618](https://github.com/fastapilabs/cloud/pull/618) by [@patrick91](https://github.com/patrick91).
 * ♻️ Logs tweaks. PR [#623](https://github.com/fastapilabs/cloud/pull/623) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor logs. PR [#617](https://github.com/fastapilabs/cloud/pull/617) by [@alejsdev](https://github.com/alejsdev).
