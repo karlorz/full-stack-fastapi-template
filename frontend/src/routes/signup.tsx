@@ -80,7 +80,7 @@ function SignUp() {
                 invalid={!!errors.full_name}
                 errorText={errors.full_name?.message}
               >
-                <InputGroup w="100%" startElement={<User color="fg.subtle" />}>
+                <InputGroup w="100%" startElement={<User />}>
                   <Input
                     id="full_name"
                     minLength={3}
@@ -91,7 +91,7 @@ function SignUp() {
                 </InputGroup>
               </Field>
               <Field invalid={!!errors.email} errorText={errors.email?.message}>
-                <InputGroup w="100%" startElement={<Email color="fg.subtle" />}>
+                <InputGroup w="100%" startElement={<Email />}>
                   <Input
                     id="email"
                     {...register("email", {
@@ -106,14 +106,14 @@ function SignUp() {
               </Field>
               <PasswordInput
                 type="password"
-                startElement={<Lock color="fg.subtle" />}
+                startElement={<Lock />}
                 {...register("password", passwordRules())}
                 placeholder="Password"
                 errors={errors}
               />
               <PasswordInput
                 type="confirm_password"
-                startElement={<Lock color="fg.subtle" />}
+                startElement={<Lock />}
                 {...register(
                   "confirm_password",
                   confirmPasswordRules(getValues),

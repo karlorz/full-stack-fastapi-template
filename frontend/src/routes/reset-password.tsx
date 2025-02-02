@@ -74,14 +74,14 @@ function ResetPassword() {
           Please enter your new password and confirm it to reset your password.
         </Text>
         <PasswordInput
-          startElement={<Lock color="fg.subtle" />}
+          startElement={<Lock />}
           type="new_password"
           errors={errors}
           {...register("new_password", passwordRules())}
           placeholder="New Password"
         />
         <PasswordInput
-          startElement={<Lock color="fg.subtle" />}
+          startElement={<Lock />}
           type="confirm_password"
           errors={errors}
           {...register("confirm_password", confirmPasswordRules(getValues))}

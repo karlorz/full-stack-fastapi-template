@@ -70,7 +70,7 @@ function Login() {
             invalid={!!errors.username}
             errorText={errors.username?.message}
           >
-            <InputGroup w="100%" startElement={<Email color="fg.subtle" />}>
+            <InputGroup w="100%" startElement={<Email />}>
               <Input
                 id="username"
                 {...register("username", {
@@ -85,7 +85,7 @@ function Login() {
           </Field>
           <PasswordInput
             type="password"
-            startElement={<Lock color="fg.subtle" />}
+            startElement={<Lock />}
             {...register("password", passwordRules())}
             placeholder="Password"
             errors={errors}

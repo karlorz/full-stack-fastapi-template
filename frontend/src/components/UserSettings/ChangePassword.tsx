@@ -50,21 +50,21 @@ const ChangePassword = () => {
           <VStack gap={4} w="50%">
             <PasswordInput
               type="current_password"
-              startElement={<Lock color="fg.subtle" />}
+              startElement={<Lock />}
               {...register("current_password")}
               placeholder="Current Password"
               errors={errors}
             />
             <PasswordInput
               type="new_password"
-              startElement={<Lock color="fg.subtle" />}
+              startElement={<Lock />}
               {...register("new_password", passwordRules())}
               placeholder="New Password"
               errors={errors}
             />
             <PasswordInput
               type="confirm_password"
-              startElement={<Lock color="fg.subtle" />}
+              startElement={<Lock />}
               {...register("confirm_password", confirmPasswordRules(getValues))}
               placeholder="Confirm Password"
               errors={errors}

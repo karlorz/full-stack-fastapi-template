@@ -96,7 +96,7 @@ function RecoverPassword() {
             reset your password.
           </Text>
           <Field invalid={!!errors.email} errorText={errors.email?.message}>
-            <InputGroup w="100%" startElement={<Email color="fg.subtle" />}>
+            <InputGroup w="100%" startElement={<Email />}>
               <Input
                 id="email"
                 {...register("email", {

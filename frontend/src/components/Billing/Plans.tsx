@@ -36,7 +36,7 @@ const Plans = () => {
                 {feature.value ? (
                   <FaCheckCircle color="main.dark" />
                 ) : (
-                  <FaCircleXmark color="fg.subtle" />
+                  <FaCircleXmark />
                 )}
                 <Text
                   fontSize="sm"
