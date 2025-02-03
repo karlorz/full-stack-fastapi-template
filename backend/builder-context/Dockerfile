@@ -1,4 +1,6 @@
-FROM python:3.12-slim
+ARG BASE_IMAGE=python:3.13-slim
+
+FROM ${BASE_IMAGE}
 
 ENV PYTHONUNBUFFERED=1
 
