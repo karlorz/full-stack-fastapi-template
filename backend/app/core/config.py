@@ -208,6 +208,7 @@ class MainSettings(SettingsEnv):
     ]
 
     ALLOWED_EMAIL_RECIPIENT_DOMAINS: list[str] = ["fastapilabs.com"]
+    ALLOW_SIGNUP_TOKEN: str = "changethis"
 
     # TODO: update type to EmailStr when sqlmodel supports it
     EMAIL_TEST_USER: str = "test@example.com"
@@ -215,7 +216,7 @@ class MainSettings(SettingsEnv):
     @model_validator(mode="after")
     def _enforce_non_default_secrets(self) -> Self:
         _check_default_secret("SECRET_KEY", self.SECRET_KEY)
-
+        _check_default_secret("ALLOW_SIGNUP_TOKEN", self.ALLOW_SIGNUP_TOKEN)
         return self
 
     EMAILABLE_KEY: str

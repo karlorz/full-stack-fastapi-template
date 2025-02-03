@@ -133,6 +133,7 @@ jobs:
         NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"
         NATS_CREDS: "${{ secrets.NATS_CREDS }}"
         ENABLE_LOCALSTACK: "False"
+        ALLOW_SIGNUP_TOKEN: "${{ secrets.ALLOW_SIGNUP_TOKEN }}"
     - name: Update Knative Service image
       run: uv run typer --func deploy_cloud app.docker_builder run api $IMAGE_URL --min-scale 1
       working-directory: backend
@@ -183,6 +184,7 @@ jobs:
         NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"
         NATS_CREDS: "${{ secrets.NATS_CREDS }}"
         ENABLE_LOCALSTACK: "False"
+        ALLOW_SIGNUP_TOKEN: "${{ secrets.ALLOW_SIGNUP_TOKEN }}"
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-backend:  # This job does nothing and is only used for the branch protection
     if: always()

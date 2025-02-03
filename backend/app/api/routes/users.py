@@ -1,8 +1,11 @@
 import logging
-from typing import Any
+import secrets
+from typing import Annotated, Any
 
 import emailable  # type: ignore
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
+from pydantic import BaseModel
+from pydantic.networks import EmailStr
 from sqlmodel import select
 
 from app import crud
@@ -33,12 +36,14 @@ from app.models import (
 )
 from app.utils import (
     generate_account_deletion_email,
+    generate_invitation_email_for_waiting_list_user,
     generate_verification_email,
     generate_verification_email_token,
     generate_verification_update_email,
     generate_verification_update_email_token,
     generate_waiting_list_email,
     generate_waiting_list_update_email,
+    get_datetime_utc,
     is_signup_allowed,
     send_email,
     validate_email_deliverability,
@@ -279,3 +284,48 @@ def add_to_waiting_list(session: SessionDep, user_in: WaitingListUserCreate) -> 
             html_content=email_data.html_content,
         )
         return Message(message="User added to waiting list")
+
+
+class AllowSignupUser(BaseModel):
+    email: EmailStr
+
+
+class AllowSignupHeaders(BaseModel):
+    token: str
+
+
+@router.post("/allow-signup", include_in_schema=False)
+def allow_signup(
+    session: SessionDep,
+    user_in: AllowSignupUser,
+    headers: Annotated[AllowSignupHeaders, Header()],
+) -> Message:
+    """
+    Allow user to signup
+    """
+    if not secrets.compare_digest(headers.token, settings.ALLOW_SIGNUP_TOKEN):
+        raise HTTPException(status_code=400, detail="Invalid token")
+
+    user = session.exec(
+        select(WaitingListUser).where(WaitingListUser.email == user_in.email)
+    ).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user.allowed_at:
+        raise HTTPException(status_code=400, detail="User already allowed to signup")
+
+    user.allowed_at = get_datetime_utc()
+    session.add(user)
+    session.commit()
+
+    email_data = generate_invitation_email_for_waiting_list_user(user.email)
+
+    send_email(
+        email_to=user.email,
+        subject=email_data.subject,
+        html_content=email_data.html_content,
+    )
+
+    return Message(message="User allowed to signup")
