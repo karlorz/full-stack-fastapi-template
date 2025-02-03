@@ -7,13 +7,17 @@ import {
   Separator,
   Text,
 } from "@chakra-ui/react"
-import { createFileRoute } from "@tanstack/react-router"
-import { Link as RouterLink, useNavigate } from "@tanstack/react-router"
+import {
+  Link as RouterLink,
+  createFileRoute,
+  useNavigate,
+} from "@tanstack/react-router"
 import { Fragment } from "react"
 import { z } from "zod"
 
 import { TeamsService, UsersService } from "@/client"
 import CustomCard from "@/components/Common/CustomCard"
+import PendingTeams from "@/components/PendingComponents/PendingTeams"
 import {
   PaginationItems,
   PaginationNextTrigger,
@@ -78,6 +82,7 @@ export const Route = createFileRoute("/_layout/teams/all")({
 
     return { teams, currentUser }
   },
+  pendingComponent: PendingTeams,
 })
 
 function AllTeams() {

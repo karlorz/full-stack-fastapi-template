@@ -1,4 +1,4 @@
-import { Container, Flex } from "@chakra-ui/react"
+import { Container } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Suspense, useState } from "react"
 
@@ -9,8 +9,8 @@ import { handleError, nameRules } from "@/utils"
 import CustomCard from "../Common/CustomCard"
 import EditableField from "../Common/EditableField"
 import UpdateEmailInfo from "../Common/UpdateEmailInfo"
+import PendingUserInformation from "../PendingComponents/PendingUserInformation"
 import { DialogRoot } from "../ui/dialog"
-import { Skeleton } from "../ui/skeleton"
 import ChangePassword from "./ChangePassword"
 import DeleteAccount from "./DeleteAccount"
 
@@ -94,23 +94,7 @@ const UserInformationContent = () => {
 
 const UserInformation = () => {
   return (
-    <Suspense
-      fallback={
-        <Flex
-          direction="column"
-          justify="center"
-          align="center"
-          height="80vh"
-          gap={4}
-          pt={12}
-        >
-          <Skeleton height="25%" width="100%" />
-          <Skeleton height="25%" width="100%" />
-          <Skeleton height="25%" width="100%" />
-          <Skeleton height="25%" width="100%" />
-        </Flex>
-      }
-    >
+    <Suspense fallback={<PendingUserInformation />}>
       <UserInformationContent />
     </Suspense>
   )

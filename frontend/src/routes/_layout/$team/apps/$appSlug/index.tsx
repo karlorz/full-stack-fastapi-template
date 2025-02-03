@@ -8,7 +8,7 @@ import DeleteApp from "@/components/AppSettings/DeleteApp"
 import Deployments from "@/components/AppSettings/Deployments"
 import EnvironmentVariables from "@/components/AppSettings/EnvironmentVariables"
 import CustomCard from "@/components/Common/CustomCard"
-import { Skeleton } from "@/components/ui/skeleton"
+import PendingApp from "@/components/PendingComponents/PendingApp"
 import { fetchTeamBySlug } from "@/utils"
 
 export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
@@ -48,13 +48,7 @@ export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
       throw notFound()
     }
   },
-  pendingComponent: () => (
-    <Box>
-      <Skeleton height="20px" my="10px" />
-      <Skeleton height="20px" my="10px" />
-      <Skeleton height="20px" my="10px" />
-    </Box>
-  ),
+  pendingComponent: PendingApp,
 })
 
 function AppDetail() {

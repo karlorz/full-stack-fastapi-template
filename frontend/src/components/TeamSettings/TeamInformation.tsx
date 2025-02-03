@@ -20,11 +20,11 @@ import CustomCard from "../Common/CustomCard"
 import EditableField from "../Common/EditableField"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
+import PendingTeamInformation from "../PendingComponents/PendingTeamInformation"
 import Team from "../Teams/Team"
 import { Button } from "../ui/button"
 import { DialogRoot, DialogTrigger } from "../ui/dialog"
 import { Field } from "../ui/field"
-import { Skeleton } from "../ui/skeleton"
 import DeleteTeam from "./DeleteTeam"
 import TransferTeam from "./TransferTeam"
 
@@ -134,23 +134,7 @@ const TeamInformationContent = () => {
 
 const TeamInformation = () => {
   return (
-    <Suspense
-      fallback={
-        <Flex
-          direction="column"
-          justify="center"
-          align="center"
-          height="80vh"
-          gap={4}
-          pt={12}
-        >
-          <Skeleton height="25%" width="100%" />
-          <Skeleton height="25%" width="100%" />
-          <Skeleton height="25%" width="100%" />
-          <Skeleton height="25%" width="100%" />
-        </Flex>
-      }
-    >
+    <Suspense fallback={<PendingTeamInformation />}>
       <TeamInformationContent />
     </Suspense>
   )

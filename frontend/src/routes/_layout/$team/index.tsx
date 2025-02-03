@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-router"
 
 import CustomCard from "@/components/Common/CustomCard"
-import { SkeletonText } from "@/components/ui/skeleton"
+import PendingDashboard from "@/components/PendingComponents/PendingDashboard"
 import {
   StatHelpText,
   StatLabel,
@@ -21,9 +21,9 @@ import {
   fetchTeamBySlug,
   getLastDeploymentStatus,
 } from "@/utils"
-import { Suspense } from "react"
 
 export const Route = createFileRoute("/_layout/$team/")({
+  component: Dashboard,
   loader: async ({ params: { team } }) => {
     try {
       const teamData = await fetchTeamBySlug(team)
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/_layout/$team/")({
       })
     }
   },
-  component: Dashboard,
+  pendingComponent: PendingDashboard,
 })
 
 const CurrentUser = () => {
@@ -61,10 +61,7 @@ function Dashboard() {
     <Container maxW="full" p={0}>
       <CustomCard data-testid="result">
         <Box fontSize="2xl" truncate maxWidth="250px">
-          Hi,{" "}
-          <Suspense fallback={<SkeletonText noOfLines={1} width={20} />}>
-            <CurrentUser />
-          </Suspense>{" "}
+          Hi, <CurrentUser />
         </Box>
         <Text>Welcome back, nice to see you again!</Text>
       </CustomCard>

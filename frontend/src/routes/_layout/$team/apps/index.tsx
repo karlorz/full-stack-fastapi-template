@@ -19,6 +19,7 @@ import { AppsService } from "@/client"
 import CustomCard from "@/components/Common/CustomCard"
 import EmptyState from "@/components/Common/EmptyState"
 import QuickStart from "@/components/Common/QuickStart"
+import PendingApps from "@/components/PendingComponents/PendingApps"
 import {
   PaginationItems,
   PaginationNextTrigger,
@@ -85,6 +86,7 @@ export const Route = createFileRoute("/_layout/$team/apps/")({
 
     return { team, apps }
   },
+  pendingComponent: PendingApps,
 })
 
 function Apps() {

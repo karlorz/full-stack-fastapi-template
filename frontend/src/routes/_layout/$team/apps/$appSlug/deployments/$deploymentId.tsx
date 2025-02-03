@@ -1,6 +1,8 @@
 import { AppsService, DeploymentsService } from "@/client"
+import CustomCard from "@/components/Common/CustomCard"
 import Logs from "@/components/Deployment/Logs"
 import { Status } from "@/components/Deployment/Status"
+import PendingDeployment from "@/components/PendingComponents/PendingDeployment"
 import { fetchTeamBySlug } from "@/utils"
 import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react"
 import { createFileRoute, notFound } from "@tanstack/react-router"
@@ -32,6 +34,7 @@ export const Route = createFileRoute(
       throw notFound()
     }
   },
+  pendingComponent: PendingDeployment,
 })
 
 function DeploymentDetail() {
@@ -45,7 +48,7 @@ function DeploymentDetail() {
         </Heading>
       </Flex>
 
-      <Box>
+      <Box mb={10}>
         <Text>
           Last updated: {new Date(deployment?.updated_at).toLocaleString()}
         </Text>
@@ -55,9 +58,9 @@ function DeploymentDetail() {
         </Flex>
       </Box>
 
-      <Box pt={10}>
+      <CustomCard title="Logs">
         <Logs logs={logs} />
-      </Box>
+      </CustomCard>
     </Container>
   )
 }
