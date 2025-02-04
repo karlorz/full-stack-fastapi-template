@@ -63,7 +63,7 @@ function AppDetail() {
         limit: 5,
       }),
     initialData: initialDeployments,
-    refetchInterval: 1000,
+    refetchInterval: 10000,
   })
 
   const { data: environmentVariables } = useQuery({
