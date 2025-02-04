@@ -1,29 +1,13 @@
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
-import { type ReactNode, useEffect, useState } from "react"
+import type { ReactNode } from "react"
 
 import Logo from "@/assets/logo-text-white.svg"
-
-const words = ["simplest", "smartest", "fastest"]
 
 interface BackgroundPanelProps {
   children: ReactNode
 }
 
 const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
-  const [currentWord, setCurrentWord] = useState(words[0])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentWord((prevWord) => {
-        const currentIndex = words.indexOf(prevWord)
-        const nextIndex = (currentIndex + 1) % words.length
-        return words[nextIndex]
-      })
-    }, 2000)
-
-    return () => clearInterval(interval)
-  }, [])
-
   return (
     <>
       <Flex
@@ -75,14 +59,8 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
             gap={10}
           >
             <Image src={Logo} alt="Logo" w="xs" />
-            <Text fontSize={{ base: "3xl", lg: "6xl" }} fontWeight="bold">
-              The{" "}
-              <Text as="span" color="secondary.light">
-                {currentWord}
-              </Text>{" "}
-              <br />
-              way to deploy your <br />
-              FastAPI app
+            <Text fontSize={{ base: "3xl", lg: "7xl" }} fontWeight="bold">
+              You code, we cloud
             </Text>
           </Flex>
         </Box>
