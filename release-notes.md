@@ -156,6 +156,7 @@
 
 ### Refactors
 
+* ♻️ Update tagline. PR [#626](https://github.com/fastapilabs/cloud/pull/626) by [@alejsdev](https://github.com/alejsdev).
 * 💄 Improve skeletons. PR [#628](https://github.com/fastapilabs/cloud/pull/628) by [@alejsdev](https://github.com/alejsdev).
 * 🔥 Remove unnecessary styles. PR [#625](https://github.com/fastapilabs/cloud/pull/625) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Actually check if we are sending (or not) emails. PR [#618](https://github.com/fastapilabs/cloud/pull/618) by [@patrick91](https://github.com/patrick91).
