@@ -51,7 +51,7 @@ const ChangePassword = () => {
             <PasswordInput
               type="current_password"
               startElement={<Lock />}
-              {...register("current_password")}
+              {...register("current_password", passwordRules())}
               placeholder="Current Password"
               errors={errors}
             />
