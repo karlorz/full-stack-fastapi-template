@@ -6,10 +6,6 @@ export type AccessTokenWithUserMe = {
   user: UserMePublic
 }
 
-export type app__models__Role__1 = "member" | "admin"
-
-export type app__models__Role__2 = "member" | "admin"
-
 export type AppCreate = {
   name: string
   team_id: string
@@ -53,8 +49,6 @@ export type Body_login_login_token = {
   device_code: string
   grant_type: "urn:ietf:params:oauth:grant-type:device_code"
 }
-
-export type grant_type = "urn:ietf:params:oauth:grant-type:device_code"
 
 export type CreateApp = {
   name: string
@@ -175,15 +169,13 @@ export type HTTPValidationError = {
 }
 
 export type InvitationCreate = {
-  role: "member" | "admin"
+  role: Role
   email: string
   team_id: string
 }
 
-export type role = "member" | "admin"
-
 export type InvitationPublic = {
-  role: "member" | "admin"
+  role: Role
   email: string
   id: string
   team_id: string
@@ -226,6 +218,8 @@ export type NewPassword = {
   new_password: string
 }
 
+export type Role = "member" | "admin"
+
 export type TeamCreate = {
   name: string
   description?: string | null
@@ -253,7 +247,7 @@ export type TeamUpdate = {
 }
 
 export type TeamUpdateMember = {
-  role: app__models__Role__1
+  role: Role
 }
 
 export type TeamWithUserPublic = {
@@ -277,7 +271,7 @@ export type UpdatePassword = {
 }
 
 export type UserLinkPublic = {
-  role: app__models__Role__1
+  role: Role
   user: UserPublic
 }
 
@@ -305,7 +299,7 @@ export type UserRegister = {
 export type UserTeamLinkPublic = {
   user: UserPublic
   team: TeamPublic
-  role: app__models__Role__1
+  role: Role
 }
 
 export type UserUpdateEmailMe = {

@@ -3,7 +3,7 @@ import { type SubmitHandler, useForm } from "react-hook-form"
 
 import { FaExchangeAlt } from "react-icons/fa"
 import {
-  type app__models__Role__1 as Role,
+  type Role,
   type TeamUpdateMember,
   TeamsService,
   type UserPublic,

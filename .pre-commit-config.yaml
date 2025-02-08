@@ -13,8 +13,8 @@ repos:
         exclude: ^frontend/src/client/.*
       - id: trailing-whitespace
         exclude: ^frontend/src/client/.*
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.7.3
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.4
     hooks:
       - id: ruff
         args:

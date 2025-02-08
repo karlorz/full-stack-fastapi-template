@@ -13,7 +13,6 @@ from pydantic import (
     computed_field,
     model_validator,
 )
-from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Self
 
@@ -127,7 +126,7 @@ class DBSettings(SettingsEnv):
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
         query = "sslmode=require" if self.POSTGRES_SSL_ENABLED else None
-        return MultiHostUrl.build(
+        return PostgresDsn.build(
             scheme="postgresql+psycopg",
             username=self.POSTGRES_USER,
             password=self.POSTGRES_PASSWORD,
