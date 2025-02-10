@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Add country selector to waitlist. PR [#624](https://github.com/fastapilabs/cloud/pull/624) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Bump built Python to 3.13. PR [#596](https://github.com/fastapilabs/cloud/pull/596) by [@patrick91](https://github.com/patrick91).
 * ✨API to allow user in. PR [#610](https://github.com/fastapilabs/cloud/pull/610) by [@patrick91](https://github.com/patrick91).
 * ✨ Add waitlist signup page. PR [#607](https://github.com/fastapilabs/cloud/pull/607) by [@patrick91](https://github.com/patrick91).
