@@ -359,6 +359,7 @@
 
 ### Internal
 
+* ♻️ Remove old Redis types. PR [#629](https://github.com/fastapilabs/cloud/pull/629) by [@patrick91](https://github.com/patrick91).
 * ⬆️  Upgrade dependencies. PR [#627](https://github.com/fastapilabs/cloud/pull/627) by [@patrick91](https://github.com/patrick91).
 * 🔥 Remove `query_pending_users_to_send_invitation`. PR [#616](https://github.com/fastapilabs/cloud/pull/616) by [@patrick91](https://github.com/patrick91).
 * 📝 Add CLI deployment instructions and environment configuration script. PR [#614](https://github.com/fastapilabs/cloud/pull/614) by [@alejsdev](https://github.com/alejsdev).
