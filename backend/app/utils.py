@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import emailable  # type: ignore
 import emails  # type: ignore
@@ -390,7 +390,7 @@ class DeviceAuthorizationData(BaseModel):
 
 
 def create_and_store_device_code(
-    user_code: str, client_id: str, request_ip: str | None, redis: "Redis[Any]"
+    user_code: str, client_id: str, request_ip: str | None, redis: Redis
 ) -> str:
     """Create a new device code and store it in Redis.
 
@@ -437,16 +437,16 @@ def create_and_store_device_code(
         ex=settings.DEVICE_AUTH_TTL_MINUTES * 60,
     )
 
-    pipeline.execute()
+    pipeline.execute()  # type: ignore # https://github.com/redis/redis-py/pull/3494
 
     return device_code
 
 
 def get_device_authorization_data(
-    device_code: str, redis: "Redis[Any]"
+    device_code: str, redis: Redis
 ) -> DeviceAuthorizationData | None:
     """Retrieve device authorization data from Redis using the device code."""
-    data = redis.get(f"auth:device:{device_code}")
+    data = cast(bytes, redis.get(f"auth:device:{device_code}"))
 
     if data:
         return DeviceAuthorizationData.model_validate_json(data)
@@ -455,10 +455,10 @@ def get_device_authorization_data(
 
 
 def get_device_authorization_data_by_user_code(
-    user_code: str, redis: "Redis[Any]"
+    user_code: str, redis: Redis
 ) -> DeviceAuthorizationData | None:
     """Retrieve device authorization data from Redis using the user code."""
-    device_code = redis.get(f"auth:user-code:{user_code}")
+    device_code = cast(bytes, redis.get(f"auth:user-code:{user_code}"))
 
     if device_code:
         return get_device_authorization_data(device_code.decode(), redis)
@@ -466,9 +466,7 @@ def get_device_authorization_data_by_user_code(
     return None
 
 
-def authorize_device_code(
-    device_code: str, access_token: str, redis: "Redis[Any]"
-) -> None:
+def authorize_device_code(device_code: str, access_token: str, redis: Redis) -> None:
     """Authorize the device code in Redis using the device code."""
     settings = MainSettings.get_settings()
 

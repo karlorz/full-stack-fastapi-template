@@ -1,5 +1,4 @@
 from datetime import timedelta
-from typing import Any
 
 import time_machine
 from fastapi.testclient import TestClient
@@ -18,7 +17,7 @@ settings = MainSettings.get_settings()
 
 
 @time_machine.travel("2021-01-01 00:00:00", tick=False)
-def test_get_device_code(client: TestClient, redis: "Redis[Any]") -> None:
+def test_get_device_code(client: TestClient, redis: Redis) -> None:
     data = {"client_id": "valid_id"}
 
     r = client.post(f"{settings.API_V1_STR}/login/device/authorization", data=data)
@@ -53,7 +52,7 @@ def test_get_device_code(client: TestClient, redis: "Redis[Any]") -> None:
 
 
 @time_machine.travel("2021-01-01 00:00:00", tick=False)
-def test_can_get_authorization_info(client: TestClient, redis: "Redis[Any]") -> None:
+def test_can_get_authorization_info(client: TestClient, redis: Redis) -> None:
     user_code = generate_user_code()
     device_code = create_and_store_device_code(
         user_code=user_code, request_ip="127.0.0.1", client_id="valid_id", redis=redis
@@ -97,7 +96,7 @@ def test_device_access_token_not_found(client: TestClient) -> None:
     }
 
 
-def test_device_access_token_pending(client: TestClient, redis: "Redis[Any]") -> None:
+def test_device_access_token_pending(client: TestClient, redis: Redis) -> None:
     user_code = generate_user_code()
     device_code = create_and_store_device_code(
         user_code=user_code, request_ip=None, client_id="valid_id", redis=redis
@@ -122,7 +121,7 @@ def test_device_access_token_pending(client: TestClient, redis: "Redis[Any]") ->
 
 
 def test_device_access_token_different_client_id(
-    client: TestClient, redis: "Redis[Any]"
+    client: TestClient, redis: Redis
 ) -> None:
     device_code = create_and_store_device_code(
         user_code="valid-code", request_ip=None, client_id="some-fake-id", redis=redis
@@ -148,7 +147,7 @@ def test_device_access_token_different_client_id(
 
 def test_device_access_token_expired(
     client: TestClient,
-    redis: "Redis[Any]",
+    redis: Redis,
     time_machine: time_machine.TimeMachineFixture,
 ) -> None:
     time_machine.move_to("2021-01-01 00:00:00")
@@ -179,7 +178,7 @@ def test_device_access_token_expired(
 
 def test_device_access_token_authorized(
     client: TestClient,
-    redis: "Redis[Any]",
+    redis: Redis,
 ) -> None:
     user_code = generate_user_code()
     device_code = create_and_store_device_code(
@@ -204,7 +203,7 @@ def test_device_access_token_authorized(
 
 
 def test_can_authorize_device_code_401_when_not_logged_in(
-    client: TestClient, redis: "Redis[Any]"
+    client: TestClient, redis: Redis
 ) -> None:
     user_code = generate_user_code()
 
@@ -233,7 +232,7 @@ def test_can_authorize_device_code_400_when_code_is_not_found(
 
 
 def test_can_authorize_device_code(
-    client: TestClient, redis: "Redis[Any]", normal_user_token_headers: dict[str, str]
+    client: TestClient, redis: Redis, normal_user_token_headers: dict[str, str]
 ) -> None:
     user_code = generate_user_code()
 

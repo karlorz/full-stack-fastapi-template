@@ -43,7 +43,6 @@ dev-dependencies = [
     "pre-commit<4.0.0,>=3.6.2",
     "types-passlib<2.0.0.0,>=1.7.7.20240106",
     "coverage[toml]>=7.4.3,<8.0.0",
-    "types-redis<5.0.0.0,>=4.6.0.20240425",
     "time-machine<3.0.0,>=2.14.2",
     "types-docker<8.0.0.0,>=7.1.0.20240827",
     "kubernetes-typed<19.0.0,>=18.20.2",

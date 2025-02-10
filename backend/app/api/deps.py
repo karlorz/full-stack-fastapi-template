@@ -1,5 +1,5 @@
 from collections.abc import Generator
-from typing import Annotated, Any
+from typing import Annotated, cast
 
 import jwt
 import redis
@@ -29,19 +29,19 @@ SessionDep = Annotated[Session, Depends(get_db)]
 TokenDep = Annotated[str, Depends(reusable_oauth2)]
 
 
-def get_redis() -> Generator["redis.Redis[Any]", None, None]:
+def get_redis() -> Generator[redis.Redis, None, None]:
     settings = CommonSettings.get_settings()
-    pool = redis.ConnectionPool.from_url(settings.REDIS_URI)
+    pool = redis.ConnectionPool.from_url(settings.REDIS_URI)  # type: ignore # https://github.com/redis/redis-py/pull/3495
 
     redis_instance = redis.Redis(connection_pool=pool)
 
     try:
         yield redis_instance
     finally:
-        redis_instance.close()
+        redis_instance.close()  # type: ignore # https://github.com/redis/redis-py/pull/3496
 
 
-RedisDep = Annotated["redis.Redis[Any]", Depends(get_redis)]
+RedisDep = Annotated[redis.Redis, Depends(get_redis)]
 
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:
@@ -77,7 +77,7 @@ def _rate_limit_per_minute(request: Request, redis: RedisDep, limit: int) -> Non
     current_path = request.url.path
 
     key = f"rate_limit:{host_ip}:{current_path}"
-    value = redis.incr(key)
+    value = cast(int, redis.incr(key))
     redis.expire(key, time=60, nx=True)
 
     if value > limit:

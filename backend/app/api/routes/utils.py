@@ -1,3 +1,5 @@
+from typing import cast
+
 from fastapi import APIRouter
 from pydantic import BaseModel
 
@@ -18,7 +20,7 @@ async def health_check(redis: RedisDep) -> HealthCheckResponse:
     is_redis_available: bool = False
 
     try:
-        is_redis_available = redis.ping()
+        is_redis_available = cast(bool, await redis.ping())
     except Exception:
         pass
 

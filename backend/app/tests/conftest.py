@@ -1,6 +1,5 @@
 from collections.abc import Generator
 from datetime import timedelta
-from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
@@ -76,7 +75,7 @@ def normal_user_token_headers(client: TestClient, db: Session) -> dict[str, str]
 
 
 @pytest.fixture(scope="module")
-def redis() -> Generator["Redis[Any]", None, None]:
+def redis() -> Generator[Redis, None, None]:
     yield from get_redis()
 
 
