@@ -159,6 +159,7 @@
 
 ### Refactors
 
+* ♻️ Update external link. PR [#636](https://github.com/fastapilabs/cloud/pull/636) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update tagline. PR [#626](https://github.com/fastapilabs/cloud/pull/626) by [@alejsdev](https://github.com/alejsdev).
 * 💄 Improve skeletons. PR [#628](https://github.com/fastapilabs/cloud/pull/628) by [@alejsdev](https://github.com/alejsdev).
 * 🔥 Remove unnecessary styles. PR [#625](https://github.com/fastapilabs/cloud/pull/625) by [@alejsdev](https://github.com/alejsdev).
