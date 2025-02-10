@@ -7,19 +7,13 @@ import {
   createListCollection,
 } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
+import countries from "country-list"
 import Lottie from "lottie-react"
 import { useState } from "react"
 import { Controller, type SubmitHandler, useForm } from "react-hook-form"
-import {
-  FaBuilding,
-  FaGlobe,
-  FaLightbulb,
-  FaUser,
-  FaUsers,
-} from "react-icons/fa"
-import { MdEmail } from "react-icons/md"
 
 import emailSent from "@/assets/email.json"
+import { Building, Email, Globe, User, Users } from "@/assets/icons"
 import { type TeamSize, UsersService } from "@/client"
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
 import CustomAuthContainer from "@/components/Auth/CustomContainer"
@@ -35,6 +29,8 @@ import {
 } from "@/components/ui/select"
 import useCustomToast from "@/hooks/useCustomToast"
 import { emailPattern } from "@/utils"
+import { Select } from "chakra-react-select"
+import { Bulb } from "../assets/icons"
 
 interface WaitlistForm {
   email: string
@@ -82,6 +78,13 @@ function Waitlist() {
       { label: "50-200 people", value: "large" },
       { label: "200+ people", value: "enterprise" },
     ],
+  })
+
+  const countriesCollection = createListCollection({
+    items: countries.getNames().map((name: string) => ({
+      label: name,
+      value: name,
+    })),
   })
 
   const onSubmit: SubmitHandler<WaitlistForm> = async (data) => {
@@ -143,28 +146,22 @@ function Waitlist() {
             </Box>
 
             <Field invalid={!!errors.email} errorText={errors.email?.message}>
-              <InputGroup
-                w="100%"
-                startElement={<MdEmail color="currentColor" />}
-              >
+              <InputGroup w="100%" startElement={<Email />}>
                 <Input
                   id="email"
                   {...register("email", {
+                    required: "Email is required",
                     pattern: emailPattern,
                   })}
                   placeholder="Email"
                   type="email"
-                  required
                   variant="outline"
                 />
               </InputGroup>
             </Field>
 
             <Field invalid={!!errors.name} errorText={errors.name?.message}>
-              <InputGroup
-                w="100%"
-                startElement={<FaUser color="currentColor" />}
-              >
+              <InputGroup w="100%" startElement={<User />}>
                 <Input
                   id="name"
                   {...register("name")}
@@ -179,10 +176,7 @@ function Waitlist() {
               invalid={!!errors.organization}
               errorText={errors.organization?.message}
             >
-              <InputGroup
-                w="100%"
-                startElement={<FaBuilding color="currentColor" />}
-              >
+              <InputGroup w="100%" startElement={<Building />}>
                 <Input
                   id="organization"
                   {...register("organization")}
@@ -211,7 +205,7 @@ function Waitlist() {
                   >
                     <SelectTrigger>
                       <Group display="flex" alignItems="center" flexGrow={1}>
-                        <FaUsers color="currentColor" />
+                        <Users color="fg.subtle" />
                         <SelectValueText placeholder="Team Size" />
                       </Group>
                     </SelectTrigger>
@@ -228,13 +222,9 @@ function Waitlist() {
             </Field>
 
             <Field invalid={!!errors.role} errorText={errors.role?.message}>
-              <InputGroup
-                w="100%"
-                startElement={<FaUser color="currentColor" />}
-              >
+              <InputGroup w="100%" startElement={<User />}>
                 <Input
                   id="role"
-                  {...register("role")}
                   placeholder="Your Role"
                   type="text"
                   variant="outline"
@@ -245,29 +235,36 @@ function Waitlist() {
             <Field
               invalid={!!errors.country}
               errorText={errors.country?.message}
+              data-testid="country-select"
             >
-              <InputGroup
-                w="100%"
-                startElement={<FaGlobe color="currentColor" />}
-              >
-                <Input
-                  id="country"
-                  {...register("country")}
-                  placeholder="Country"
-                  type="text"
-                  variant="outline"
-                />
-              </InputGroup>
+              <Controller
+                control={control}
+                name="country"
+                render={({ field }) => (
+                  <Select
+                    options={countriesCollection.items}
+                    value={countriesCollection.items.find(
+                      (option) => option.value === field.value,
+                    )}
+                    onChange={(selectedOption) =>
+                      field.onChange(selectedOption?.value)
+                    }
+                    placeholder={
+                      <>
+                        <Globe color="fg.subtle" mr={2} />
+                        Select Country
+                      </>
+                    }
+                  />
+                )}
+              />
             </Field>
 
             <Field
               invalid={!!errors.use_case}
               errorText={errors.use_case?.message}
             >
-              <InputGroup
-                w="100%"
-                startElement={<FaLightbulb color="currentColor" />}
-              >
+              <InputGroup w="100%" startElement={<Bulb />}>
                 <Input
                   id="use_case"
                   {...register("use_case")}

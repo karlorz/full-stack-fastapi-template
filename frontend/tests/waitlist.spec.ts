@@ -22,9 +22,15 @@ const fillForm = async (
   if (data.name) await page.getByPlaceholder("Full Name").fill(data.name)
   if (data.organization)
     await page.getByPlaceholder("Organization").fill(data.organization)
-  if (data.team_size) await page.getByTestId("team-size-select").click()
+  if (data.team_size) {
+    await page.getByTestId("team-size-select").click()
+    await page.getByRole("option", { name: data.team_size }).click()
+  }
   if (data.role) await page.getByPlaceholder("Your Role").fill(data.role)
-  if (data.country) await page.getByPlaceholder("Country").fill(data.country)
+  if (data.country) {
+    await page.getByTestId("country-select").click()
+    await page.getByRole("option", { name: data.country }).click()
+  }
   if (data.use_case)
     await page
       .getByPlaceholder("How do you plan to use FastAPI Cloud? (Optional)")
@@ -58,7 +64,6 @@ test("All inputs are visible, empty and editable", async ({ page }) => {
   await verifyInput(page, "Full Name")
   await verifyInput(page, "Organization")
   await verifyInput(page, "Your Role")
-  await verifyInput(page, "Country")
   await verifyInput(page, "How do you plan to use FastAPI Cloud? (Optional)")
 })
 
@@ -94,9 +99,9 @@ test("Submit waitlist form with all fields", async ({ page }) => {
     email: testEmail,
     name: "Test User",
     organization: "Test Corp",
-    team_size: "6-10",
+    team_size: "10-50 people",
     role: "Developer",
-    country: "United States",
+    country: "Andorra",
     use_case: "Testing the platform",
   })
   await page.getByRole("button", { name: "Join Waitlist" }).click()

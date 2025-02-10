@@ -21,13 +21,25 @@ export const system = createSystem(defaultConfig, {
       outline: "none",
     },
     // TODO: Remove this later. ref: https://github.com/chakra-ui/chakra-ui/pull/9523
-    "input::placeholder": {
-      color: "fg.muted",
+    '[data-scope="select"][data-part="value-text"]': {
+      color: "fg.muted/80",
     },
     h2: {
       fontSize: "1.2rem",
       fontFamily: "heading",
       fontWeight: "bold",
+    },
+    "::-webkit-scrollbar": {
+      borderRadius: "8px",
+      width: "16px",
+      backgroundColor: "rgba(0, 0, 0, 0.05)",
+    },
+    "::-webkit-scrollbar-thumb": {
+      borderRadius: "8px",
+      backgroundColor: "rgba(0, 0, 0, 0.1)",
+    },
+    "::-webkit-scrollbar-corner": {
+      backgroundColor: "rgba(0, 0, 0, 0.05)",
     },
   },
   theme: {
