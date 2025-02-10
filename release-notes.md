@@ -340,6 +340,7 @@
 
 ### Docs
 
+* 🍱 Update architecture diagram. PR [#635](https://github.com/fastapilabs/cloud/pull/635) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Tweak infra README. PR [#516](https://github.com/fastapilabs/cloud/pull/516) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor Kubernetes deployment, do not deploy from Pulumi. PR [#515](https://github.com/fastapilabs/cloud/pull/515) by [@tiangolo](https://github.com/tiangolo).
 * 🔒️ Migrate TLS and domain handling, use Cloudflare, support customer domains in cluster/cloud. PR [#485](https://github.com/fastapilabs/cloud/pull/485) by [@tiangolo](https://github.com/tiangolo).
