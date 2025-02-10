@@ -1,4 +1,4 @@
-import { Code, Heading, Link, Text, VStack } from "@chakra-ui/react"
+import { Code, Heading, Text, VStack } from "@chakra-ui/react"
 
 import CustomCard from "./CustomCard"
 
@@ -24,7 +24,15 @@ const QuickStart = () => {
         </Text>
         <Text>
           You can learn more in the{" "}
-          <Link className="main-link">FastAPI CLI documentation</Link>.
+          <a
+            href="https://fastapi.tiangolo.com/fastapi-cli/"
+            className="main-link"
+            target="_blank"
+            rel="noreferrer"
+          >
+            FastAPI CLI documentation
+          </a>
+          .
         </Text>
       </VStack>
     </CustomCard>

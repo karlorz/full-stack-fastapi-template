@@ -12,7 +12,7 @@ export const system = createSystem(defaultConfig, {
       margin: 0,
       padding: 0,
     },
-    ".main-link": {
+    "a.main-link": {
       color: "main.dark",
       fontWeight: "bold",
     },
