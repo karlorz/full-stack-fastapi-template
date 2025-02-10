@@ -9,11 +9,18 @@ const TransferTeam = () => {
   return (
     <>
       <Container maxW="full" p={0}>
-        <Flex as="form" align="center">
-          <Field required w="250px">
+        <Flex as="form" align="center" flexDir={{ base: "column", md: "row" }}>
+          <Field required w={{ base: "100%", md: "250px" }}>
             <Input placeholder="Email address" type="text" />
           </Field>
-          <Button variant="solid" type="submit" ml={4}>
+          <Button
+            variant="solid"
+            type="submit"
+            ml={{ base: 0, md: 4 }}
+            display={{ base: "block", md: "inline-block" }}
+            mt={{ base: 4, md: 0 }}
+            alignSelf={{ base: "flex-start", md: "auto" }}
+          >
             Transfer
           </Button>
         </Flex>

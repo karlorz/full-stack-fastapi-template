@@ -75,7 +75,7 @@ const DeleteConfirmation = () => {
       role="alertdialog"
       placement="center"
     >
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button
           variant="solid"
           colorPalette="red"

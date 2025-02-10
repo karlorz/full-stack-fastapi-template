@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_layout/settings")({
 function UserSettings() {
   return (
     <Container maxW="full" p={0}>
-      <Heading size="xl" textAlign={{ base: "center", md: "left" }} pb={2}>
+      <Heading size="xl" pb={2}>
         User Settings
       </Heading>
       <Text>View and manage settings related to your account.</Text>

@@ -74,9 +74,7 @@ function NewTeam() {
 
   return (
     <Container maxW="full" p={0}>
-      <Heading size="xl" textAlign={{ base: "center", md: "left" }}>
-        New Team
-      </Heading>
+      <Heading size="xl">New Team</Heading>
       <Box pt={10}>
         <CustomCard title="Name">
           <form onSubmit={handleSubmit(onSubmit)}>

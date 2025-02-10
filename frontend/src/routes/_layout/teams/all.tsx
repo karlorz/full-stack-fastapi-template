@@ -102,7 +102,7 @@ function AllTeams() {
   return (
     <Container maxW="full" p={0}>
       <Box mb={10}>
-        <Heading size="xl" textAlign={{ base: "center", md: "left" }} pb={2}>
+        <Heading size="xl" pb={2}>
           Teams
         </Heading>
         <Text>View all your teams</Text>

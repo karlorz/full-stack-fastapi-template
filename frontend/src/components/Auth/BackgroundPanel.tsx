@@ -17,7 +17,7 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
         h="100vh"
         bg="gradient"
         position="relative"
-        px={8}
+        px={{ base: "4", md: "8" }}
         gap={4}
       >
         <svg
@@ -56,7 +56,7 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
             p={{ base: 4, md: 8 }}
             textAlign={{ base: "center", lg: "left" }}
             width="100%"
-            gap={10}
+            gap={{ base: "2", md: "10" }}
           >
             <Image src={Logo} alt="Logo" w="xs" />
             <Text fontSize={{ base: "3xl", lg: "7xl" }} fontWeight="bold">
@@ -65,20 +65,19 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
           </Flex>
         </Box>
         {children}
-        <footer
-          style={{
-            position: "absolute",
-            bottom: 0,
-            width: "100%",
-            textAlign: "center",
-            padding: "16px 0",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            color: "white",
-            zIndex: 2,
-          }}
+        <Box
+          as="footer"
+          p={{ base: "2", md: "4" }}
+          fontWeight="bold"
+          position="absolute"
+          bottom="0"
+          width="100%"
+          textAlign="center"
+          color="white"
+          zIndex="2"
         >
           © {new Date().getFullYear()} FastAPI Labs.
-        </footer>
+        </Box>
       </Flex>
     </>
   )

@@ -39,49 +39,52 @@ function Layout() {
   return (
     <>
       <Flex minHeight="100vh" flexDirection="column" bg="bg.subtle">
-        <Flex flex="1">
-          {/* Sidebar */}
+        {/* Sidebar */}
+        <Box
+          position="fixed"
+          top="0"
+          left="0"
+          height="100vh"
+          width={{ md: "280px" }}
+        >
+          <Suspense>
+            <Sidebar teams={teams} />
+          </Suspense>
+        </Box>
+        <Flex flexDir="column" flex="1" ml={{ base: 0, md: "250px" }}>
+          {/* Navbar */}
           <Box
+            bg="gradient"
+            id="navbar"
+            display={{ base: "none", md: "flex" }}
+            justifyContent="space-between"
             position="fixed"
             top="0"
-            left="0"
-            height="100vh"
-            width={{ md: "280px" }}
+            right="0"
+            w="100%"
+            h="64px"
+            zIndex="2"
+            p={4}
           >
-            <Suspense>
-              <Sidebar teams={teams} />
-            </Suspense>
+            <Center>
+              <Link to="/">
+                <Image src={logo} alt="Logo" p={4} width={180} />
+              </Link>
+            </Center>
+            <Flex gap={2} alignItems="center">
+              <Appearance />
+              <UserMenu />
+            </Flex>
           </Box>
-          <Flex flexDir="column" flex="1" ml={{ base: 0, md: "250px" }}>
-            {/* Navbar */}
-            <Box
-              bg="gradient"
-              id="navbar"
-              display={{ base: "none", md: "flex" }}
-              justifyContent="space-between"
-              position="fixed"
-              top="0"
-              right="0"
-              w="100%"
-              h="64px"
-              zIndex="2"
-              p={4}
-            >
-              <Center>
-                <Link to="/">
-                  <Image src={logo} alt="Logo" p={4} width={180} />
-                </Link>
-              </Center>
-              <Flex gap={2} alignItems="center">
-                <Appearance />
-                <UserMenu />
-              </Flex>
-            </Box>
-            {/* Main Content */}
-            <Box w="80%" p={{ base: 0, md: 10 }} mt="64px" mx="auto">
-              <Outlet />
-            </Box>
-          </Flex>
+          {/* Main Content */}
+          <Box
+            w={{ base: "100%", md: "80%" }}
+            p={10}
+            mt={{ base: "0", md: "64px" }}
+            mx="auto"
+          >
+            <Outlet />
+          </Box>
         </Flex>
         <Footer />
       </Flex>

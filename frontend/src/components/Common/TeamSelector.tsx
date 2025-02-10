@@ -101,7 +101,7 @@ const TeamSelector = ({
             <ArrowDown color="black" />
           </Button>
         </MenuTrigger>
-        <MenuContent p={4} w="100%">
+        <MenuContent p={4} w="100%" portalled={false}>
           {selectedTeam !== personalTeam && (
             <>
               <MenuItemGroup title="Personal Team">

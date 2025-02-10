@@ -32,6 +32,7 @@ const EditableField = ({
   return (
     <Editable.Root
       w={{ base: "100%", md: "50%" }}
+      maxW="300px"
       defaultValue={value}
       submitMode="none"
       onValueCommit={(details) => handleSubmit(() => onSubmit(details.value))()}
@@ -51,11 +52,7 @@ const EditableField = ({
           errorText={errors[type]?.message}
           style={{ flexGrow: 1 }}
         >
-          <Editable.Input
-            {...register(type, rules)}
-            type={type}
-            style={{ width: "100%" }}
-          />
+          <Editable.Input {...register(type, rules)} type={type} />
         </Field>
         <Editable.Control>
           <Editable.EditTrigger asChild>

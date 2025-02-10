@@ -1,4 +1,4 @@
-import { Heading, type IconProps, Text } from "@chakra-ui/react"
+import { Center, Heading, type IconProps, Text } from "@chakra-ui/react"
 import type { FC } from "react"
 
 import CustomCard from "./CustomCard"
@@ -24,13 +24,15 @@ const EmptyState = ({
       justifyContent="center"
       flexDirection="column"
     >
-      <IconComponent
-        boxSize={IconComponent.displayName === "EmptyBox" ? 10 : 6}
-      />
+      <Center>
+        <IconComponent
+          boxSize={IconComponent.displayName === "EmptyBox" ? 10 : 6}
+        />
+      </Center>
       <Heading size="md" textAlign="center">
         {title}
       </Heading>
-      <Text>{description}</Text>
+      <Text textAlign={{ base: "center", md: "inherit" }}>{description}</Text>
     </CustomCard>
   )
 }

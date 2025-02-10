@@ -67,6 +67,7 @@ const Logs = ({ logs }: LogsProps) => {
             alignItems="center"
             justifyContent="center"
             height="100%"
+            textAlign="center"
           >
             <Text>No logs to show</Text>
             <Text>New logs will appear here when available</Text>

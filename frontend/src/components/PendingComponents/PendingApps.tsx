@@ -11,11 +11,11 @@ import CustomCard from "../Common/CustomCard"
 
 const PendingApps = () => (
   <Container maxW="full" p={0}>
-    <Heading size="xl" textAlign={{ base: "center", md: "left" }} pb={2}>
+    <Heading size="xl" pb={2}>
       Apps
     </Heading>
-    <Text>View and manage apps related to your team.</Text>
-    <Flex justifyContent="end" mb={4}>
+    <Text textAlign="inherit">View and manage apps related to your team.</Text>
+    <Flex justifyContent={{ base: "inherit", md: "end" }} my={4}>
       <Skeleton h="40px" w="100px" />
     </Flex>
     <CustomCard>

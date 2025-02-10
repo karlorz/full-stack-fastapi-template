@@ -75,7 +75,11 @@ const TeamInformationContent = () => {
             {currentUserRole === "admin" && (
               <DialogRoot size={{ base: "xs", md: "md" }} placement="center">
                 <DialogTrigger asChild>
-                  <Button variant="solid" marginLeft="auto">
+                  <Button
+                    variant="solid"
+                    mb={4}
+                    marginLeft={{ base: "inherit", md: "auto" }}
+                  >
                     Invite Member
                   </Button>
                 </DialogTrigger>

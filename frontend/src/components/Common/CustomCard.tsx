@@ -1,4 +1,4 @@
-import { Box, type BoxProps, Heading } from "@chakra-ui/react"
+import { type BoxProps, Card } from "@chakra-ui/react"
 import type { ReactNode } from "react"
 
 interface CustomCardProps extends BoxProps {
@@ -8,22 +8,25 @@ interface CustomCardProps extends BoxProps {
 
 const CustomCard = ({ title, children, ...props }: CustomCardProps) => {
   return (
-    <Box
-      zIndex="auto"
-      id="card"
-      borderRadius="md"
-      px={8}
-      py={8}
-      mb={8}
-      {...props}
-      gap={2}
-      bg="bg.panel"
-    >
-      <Heading size="md" fontWeight="bold" mb={4}>
-        {title}
-      </Heading>
-      {children}
-    </Box>
+    <>
+      <Card.Root
+        borderRadius="md"
+        bg="bg.panel"
+        border="none"
+        mb={8}
+        {...props}
+        id="card"
+      >
+        <Card.Body gap={2} justifyContent="center">
+          {title && (
+            <Card.Title fontSize="sm" mt={2}>
+              {title}
+            </Card.Title>
+          )}
+          {children}
+        </Card.Body>
+      </Card.Root>
+    </>
   )
 }
 
