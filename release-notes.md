@@ -159,6 +159,7 @@
 
 ### Refactors
 
+* ♻️ Responsiveness tweaks. PR [#633](https://github.com/fastapilabs/cloud/pull/633) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update external link. PR [#636](https://github.com/fastapilabs/cloud/pull/636) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update tagline. PR [#626](https://github.com/fastapilabs/cloud/pull/626) by [@alejsdev](https://github.com/alejsdev).
 * 💄 Improve skeletons. PR [#628](https://github.com/fastapilabs/cloud/pull/628) by [@alejsdev](https://github.com/alejsdev).
