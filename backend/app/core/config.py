@@ -168,6 +168,16 @@ class MainSettings(SettingsEnv):
             self.FRONTEND_HOST
         ]
 
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def posthog_enabled(self) -> bool:
+        import sys
+
+        return "pytest" not in sys.modules
+
+    POSTHOG_API_KEY: str | None = None
+    POSTHOG_HOST: str | None = None
+
     PROJECT_NAME: str = "FastAPI Cloud"
     RESERVED_APP_NAMES: Annotated[list[str] | str, BeforeValidator(parse_list_or_str)]
     BACKEND_SENTRY_DSN: HttpUrl | None = None

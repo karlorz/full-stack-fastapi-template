@@ -10,8 +10,13 @@ import ReactDOM from "react-dom/client"
 import { routeTree } from "./routeTree.gen"
 
 import * as Sentry from "@sentry/react"
+import { PostHogProvider } from "posthog-js/react"
 import { ApiError, OpenAPI } from "./client"
 import { CustomProvider } from "./components/ui/custom-provider"
+
+const posthogOptions = {
+  api_host: import.meta.env.VITE_APP_PUBLIC_POSTHOG_HOST,
+}
 
 OpenAPI.BASE = import.meta.env.VITE_API_URL
 OpenAPI.TOKEN = async () => {
@@ -51,10 +56,15 @@ if (process.env.NODE_ENV === "production") {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <CustomProvider>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </CustomProvider>
+    <PostHogProvider
+      apiKey={import.meta.env.VITE_APP_PUBLIC_POSTHOG_KEY as string}
+      options={posthogOptions}
+    >
+      <CustomProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </CustomProvider>
+    </PostHogProvider>
   </StrictMode>,
 )

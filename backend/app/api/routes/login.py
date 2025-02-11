@@ -1,13 +1,21 @@
 from datetime import timedelta
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Depends, Form, HTTPException, Request
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    Form,
+    HTTPException,
+    Request,
+)
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 
 from app import crud
 from app.api.deps import (
     CurrentUser,
+    PosthogDep,
     RedisDep,
     SessionDep,
     rate_limit_5_per_minute,
@@ -190,6 +198,8 @@ async def authorize_device(
     data: AuthorizeDeviceIn,
     current_user: CurrentUser,
     redis: RedisDep,
+    posthog: PosthogDep,
+    background_tasks: BackgroundTasks,
 ) -> Any:
     settings = MainSettings.get_settings()
     device_data = get_device_authorization_data_by_user_code(data.user_code, redis)
@@ -204,6 +214,13 @@ async def authorize_device(
     )
 
     authorize_device_code(device_data.device_code, access_token, redis)
+
+    background_tasks.add_task(
+        posthog.capture,
+        current_user.id,
+        "device_authorized",
+        properties={"device_code": device_data.device_code},
+    )
 
     return {"success": True}
 

@@ -5,8 +5,8 @@ import {
 } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { AxiosError } from "axios"
+import { usePostHog } from "posthog-js/react"
 import { useState } from "react"
-
 import {
   type ApiError,
   type Body_login_login_access_token as LoginFormData,
@@ -16,7 +16,6 @@ import {
   UsersService,
 } from "../client"
 import useCustomToast from "./useCustomToast"
-
 const isLoggedIn = () => {
   return localStorage.getItem("access_token") !== null
 }
@@ -35,6 +34,8 @@ const useAuth = () => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const navigate = useNavigate()
+
+  const posthog = usePostHog()
 
   const signUpMutation = useMutation({
     mutationFn: (data: UserRegister) =>
@@ -66,6 +67,16 @@ const useAuth = () => {
     })
     queryClient.setQueryData(["currentUser"], response.user)
     localStorage.setItem("access_token", response.access_token)
+
+    try {
+      posthog.identify(response.user.id, {
+        email: response.user.email,
+        name: response.user.full_name,
+      })
+    } catch (error) {
+      // do nothing
+    }
+
     return data.redirect
   }
 
@@ -91,6 +102,12 @@ const useAuth = () => {
     queryClient.invalidateQueries()
     const search = redirect ? { redirect } : undefined
     navigate({ to: "/login", search })
+
+    try {
+      posthog.reset(true)
+    } catch (error) {
+      // do nothing
+    }
   }
 
   return {

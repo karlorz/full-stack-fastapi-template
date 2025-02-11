@@ -3,11 +3,11 @@ from typing import Any, Literal
 
 import httpx
 import logfire
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from sqlalchemy import func
 from sqlmodel import and_, col, select
 
-from app.api.deps import CurrentUser, SessionDep
+from app.api.deps import CurrentUser, PosthogDep, SessionDep
 from app.api.utils.aws_s3 import generate_presigned_url_post
 from app.aws_utils import get_sqs_client
 from app.core.config import CommonSettings
@@ -156,7 +156,11 @@ def read_deployment_logs(
     "/apps/{app_id}/deployments/", response_model=DeploymentPublic, status_code=201
 )
 def create_deployment(
-    session: SessionDep, app_id: uuid.UUID, current_user: CurrentUser
+    session: SessionDep,
+    app_id: uuid.UUID,
+    current_user: CurrentUser,
+    posthog: PosthogDep,
+    background_tasks: BackgroundTasks,
 ) -> Any:
     """
     Create a new deployment.
@@ -179,6 +183,18 @@ def create_deployment(
     session.add(new_deployment)
     session.commit()
     session.refresh(new_deployment)
+
+    background_tasks.add_task(
+        posthog.capture,
+        current_user.id,
+        "deployment_created",
+        properties={
+            "deployment_id": new_deployment.id,
+            "app_id": app.id,
+            "app_name": app.name,
+        },
+    )
+
     return new_deployment
 
 

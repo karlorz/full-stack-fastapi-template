@@ -6,6 +6,7 @@ import redis
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
+from posthog import Posthog
 from pydantic import ValidationError
 from sqlmodel import Session
 
@@ -90,3 +91,15 @@ def rate_limit_5_per_minute(request: Request, redis: RedisDep) -> None:
 
 def rate_limit_20_per_minute(request: Request, redis: RedisDep) -> None:
     return _rate_limit_per_minute(request, redis, 20)
+
+
+def posthog_client() -> Generator[Posthog, None, None]:
+    settings = MainSettings.get_settings()
+
+    client = Posthog(settings.POSTHOG_API_KEY, settings.POSTHOG_HOST)  # type: ignore
+    client.disabled = not settings.posthog_enabled
+
+    yield client
+
+
+PosthogDep = Annotated[Posthog, Depends(posthog_client)]
