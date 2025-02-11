@@ -363,6 +363,7 @@
 
 ### Internal
 
+* ✨ Improve server events for Posthog. PR [#638](https://github.com/fastapilabs/cloud/pull/638) by [@patrick91](https://github.com/patrick91).
 * ✨ Add Posthog. PR [#631](https://github.com/fastapilabs/cloud/pull/631) by [@patrick91](https://github.com/patrick91).
 * ♻️ Remove old Redis types. PR [#629](https://github.com/fastapilabs/cloud/pull/629) by [@patrick91](https://github.com/patrick91).
 * ⬆️  Upgrade dependencies. PR [#627](https://github.com/fastapilabs/cloud/pull/627) by [@patrick91](https://github.com/patrick91).
