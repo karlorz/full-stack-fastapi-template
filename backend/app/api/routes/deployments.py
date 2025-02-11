@@ -7,7 +7,7 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException
 from sqlalchemy import func
 from sqlmodel import and_, col, select
 
-from app.api.deps import CurrentUser, PosthogDep, SessionDep
+from app.api.deps import CurrentUser, PosthogDep, PosthogProperties, SessionDep
 from app.api.utils.aws_s3 import generate_presigned_url_post
 from app.aws_utils import get_sqs_client
 from app.core.config import CommonSettings
@@ -159,8 +159,9 @@ def create_deployment(
     session: SessionDep,
     app_id: uuid.UUID,
     current_user: CurrentUser,
-    posthog: PosthogDep,
     background_tasks: BackgroundTasks,
+    posthog: PosthogDep,
+    posthog_properties: PosthogProperties,
 ) -> Any:
     """
     Create a new deployment.
@@ -192,6 +193,7 @@ def create_deployment(
             "deployment_id": new_deployment.id,
             "app_id": app.id,
             "app_name": app.name,
+            **posthog_properties,
         },
     )
 

@@ -16,6 +16,7 @@ from app import crud
 from app.api.deps import (
     CurrentUser,
     PosthogDep,
+    PosthogProperties,
     RedisDep,
     SessionDep,
     rate_limit_5_per_minute,
@@ -198,8 +199,9 @@ async def authorize_device(
     data: AuthorizeDeviceIn,
     current_user: CurrentUser,
     redis: RedisDep,
-    posthog: PosthogDep,
     background_tasks: BackgroundTasks,
+    posthog: PosthogDep,
+    posthog_properties: PosthogProperties,
 ) -> Any:
     settings = MainSettings.get_settings()
     device_data = get_device_authorization_data_by_user_code(data.user_code, redis)
@@ -219,7 +221,10 @@ async def authorize_device(
         posthog.capture,
         current_user.id,
         "device_authorized",
-        properties={"device_code": device_data.device_code},
+        properties={
+            "device_code": device_data.device_code,
+            **posthog_properties,
+        },
     )
 
     return {"success": True}

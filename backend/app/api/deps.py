@@ -3,7 +3,7 @@ from typing import Annotated, cast
 
 import jwt
 import redis
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Depends, Header, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from posthog import Posthog
@@ -103,3 +103,27 @@ def posthog_client() -> Generator[Posthog, None, None]:
 
 
 PosthogDep = Annotated[Posthog, Depends(posthog_client)]
+
+
+def get_client_ip(request: Request) -> str:
+    forwarded_for = request.headers.get("X-Forwarded-For")
+
+    if forwarded_for:
+        return forwarded_for.split(",")[0]
+
+    assert request.client
+
+    return request.client.host
+
+
+def posthog_properties(
+    client_ip: Annotated[str, Depends(get_client_ip)],
+    user_agent: Annotated[str, Header(include_in_schema=False)],
+) -> dict[str, str]:
+    return {
+        "$raw_user_agent": user_agent,
+        "$ip": client_ip,
+    }
+
+
+PosthogProperties = Annotated[dict[str, str], Depends(posthog_properties)]

@@ -5,7 +5,7 @@ import logfire
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from sqlmodel import col, func, select
 
-from app.api.deps import CurrentUser, PosthogDep, SessionDep
+from app.api.deps import CurrentUser, PosthogDep, PosthogProperties, SessionDep
 from app.api.utils.teams import generate_app_slug_name
 from app.crud import get_user_team_link
 from app.models import App, AppCreate, AppPublic, AppsPublic, Message
@@ -78,8 +78,9 @@ def create_app(
     session: SessionDep,
     current_user: CurrentUser,
     app_in: AppCreate,
-    posthog: PosthogDep,
     background_tasks: BackgroundTasks,
+    posthog: PosthogDep,
+    posthog_properties: PosthogProperties,
 ) -> Any:
     """
     Create a new app with the provided details.
@@ -102,7 +103,11 @@ def create_app(
         posthog.capture,
         current_user.id,
         "app_created",
-        properties={"app_id": app.id, "app_name": app.name},
+        properties={
+            "app_id": app.id,
+            "app_name": app.name,
+            **posthog_properties,
+        },
     )
 
     return app
@@ -167,8 +172,9 @@ def delete_app(
     session: SessionDep,
     current_user: CurrentUser,
     app_id: uuid.UUID,
-    posthog: PosthogDep,
     background_tasks: BackgroundTasks,
+    posthog: PosthogDep,
+    posthog_properties: PosthogProperties,
 ) -> Any:
     """
     Delete the provided app.
@@ -198,7 +204,11 @@ def delete_app(
         posthog.capture,
         current_user.id,
         "app_deleted",
-        properties={"app_id": app.id, "app_name": app.name},
+        properties={
+            "app_id": app.id,
+            "app_name": app.name,
+            **posthog_properties,
+        },
     )
 
     return Message(message="App deleted")

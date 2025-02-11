@@ -1,10 +1,15 @@
 import uuid
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from sqlmodel import col, func, select
 
-from app.api.deps import CurrentUser, SessionDep
+from app.api.deps import (
+    CurrentUser,
+    PosthogDep,
+    PosthogProperties,
+    SessionDep,
+)
 from app.crud import get_user_team_link
 from app.models import (
     App,
@@ -66,6 +71,9 @@ def create_environment_variable(
     current_user: CurrentUser,
     app_id: uuid.UUID,
     environment_variable_in: EnvironmentVariableCreate,
+    posthog_properties: PosthogProperties,
+    posthog: PosthogDep,
+    background_tasks: BackgroundTasks,
 ) -> Any:
     """
     Create a new environment variable for the provided app.
@@ -113,6 +121,13 @@ def create_environment_variable(
 
     session.refresh(environment_variable)
 
+    background_tasks.add_task(
+        posthog.capture,
+        current_user.id,
+        "environment_variable_created",
+        properties=posthog_properties,
+    )
+
     return environment_variable
 
 
@@ -122,6 +137,9 @@ def update_environment_variables(
     current_user: CurrentUser,
     app_id: uuid.UUID,
     environment_variables_in: dict[str, str | None],
+    posthog_properties: PosthogProperties,
+    posthog: PosthogDep,
+    background_tasks: BackgroundTasks,
 ) -> Any:
     """
     Update the provided environment variables.
@@ -181,6 +199,13 @@ def update_environment_variables(
     environment_variables = session.exec(statement).all()
     count = session.exec(count_statement).one()
 
+    background_tasks.add_task(
+        posthog.capture,
+        current_user.id,
+        "environment_variables_updated",
+        properties=posthog_properties,
+    )
+
     return EnvironmentVariablesPublic(data=environment_variables, count=count)
 
 
@@ -190,6 +215,9 @@ def delete_environment_variable(
     current_user: CurrentUser,
     app_id: uuid.UUID,
     environment_variable_name: str,
+    posthog_properties: PosthogProperties,
+    posthog: PosthogDep,
+    background_tasks: BackgroundTasks,
 ) -> Any:
     """
     Delete the provided environment variable.
@@ -224,6 +252,13 @@ def delete_environment_variable(
     session.add(app)
     session.commit()
 
+    background_tasks.add_task(
+        posthog.capture,
+        current_user.id,
+        "environment_variable_deleted",
+        properties=posthog_properties,
+    )
+
     return Message(message="Environment variable deleted")
 
 
@@ -234,6 +269,9 @@ def update_environment_variable(
     app_id: uuid.UUID,
     environment_variable_name: str,
     environment_variable_in: EnvironmentVariableUpdate,
+    posthog_properties: PosthogProperties,
+    posthog: PosthogDep,
+    background_tasks: BackgroundTasks,
 ) -> Any:
     """
     Update the provided environment variable.
@@ -272,5 +310,12 @@ def update_environment_variable(
     session.commit()
 
     session.refresh(environment_variable)
+
+    background_tasks.add_task(
+        posthog.capture,
+        current_user.id,
+        "environment_variable_updated",
+        properties=posthog_properties,
+    )
 
     return environment_variable
