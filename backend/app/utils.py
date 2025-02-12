@@ -86,11 +86,10 @@ def is_signup_allowed(email_to: str, session: Session) -> bool:
         col(WaitingListUser.email) == email_to,
     )
     user = session.exec(statement).first()
-    if (
-        user
-        and user.allowed_at is not None
-        and user.email in settings.ALLOWED_SIGNUP_EMAILS
-    ) or email_to.endswith(tuple(settings.ALLOWED_SIGNUP_DOMAINS)):
+
+    if (user and user.can_signup) or (
+        email_to.endswith(tuple(settings.ALLOWED_SIGNUP_DOMAINS))
+    ):
         return True
 
     return False

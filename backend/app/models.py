@@ -425,6 +425,14 @@ class WaitingListUser(WaitingListUserBase, table=True):
     allowed_at: datetime | None = Field(default=None, index=True)
     invitation_sent_at: datetime | None = Field(default=None, index=True)
 
+    @computed_field
+    @hybrid_property
+    def can_signup(self) -> bool:
+        return (
+            self.allowed_at is not None
+            and self.email in MainSettings.get_settings().ALLOWED_SIGNUP_EMAILS
+        )
+
 
 class WaitingListUserCreate(WaitingListUserBase):
     pass

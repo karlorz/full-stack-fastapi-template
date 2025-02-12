@@ -161,7 +161,7 @@ def test_read_owned_team(client: TestClient, db: Session) -> None:
 
     # Make a request to the get_teams route using the client fixture and superuser_token_headers
     response = client.get(
-        f"{settings.API_V1_STR}/teams/?owner=true",
+        f"{settings.API_V1_STR}/teams/?owner=true&order_by=created_at&order=desc",
         headers=user_auth_headers,
     )
 
@@ -173,8 +173,8 @@ def test_read_owned_team(client: TestClient, db: Session) -> None:
     # create_user creates a team for the user
     assert len(teams) == 2
     assert count == 2
-    assert teams[0]["id"] == str(user1.personal_team.id)
-    assert teams[1]["id"] == str(org1.id)
+    assert teams[0]["id"] == str(org1.id)
+    assert teams[1]["id"] == str(user1.personal_team.id)
 
 
 def test_read_teams_order(client: TestClient, db: Session) -> None:
