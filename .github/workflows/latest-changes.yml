@@ -38,3 +38,15 @@ jobs:
           end_regex: "^## "
           debug_logs: true
           label_header_prefix: "### "
+          labels: >
+            [
+              {"label": "breaking", "header": "Breaking Changes"},
+              {"label": "security", "header": "Security Fixes"},
+              {"label": "feature", "header": "Features"},
+              {"label": "bug", "header": "Fixes"},
+              {"label": "refactor", "header": "Refactors"},
+              {"label": "upgrade", "header": "Upgrades"},
+              {"label": "infra", "header": "Infrastructure"},
+              {"label": "docs", "header": "Docs"},
+              {"label": "internal", "header": "Internal"},
+            ]
