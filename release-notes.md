@@ -339,6 +339,10 @@
 * ⬆️ Upgrade SQLModel. PR [#56](https://github.com/fastapilabs/cloud/pull/56) by [@tiangolo](https://github.com/tiangolo).
 * Bump follow-redirects from 1.15.5 to 1.15.6 in /frontend. PR [#734](https://github.com/tiangolo/full-stack-fastapi-template/pull/734) by [@dependabot[bot]](https://github.com/apps/dependabot).
 
+### Infrastructure
+
+* 🔧 Update latest-changes config to include infra section. PR [#645](https://github.com/fastapilabs/cloud/pull/645) by [@tiangolo](https://github.com/tiangolo).
+
 ### Docs
 
 * 📝 Update README format. PR [#643](https://github.com/fastapilabs/cloud/pull/643) by [@tiangolo](https://github.com/tiangolo).
