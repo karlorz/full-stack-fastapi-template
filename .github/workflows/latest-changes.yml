@@ -48,5 +48,5 @@ jobs:
               {"label": "upgrade", "header": "Upgrades"},
               {"label": "infra", "header": "Infrastructure"},
               {"label": "docs", "header": "Docs"},
-              {"label": "internal", "header": "Internal"},
+              {"label": "internal", "header": "Internal"}
             ]
