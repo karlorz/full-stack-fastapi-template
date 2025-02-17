@@ -341,6 +341,7 @@
 
 ### Docs
 
+* 📝 Update README format. PR [#643](https://github.com/fastapilabs/cloud/pull/643) by [@tiangolo](https://github.com/tiangolo).
 * 🍱 Update architecture diagram. PR [#635](https://github.com/fastapilabs/cloud/pull/635) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Tweak infra README. PR [#516](https://github.com/fastapilabs/cloud/pull/516) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor Kubernetes deployment, do not deploy from Pulumi. PR [#515](https://github.com/fastapilabs/cloud/pull/515) by [@tiangolo](https://github.com/tiangolo).
