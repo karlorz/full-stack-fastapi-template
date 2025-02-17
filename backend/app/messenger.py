@@ -105,31 +105,35 @@ async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
         )
 
         # Create an async task group so all messages are processed concurrently
-        async with asyncer.create_task_group() as tg:
-            for message in messages.get("Messages", []):
-                deployment_id = message.get("Body")
-                receipt_handle = message.get("ReceiptHandle")
-                if not deployment_id:
-                    logfire.error("No deployment_id in message")
-                    sentry_sdk.capture_message("No deployment_id in message")
-                    if receipt_handle:
-                        logfire.info("Delete message")
-                        sqs.delete_message(
-                            QueueUrl=queue_url, ReceiptHandle=receipt_handle
-                        )
-                    continue
-                assert receipt_handle
-                # Schedule processing this message concurrently. By the end of the
-                # async with block for the task group it would have finished
-                logfire.info(
-                    "Schedule process deployment_id: {deployment_id}",
-                    deployment_id=deployment_id,
-                )
-                tg.soonify(process_message)(
-                    deployment_id=deployment_id,
-                    receipt_handle=receipt_handle,
-                    client=client,
-                )
+        try:
+            async with asyncer.create_task_group() as tg:
+                for message in messages.get("Messages", []):
+                    deployment_id = message.get("Body")
+                    receipt_handle = message.get("ReceiptHandle")
+                    if not deployment_id:
+                        logfire.error("No deployment_id in message")
+                        sentry_sdk.capture_message("No deployment_id in message")
+                        if receipt_handle:
+                            logfire.info("Delete message")
+                            sqs.delete_message(
+                                QueueUrl=queue_url, ReceiptHandle=receipt_handle
+                            )
+                        continue
+                    assert receipt_handle
+                    # Schedule processing this message concurrently. By the end of the
+                    # async with block for the task group it would have finished
+                    logfire.info(
+                        "Schedule process deployment_id: {deployment_id}",
+                        deployment_id=deployment_id,
+                    )
+                    tg.soonify(process_message)(
+                        deployment_id=deployment_id,
+                        receipt_handle=receipt_handle,
+                        client=client,
+                    )
+        except Exception as e:
+            logfire.error("Error processing messages: {e}", e=e)
+            sentry_sdk.capture_exception(e)
 
 
 async def main() -> None:
