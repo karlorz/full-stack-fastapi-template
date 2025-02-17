@@ -334,6 +334,7 @@
 
 ### Upgrades
 
+* ⬆️ Upgrade Python to 3.13. PR [#648](https://github.com/fastapilabs/cloud/pull/648) by [@tiangolo](https://github.com/tiangolo).
 * ⬆️ Upgrade FastAPI version. PR [#311](https://github.com/fastapilabs/cloud/pull/311) by [@tiangolo](https://github.com/tiangolo).
 * ⬆️ Upgrade SQLModel. PR [#157](https://github.com/fastapilabs/cloud/pull/157) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Update Traefik. PR [#119](https://github.com/fastapilabs/cloud/pull/119) by [@tiangolo](https://github.com/tiangolo).
