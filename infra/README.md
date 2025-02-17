@@ -200,7 +200,7 @@ Then rename the context:
 kubectl config rename-context ...
 ```
 
-## Select the Kubernetes Context
+### Select the Kubernetes Context
 
 Select the Kubernetes context for the AWS environment:
 
@@ -403,7 +403,7 @@ In `fastapicloud.work`:
 * Add a `CNAME` record pointing `customdomain.fastapicloud.work` to `customdomain-fastapicloud.fastapicloud.club`.
 * Add a `CNAME` record pointing `api.fastapicloud.work` to `customdomain.fastapicloud.work`.
 
-### Production
+#### Production
 
 In `fastapicloud.dev`:
 
