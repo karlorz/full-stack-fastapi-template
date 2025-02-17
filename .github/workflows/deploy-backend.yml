@@ -46,7 +46,7 @@ jobs:
       matrix:
         # Two environments by default: staging and development, but can be overridden by the user in a workflow dispatch
         # TODO: once production is stable, disallow deploying to production from workflow_dispatch
-        environment: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.environment)) || fromJson('["staging", "development"]') }}
+        environment: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.environment)) || fromJson('["staging", "development", "production"]') }}
     runs-on: depot-ubuntu-22.04
     # Permissions for Depot Docker build
     permissions:

@@ -50,9 +50,10 @@ jobs:
     if: ( needs.changes.outputs.changed == 'true' && (github.event_name != 'pull_request' || github.secret_source == 'Actions'))
     strategy:
       matrix:
-        # Two environments by default: staging and development, but can be overridden by the user in a workflow dispatch
-        # TODO: once production is stable, disallow deploying to production from workflow_dispatch
-        environment: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.environment)) || fromJson('["staging", "development"]') }}
+        # On workflow dispatch, deploy to a single environment from the user input
+        # On push, which is only triggered on master, deploy to all environments
+        # On pull request, the deployment will be done as previews, deploy only to staging and development
+        environment: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.environment)) || (github.event_name == 'push' && fromJson('["staging", "development", "production"]')) || fromJson('["staging", "development"]') }}
     environment: ${{ matrix.environment }}
     runs-on: depot-ubuntu-22.04
     steps:
