@@ -364,6 +364,7 @@
 
 ### Internal
 
+* 🐛 Fix JSON config in latest-changes. PR [#646](https://github.com/fastapilabs/cloud/pull/646) by [@tiangolo](https://github.com/tiangolo).
 * 🚀 Deploy to prod on merge to master. PR [#644](https://github.com/fastapilabs/cloud/pull/644) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Move logic to check if user can signup to Waitlist model. PR [#609](https://github.com/fastapilabs/cloud/pull/609) by [@patrick91](https://github.com/patrick91).
 * ✨ Improve server events for Posthog. PR [#638](https://github.com/fastapilabs/cloud/pull/638) by [@patrick91](https://github.com/patrick91).
