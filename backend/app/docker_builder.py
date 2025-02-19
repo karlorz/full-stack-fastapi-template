@@ -37,6 +37,7 @@ from app.core.config import (
     DBSettings,
     DepotSettings,
     MainSettings,
+    SettingsEnv,
 )
 from app.core.db import engine
 from app.depot_py.depot.build import v1 as depot_build
@@ -240,25 +241,16 @@ def create_custom_domain(*, namespace: str, domain: str, service_name: str) -> N
 def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
     namespace = "fastapicloud"
 
-    main_settings_data = MainSettings.get_settings().model_dump(
-        mode="json", exclude_unset=True, exclude={"all_cors_origins"}
-    )
-    common_settings_data = CommonSettings.get_settings().model_dump(
-        mode="json", exclude_unset=True
-    )
-    db_settings_data = DBSettings.get_settings().model_dump(
-        mode="json", exclude_unset=True
-    )
-    cloudflare_settings_data = CloudflareSettings.get_settings().model_dump(
-        mode="json", exclude_unset=True
-    )
-
-    env_data = {
-        **main_settings_data,
-        **common_settings_data,
-        **db_settings_data,
-        **cloudflare_settings_data,
-    }
+    settings_groups: list[type[SettingsEnv]] = [
+        MainSettings,
+        CommonSettings,
+        DBSettings,
+        CloudflareSettings,
+    ]
+    env_data = {}
+    for settings_group in settings_groups:
+        settings = settings_group.get_settings()
+        env_data.update(settings.model_dump(mode="json", exclude_unset=True))
 
     env_strs = {k: str(v) for k, v in env_data.items()}
 
