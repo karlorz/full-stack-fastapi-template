@@ -27,8 +27,8 @@ import { Route as LayoutTeamIndexImport } from './routes/_layout/$team/index'
 import { Route as LayoutTeamsNewImport } from './routes/_layout/teams/new'
 import { Route as LayoutTeamsAllImport } from './routes/_layout/teams/all'
 import { Route as LayoutTeamSettingsImport } from './routes/_layout/$team/settings'
+import { Route as LayoutTeamNewAppImport } from './routes/_layout/$team/new-app'
 import { Route as LayoutTeamAppsIndexImport } from './routes/_layout/$team/apps/index'
-import { Route as LayoutTeamAppsNewImport } from './routes/_layout/$team/apps/new'
 import { Route as LayoutTeamAppsAppSlugIndexImport } from './routes/_layout/$team/apps/$appSlug/index'
 import { Route as LayoutTeamAppsAppSlugDeploymentsDeploymentIdImport } from './routes/_layout/$team/apps/$appSlug/deployments/$deploymentId'
 
@@ -114,13 +114,13 @@ const LayoutTeamSettingsRoute = LayoutTeamSettingsImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutTeamAppsIndexRoute = LayoutTeamAppsIndexImport.update({
-  path: '/$team/apps/',
+const LayoutTeamNewAppRoute = LayoutTeamNewAppImport.update({
+  path: '/$team/new-app',
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutTeamAppsNewRoute = LayoutTeamAppsNewImport.update({
-  path: '/$team/apps/new',
+const LayoutTeamAppsIndexRoute = LayoutTeamAppsIndexImport.update({
+  path: '/$team/apps/',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -189,6 +189,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/$team/new-app': {
+      preLoaderRoute: typeof LayoutTeamNewAppImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/$team/settings': {
       preLoaderRoute: typeof LayoutTeamSettingsImport
       parentRoute: typeof LayoutImport
@@ -203,10 +207,6 @@ declare module '@tanstack/react-router' {
     }
     '/_layout/$team/': {
       preLoaderRoute: typeof LayoutTeamIndexImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/$team/apps/new': {
-      preLoaderRoute: typeof LayoutTeamAppsNewImport
       parentRoute: typeof LayoutImport
     }
     '/_layout/$team/apps/': {
@@ -231,11 +231,11 @@ export const routeTree = rootRoute.addChildren([
     LayoutDeviceRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
+    LayoutTeamNewAppRoute,
     LayoutTeamSettingsRoute,
     LayoutTeamsAllRoute,
     LayoutTeamsNewRoute,
     LayoutTeamIndexRoute,
-    LayoutTeamAppsNewRoute,
     LayoutTeamAppsIndexRoute,
     LayoutTeamAppsAppSlugIndexRoute,
     LayoutTeamAppsAppSlugDeploymentsDeploymentIdRoute,

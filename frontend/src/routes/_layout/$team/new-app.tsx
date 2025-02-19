@@ -21,7 +21,7 @@ import {
 import { Field } from "@/components/ui/field"
 import { extractErrorMessage, fetchTeamBySlug } from "@/utils"
 
-export const Route = createFileRoute("/_layout/$team/apps/new")({
+export const Route = createFileRoute("/_layout/$team/new-app")({
   component: NewApp,
   loader: ({ params }) => fetchTeamBySlug(params.team),
 })
@@ -88,13 +88,13 @@ function NewApp() {
         </CustomCard>
         {/* TODO: Complete when integration with Github is implemented */}
         {/* <CustomCard title="Source Code">
-          <Text mb={4}>
-            Connect your app to a source code repository to deploy it.
-          </Text>
-          <Button variant="secondary" colorScheme="gray" leftIcon={<FaGithub />}>
-            Connect
-          </Button>
-        </CustomCard> */}
+            <Text mb={4}>
+              Connect your app to a source code repository to deploy it.
+            </Text>
+            <Button variant="secondary" colorScheme="gray" leftIcon={<FaGithub />}>
+              Connect
+            </Button>
+          </CustomCard> */}
       </Box>
 
       <DialogRoot

@@ -111,7 +111,7 @@ function Apps() {
         View and manage apps related to your team.
       </Text>
       <Flex justifyContent={{ base: "inherit", md: "end" }} my={4}>
-        <RouterLink to="/$team/apps/new">
+        <RouterLink to="/$team/new-app">
           <Button>Create App</Button>
         </RouterLink>
       </Flex>

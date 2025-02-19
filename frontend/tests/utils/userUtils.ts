@@ -53,7 +53,7 @@ export async function viewInvitation(
 }
 
 export async function createApp(page: Page, teamSlug: string, appName: string) {
-  await page.goto(`/${teamSlug}/apps/new`)
+  await page.goto(`/${teamSlug}/new-app`)
   await page.getByPlaceholder("App Name").fill(appName)
   await page.getByRole("button", { name: "Create App" }).click()
   await expect(page.getByTestId("app-created-success")).toBeVisible()
