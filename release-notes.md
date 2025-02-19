@@ -121,6 +121,7 @@
 
 ### Fixes
 
+* 🐛 Restructure `new-app` route to avoid conflict with app named `new`. PR [#654](https://github.com/fastapilabs/cloud/pull/654) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix missing password validation rules in ChangePassword component. PR [#634](https://github.com/fastapilabs/cloud/pull/634) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Reduce interval for refetching deployments. PR [#632](https://github.com/fastapilabs/cloud/pull/632) by [@patrick91](https://github.com/patrick91).
 * 🐛 Fix bug with waitlist team size select. PR [#621](https://github.com/fastapilabs/cloud/pull/621) by [@patrick91](https://github.com/patrick91).
