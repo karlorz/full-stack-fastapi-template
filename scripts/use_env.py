@@ -18,7 +18,7 @@ def main(env: Env):
     url = "http://localhost:8000/api/v1"
 
     if env.value == "development":
-        url = "https://api.fastapicloud.space/api/v1"
+        url = "https://api.fastapicloud.site/api/v1"
     elif env.value == "staging":
         url = "https://api.fastapicloud.work/api/v1"
     elif env.value == "production":
