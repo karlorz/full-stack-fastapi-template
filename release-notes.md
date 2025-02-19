@@ -159,6 +159,7 @@
 
 ### Refactors
 
+* ♻️ Refactor settings, do not use computed_field, not needed. PR [#651](https://github.com/fastapilabs/cloud/pull/651) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Do not crash messenger on errors. PR [#647](https://github.com/fastapilabs/cloud/pull/647) by [@tiangolo](https://github.com/tiangolo).
 * 🔥 Remove tests that only test mocks. PR [#649](https://github.com/fastapilabs/cloud/pull/649) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Responsiveness tweaks. PR [#633](https://github.com/fastapilabs/cloud/pull/633) by [@alejsdev](https://github.com/alejsdev).
