@@ -62,4 +62,4 @@ COPY --chown=user:user builder-context /app/builder-context
 RUN --mount=type=cache,target=/user/.cache/uv \
     uv sync
 
-CMD ["sh", "-c", "fastapi run app/docker_builder.py --port ${PORT:-8001}"]
+CMD ["sh", "-c", "fastapi run app/builder.py --port ${PORT:-8001}"]

@@ -286,7 +286,7 @@ repository_backend = aws.ecr.Repository(
     },
 )
 
-repository_docker_builder = aws.ecr.Repository(
+repository_builder = aws.ecr.Repository(
     "repository-builder",
     name="fastapicloud-builder",
     image_scanning_configuration={

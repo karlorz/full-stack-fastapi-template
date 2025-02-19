@@ -97,7 +97,7 @@ sort = "-Cover"
 omit = [
     "app/depot_py/*",
     "app/builder_utils.py",
-    "app/docker_builder.py",
+    "app/builder.py",
     "app/cloudflare_utils.py",
 ]
 

@@ -57,14 +57,6 @@ jobs:
       IMAGE_TAG: ${{ matrix.environment }}-${{ github.sha }}
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.13"
-    - name: Install uv
-      uses: astral-sh/setup-uv@v5
-      with:
-        version: "0.4.15"
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -90,6 +82,14 @@ jobs:
         tags: |
           ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
         context: ./backend/
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.13"
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "0.4.15"
     - name: Run migrations
       run: uv run bash scripts/prestart.sh
       working-directory: backend
@@ -134,8 +134,8 @@ jobs:
         NATS_CREDS: "${{ secrets.NATS_CREDS }}"
         ENABLE_LOCALSTACK: "False"
         ALLOW_SIGNUP_TOKEN: "${{ secrets.ALLOW_SIGNUP_TOKEN }}"
-    - name: Update Knative Service image
-      run: uv run typer --func deploy_cloud app.docker_builder run api $IMAGE_URL --min-scale 1
+    - name: Update Knative Service
+      run: uv run typer --func deploy_cloud app.builder run api-fastapicloud $IMAGE_URL --min-scale 1
       working-directory: backend
       env:
         IMAGE_URL: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}

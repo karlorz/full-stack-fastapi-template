@@ -35,7 +35,6 @@ jobs:
           changed:
             - backend/**
             - .env
-            - infra/k8s/builder/builder.yaml
             - .github/workflows/deploy-builder.yml
 
   deploy-builder:
@@ -84,10 +83,20 @@ jobs:
           ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
         context: ./backend/
         file: ./backend/Dockerfile.builder
-    - name: Update builder deployment
-      run: envsubst < infra/k8s/builder/builder.yaml | kubectl apply -f -
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.13"
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "0.4.15"
+    - name: Update Knative Service
+      run: uv run typer --func deploy_cloud app.builder run builder-fastapicloud $IMAGE_URL --min-scale 1
+      working-directory: backend
       env:
-        IMAGE: ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}
+        IMAGE_URL: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}
+
         DEPLOYMENTS_DOMAIN: "${{ vars.DEPLOYMENTS_DOMAIN }}"
         ENVIRONMENT: ${{ matrix.environment }}
         POSTGRES_SERVER: "${{ vars.POSTGRES_SERVER }}"
@@ -107,6 +116,7 @@ jobs:
         NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"
         NATS_CREDS_JSON_STR: "${{ secrets.NATS_CREDS_JSON_STR }}"
         REDIS_SERVER: "${{ vars.REDIS_SERVER }}"
+        ENABLE_LOCALSTACK: "False"
 
         # Secrets for the builder
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"

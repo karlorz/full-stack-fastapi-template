@@ -23,7 +23,7 @@
             "module": "fastapi",
             "args": [
                 "run",
-                "app/docker_builder.py",
+                "app/builder.py",
                 "--port",
                 "8001"
             ],

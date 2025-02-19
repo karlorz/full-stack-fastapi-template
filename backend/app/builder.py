@@ -7,6 +7,7 @@ import tempfile
 import uuid
 from collections.abc import Generator, Iterator
 from contextlib import contextmanager
+from enum import Enum
 from pathlib import Path
 from typing import Any
 
@@ -238,15 +239,25 @@ def create_custom_domain(*, namespace: str, domain: str, service_name: str) -> N
     )
 
 
-def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
+class ServiceName(str, Enum):
+    api = "api-fastapicloud"
+    builder = "builder-fastapicloud"
+
+
+def deploy_cloud(
+    service_name: ServiceName, image_url: str, min_scale: int = 0, public: bool = False
+) -> None:
     namespace = "fastapicloud"
 
     settings_groups: list[type[SettingsEnv]] = [
-        MainSettings,
         CommonSettings,
         DBSettings,
         CloudflareSettings,
     ]
+    if service_name == ServiceName.api:
+        settings_groups.extend([MainSettings])
+    elif service_name == ServiceName.builder:
+        settings_groups.extend([BuilderSettings, DepotSettings])
     env_data = {}
     for settings_group in settings_groups:
         settings = settings_group.get_settings()
@@ -255,21 +266,25 @@ def deploy_cloud(service_name: str, image_url: str, min_scale: int = 0) -> None:
     env_strs = {k: str(v) for k, v in env_data.items()}
 
     deploy_to_kubernetes(
-        service_name,
-        image_url,
+        service_name=service_name.value,
+        full_image_tag=image_url,
         namespace=namespace,
         min_scale=min_scale,
         env=env_strs,
         service_account="fastapicloud",
+        public=public,
     )
-    create_custom_domain(
-        namespace=namespace,
-        domain=MainSettings.get_settings().API_DOMAIN,
-        service_name=service_name,
-    )
+    if service_name == ServiceName.api:
+        # Setting a custom domain exposes the service publicly via the custom domain
+        create_custom_domain(
+            namespace=namespace,
+            domain=MainSettings.get_settings().API_DOMAIN,
+            service_name=service_name.value,
+        )
 
 
 def deploy_to_kubernetes(
+    *,
     service_name: str,
     full_image_tag: str,
     namespace: str,
@@ -277,6 +292,7 @@ def deploy_to_kubernetes(
     env: dict[str, str] | None = None,
     service_account: str | None = None,
     labels: dict[str, str] | None = None,
+    public: bool = True,
 ) -> None:
     use_env = env or {}
     use_labels = labels or {}
@@ -314,6 +330,10 @@ def deploy_to_kubernetes(
         knative_service["spec"]["template"]["spec"]["serviceAccountName"] = (
             service_account
         )
+    if not public:
+        knative_service["metadata"].setdefault("labels", {})[
+            "networking.knative.dev/visibility"
+        ] = "cluster-local"
 
     ## TODO: Add resource limits and quotas by namespace
     create_namespace_by_team(namespace)
