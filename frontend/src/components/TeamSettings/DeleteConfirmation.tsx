@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "../ui/dialog"
 import { DialogRoot } from "../ui/dialog"
@@ -88,7 +89,9 @@ const DeleteConfirmation = ({ teamId }: DeleteProps) => {
           onSubmit={handleSubmit(onSubmit)}
           data-testid="delete-confirmation-team"
         >
-          <DialogHeader as="h2">Delete Team</DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Delete Team</DialogTitle>
+          </DialogHeader>
           <DialogBody>
             <VStack gap={4}>
               <Alert

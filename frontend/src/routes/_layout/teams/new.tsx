@@ -17,6 +17,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogRoot,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import { Field } from "@/components/ui/field"
 import { extractErrorMessage } from "@/utils"
@@ -112,7 +113,9 @@ function NewTeam() {
           <DialogCloseTrigger />
           {mutation.isSuccess ? (
             <>
-              <DialogHeader as="h2">Team Created!</DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Team Created!</DialogTitle>
+              </DialogHeader>
               <DialogBody>
                 <Center>
                   <Lottie
@@ -135,7 +138,9 @@ function NewTeam() {
             </>
           ) : mutation.isError ? (
             <>
-              <DialogHeader as="h2">Team Creation Failed</DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Team Creation Failed</DialogTitle>
+              </DialogHeader>
               <DialogBody>
                 <Center>
                   <Lottie

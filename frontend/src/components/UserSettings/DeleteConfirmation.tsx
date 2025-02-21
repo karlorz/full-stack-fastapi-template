@@ -17,6 +17,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogRoot,
+  DialogTitle,
   DialogTrigger,
 } from "../ui/dialog"
 import { Field } from "../ui/field"
@@ -92,7 +93,9 @@ const DeleteConfirmation = () => {
           onSubmit={handleSubmit(onSubmit)}
           data-testid="delete-confirmation-user"
         >
-          <DialogHeader as="h2">Delete Account</DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Delete Account</DialogTitle>
+          </DialogHeader>
           {ownsTeams ? (
             <>
               <DialogBody>

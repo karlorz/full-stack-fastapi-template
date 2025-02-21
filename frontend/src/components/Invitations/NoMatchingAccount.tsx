@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react"
+import { Box, Text } from "@chakra-ui/react"
 
 import type { InvitationPublic, UserPublic } from "@/client"
 import { Button } from "@/components/ui/button"
@@ -10,6 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogRoot,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import useAuth from "@/hooks/useAuth"
 import { useNavigate } from "@tanstack/react-router"
@@ -48,10 +49,8 @@ const NoMatchingAccount = ({
     >
       <DialogContent>
         <DialogCloseTrigger />
-        <DialogHeader as="h2">
-          <Flex alignItems="center">
-            <Text mr={2}>Oops!</Text>
-          </Flex>
+        <DialogHeader>
+          <DialogTitle>Oops!</DialogTitle>
         </DialogHeader>
         <DialogBody data-testid="no-matching-account">
           <Text>You are not the invited user for this invitation.</Text>

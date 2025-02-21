@@ -1,11 +1,13 @@
-import { Button, DialogActionTrigger, Text } from "@chakra-ui/react"
+import { Button, Text } from "@chakra-ui/react"
 
 import {
+  DialogActionTrigger,
   DialogBody,
   DialogCloseTrigger,
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 
 const UpdateEmailInfo = () => {
@@ -13,7 +15,9 @@ const UpdateEmailInfo = () => {
     <>
       <DialogContent>
         <DialogCloseTrigger />
-        <DialogHeader as="h2">Email Update Verification</DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Email Update Verification</DialogTitle>
+        </DialogHeader>
         <DialogBody data-testid="verification-email-modal">
           <Text>
             Your email update is pending verification. Please check your inbox

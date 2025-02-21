@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
+import { DialogTitle } from "@chakra-ui/react"
 import { Trash } from "../../assets/icons"
 import { MenuItem } from "../ui/menu"
 
@@ -64,7 +65,9 @@ const RemoveUser = ({ teamId, userId }: RemoveProps) => {
         <DialogContent>
           <DialogCloseTrigger />
           <form onSubmit={handleSubmit(onSubmit)}>
-            <DialogHeader as="h2">Remove User</DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Remove User</DialogTitle>
+            </DialogHeader>
             <DialogBody>
               <>
                 <span>

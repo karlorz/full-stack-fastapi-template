@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import { Field } from "@/components/ui/field"
 import { emailPattern, extractErrorMessage } from "@/utils"
@@ -67,7 +68,9 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
         <DialogCloseTrigger />
         {mutation.isPending || mutation.isIdle ? (
           <>
-            <DialogHeader as="h2">Team Invitation</DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Team Invitation</DialogTitle>
+            </DialogHeader>
             <DialogBody>
               <Text mb={4}>
                 Fill in the email address to invite someone to your team.
@@ -102,7 +105,9 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
           </>
         ) : mutation.isSuccess ? (
           <>
-            <DialogHeader as="h2">Invitation Sent!</DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Invitation Sent!</DialogTitle>
+            </DialogHeader>
             <DialogBody>
               <Center>
                 <Lottie
@@ -130,7 +135,9 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
           </>
         ) : (
           <>
-            <DialogHeader>Invitation Failed</DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Invitation Failed</DialogTitle>
+            </DialogHeader>
             <DialogBody>
               <Center>
                 <Lottie

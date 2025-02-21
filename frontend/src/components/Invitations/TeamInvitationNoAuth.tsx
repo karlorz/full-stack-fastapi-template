@@ -11,6 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogRoot,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import { useState } from "react"
 
@@ -43,7 +44,9 @@ const TeamInvitationNoAuth = ({
     >
       <DialogContent>
         <DialogCloseTrigger />
-        <DialogHeader as="h2">Team Invitation</DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Team Invitation</DialogTitle>
+        </DialogHeader>
         <DialogBody data-testid="noauth-invitation">
           <Text>
             Hi <strong>{invitation?.email},</strong>

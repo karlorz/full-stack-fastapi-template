@@ -14,6 +14,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogRoot,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import { useState } from "react"
 
@@ -56,7 +57,9 @@ const AcceptInvitation = ({ token, invitation }: AcceptInvitationProps) => {
         <DialogCloseTrigger />
         {mutation.isPending || mutation.isIdle ? (
           <>
-            <DialogHeader as="h2">Team Invitation</DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Team Invitation</DialogTitle>
+            </DialogHeader>
             <DialogBody data-testid="accept-invitation">
               <Text>
                 Hi <strong>{invitation?.email},</strong>
@@ -85,7 +88,9 @@ const AcceptInvitation = ({ token, invitation }: AcceptInvitationProps) => {
           </>
         ) : mutation.isSuccess ? (
           <>
-            <DialogHeader as="h2">Invitation Accepted!</DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Invitation Accepted!</DialogTitle>
+            </DialogHeader>
             <DialogBody>
               <Center>
                 <Lottie
@@ -109,7 +114,9 @@ const AcceptInvitation = ({ token, invitation }: AcceptInvitationProps) => {
           </>
         ) : (
           <>
-            <DialogHeader as="h2">Error</DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Error</DialogTitle>
+            </DialogHeader>
             <DialogBody>
               <Text>
                 An error occurred while processing your request. Please try

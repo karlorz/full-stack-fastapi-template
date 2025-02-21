@@ -17,6 +17,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogRoot,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import { Field } from "@/components/ui/field"
 import { extractErrorMessage, fetchTeamBySlug } from "@/utils"
@@ -107,8 +108,8 @@ function NewApp() {
           <DialogCloseTrigger />
           {mutation.isSuccess ? (
             <>
-              <DialogHeader as="h2" data-testid="app-created-success">
-                App Created!
+              <DialogHeader data-testid="app-created-success">
+                <DialogTitle>App Created!</DialogTitle>
               </DialogHeader>
               <DialogBody>
                 <Center>
@@ -141,7 +142,9 @@ function NewApp() {
             </>
           ) : mutation.isError ? (
             <>
-              <DialogHeader as="h2">App Creation Failed</DialogHeader>
+              <DialogHeader>
+                <DialogTitle>App Creation Failed</DialogTitle>
+              </DialogHeader>
               <DialogBody>
                 <Center>
                   <Lottie

@@ -47,7 +47,7 @@ const ChangePassword = () => {
           Change your password.
         </Text>
         <Box as="form" onSubmit={handleSubmit(onSubmit)}>
-          <VStack gap={4} w={{ base: "100%", md: "50%" }}>
+          <VStack gap={4} w={{ base: "100%", md: "md" }}>
             <PasswordInput
               type="current_password"
               startElement={<Lock />}

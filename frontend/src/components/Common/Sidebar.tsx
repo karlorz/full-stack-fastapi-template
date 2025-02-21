@@ -38,10 +38,6 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
     }
   }, [currentTeamSlug])
 
-  const handleLogout = () => {
-    logout()
-  }
-
   const CurrentUserEmail = () => {
     const currentUser = useCurrentUser()
     return currentUser?.email || ""
@@ -63,7 +59,7 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
             <FaBars />
           </IconButton>
         </DrawerTrigger>
-        <DrawerContent maxW="280px">
+        <DrawerContent maxW="xs">
           <DrawerCloseTrigger />
           <DrawerContext>
             {(store) => (
@@ -81,7 +77,7 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
                   <Suspense
                     fallback={<SkeletonText noOfLines={1} width={100} />}
                   >
-                    <Text truncate maxWidth="200px" px={4} py={2}>
+                    <Text truncate px={4} py={2}>
                       <CurrentUserEmail />
                     </Text>
                   </Suspense>
@@ -104,7 +100,7 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
                 <Flex
                   as="button"
                   onClick={() => {
-                    handleLogout()
+                    logout()
                   }}
                   alignItems="center"
                   gap={4}
@@ -128,7 +124,7 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
         bg="bg.panel"
         id="sidebar"
         display={{ base: "none", md: "flex" }}
-        minW="280px"
+        minW="xxs"
         h="100vh"
         mt="64px"
         p={6}

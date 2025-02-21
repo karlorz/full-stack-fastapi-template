@@ -13,12 +13,13 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogRoot,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Field } from "@/components/ui/field"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
-import { DialogRoot } from "../ui/dialog"
 
 interface DeleteProps {
   appId: string
@@ -86,7 +87,9 @@ const DeleteConfirmation = ({ appId, appSlug }: DeleteProps) => {
           onSubmit={handleSubmit(onSubmit)}
           data-testid="delete-confirmation-app"
         >
-          <DialogHeader as="h2">Delete App</DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Delete App</DialogTitle>
+          </DialogHeader>
           <DialogBody>
             <VStack gap={4}>
               <Alert

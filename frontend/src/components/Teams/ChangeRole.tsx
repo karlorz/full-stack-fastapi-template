@@ -19,6 +19,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogRoot,
+  DialogTitle,
   DialogTrigger,
 } from "../ui/dialog"
 import { MenuItem } from "../ui/menu"
@@ -74,7 +75,9 @@ const ChangeRole = ({ userRole, teamId, user }: ChangeRoleProps) => {
         <DialogContent>
           <DialogCloseTrigger />
           <form onSubmit={handleSubmit(onSubmit)}>
-            <DialogHeader as="h2">Change Role</DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Change Role</DialogTitle>
+            </DialogHeader>
             <DialogBody>
               {userRole === "member" ? (
                 <>
