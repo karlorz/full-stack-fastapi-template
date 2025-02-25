@@ -497,7 +497,7 @@ def test_signup_with_waiting_list_email_allowed(
 def test_signup_with_waiting_list_email_not_allowed(
     client: TestClient, db: Session, send_email_mock: MagicMock
 ) -> None:
-    user_in = WaitingListUserCreate(email="esteban@fastapilabs.com")
+    user_in = WaitingListUserCreate(email="esteban@some-random-domain.com")
     user = crud.add_to_waiting_list(session=db, user_in=user_in)
     db.add(user)
     db.commit()

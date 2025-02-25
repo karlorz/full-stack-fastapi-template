@@ -430,7 +430,7 @@ class WaitingListUser(WaitingListUserBase, table=True):
     def can_signup(self) -> bool:
         return (
             self.allowed_at is not None
-            and self.email in MainSettings.get_settings().ALLOWED_SIGNUP_EMAILS
+            or self.email in MainSettings.get_settings().ALLOWED_SIGNUP_EMAILS
         )
 
 
