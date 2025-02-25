@@ -162,6 +162,7 @@
 
 ### Refactors
 
+* ♻️ Remove email from signup domains. PR [#663](https://github.com/fastapilabs/cloud/pull/663) by [@alejsdev](https://github.com/alejsdev).
 * 🎨 Add frontend tweaks . PR [#657](https://github.com/fastapilabs/cloud/pull/657) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor settings, do not use computed_field, not needed. PR [#651](https://github.com/fastapilabs/cloud/pull/651) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Do not crash messenger on errors. PR [#647](https://github.com/fastapilabs/cloud/pull/647) by [@tiangolo](https://github.com/tiangolo).
