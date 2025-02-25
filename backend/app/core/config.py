@@ -202,7 +202,6 @@ class MainSettings(SettingsEnv):
 
     ALLOWED_SIGNUP_DOMAINS: list[str] = ["example.com"]
     ALLOWED_SIGNUP_EMAILS: list[str] = [
-        "esteban@fastapilabs.com",
         "alejandra@fastapilabs.com",
         "sebastian@fastapilabs.com",
         "patrick@fastapilabs.com",
