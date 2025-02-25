@@ -16,7 +16,7 @@ import DeleteAccount from "./DeleteAccount"
 
 const UserInformationContent = () => {
   const queryClient = useQueryClient()
-  const showToast = useCustomToast()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const currentUser = useCurrentUser()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -28,7 +28,7 @@ const UserInformationContent = () => {
     onSuccess: () => {
       setIsOpen(true)
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },
@@ -40,9 +40,9 @@ const UserInformationContent = () => {
         requestBody: { full_name },
       }),
     onSuccess: () => {
-      showToast("Success!", "Full name updated successfully", "success")
+      showSuccessToast("Full name updated successfully")
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

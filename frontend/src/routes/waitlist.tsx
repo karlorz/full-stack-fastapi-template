@@ -68,7 +68,7 @@ function Waitlist() {
 
   const [isSuccess, setIsSuccess] = useState(false)
   const [submittedEmail, setSubmittedEmail] = useState("")
-  const showToast = useCustomToast()
+  const { showErrorToast } = useCustomToast()
 
   const teamSizes = createListCollection({
     items: [
@@ -106,11 +106,7 @@ function Waitlist() {
       setIsSuccess(true)
     } catch (error) {
       console.error(error)
-      showToast(
-        "Error",
-        "Failed to join waitlist. Please try again later.",
-        "error",
-      )
+      showErrorToast("Failed to join waitlist. Please try again later.")
     }
   }
 

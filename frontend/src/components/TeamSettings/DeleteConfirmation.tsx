@@ -42,7 +42,7 @@ const DeleteConfirmation = ({ teamId }: DeleteProps) => {
     mode: "onBlur",
     criteriaMode: "all",
   })
-  const showToast = useCustomToast()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const navigate = useNavigate()
 
   const mutation = useMutation({
@@ -50,11 +50,11 @@ const DeleteConfirmation = ({ teamId }: DeleteProps) => {
       await TeamsService.deleteTeam({ teamId: teamId })
     },
     onSuccess: () => {
-      showToast("Success", "The team was deleted successfully", "success")
+      showSuccessToast("The team was deleted successfully")
       localStorage.removeItem("current_team")
       navigate({ to: "/" })
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

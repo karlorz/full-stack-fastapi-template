@@ -41,7 +41,7 @@ const DeleteConfirmation = ({ appId, appSlug }: DeleteProps) => {
     mode: "onBlur",
     criteriaMode: "all",
   })
-  const showToast = useCustomToast()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const navigate = useNavigate()
 
   const mutation = useMutation({
@@ -49,10 +49,10 @@ const DeleteConfirmation = ({ appId, appSlug }: DeleteProps) => {
       await AppsService.deleteApp({ appId })
     },
     onSuccess: () => {
-      showToast("Success", "The app was deleted successfully", "success")
+      showSuccessToast("The app was deleted successfully")
       navigate({ to: "/" })
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

@@ -125,6 +125,6 @@ test.describe("User can manage apps succesfully", () => {
       .getByPlaceholder(`Type "delete app ${appSlug}" to confirm`)
       .fill(`delete app ${appSlug}`)
     await page.getByRole("button", { name: "Confirm" }).click()
-    await expect(page.getByText("Success", { exact: true })).toBeVisible()
+    await expect(page.getByText("Success!", { exact: true })).toBeVisible()
   })
 })

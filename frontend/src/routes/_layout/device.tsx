@@ -57,7 +57,7 @@ function AuthorizeDevice() {
   const { code } = Route.useSearch()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<boolean>(false)
-  const showToast = useCustomToast()
+  const { showErrorToast } = useCustomToast()
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -71,7 +71,7 @@ function AuthorizeDevice() {
         setError((err as any).body.detail)
       }
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
   })
   return (
     <>

@@ -32,7 +32,7 @@ interface ChangeRoleProps {
 
 const ChangeRole = ({ userRole, teamId, user }: ChangeRoleProps) => {
   const queryClient = useQueryClient()
-  const showToast = useCustomToast()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const {
     handleSubmit,
     formState: { isSubmitting },
@@ -46,9 +46,9 @@ const ChangeRole = ({ userRole, teamId, user }: ChangeRoleProps) => {
         userId: user.id,
       }),
     onSuccess: () => {
-      showToast("Success", "The role was updated successfully", "success")
+      showSuccessToast("The role was updated successfully")
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

@@ -9,16 +9,16 @@ import { IconButton } from "@chakra-ui/react"
 
 const CancelInvitation = ({ id }: { id: string }) => {
   const queryClient = useQueryClient()
-  const showToast = useCustomToast()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
 
   const mutation = useMutation({
     mutationFn: async (data: InvitationsData["DeleteInvitation"]) => {
       await InvitationsService.deleteInvitation(data)
     },
     onSuccess: () => {
-      showToast("Success", "The invitation was cancelled", "success")
+      showSuccessToast("The invitation was cancelled")
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

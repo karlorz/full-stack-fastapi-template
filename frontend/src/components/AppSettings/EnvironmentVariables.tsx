@@ -215,7 +215,7 @@ const EnvironmentVariables = ({
     isEditing || environmentVariables.length === 0
   const shouldShowFooter = isEditing || hasEnvironmentVariables
 
-  const showToast = useCustomToast()
+  const { showErrorToast } = useCustomToast()
 
   useEffect(() => {
     reset({ environmentVariables })
@@ -260,7 +260,7 @@ const EnvironmentVariables = ({
         response,
       )
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
   })
 
   const onSubmit = (data: Schema) => {

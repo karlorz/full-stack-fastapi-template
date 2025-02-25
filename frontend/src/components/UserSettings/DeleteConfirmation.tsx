@@ -34,7 +34,7 @@ const DeleteConfirmation = () => {
     formState: { isSubmitting, errors },
     watch,
   } = useForm<DeleteInput>()
-  const showToast = useCustomToast()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const { logout } = useAuth()
 
   const { data: userTeams } = useQuery({
@@ -55,10 +55,10 @@ const DeleteConfirmation = () => {
       await UsersService.deleteUserMe()
     },
     onSuccess: () => {
-      showToast("Success", "Your account was deleted successfully", "success")
+      showSuccessToast("Your account was deleted successfully")
       logout()
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

@@ -30,7 +30,7 @@ import TransferTeam from "./TransferTeam"
 
 const TeamInformationContent = () => {
   const queryClient = useQueryClient()
-  const showToast = useCustomToast()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const { team: teamSlug } = Route.useParams()
   const currentUser = useCurrentUser()
   const { data: team } = useSuspenseQuery({
@@ -45,9 +45,9 @@ const TeamInformationContent = () => {
     mutationFn: (data: TeamUpdate) =>
       TeamsService.updateTeam({ requestBody: data, teamId: team.id }),
     onSuccess: () => {
-      showToast("Success!", "Team updated successfully", "success")
+      showSuccessToast("Team updated successfully")
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

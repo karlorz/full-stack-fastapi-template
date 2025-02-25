@@ -47,7 +47,7 @@ function RecoverPassword() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormData>()
-  const showToast = useCustomToast()
+  const { showErrorToast } = useCustomToast()
 
   const handleMouseEnter = () => {
     timeoutId = setTimeout(() => {
@@ -72,7 +72,7 @@ function RecoverPassword() {
       setEmailSent(true)
       reset()
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
   })
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {

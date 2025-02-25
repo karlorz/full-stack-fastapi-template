@@ -84,7 +84,7 @@ export function extractErrorMessage(err: ApiError): string {
 
 export const handleError = function (this: any, err: ApiError) {
   const errorMessage = extractErrorMessage(err)
-  this("Error", errorMessage, "error")
+  this(errorMessage)
 }
 
 export const fetchTeamBySlug = async (teamSlug: string) => {

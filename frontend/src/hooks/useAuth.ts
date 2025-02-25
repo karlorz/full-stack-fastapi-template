@@ -32,7 +32,7 @@ const useCurrentUser = () => {
 const useAuth = () => {
   const [emailSent, setEmailSent] = useState(false)
   const queryClient = useQueryClient()
-  const showToast = useCustomToast()
+  const { showErrorToast } = useCustomToast()
   const navigate = useNavigate()
 
   const posthog = usePostHog()
@@ -51,7 +51,7 @@ const useAuth = () => {
         errDetail = err.message
       }
 
-      showToast("Something went wrong.", `${errDetail}`, "error")
+      showErrorToast(errDetail)
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] })
@@ -92,7 +92,7 @@ const useAuth = () => {
         errDetail = err.message
       }
 
-      showToast("Something went wrong.", `${errDetail}`, "error")
+      showErrorToast(errDetail)
     },
   })
 

@@ -14,7 +14,7 @@ interface UpdatePasswordForm extends UpdatePassword {
 }
 
 const ChangePassword = () => {
-  const showToast = useCustomToast()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const {
     register,
     handleSubmit,
@@ -30,10 +30,10 @@ const ChangePassword = () => {
     mutationFn: (data: UpdatePassword) =>
       UsersService.updatePasswordMe({ requestBody: data }),
     onSuccess: () => {
-      showToast("Success!", "Password updated successfully", "success")
+      showSuccessToast("Password updated successfully")
       reset()
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
   })
 
   const onSubmit: SubmitHandler<UpdatePasswordForm> = async (data) => {

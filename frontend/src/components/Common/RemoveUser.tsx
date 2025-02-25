@@ -26,7 +26,7 @@ interface RemoveProps {
 
 const RemoveUser = ({ teamId, userId }: RemoveProps) => {
   const queryClient = useQueryClient()
-  const showToast = useCustomToast()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const {
     handleSubmit,
     formState: { isSubmitting },
@@ -37,9 +37,9 @@ const RemoveUser = ({ teamId, userId }: RemoveProps) => {
       await TeamsService.removeMemberFromTeam(data)
     },
     onSuccess: () => {
-      showToast("Success", "The user was removed successfully", "success")
+      showSuccessToast("The user was removed successfully")
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
     onSettled: () => {
       queryClient.invalidateQueries()
     },

@@ -41,7 +41,7 @@ function ResetPassword() {
       new_password: "",
     },
   })
-  const showToast = useCustomToast()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const navigate = useNavigate()
 
   const resetPassword = async (data: NewPassword) => {
@@ -55,11 +55,11 @@ function ResetPassword() {
   const mutation = useMutation({
     mutationFn: resetPassword,
     onSuccess: () => {
-      showToast("Success!", "Password updated successfully", "success")
+      showSuccessToast("Password updated successfully")
       reset()
       navigate({ to: "/login" })
     },
-    onError: handleError.bind(showToast),
+    onError: handleError.bind(showErrorToast),
   })
 
   const onSubmit: SubmitHandler<NewPasswordForm> = async (data) => {

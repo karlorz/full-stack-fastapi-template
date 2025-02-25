@@ -12,7 +12,7 @@ import TeamInvitationNoAuth from "./TeamInvitationNoAuth"
 
 const TeamInvitation = () => {
   const navigate = useNavigate()
-  const showToast = useCustomToast()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const token = new URLSearchParams(window.location.search).get(
     "invitation_token",
   )
@@ -37,14 +37,10 @@ const TeamInvitation = () => {
 
   useEffect(() => {
     if (invitation?.status === "accepted") {
-      showToast(
-        "Invitation Status",
-        "Invitation has already been accepted",
-        "warning",
-      )
+      showSuccessToast("Invitation has already been accepted")
       navigate({ to: "/" })
     }
-  }, [invitation, showToast, navigate])
+  }, [invitation, showSuccessToast, navigate])
 
   //TODO: Improve handling of loading and error states
 
@@ -53,7 +49,7 @@ const TeamInvitation = () => {
   }
 
   if (error) {
-    showToast("Error", "Invalid invitation token.", "error")
+    showErrorToast("Invalid invitation token")
   }
 
   if (!token || error || invitation?.status === "accepted") {
