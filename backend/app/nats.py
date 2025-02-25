@@ -23,6 +23,8 @@ async def make_nats_client() -> Client:
         common_settings.NATS_HOST_NAME,
         user_credentials=common_settings.NATS_CREDS,
         name=f"fastapicloud-{secrets.token_hex(4)}",
+        allow_reconnect=False,
+        max_reconnect_attempts=1,
     )
     return nc
 
