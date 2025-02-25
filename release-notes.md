@@ -355,6 +355,7 @@
 
 ### Docs
 
+* 📝 Update `frontend/README.md`. PR [#660](https://github.com/fastapilabs/cloud/pull/660) by [@alejsdev](https://github.com/alejsdev).
 * 📝 Update README format. PR [#643](https://github.com/fastapilabs/cloud/pull/643) by [@tiangolo](https://github.com/tiangolo).
 * 🍱 Update architecture diagram. PR [#635](https://github.com/fastapilabs/cloud/pull/635) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Tweak infra README. PR [#516](https://github.com/fastapilabs/cloud/pull/516) by [@tiangolo](https://github.com/tiangolo).
