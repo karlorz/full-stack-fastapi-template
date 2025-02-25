@@ -59,7 +59,7 @@ Check the file `package.json` to see other available options.
 * From the top level project directory, run the script:
 
 ```bash
-./scripts/generate-frontend-client.sh
+./scripts/generate-client.sh
 ```
 
 * Commit the changes.
@@ -70,12 +70,6 @@ Check the file `package.json` to see other available options.
 
 * Download the OpenAPI JSON file from `http://localhost/api/v1/openapi.json` and copy it to a new file `openapi.json` at the root of the `frontend` directory.
 
-* To simplify the names in the generated frontend client code, modify the `openapi.json` file by running the following script:
-
-```bash
-node modify-openapi-operationids.js
-```
-
 * To generate the frontend client, run:
 
 ```bash
@@ -84,7 +78,7 @@ npm run generate-client
 
 * Commit the changes.
 
-Notice that every time the backend changes (changing the OpenAPI schema), you should follow these steps again to update the frontend client.
+Notice that everytime the backend changes (changing the OpenAPI schema), you should follow these steps again to update the frontend client.
 
 ## Using a Remote API
 
@@ -115,3 +109,33 @@ The frontend code is structured as follows:
 * `frontend/src/hooks` - Custom hooks.
 * `frontend/src/routes` - The different routes of the frontend which include the pages.
 * `theme.tsx` - The Chakra UI custom theme.
+
+## End-to-End Testing with Playwright
+
+The frontend includes initial end-to-end tests using Playwright. To run the tests, you need to have the Docker Compose stack running. Start the stack with the following command:
+
+```bash
+docker compose up -d --wait backend
+```
+
+Then, you can run the tests with the following command:
+
+```bash
+npx playwright test
+```
+
+You can also run your tests in UI mode to see the browser and interact with it running:
+
+```bash
+npx playwright test --ui
+```
+
+To stop and remove the Docker Compose stack and clean the data created in tests, use the following command:
+
+```bash
+docker compose down -v
+```
+
+To update the tests, navigate to the tests directory and modify the existing test files or add new ones as needed.
+
+For more information on writing and running Playwright tests, refer to the official [Playwright documentation](https://playwright.dev/docs/intro).
