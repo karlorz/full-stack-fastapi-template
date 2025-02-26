@@ -11,6 +11,7 @@ from typing import Any, Literal, cast
 import emailable  # type: ignore
 import emails  # type: ignore
 import jwt
+import logfire
 from jinja2 import Template
 from jwt.exceptions import InvalidTokenError
 from pydantic import BaseModel, Field
@@ -105,11 +106,15 @@ def send_email(
 
     assert settings.emails_enabled, "no provided configuration for email variables"
     if not is_allowed_recipient(email_to):
-        raise RuntimeError(
-            f"In environment {CommonSettings.get_settings().ENVIRONMENT} with "
-            f"SMTP_HOST {settings.SMTP_HOST} "
-            f"recipient email is not allowed: {email_to}"
+        logfire.warning(
+            "In environment {environment} with SMTP_HOST {smtp_host} "
+            "recipient email is not allowed: {email_to}",
+            environment=CommonSettings.get_settings().ENVIRONMENT,
+            smtp_host=settings.SMTP_HOST,
+            email_to=email_to,
         )
+        return
+
     message = emails.Message(
         subject=subject,
         html=html_content,
