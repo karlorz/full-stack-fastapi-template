@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Add support to transfer a team. PR [#656](https://github.com/fastapilabs/cloud/pull/656) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add API to stream build logs. PR [#666](https://github.com/fastapilabs/cloud/pull/666) by [@patrick91](https://github.com/patrick91).
 * ✨ Don't fail if we can't send emails. PR [#665](https://github.com/fastapilabs/cloud/pull/665) by [@patrick91](https://github.com/patrick91).
 * ✨ Add support for deploying private Knative services and builder on Knative. PR [#653](https://github.com/fastapilabs/cloud/pull/653) by [@tiangolo](https://github.com/tiangolo).
