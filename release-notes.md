@@ -162,6 +162,7 @@
 
 ### Refactors
 
+* ✨ Create user in waiting list when they don't exist. PR [#664](https://github.com/fastapilabs/cloud/pull/664) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor toasts. PR [#658](https://github.com/fastapilabs/cloud/pull/658) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Remove email from signup domains. PR [#663](https://github.com/fastapilabs/cloud/pull/663) by [@alejsdev](https://github.com/alejsdev).
 * 🎨 Add frontend tweaks . PR [#657](https://github.com/fastapilabs/cloud/pull/657) by [@alejsdev](https://github.com/alejsdev).
