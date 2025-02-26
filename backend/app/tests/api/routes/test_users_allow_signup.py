@@ -3,11 +3,11 @@ from unittest.mock import ANY, MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app import crud
 from app.core.config import MainSettings
-from app.models import WaitingListUserCreate
+from app.models import WaitingListUser, WaitingListUserCreate
 from app.tests.utils.utils import random_email
 from app.utils import get_datetime_utc
 
@@ -48,19 +48,30 @@ def test_fails_when_token_is_invalid(
     send_email_mock.assert_not_called()
 
 
-def test_fails_when_user_is_not_found(
-    client: TestClient, send_email_mock: MagicMock
+def test_creates_user_when_not_found(
+    client: TestClient, db: Session, send_email_mock: MagicMock
 ) -> None:
     headers = {"token": settings.ALLOW_SIGNUP_TOKEN}
-    data = {"email": "testing@fastapilabs.com"}
+    email = "testing@fastapilabs.com"
+    data = {"email": email}
 
     r = client.post(
         f"{settings.API_V1_STR}/users/allow-signup", json=data, headers=headers
     )
-    assert r.status_code == 404
-    assert r.json()["detail"] == "User not found"
+    assert r.status_code == 200
+    assert r.json()["message"] == "User allowed to signup"
 
-    send_email_mock.assert_not_called()
+    # Check that the user was created in the waiting list
+    user = db.exec(
+        select(WaitingListUser).where(WaitingListUser.email == email)
+    ).first()
+    assert user is not None
+    assert user.email == email
+    assert user.allowed_at is not None
+
+    send_email_mock.assert_called_once_with(
+        email_to=email, subject=ANY, html_content=ANY
+    )
 
 
 def test_succeeds_when_user_is_found(
