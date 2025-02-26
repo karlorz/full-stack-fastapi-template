@@ -1,9 +1,12 @@
+import json
 import uuid
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
+from redis import Redis
 from sqlmodel import Session, select
 
+from app.api.routes.deployments import sqs
 from app.core.config import CommonSettings, MainSettings
 from app.crud import add_user_to_team
 from app.models import Deployment, Role
@@ -239,8 +242,6 @@ def test_upload_complete(client: TestClient, db: Session) -> None:
         password="password12345",
     )
 
-    from app.api.routes.deployments import sqs
-
     with patch.object(sqs, "send_message") as mock:
         response = client.post(
             f"{settings.API_V1_STR}/deployments/{deployment.id}/upload-complete",
@@ -307,3 +308,143 @@ def test_upload_complete_not_member_of_team(client: TestClient, db: Session) -> 
     assert response.status_code == 404
     data = response.json()
     assert data["detail"] == "Team not found for the current user"
+
+
+def test_get_build_logs(client: TestClient, db: Session, redis: Redis) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+    deployment = create_deployment_for_app(db, app=app)
+
+    # Add test build logs to Redis
+    redis_key = f"build_logs:{deployment.id}"
+    redis.xadd(
+        redis_key,
+        {"type": "message", "message": "Building image..."},
+        id="1234567890",
+    )
+    redis.xadd(
+        redis_key,
+        {"type": "complete", "status": "success"},
+        id="1234567891",
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/deployments/{deployment.id}/build-logs",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    # Convert bytes to string and split by newlines to get individual log entries
+    logs = [json.loads(log) for log in response.content.decode().strip().split("\n")]
+    assert len(logs) == 2
+
+    assert logs[0]["message"] == "Building image..."
+    assert logs[1]["type"] == "complete"
+
+    # Clean up Redis after test
+    redis.delete(redis_key)
+
+
+def test_get_build_logs_deployment_not_found(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/deployments/{uuid.uuid4()}/build-logs",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "Deployment not found"
+
+
+def test_get_build_logs_user_not_in_team(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db)
+    app = create_random_app(db, team=team)
+    deployment = create_deployment_for_app(db, app=app)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/deployments/{deployment.id}/build-logs",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "Team not found for the current user"
+
+
+def test_get_build_logs_timeout(client: TestClient, db: Session) -> None:
+    """Getting logs should timeout after some amount of time if there are no logs"""
+
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+    deployment = create_deployment_for_app(db, app=app)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    with patch.object(
+        MainSettings.get_settings(), "BUILD_LOGS_STREAM_TIMEOUT_SECONDS", 1
+    ):
+        response = client.get(
+            f"{settings.API_V1_STR}/deployments/{deployment.id}/build-logs",
+            headers=user_auth_headers,
+        )
+
+    assert response.status_code == 200
+
+    assert response.content == b'{"type": "timeout"}\n'

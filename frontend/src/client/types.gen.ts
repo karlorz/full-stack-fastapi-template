@@ -445,6 +445,12 @@ export type DeploymentsUploadCompleteData = {
 
 export type DeploymentsUploadCompleteResponse = unknown
 
+export type DeploymentsGetBuildLogsData = {
+  deploymentId: string
+}
+
+export type DeploymentsGetBuildLogsResponse = unknown
+
 export type InvitationsReadInvitationsMeData = {
   limit?: number
   skip?: number

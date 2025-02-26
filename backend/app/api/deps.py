@@ -3,6 +3,7 @@ from typing import Annotated, cast
 
 import jwt
 import redis
+import redis.asyncio
 from fastapi import Depends, Header, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
@@ -43,6 +44,21 @@ def get_redis() -> Generator[redis.Redis, None, None]:
 
 
 RedisDep = Annotated[redis.Redis, Depends(get_redis)]
+
+
+def get_async_redis() -> Generator[redis.asyncio.Redis, None, None]:
+    settings = CommonSettings.get_settings()
+
+    pool = redis.asyncio.ConnectionPool.from_url(
+        settings.REDIS_URI, decode_responses=True
+    )
+
+    redis_instance = redis.asyncio.Redis(connection_pool=pool)
+
+    yield redis_instance
+
+
+AsyncRedisDep = Annotated[redis.asyncio.Redis, Depends(get_async_redis)]
 
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:

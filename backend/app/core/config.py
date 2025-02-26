@@ -222,6 +222,8 @@ class MainSettings(SettingsEnv):
 
     EMAILABLE_KEY: str
 
+    BUILD_LOGS_STREAM_TIMEOUT_SECONDS: int = 30
+
 
 class BuilderSettings(SettingsEnv):
     ECR_REGISTRY_URL: str | None = None

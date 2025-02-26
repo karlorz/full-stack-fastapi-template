@@ -1,16 +1,27 @@
+import time
 import uuid
+from collections.abc import AsyncGenerator
 from typing import Any, Literal
 
 import httpx
 import logfire
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
+from fastapi.responses import StreamingResponse
+from pydantic import ValidationError
 from sqlalchemy import func
 from sqlmodel import and_, col, select
 
-from app.api.deps import CurrentUser, PosthogDep, PosthogProperties, SessionDep
+from app.api.deps import (
+    AsyncRedisDep,
+    CurrentUser,
+    PosthogDep,
+    PosthogProperties,
+    SessionDep,
+)
 from app.api.utils.aws_s3 import generate_presigned_url_post
 from app.aws_utils import get_sqs_client
-from app.core.config import CommonSettings
+from app.builder import BuildLog, BuildLogComplete
+from app.core.config import CommonSettings, MainSettings
 from app.crud import get_user_team_link
 from app.models import (
     App,
@@ -322,3 +333,77 @@ def upload_complete(
     sqs.send_message(QueueUrl=queue_url, MessageBody=str(deployment_id))
 
     return Message(message="OK")
+
+
+@router.get("/deployments/{deployment_id}/build-logs")
+def get_build_logs(
+    session: SessionDep,
+    current_user: CurrentUser,
+    redis: AsyncRedisDep,
+    deployment_id: uuid.UUID,
+    request: Request,
+) -> Any:
+    deployment = session.exec(
+        select(Deployment).where(Deployment.id == deployment_id)
+    ).first()
+    if not deployment:
+        raise HTTPException(status_code=404, detail="Deployment not found")
+
+    app = deployment.app
+
+    user_team_link = get_user_team_link(
+        session=session, user_id=current_user.id, team_id=app.team_id
+    )
+    if not user_team_link:
+        raise HTTPException(
+            status_code=404, detail="Team not found for the current user"
+        )
+
+    timeout_seconds = MainSettings.get_settings().BUILD_LOGS_STREAM_TIMEOUT_SECONDS
+
+    async def _stream_logs(deployment_id: uuid.UUID) -> AsyncGenerator[str, None]:
+        redis_key = f"build_logs:{deployment_id}"
+        last_id = "0"
+
+        last_valid_message_time = time.monotonic()
+
+        while True:
+            if await request.is_disconnected():
+                break
+
+            if time.monotonic() - last_valid_message_time > timeout_seconds:
+                yield '{"type": "timeout"}\n'
+                return
+
+            stream_data = await redis.xread(streams={redis_key: last_id}, block=200)
+
+            if not stream_data:
+                continue
+
+            for _, messages in stream_data:
+                for message_id, message_data in messages:
+                    try:
+                        log = BuildLog.model_validate(
+                            {"id": message_id, "log": message_data}
+                        )
+                    except ValidationError:
+                        logfire.error(
+                            "Invalid build log message",
+                            message=message_data,
+                        )
+                        continue
+
+                    last_valid_message_time = time.monotonic()
+
+                    yield log.log.model_dump_json()
+                    yield "\n"
+
+                    match log.log:
+                        case BuildLogComplete():
+                            return
+
+                    last_id = message_id
+
+    return StreamingResponse(
+        _stream_logs(deployment_id), media_type="application/x-ndjson"
+    )

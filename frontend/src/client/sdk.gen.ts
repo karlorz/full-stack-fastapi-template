@@ -26,6 +26,8 @@ import type {
   AppsUpdateEnvironmentVariablesResponse,
   DeploymentsCreateDeploymentData,
   DeploymentsCreateDeploymentResponse,
+  DeploymentsGetBuildLogsData,
+  DeploymentsGetBuildLogsResponse,
   DeploymentsReadDeploymentData,
   DeploymentsReadDeploymentLogsData,
   DeploymentsReadDeploymentLogsResponse,
@@ -531,6 +533,28 @@ export class DeploymentsService {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/v1/deployments/{deployment_id}/upload-complete",
+      path: {
+        deployment_id: data.deploymentId,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Get Build Logs
+   * @param data The data for the request.
+   * @param data.deploymentId
+   * @returns unknown Successful Response
+   * @throws ApiError
+   */
+  public static getBuildLogs(
+    data: DeploymentsGetBuildLogsData,
+  ): CancelablePromise<DeploymentsGetBuildLogsResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/deployments/{deployment_id}/build-logs",
       path: {
         deployment_id: data.deploymentId,
       },
