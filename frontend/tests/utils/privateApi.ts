@@ -1,5 +1,4 @@
-import { OpenAPI } from "../../src/client"
-import { PrivateService } from "../../src/client/services"
+import { OpenAPI, PrivateService, type Role } from "../../src/client"
 
 // TODO: from env
 OpenAPI.BASE = `${process.env.VITE_API_URL}`
@@ -88,6 +87,24 @@ export const createEnvironmentVariable = async ({
       app_id: appId,
       name,
       value,
+    },
+  })
+}
+
+export const addUserToTeam = async ({
+  teamId,
+  userId,
+  role,
+}: {
+  teamId: string
+  userId: string
+  role: Role
+}) => {
+  return PrivateService.addUserToTeam({
+    teamId: teamId,
+    requestBody: {
+      user_id: userId,
+      role: role,
     },
   })
 }

@@ -434,6 +434,159 @@ def test_update_team_not_enough_permissions(client: TestClient, db: Session) -> 
     assert data["detail"] == "Not enough permissions to execute this action"
 
 
+def test_transfer_team(client: TestClient, db: Session) -> None:
+    owner_email = "owner1@fastapi.com"
+    user_email = "user1@fastapi.com"
+    password = "test12345"
+    full_name = "Test User"
+
+    user1 = create_user(
+        session=db,
+        email=owner_email,
+        password=password,
+        full_name=full_name,
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user1.id)
+    user2 = create_user(
+        session=db,
+        email=user_email,
+        password=password,
+        full_name=full_name,
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user1, team=team, role=Role.admin)
+    add_user_to_team(session=db, user=user2, team=team, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client, email=owner_email, password=password
+    )
+    response = client.put(
+        f"{settings.API_V1_STR}/teams/{team.id}/transfer-ownership/",
+        headers=user_auth_headers,
+        json={"user_id": str(user2.id)},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["owner_id"] == str(user2.id)
+    db.refresh(team)
+    assert team.owner_id == user2.id
+
+
+def test_transfer_team_user_not_found(client: TestClient, db: Session) -> None:
+    owner_email = "owner2@fastapi.com"
+    user_email = "user2@fastapi.com"
+    password = "test12345"
+    full_name = "Test User"
+
+    user1 = create_user(
+        session=db,
+        email=owner_email,
+        password=password,
+        full_name=full_name,
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user1.id)
+    user2 = create_user(
+        session=db,
+        email=user_email,
+        password=password,
+        full_name=full_name,
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user1, team=team, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client, email=owner_email, password=password
+    )
+    response = client.put(
+        f"{settings.API_V1_STR}/teams/{team.id}/transfer-ownership/",
+        headers=user_auth_headers,
+        json={"user_id": str(user2.id)},
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "User not found in team"
+
+
+def test_transfer_team_member_cannot_transfer(client: TestClient, db: Session) -> None:
+    team = create_random_team(db)
+    user1_email = "owner3@fastapi.com"
+    user2_email = "user3@fastapi.com"
+    password = "test12345"
+    full_name = "Test User"
+
+    user1 = create_user(
+        session=db,
+        email=user1_email,
+        password=password,
+        full_name=full_name,
+        is_verified=True,
+    )
+    user2 = create_user(
+        session=db,
+        email=user2_email,
+        password=password,
+        full_name=full_name,
+        is_verified=True,
+    )
+    add_user_to_team(session=db, user=user1, team=team, role=Role.member)
+    add_user_to_team(session=db, user=user2, team=team, role=Role.member)
+
+    user_auth_headers = user_authentication_headers(
+        client=client, email=user1_email, password=password
+    )
+    response = client.put(
+        f"{settings.API_V1_STR}/teams/{team.id}/transfer-ownership/",
+        headers=user_auth_headers,
+        json={"user_id": str(user2.id)},
+    )
+
+    assert response.status_code == 400
+    data = response.json()
+    assert data["detail"] == "Not enough permissions to execute this action"
+
+
+def test_transfer_team_new_owner_not_admin(client: TestClient, db: Session) -> None:
+    owner_email = "owner4@fastapi.com"
+    user_email = "user4@fastapi.com"
+    password = "test12345"
+    full_name = "Test User"
+    user1 = create_user(
+        session=db,
+        email=owner_email,
+        password=password,
+        full_name=full_name,
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user1.id)
+    user2 = create_user(
+        session=db,
+        email=user_email,
+        password=password,
+        full_name=full_name,
+        is_verified=True,
+    )
+
+    add_user_to_team(session=db, user=user1, team=team, role=Role.admin)
+    add_user_to_team(session=db, user=user2, team=team, role=Role.member)
+
+    user_auth_headers = user_authentication_headers(
+        client=client, email=owner_email, password=password
+    )
+    response = client.put(
+        f"{settings.API_V1_STR}/teams/{team.id}/transfer-ownership/",
+        headers=user_auth_headers,
+        json={"user_id": str(user2.id)},
+    )
+
+    assert response.status_code == 400
+    data = response.json()
+    assert data["detail"] == "User must be an admin to transfer ownership"
+
+
 def test_delete_team(client: TestClient, db: Session) -> None:
     team = create_random_team(db)
     user = create_user(

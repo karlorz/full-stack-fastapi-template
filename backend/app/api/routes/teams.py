@@ -2,11 +2,13 @@ import uuid
 from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import selectinload
 from sqlmodel import col, func, select
 
 from app.api.deps import CurrentUser, SessionDep, get_current_user
 from app.api.utils.teams import generate_team_slug_name
+from app.crud import get_user_team_link
 from app.models import (
     Message,
     Role,
@@ -143,6 +145,49 @@ def update_team(
     session.commit()
     session.refresh(team)
     return team
+
+
+class TransferTeamOwnership(BaseModel):
+    user_id: uuid.UUID
+
+
+@router.put("/{team_id}/transfer-ownership/", response_model=TeamPublic)
+def transfer_team(
+    session: SessionDep,
+    current_user: CurrentUser,
+    team_id: uuid.UUID,
+    data: TransferTeamOwnership,
+) -> Any:
+    """
+    Transfer team ownership to another user.
+    """
+    user_id = data.user_id
+    link = get_user_team_link(session=session, user_id=current_user.id, team_id=team_id)
+    if not link:
+        raise HTTPException(
+            status_code=404, detail="Team not found for the current user"
+        )
+
+    if link.team.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=400, detail="Not enough permissions to execute this action"
+        )
+
+    new_owner_link = get_user_team_link(
+        session=session, user_id=user_id, team_id=team_id
+    )
+    if not new_owner_link:
+        raise HTTPException(status_code=404, detail="User not found in team")
+    if new_owner_link.role != Role.admin:
+        raise HTTPException(
+            status_code=400, detail="User must be an admin to transfer ownership"
+        )
+    link.team.owner_id = user_id
+
+    session.add(link.team)
+    session.commit()
+    session.refresh(link.team)
+    return link.team
 
 
 @router.delete("/{team_id}", response_model=Message)

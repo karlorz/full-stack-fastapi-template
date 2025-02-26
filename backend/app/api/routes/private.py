@@ -19,6 +19,7 @@ from app.models import (
     User,
     UserPublic,
     UserTeamLink,
+    UserTeamLinkPublic,
 )
 from app.tests.utils.utils import random_lower_string
 
@@ -82,6 +83,28 @@ def create_team(team_in: CreateTeam, session: SessionDep) -> Any:
     session.commit()
 
     return team
+
+
+class AddUserToTeam(BaseModel):
+    user_id: uuid.UUID
+    role: Role
+
+
+@router.post("/teams/{team_id}/add-user", response_model=UserTeamLinkPublic)
+def add_user_to_team(
+    team_id: uuid.UUID, body: AddUserToTeam, session: SessionDep
+) -> Any:
+    """
+    Add user to team.
+    """
+
+    team = session.get(Team, team_id)
+    assert team
+    user_org_link = UserTeamLink(user_id=body.user_id, team_id=team.id, role=body.role)
+    session.add(user_org_link)
+    session.commit()
+    session.refresh(user_org_link)
+    return user_org_link
 
 
 class CreateApp(BaseModel):

@@ -37,10 +37,7 @@ function Team() {
   const membersCount = team.user_links.length
   const currentUserRole = getCurrentUserRole(team, currentUser)
 
-  const headers = ["Email", "Role"]
-  if (currentUserRole === "member") {
-    headers.push("Actions")
-  }
+  const headers = ["Email", "Role", "Actions"]
 
   return (
     <Container maxW="full" p={0}>
@@ -53,11 +50,7 @@ function Team() {
         <Table.Header>
           <Table.Row>
             {headers.map((header) => (
-              <Table.ColumnHeader
-                key={header}
-                textTransform="capitalize"
-                width={header === "Actions" ? "20%" : "40%"}
-              >
+              <Table.ColumnHeader key={header} textTransform="capitalize">
                 {header}
               </Table.ColumnHeader>
             ))}
@@ -99,15 +92,11 @@ function Team() {
                   <Table.Cell>
                     {role === "admin" ? "Admin" : "Member"}
                   </Table.Cell>
-                  <Table.Cell
-                    display={
-                      currentUserRole === "member" ||
-                      currentUser?.id === user.id
-                        ? "none"
-                        : "block"
-                    }
-                  >
-                    <ActionsMenu userRole={role} team={team} value={user} />
+                  <Table.Cell>
+                    {currentUserRole !== "member" &&
+                      currentUser?.id !== user.id && (
+                        <ActionsMenu userRole={role} team={team} value={user} />
+                      )}
                   </Table.Cell>
                 </Table.Row>
               ))}

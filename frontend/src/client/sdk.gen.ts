@@ -69,6 +69,8 @@ import type {
   LoginResetPasswordData,
   LoginResetPasswordResponse,
   LoginTestTokenResponse,
+  PrivateAddUserToTeamData,
+  PrivateAddUserToTeamResponse,
   PrivateCreateAppData,
   PrivateCreateAppResponse,
   PrivateCreateDeploymentData,
@@ -89,6 +91,8 @@ import type {
   TeamsReadTeamsResponse,
   TeamsRemoveMemberFromTeamData,
   TeamsRemoveMemberFromTeamResponse,
+  TeamsTransferTeamData,
+  TeamsTransferTeamResponse,
   TeamsUpdateMemberInTeamData,
   TeamsUpdateMemberInTeamResponse,
   TeamsUpdateTeamData,
@@ -952,6 +956,32 @@ export class PrivateService {
   }
 
   /**
+   * Add User To Team
+   * Add user to team.
+   * @param data The data for the request.
+   * @param data.teamId
+   * @param data.requestBody
+   * @returns UserTeamLinkPublic Successful Response
+   * @throws ApiError
+   */
+  public static addUserToTeam(
+    data: PrivateAddUserToTeamData,
+  ): CancelablePromise<PrivateAddUserToTeamResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/private/teams/{team_id}/add-user",
+      path: {
+        team_id: data.teamId,
+      },
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
    * Create App
    * Create a new app.
    * @param data The data for the request.
@@ -1140,6 +1170,32 @@ export class TeamsService {
       path: {
         team_id: data.teamId,
       },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Transfer Team
+   * Transfer team ownership to another user.
+   * @param data The data for the request.
+   * @param data.teamId
+   * @param data.requestBody
+   * @returns TeamPublic Successful Response
+   * @throws ApiError
+   */
+  public static transferTeam(
+    data: TeamsTransferTeamData,
+  ): CancelablePromise<TeamsTransferTeamResponse> {
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/teams/{team_id}/transfer-ownership/",
+      path: {
+        team_id: data.teamId,
+      },
+      body: data.requestBody,
+      mediaType: "application/json",
       errors: {
         422: "Validation Error",
       },

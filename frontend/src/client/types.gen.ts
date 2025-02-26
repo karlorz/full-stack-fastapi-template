@@ -6,6 +6,11 @@ export type AccessTokenWithUserMe = {
   user: UserMePublic
 }
 
+export type AddUserToTeam = {
+  user_id: string
+  role: Role
+}
+
 export type AppCreate = {
   name: string
   team_id: string
@@ -263,6 +268,10 @@ export type TeamWithUserPublic = {
 export type Token = {
   access_token: string
   token_type?: string
+}
+
+export type TransferTeamOwnership = {
+  user_id: string
 }
 
 export type UpdatePassword = {
@@ -554,6 +563,13 @@ export type PrivateCreateTeamData = {
 
 export type PrivateCreateTeamResponse = TeamPublic
 
+export type PrivateAddUserToTeamData = {
+  requestBody: AddUserToTeam
+  teamId: string
+}
+
+export type PrivateAddUserToTeamResponse = UserTeamLinkPublic
+
 export type PrivateCreateAppData = {
   requestBody: CreateApp
 }
@@ -607,6 +623,13 @@ export type TeamsDeleteTeamData = {
 }
 
 export type TeamsDeleteTeamResponse = Message
+
+export type TeamsTransferTeamData = {
+  requestBody: TransferTeamOwnership
+  teamId: string
+}
+
+export type TeamsTransferTeamResponse = TeamPublic
 
 export type TeamsUpdateMemberInTeamData = {
   requestBody: TeamUpdateMember

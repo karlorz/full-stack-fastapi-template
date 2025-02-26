@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test"
-import { createTeam, createUser } from "./utils/privateApi"
+import { addUserToTeam, createTeam, createUser } from "./utils/privateApi"
 import { randomEmail, randomTeamName } from "./utils/random"
 import { logInUser } from "./utils/userUtils"
 
@@ -65,6 +65,43 @@ test.describe("Select and change team successfully", () => {
     await page.goto(`/${team.slug}/settings`)
     const teamNameLocator = page.locator('[data-part="preview"]')
     await expect(teamNameLocator).toContainText(teamName)
+  })
+})
+
+test.describe("Admin transfer team successfully", () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test("Admin can transfer team ownership to another user", async ({
+    page,
+  }) => {
+    const ownerEmail = randomEmail()
+    const password = "password"
+    const teamName = randomTeamName()
+
+    const owner = await createUser({ email: ownerEmail, password })
+    const team = await createTeam({ name: teamName, ownerId: owner.id })
+
+    const newOwnerEmail = randomEmail()
+    const newOwner = await createUser({ email: newOwnerEmail, password })
+    await addUserToTeam({ teamId: team.id, userId: newOwner.id, role: "admin" })
+
+    await logInUser(page, ownerEmail, password)
+
+    await page.goto(`/${team.slug}/settings`)
+
+    await page
+      .getByTestId("user-select")
+      .locator("div")
+      .filter({ hasText: "Select User" })
+      .nth(1)
+      .click()
+    await page.getByRole("option", { name: newOwnerEmail }).click()
+
+    await page.getByRole("button", { name: "Transfer Team" }).click()
+
+    await expect(
+      page.getByText("The team was transferred successfully"),
+    ).toBeVisible()
   })
 })
 

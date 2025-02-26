@@ -1,31 +1,132 @@
-import { Container, Flex, Input } from "@chakra-ui/react"
-
+import { User } from "@/assets/icons"
+import { TeamsService } from "@/client"
+import useCustomToast from "@/hooks/useCustomToast"
+import { Route } from "@/routes/_layout/$team"
+import { fetchTeamBySlug, handleError } from "@/utils"
+import { Container, Flex } from "@chakra-ui/react"
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query"
+import { Select } from "chakra-react-select"
+import { Controller, useForm } from "react-hook-form"
 import { Button } from "../ui/button"
 import { Field } from "../ui/field"
 
-// TODO: Complete this when the functionality is implemented
+interface TransferTeamForm {
+  userId: string
+}
 
-const TransferTeam = () => {
+interface AdminUser {
+  user: {
+    email: string
+    id: string
+  }
+}
+
+interface TransferTeamProps {
+  adminUsers: AdminUser[]
+}
+
+const TransferTeam = ({ adminUsers }: TransferTeamProps) => {
+  const { team: teamSlug } = Route.useParams()
+  const { data: team } = useSuspenseQuery({
+    queryKey: ["team", teamSlug],
+    queryFn: () => fetchTeamBySlug(teamSlug),
+  })
+  const queryClient = useQueryClient()
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = useForm<TransferTeamForm>({
+    mode: "onBlur",
+    defaultValues: {
+      userId: "",
+    },
+  })
+
+  const { showSuccessToast, showErrorToast } = useCustomToast()
+
+  const selectOptions = adminUsers.map((admin) => ({
+    value: admin.user.id,
+    label: admin.user.email,
+  }))
+
+  const mutation = useMutation({
+    mutationFn: async (userId: string) => {
+      return TeamsService.transferTeam({
+        teamId: team.id,
+        requestBody: {
+          user_id: userId,
+        },
+      })
+    },
+    onSuccess: () => {
+      showSuccessToast("The team was transferred successfully")
+    },
+    onError: handleError.bind(showErrorToast),
+    onSettled: () => {
+      queryClient.invalidateQueries()
+    },
+  })
+
+  const onSubmit = ({ userId }: TransferTeamForm) => mutation.mutate(userId)
+
   return (
-    <>
-      <Container maxW="full" p={0}>
-        <Flex as="form" align="center" flexDir={{ base: "column", md: "row" }}>
-          <Field required w={{ base: "100%", md: "250px" }}>
-            <Input placeholder="Email address" type="text" />
-          </Field>
-          <Button
-            variant="solid"
-            type="submit"
-            ml={{ base: 0, md: 4 }}
-            display={{ base: "block", md: "inline-block" }}
-            mt={{ base: 4, md: 0 }}
-            alignSelf={{ base: "flex-start", md: "auto" }}
-          >
-            Transfer
-          </Button>
-        </Flex>
-      </Container>
-    </>
+    <Container maxW="full" p={0}>
+      <Flex
+        as="form"
+        align="center"
+        flexDir={{ base: "column", md: "row" }}
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <Field
+          invalid={!!errors.userId}
+          errorText={errors.userId?.message}
+          w={{ base: "100%", md: "xs" }}
+          data-testid="user-select"
+        >
+          <Controller
+            control={control}
+            name="userId"
+            rules={{ required: "Please select a user" }}
+            render={({ field }) => (
+              <Select
+                options={selectOptions}
+                value={selectOptions.find(
+                  (option) => option.value === field.value,
+                )}
+                onChange={(selectedOption) =>
+                  field.onChange(selectedOption?.value)
+                }
+                placeholder={
+                  <>
+                    <User color="fg.subtle" mr={2} />
+                    Select User
+                  </>
+                }
+                data-testid="user-select"
+              />
+            )}
+          />
+        </Field>
+
+        <Button
+          variant="solid"
+          type="submit"
+          ml={{ base: 0, md: 4 }}
+          display={{ base: "block", md: "inline-block" }}
+          mt={{ base: 4, md: 0 }}
+          alignSelf={{ base: "flex-start", md: "auto" }}
+          loading={isSubmitting}
+        >
+          Transfer Team
+        </Button>
+      </Flex>
+    </Container>
   )
 }
+
 export default TransferTeam

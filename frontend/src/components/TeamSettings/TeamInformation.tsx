@@ -37,9 +37,12 @@ const TeamInformationContent = () => {
     queryKey: ["team", teamSlug],
     queryFn: () => fetchTeamBySlug(teamSlug),
   })
-  const owner = team.user_links.find(({ user }) => user.id === team.owner_id)
   const currentUserRole = getCurrentUserRole(team, currentUser)
-  const isCurrentUserOwner = owner?.user.id === currentUser?.id
+  const isCurrentUserOwner = team.owner_id === currentUser?.id
+  const adminUsers = team.user_links.filter(
+    (userLink) =>
+      userLink.role === "admin" && userLink.user.id !== currentUser?.id,
+  )
 
   const mutation = useMutation({
     mutationFn: (data: TeamUpdate) =>
@@ -118,10 +121,11 @@ const TeamInformationContent = () => {
             >
               <CustomCard title="Transfer Ownership" width="100%">
                 <Text mb={4}>
-                  You are the current team owner. You can transfer ownership to
-                  another team member.
+                  You are the <b>current team owner.</b> You can transfer
+                  ownership to a team admin by selecting their name from the
+                  list below.
                 </Text>
-                <TransferTeam />
+                <TransferTeam adminUsers={adminUsers} />
               </CustomCard>
             </Flex>
           )}
