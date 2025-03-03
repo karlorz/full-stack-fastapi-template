@@ -10,7 +10,7 @@
   <mj-body background-color="#fafbfc">
     <mj-section css-class="gradient-bg" padding="20px">
       <mj-column>
-        <mj-image src="{{ server_host }}/assets/images/logo.svg" align="center" width="150px"></mj-image>
+        <mj-image src="{{ server_host }}/assets/images/logo.png" align="center" width="150px"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section background-color="#fff" padding="40px 20px">
