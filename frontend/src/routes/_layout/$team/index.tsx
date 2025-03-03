@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router"
 
 import CustomCard from "@/components/Common/CustomCard"
+import QuickStart from "@/components/Common/QuickStart"
 import PendingDashboard from "@/components/PendingComponents/PendingDashboard"
 import {
   StatHelpText,
@@ -64,6 +65,9 @@ function Dashboard() {
           Hi, <CurrentUser />
         </Box>
         <Text>Welcome back, nice to see you again!</Text>
+      </CustomCard>
+      <CustomCard title="Quick Start">
+        <QuickStart />
       </CustomCard>
       <Flex direction={{ base: "column", md: "row" }} gap={4}>
         <CustomCard title={lastApp?.name} w={{ base: "100%", md: "55%" }}>

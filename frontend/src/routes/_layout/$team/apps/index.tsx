@@ -18,7 +18,6 @@ import { EmptyBox } from "@/assets/icons"
 import { AppsService } from "@/client"
 import CustomCard from "@/components/Common/CustomCard"
 import EmptyState from "@/components/Common/EmptyState"
-import QuickStart from "@/components/Common/QuickStart"
 import PendingApps from "@/components/PendingComponents/PendingApps"
 import {
   PaginationItems,
@@ -161,13 +160,17 @@ function Apps() {
           </CustomCard>
         </>
       ) : (
-        <Flex gap={4} pt={{ md: 10 }} flexDir={{ base: "column", md: "row" }}>
+        <Flex
+          gap={4}
+          pt={{ md: 10 }}
+          flexDir={{ base: "column", md: "row" }}
+          h="md"
+        >
           <EmptyState
             title="You don't have any app yet"
             description="Create your first app to get started and deploy it to the cloud."
             icon={EmptyBox}
           />
-          <QuickStart />
         </Flex>
       )}
     </Container>

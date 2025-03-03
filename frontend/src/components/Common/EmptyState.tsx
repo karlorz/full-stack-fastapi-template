@@ -18,7 +18,7 @@ const EmptyState = ({
 }: EmptyStateProps) => {
   return (
     <CustomCard
-      w={{ base: "100%", md: "60%" }}
+      w="100%"
       display="flex"
       alignItems="center"
       justifyContent="center"
