@@ -165,6 +165,7 @@
 
 ### Refactors
 
+* ♻️ Update layout to allow flexible width for name in dashboard greeting and restructure user information. PR [#667](https://github.com/fastapilabs/cloud/pull/667) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Create user in waiting list when they don't exist. PR [#664](https://github.com/fastapilabs/cloud/pull/664) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor toasts. PR [#658](https://github.com/fastapilabs/cloud/pull/658) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Remove email from signup domains. PR [#663](https://github.com/fastapilabs/cloud/pull/663) by [@alejsdev](https://github.com/alejsdev).
