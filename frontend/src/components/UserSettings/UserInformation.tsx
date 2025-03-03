@@ -1,4 +1,4 @@
-import { Container } from "@chakra-ui/react"
+import { Container, Flex } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Suspense, useState } from "react"
 
@@ -51,22 +51,24 @@ const UserInformationContent = () => {
   return (
     <>
       <Container maxW="full" my={4} px={0} pt={10}>
-        <CustomCard title="Full Name">
-          <EditableField
-            type="full_name"
-            value={currentUser?.full_name ?? ""}
-            onSubmit={(newFullName) => fullNameMutation.mutate(newFullName)}
-            rules={nameRules()}
-          />
-        </CustomCard>
-        <CustomCard title="Email">
-          <EditableField
-            type="email"
-            value={currentUser?.email ?? ""}
-            onSubmit={(newEmail) => emailMutation.mutate(newEmail)}
-            rules={{ required: "Email is required" }}
-          />
-        </CustomCard>
+        <Flex gap={4} flexDir={{ base: "column", md: "row" }}>
+          <CustomCard title="Full Name" flex="1">
+            <EditableField
+              type="full_name"
+              value={currentUser?.full_name ?? ""}
+              onSubmit={(newFullName) => fullNameMutation.mutate(newFullName)}
+              rules={nameRules()}
+            />
+          </CustomCard>
+          <CustomCard title="Email" flex="1">
+            <EditableField
+              type="email"
+              value={currentUser?.email ?? ""}
+              onSubmit={(newEmail) => emailMutation.mutate(newEmail)}
+              rules={{ required: "Email is required" }}
+            />
+          </CustomCard>
+        </Flex>
         <CustomCard title="Password">
           <ChangePassword />
         </CustomCard>

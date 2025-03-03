@@ -60,7 +60,7 @@ function Dashboard() {
   return (
     <Container maxW="full" p={0}>
       <CustomCard data-testid="result">
-        <Box fontSize="2xl" truncate maxWidth="250px">
+        <Box fontSize="2xl" truncate maxW="100%">
           Hi, <CurrentUser />
         </Box>
         <Text>Welcome back, nice to see you again!</Text>

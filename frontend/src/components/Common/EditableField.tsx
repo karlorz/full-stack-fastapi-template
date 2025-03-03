@@ -31,7 +31,6 @@ const EditableField = ({
 
   return (
     <Editable.Root
-      w={{ base: "100%", md: "md" }}
       defaultValue={value}
       submitMode="none"
       onValueCommit={(details) => handleSubmit(() => onSubmit(details.value))()}
