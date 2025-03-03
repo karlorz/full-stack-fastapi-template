@@ -165,6 +165,7 @@
 
 ### Refactors
 
+* ♻️ Add temporary Quickstart for first users. PR [#668](https://github.com/fastapilabs/cloud/pull/668) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update email templates to use new png logo. PR [#670](https://github.com/fastapilabs/cloud/pull/670) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add missing states and refactor deployment status handling. PR [#671](https://github.com/fastapilabs/cloud/pull/671) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Update styling . PR [#669](https://github.com/fastapilabs/cloud/pull/669) by [@alejsdev](https://github.com/alejsdev).
