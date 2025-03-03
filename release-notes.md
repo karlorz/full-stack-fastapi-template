@@ -165,6 +165,7 @@
 
 ### Refactors
 
+* ♻️ Add missing states and refactor deployment status handling. PR [#671](https://github.com/fastapilabs/cloud/pull/671) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Update styling . PR [#669](https://github.com/fastapilabs/cloud/pull/669) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update layout to allow flexible width for name in dashboard greeting and restructure user information. PR [#667](https://github.com/fastapilabs/cloud/pull/667) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Create user in waiting list when they don't exist. PR [#664](https://github.com/fastapilabs/cloud/pull/664) by [@patrick91](https://github.com/patrick91).
