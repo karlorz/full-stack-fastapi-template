@@ -165,6 +165,7 @@
 
 ### Refactors
 
+* ♻️ Update email templates to use new png logo. PR [#670](https://github.com/fastapilabs/cloud/pull/670) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add missing states and refactor deployment status handling. PR [#671](https://github.com/fastapilabs/cloud/pull/671) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Update styling . PR [#669](https://github.com/fastapilabs/cloud/pull/669) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update layout to allow flexible width for name in dashboard greeting and restructure user information. PR [#667](https://github.com/fastapilabs/cloud/pull/667) by [@alejsdev](https://github.com/alejsdev).
