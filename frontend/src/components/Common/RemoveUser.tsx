@@ -57,7 +57,7 @@ const RemoveUser = ({ teamId, userId }: RemoveProps) => {
         placement="center"
       >
         <DialogTrigger asChild>
-          <MenuItem value="remove-user" color="error.base">
+          <MenuItem value="remove-user" color="error.base" cursor="pointer">
             <Trash fontSize="16px" />
             Remove User
           </MenuItem>
@@ -93,7 +93,12 @@ const RemoveUser = ({ teamId, userId }: RemoveProps) => {
                 </Button>
               </DialogActionTrigger>
               <DialogActionTrigger asChild>
-                <Button variant="solid" type="submit" loading={isSubmitting}>
+                <Button
+                  variant="solid"
+                  colorPalette="red"
+                  type="submit"
+                  loading={isSubmitting}
+                >
                   Confirm
                 </Button>
               </DialogActionTrigger>

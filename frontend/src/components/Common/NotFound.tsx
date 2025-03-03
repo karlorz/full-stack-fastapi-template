@@ -12,14 +12,11 @@ const NotFound = () => {
         justify="center"
         flexDir="column"
         data-testid="not-found"
+        color="gray.600"
         p={4}
       >
         <Flex alignItems="center" zIndex={1}>
-          <NotFoundIcon
-            boxSize={{ base: "100px", md: "150px" }}
-            color="gray.600"
-            mb={4}
-          />
+          <NotFoundIcon boxSize={{ base: "100px", md: "150px" }} mb={4} />
           <Flex flexDir="column" ml={4} align="center" justify="center" p={4}>
             <Text
               fontSize={{ base: "6xl", md: "8xl" }}
@@ -46,12 +43,7 @@ const NotFound = () => {
         </Text>
         <Center zIndex={1}>
           <Link to="/">
-            <Button
-              variant="solid"
-              colorScheme="teal"
-              mt={4}
-              alignSelf="center"
-            >
+            <Button variant="solid" mt={4} alignSelf="center">
               Go Back
             </Button>
           </Link>

@@ -67,7 +67,7 @@ const ChangeRole = ({ userRole, teamId, user }: ChangeRoleProps) => {
         placement="center"
       >
         <DialogTrigger asChild>
-          <MenuItem value="change-role">
+          <MenuItem value="change-role" cursor="pointer">
             <FaExchangeAlt fontSize="16px" />
             Change Role
           </MenuItem>
