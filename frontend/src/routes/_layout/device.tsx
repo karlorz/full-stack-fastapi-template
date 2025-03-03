@@ -1,9 +1,8 @@
-import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react"
+import { Alert, Container, Flex, Heading, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 import { useState } from "react"
-import { FaExclamationTriangle } from "react-icons/fa"
 import { z } from "zod"
 
 import { LoginService } from "@/client"
@@ -40,12 +39,7 @@ export const Route = createFileRoute("/_layout/device")({
 
 function CodeNotFound() {
   return (
-    <Flex
-      flexDir="column"
-      justifyContent="center"
-      alignItems="center"
-      h="100vh"
-    >
+    <Flex flexDir="column" justifyContent="center" alignItems="center" flex={1}>
       <Heading size="md">Invalid code</Heading>
       <Text>The code you provided is invalid or has expired.</Text>
     </Flex>
@@ -75,7 +69,7 @@ function AuthorizeDevice() {
   })
   return (
     <>
-      <Flex flexDir={{ base: "column", md: "row" }} justify="center" h="100vh">
+      <Flex flexDir={{ base: "column", md: "row" }} justify="center" flex={1}>
         {!success ? (
           <Container
             maxW={{ base: "xs", md: "md" }}
@@ -89,22 +83,22 @@ function AuthorizeDevice() {
               Authorize FastAPI CLI
             </Heading>
             <Text>Click the button below to authorize FastAPI CLI</Text>
-            <Box bg="yellow.50" p={4} borderRadius="md" color="black">
-              <FaExclamationTriangle
-                color="yellow.500"
-                style={{ verticalAlign: "middle" }}
-              />{" "}
-              This authorization was requested from{" "}
-              <Text fontWeight="bold" as="span" data-testid="request-ip">
-                {deviceAuthInfo.request_ip}
-              </Text>{" "}
-              on{" "}
-              {formatDate(
-                deviceAuthInfo.created_at,
-                "MMMM dd, yyyy 'at' HH:mm (OOOO)",
-              )}
-            </Box>
-
+            <Alert.Root status="warning">
+              <Alert.Indicator />
+              <Alert.Content>
+                <Alert.Description>
+                  This authorization was requested from{" "}
+                  <Text as="span" fontWeight="bold" data-testid="request-ip">
+                    {deviceAuthInfo.request_ip}
+                  </Text>{" "}
+                  on{" "}
+                  {formatDate(
+                    deviceAuthInfo.created_at,
+                    "MMMM dd, yyyy 'at' HH:mm (OOOO)",
+                  )}
+                </Alert.Description>
+              </Alert.Content>
+            </Alert.Root>
             <Button
               variant="solid"
               loading={mutation.isPending}

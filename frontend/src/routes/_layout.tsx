@@ -77,14 +77,16 @@ function Layout() {
             </Flex>
           </Box>
           {/* Main Content */}
-          <Box
+          <Flex
             w={{ base: "100%", md: "80%" }}
-            p={10}
+            flexDir="column"
+            flex={1}
             mt={{ base: "0", md: "64px" }}
             mx="auto"
+            p={10}
           >
             <Outlet />
-          </Box>
+          </Flex>
         </Flex>
         <Footer />
       </Flex>

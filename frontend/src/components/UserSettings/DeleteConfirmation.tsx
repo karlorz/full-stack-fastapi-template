@@ -1,4 +1,4 @@
-import { Input, Text, VStack } from "@chakra-ui/react"
+import { Alert, Input, Text, VStack } from "@chakra-ui/react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link as RouterLink } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
@@ -7,7 +7,6 @@ import { TeamsService, UsersService } from "../../client"
 import useAuth from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils"
-import { Alert } from "../ui/alert"
 import { Button } from "../ui/button"
 import {
   DialogActionTrigger,
@@ -99,12 +98,14 @@ const DeleteConfirmation = () => {
           {ownsTeams ? (
             <>
               <DialogBody>
-                <Alert
-                  status="warning"
-                  borderRadius="md"
-                  color="warning.base"
-                  title="Warning: This action cannot be undone."
-                />
+                <Alert.Root status="warning">
+                  <Alert.Indicator />
+                  <Alert.Content>
+                    <Alert.Title>
+                      Warning: This action cannot be undone.
+                    </Alert.Title>
+                  </Alert.Content>
+                </Alert.Root>
                 <Text my={4}>
                   You must remove or transfer ownership of your teams before
                   deleting your account. Please visit the{" "}
@@ -125,12 +126,14 @@ const DeleteConfirmation = () => {
             <>
               <DialogBody>
                 <VStack gap={4}>
-                  <Alert
-                    status="warning"
-                    borderRadius="md"
-                    color="warning.base"
-                    title="Warning: This action cannot be undone."
-                  />
+                  <Alert.Root status="warning">
+                    <Alert.Indicator />
+                    <Alert.Content>
+                      <Alert.Title>
+                        Warning: This action cannot be undone.
+                      </Alert.Title>
+                    </Alert.Content>
+                  </Alert.Root>
                   {/* TODO: Update this text when the other features are completed*/}
                   <Text w="100%">
                     All your account data will be{" "}

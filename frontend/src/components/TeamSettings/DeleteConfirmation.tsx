@@ -1,4 +1,4 @@
-import { Input, Text, VStack } from "@chakra-ui/react"
+import { Alert, Input, Text, VStack } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
@@ -7,7 +7,6 @@ import { TeamsService } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
 import { Route } from "@/routes/_layout/$team"
 import { handleError } from "@/utils"
-import { Alert } from "../ui/alert"
 import { Button } from "../ui/button"
 import {
   DialogActionTrigger,
@@ -94,12 +93,14 @@ const DeleteConfirmation = ({ teamId }: DeleteProps) => {
           </DialogHeader>
           <DialogBody>
             <VStack gap={4}>
-              <Alert
-                status="warning"
-                borderRadius="md"
-                color="warning.base"
-                title="Warning: This action cannot be undone."
-              />
+              <Alert.Root status="warning">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Title>
+                    Warning: This action cannot be undone.
+                  </Alert.Title>
+                </Alert.Content>
+              </Alert.Root>
               {/* TODO: Update this text when the other features are completed*/}
               <Text w="100%">
                 This team will be <strong>permanently deleted.</strong>
