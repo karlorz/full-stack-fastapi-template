@@ -44,11 +44,12 @@ function ResetPassword() {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const navigate = useNavigate()
 
-  const resetPassword = async (data: NewPassword) => {
-    const token = new URLSearchParams(window.location.search).get("token")
-    if (!token) return
-    await LoginService.resetPassword({
-      requestBody: { new_password: data.new_password, token: token },
+  const resetPassword = async (data: {
+    newPassword: string
+    token: string
+  }) => {
+    return LoginService.resetPassword({
+      requestBody: { new_password: data.newPassword, token: data.token },
     })
   }
 
@@ -63,7 +64,16 @@ function ResetPassword() {
   })
 
   const onSubmit: SubmitHandler<NewPasswordForm> = async (data) => {
-    mutation.mutate(data)
+    const token = new URLSearchParams(window.location.search).get("token")
+
+    if (token) {
+      mutation.mutate({
+        newPassword: data.new_password,
+        token,
+      })
+    } else {
+      showErrorToast("Invalid or missing reset token")
+    }
   }
 
   return (
