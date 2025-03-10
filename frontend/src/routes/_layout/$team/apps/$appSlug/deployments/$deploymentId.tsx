@@ -5,6 +5,7 @@ import { Status } from "@/components/Deployment/Status"
 import PendingDeployment from "@/components/PendingComponents/PendingDeployment"
 import { fetchTeamBySlug } from "@/utils"
 import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react"
+import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, notFound } from "@tanstack/react-router"
 
 export const Route = createFileRoute(
@@ -38,7 +39,29 @@ export const Route = createFileRoute(
 })
 
 function DeploymentDetail() {
-  const { deployment, logs } = Route.useLoaderData()
+  const { deployment: initialDeployment, logs: initialLogs } =
+    Route.useLoaderData()
+
+  const { data: deployment } = useQuery({
+    queryKey: ["deployments", initialDeployment.id],
+    queryFn: () =>
+      DeploymentsService.readDeployment({
+        appId: initialDeployment.app_id,
+        deploymentId: initialDeployment.id,
+      }),
+    initialData: initialDeployment,
+    refetchInterval: 5000,
+  })
+
+  const { data } = useQuery({
+    queryKey: ["deployment-logs", initialDeployment.id],
+    queryFn: () =>
+      DeploymentsService.readDeploymentLogs({
+        deploymentId: initialDeployment.id,
+      }),
+    initialData: { logs: initialLogs },
+    refetchInterval: 5000,
+  })
 
   return (
     <Container maxW="full" p={0}>
@@ -59,7 +82,7 @@ function DeploymentDetail() {
       </Box>
 
       <CustomCard title="Logs">
-        <Logs logs={logs} />
+        <Logs logs={data.logs} />
       </CustomCard>
     </Container>
   )
