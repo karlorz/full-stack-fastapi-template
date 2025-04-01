@@ -205,6 +205,8 @@ class MainSettings(SettingsEnv):
         "alejandra@fastapilabs.com",
         "sebastian@fastapilabs.com",
         "patrick@fastapilabs.com",
+        "bento@fastapilabs.com",
+        "sofie@fastapilabs.com",
         "testing@fastapilabs.com",
     ]
 
