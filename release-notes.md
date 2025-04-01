@@ -393,6 +393,7 @@
 
 ### Internal
 
+* 🔧 Add npm and docker package ecosystems to Dependabot configuration. PR [#683](https://github.com/fastapilabs/cloud/pull/683) by [@alejsdev](https://github.com/alejsdev).
 * 🔧 Set Node version to 20 in the local .nvmrc file. PR [#682](https://github.com/fastapilabs/cloud/pull/682) by [@tiangolo](https://github.com/tiangolo).
 * 🍱 Update architecture diagram to have white background, for dark mode GitHub. PR [#681](https://github.com/fastapilabs/cloud/pull/681) by [@tiangolo](https://github.com/tiangolo).
 * 🩹 Prevent nats from endlessing trying to reconnect. PR [#661](https://github.com/fastapilabs/cloud/pull/661) by [@patrick91](https://github.com/patrick91).
