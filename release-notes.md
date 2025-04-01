@@ -167,6 +167,7 @@
 
 ### Refactors
 
+* 🔧 Add Bento and Sofie to allowed sign ups. PR [#678](https://github.com/fastapilabs/cloud/pull/678) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Update alerts and device view . PR [#673](https://github.com/fastapilabs/cloud/pull/673) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add temporary Quickstart for first users. PR [#668](https://github.com/fastapilabs/cloud/pull/668) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update email templates to use new png logo. PR [#670](https://github.com/fastapilabs/cloud/pull/670) by [@alejsdev](https://github.com/alejsdev).
