@@ -393,6 +393,7 @@
 
 ### Internal
 
+* 🍱 Update architecture diagram to have white background, for dark mode GitHub. PR [#681](https://github.com/fastapilabs/cloud/pull/681) by [@tiangolo](https://github.com/tiangolo).
 * 🩹 Prevent nats from endlessing trying to reconnect. PR [#661](https://github.com/fastapilabs/cloud/pull/661) by [@patrick91](https://github.com/patrick91).
 * 🐛 Fix domain for dev API. PR [#655](https://github.com/fastapilabs/cloud/pull/655) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Fix JSON config in latest-changes. PR [#646](https://github.com/fastapilabs/cloud/pull/646) by [@tiangolo](https://github.com/tiangolo).
