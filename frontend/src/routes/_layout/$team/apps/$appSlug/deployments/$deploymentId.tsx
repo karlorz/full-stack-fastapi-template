@@ -32,7 +32,7 @@ export const Route = createFileRoute(
 
       return { deployment, logs }
     } catch (error) {
-      throw notFound()
+      throw notFound({ routeId: "/" })
     }
   },
   pendingComponent: PendingDeployment,

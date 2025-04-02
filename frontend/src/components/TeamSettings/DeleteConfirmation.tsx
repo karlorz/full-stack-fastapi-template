@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 
 import { TeamsService } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
-import { Route } from "@/routes/_layout/$team"
 import { handleError } from "@/utils"
 import { Button } from "../ui/button"
 import {
@@ -23,14 +22,14 @@ import { Field } from "../ui/field"
 
 interface DeleteProps {
   teamId: string
+  team: string
 }
 
 interface DeleteInput {
   confirmation: string
 }
 
-const DeleteConfirmation = ({ teamId }: DeleteProps) => {
-  const { team } = Route.useParams()
+const DeleteConfirmation = ({ teamId, team }: DeleteProps) => {
   const queryClient = useQueryClient()
   const {
     register,

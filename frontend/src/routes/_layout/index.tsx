@@ -1,8 +1,4 @@
-import {
-  Navigate,
-  createFileRoute,
-  useRouterState,
-} from "@tanstack/react-router"
+import { Navigate, createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 
 import { useCurrentUser } from "../../hooks/useAuth"
@@ -16,7 +12,7 @@ export const Route = createFileRoute("/_layout/")({
 })
 
 function Index() {
-  const routerState = useRouterState()
+  const search = Route.useSearch()
   const currentUser = useCurrentUser()
 
   return (
@@ -27,7 +23,7 @@ function Index() {
           localStorage.getItem("current_team") ||
           currentUser!.personal_team_slug,
       }}
-      search={routerState.location.search}
+      search={search}
     />
   )
 }

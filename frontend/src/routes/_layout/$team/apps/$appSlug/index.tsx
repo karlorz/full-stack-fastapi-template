@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
       const team = await fetchTeamBySlug(params.team)
 
       if (!team) {
-        throw notFound()
+        throw notFound({ routeId: "/" })
       }
 
       const apps = await AppsService.readApps({
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
       })
 
       if (apps.data.length === 0) {
-        throw notFound()
+        throw notFound({ routeId: "/" })
       }
 
       const deployments = await DeploymentsService.readDeployments({
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/_layout/$team/apps/$appSlug/")({
 
       return { app, deployments }
     } catch (error) {
-      throw notFound()
+      throw notFound({ routeId: "/" })
     }
   },
   pendingComponent: PendingApp,

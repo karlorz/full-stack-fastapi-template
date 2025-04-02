@@ -15,7 +15,7 @@ import {
 import { Fragment } from "react"
 import { z } from "zod"
 
-import { TeamsService, UsersService } from "@/client"
+import { type TeamPublic, TeamsService, UsersService } from "@/client"
 import CustomCard from "@/components/Common/CustomCard"
 import PendingTeams from "@/components/PendingComponents/PendingTeams"
 import {
@@ -97,7 +97,7 @@ function AllTeams() {
     currentUser,
   } = Route.useLoaderData()
 
-  const teams = data.slice(0, PER_PAGE)
+  const teams: TeamPublic[] = data.slice(0, PER_PAGE)
 
   return (
     <Container maxW="full" p={0}>

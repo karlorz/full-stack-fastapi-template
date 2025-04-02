@@ -8,7 +8,6 @@ import {
 import { type TeamUpdate, TeamsService } from "@/client"
 import { useCurrentUser } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
-import { Route } from "@/routes/_layout/$team"
 import {
   fetchTeamBySlug,
   getCurrentUserRole,
@@ -26,10 +25,9 @@ import { Field } from "../ui/field"
 import DeleteTeam from "./DeleteTeam"
 import TransferTeam from "./TransferTeam"
 
-const TeamInformationContent = () => {
+const TeamInformationContent = ({ team: teamSlug }: { team: string }) => {
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
-  const { team: teamSlug } = Route.useParams()
   const currentUser = useCurrentUser()
   const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamSlug],
@@ -89,7 +87,7 @@ const TeamInformationContent = () => {
                 )}
               </Tabs.List>
               <Tabs.Content value="active" px={0}>
-                <Team />
+                <Team team={teamSlug} />
               </Tabs.Content>
               {currentUserRole === "admin" && (
                 <Tabs.Content value="pending" px={0}>
@@ -110,13 +108,13 @@ const TeamInformationContent = () => {
                   ownership to a team admin by selecting their name from the
                   list below.
                 </Text>
-                <TransferTeam adminUsers={adminUsers} />
+                <TransferTeam adminUsers={adminUsers} team={teamSlug} />
               </CustomCard>
             </Flex>
           )}
           {currentUserRole === "admin" && (
             <CustomCard>
-              <DeleteTeam teamId={team.id} />
+              <DeleteTeam teamId={team.id} team={teamSlug} />
             </CustomCard>
           )}
         </>
@@ -125,10 +123,10 @@ const TeamInformationContent = () => {
   )
 }
 
-const TeamInformation = () => {
+const TeamInformation = ({ team }: { team: string }) => {
   return (
     <Suspense fallback={<PendingTeamInformation />}>
-      <TeamInformationContent />
+      <TeamInformationContent team={team} />
     </Suspense>
   )
 }

@@ -14,13 +14,14 @@ export const Route = createFileRoute("/_layout/$team/settings")({
 })
 
 function TeamSettings() {
+  const { team } = Route.useParams()
   return (
     <Container maxW="full" p={0}>
       <Heading size="xl" pb={2}>
         Team Settings
       </Heading>
       <Text>View and manage settings related to your team.</Text>
-      <TeamInformation />
+      <TeamInformation team={team} />
       {/* <Tabs variant="basic" pt={10}>
         <TabList>
           {tabsConfig.map((tab, index) => (

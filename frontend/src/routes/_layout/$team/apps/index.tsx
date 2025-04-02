@@ -15,7 +15,7 @@ import { PackageOpen } from "lucide-react"
 import { Fragment } from "react"
 import { z } from "zod"
 
-import { AppsService } from "@/client"
+import { type AppPublic, AppsService } from "@/client"
 import CustomCard from "@/components/Common/CustomCard"
 import EmptyState from "@/components/Common/EmptyState"
 import PendingApps from "@/components/PendingComponents/PendingApps"
@@ -99,7 +99,7 @@ function Apps() {
     apps: { data, count },
   } = Route.useLoaderData()
 
-  const apps = data.slice(0, PER_PAGE)
+  const apps: AppPublic[] = data.slice(0, PER_PAGE)
 
   return (
     <Container maxW="full" p={0}>

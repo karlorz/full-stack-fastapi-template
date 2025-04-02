@@ -4,7 +4,7 @@ import { AlertTriangle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
-const NotFound = () => {
+const ErrorElement = () => {
   const { location } = useRouterState()
 
   return (
@@ -14,7 +14,6 @@ const NotFound = () => {
         align="center"
         justify="center"
         flexDir="column"
-        data-testid="not-found"
         color="gray.700"
         p={4}
       >
@@ -30,8 +29,10 @@ const NotFound = () => {
               fontSize={{ base: "3xl", md: "4xl" }}
               fontWeight="bold"
               mb={2}
+              bgGradient="linear(to-r, red.600, orange.600)"
+              bgClip="text"
             >
-              404!
+              Something Went Wrong
             </Text>
             <Text
               fontSize="md"
@@ -39,11 +40,10 @@ const NotFound = () => {
               mb={4}
               textAlign={{ base: "center", md: "left" }}
             >
-              The page you are looking for at{" "}
-              <Text as="span" fontWeight="semibold">
+              An unexpected error occurred while processing your request at{" "}
+              <Text as="span" fontWeight="semibold" color="red.600">
                 {location.pathname}
-              </Text>{" "}
-              was not found.
+              </Text>
             </Text>
             <Flex gap={4} flexDir={{ base: "column", md: "row" }}>
               <Link to="/">
@@ -60,4 +60,4 @@ const NotFound = () => {
   )
 }
 
-export default NotFound
+export default ErrorElement

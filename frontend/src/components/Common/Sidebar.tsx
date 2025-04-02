@@ -6,7 +6,7 @@ import {
   Separator,
   Text,
 } from "@chakra-ui/react"
-import { LogOut, Menu, User } from "lucide-react"
+import { useRouterState } from "@tanstack/react-router"
 
 import type { TeamsPublic } from "@/client"
 import {
@@ -17,14 +17,17 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import useAuth, { useCurrentUser } from "@/hooks/useAuth"
-import { Route } from "@/routes/_layout/$team"
 import { Link } from "@tanstack/react-router"
+import { LogOut, Menu, User } from "lucide-react"
 import { Suspense, useEffect } from "react"
 import { SkeletonText } from "../ui/skeleton"
 import SidebarItems from "./SidebarItems"
 
 const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
-  const { team } = Route.useParams()
+  const matches = useRouterState({ select: (s) => s.matches })
+  const lastMatch = matches[matches.length - 1]
+  const team = lastMatch?.params.team
+
   const { logout } = useAuth()
 
   const personalTeam = teams?.data.find((t) => t.is_personal_team)

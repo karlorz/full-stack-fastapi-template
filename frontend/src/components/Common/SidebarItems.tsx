@@ -1,27 +1,9 @@
 import { Box, Flex, Text } from "@chakra-ui/react"
-import {
-  type AnyRoute,
-  Link,
-  type RegisteredRouter,
-  type RoutePaths,
-  type ToOptions,
-  type UseLinkPropsOptions,
-} from "@tanstack/react-router"
+import { Link, type ToOptions, linkOptions } from "@tanstack/react-router"
 
 import type { TeamsPublic } from "@/client"
 import { Home, LayoutGrid, type LucideIcon, Settings } from "lucide-react"
 import TeamSelector from "./TeamSelector"
-
-// https://github.com/TanStack/router/issues/1194#issuecomment-1956736102
-export function link<
-  TRouteTree extends AnyRoute = RegisteredRouter["routeTree"],
-  TFrom extends RoutePaths<TRouteTree> | string = string,
-  TTo extends string = "",
-  TMaskFrom extends RoutePaths<TRouteTree> | string = TFrom,
-  TMaskTo extends string = "",
->(options: UseLinkPropsOptions<TRouteTree, TFrom, TTo, TMaskFrom, TMaskTo>) {
-  return options as UseLinkPropsOptions
-}
 
 type Item = {
   icon: LucideIcon
@@ -33,7 +15,7 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
     {
       icon: Home,
       title: "Dashboard",
-      ...link({
+      ...linkOptions({
         to: "/$team/",
         params: { team },
       }),
@@ -41,7 +23,7 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
     {
       icon: LayoutGrid,
       title: "Apps",
-      ...link({
+      ...linkOptions({
         to: "/$team/apps",
         params: { team },
       }),
@@ -49,7 +31,7 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
     {
       icon: Settings,
       title: "Team Settings",
-      ...link({
+      ...linkOptions({
         to: "/$team/settings",
         params: { team },
       }),

@@ -1,6 +1,5 @@
 import { TeamsService } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
-import { Route } from "@/routes/_layout/$team"
 import { fetchTeamBySlug, handleError } from "@/utils"
 import { Container, Flex } from "@chakra-ui/react"
 import {
@@ -27,10 +26,10 @@ interface AdminUser {
 
 interface TransferTeamProps {
   adminUsers: AdminUser[]
+  team: string
 }
 
-const TransferTeam = ({ adminUsers }: TransferTeamProps) => {
-  const { team: teamSlug } = Route.useParams()
+const TransferTeam = ({ adminUsers, team: teamSlug }: TransferTeamProps) => {
   const { data: team } = useSuspenseQuery({
     queryKey: ["team", teamSlug],
     queryFn: () => fetchTeamBySlug(teamSlug),

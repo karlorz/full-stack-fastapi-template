@@ -3,7 +3,7 @@ import { TriangleAlert } from "lucide-react"
 
 import DeleteConfirmation from "./DeleteConfirmation"
 
-const DeleteTeam = ({ teamId }: { teamId: string }) => {
+const DeleteTeam = ({ teamId, team }: { teamId: string; team: string }) => {
   return (
     <>
       <Container maxW="full" p={0}>
@@ -31,7 +31,7 @@ const DeleteTeam = ({ teamId }: { teamId: string }) => {
             </Box>
           </Flex>
 
-          <DeleteConfirmation teamId={teamId} />
+          <DeleteConfirmation teamId={teamId} team={team} />
         </Flex>
       </Container>
     </>

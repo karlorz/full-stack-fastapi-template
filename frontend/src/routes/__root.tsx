@@ -1,17 +1,9 @@
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router"
-import React, { Suspense } from "react"
 
 import type { QueryClient } from "@tanstack/react-query"
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
+import ErrorElement from "../components/Common/ErrorElement"
 import NotFound from "../components/Common/NotFound"
-
-const TanStackRouterDevtools =
-  process.env.NODE_ENV === "production"
-    ? () => null
-    : React.lazy(() =>
-        import("@tanstack/router-devtools").then((res) => ({
-          default: res.TanStackRouterDevtools,
-        })),
-      )
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -19,10 +11,9 @@ export const Route = createRootRouteWithContext<{
   component: () => (
     <>
       <Outlet />
-      <Suspense>
-        <TanStackRouterDevtools />
-      </Suspense>
+      <TanStackRouterDevtools />
     </>
   ),
   notFoundComponent: () => <NotFound />,
+  errorComponent: () => <ErrorElement />,
 })

@@ -18,14 +18,12 @@ import {
   PaginationRoot,
 } from "@/components/ui/pagination"
 import { useCurrentUser } from "@/hooks/useAuth"
-import { Route } from "@/routes/_layout/$team"
 import { fetchTeamBySlug, getCurrentUserRole } from "@/utils"
 import ActionsMenu from "../Common/ActionsMenu"
 
 const PER_PAGE = 5
 
-function Team() {
-  const { team: teamSlug } = Route.useParams()
+function Team({ team: teamSlug }: { team: string }) {
   const currentUser = useCurrentUser()
   const [page, setPage] = useState(1)
   const { data: team } = useSuspenseQuery({

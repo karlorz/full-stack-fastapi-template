@@ -41,9 +41,7 @@ export const Route = createFileRoute("/_layout/$team/")({
         localStorage.removeItem("current_team")
       }
 
-      throw notFound({
-        data: { team },
-      })
+      throw notFound({ routeId: "/" })
     }
   },
   pendingComponent: PendingDashboard,
