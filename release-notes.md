@@ -125,6 +125,7 @@
 
 ### Fixes
 
+* 🐛 Improve logs responsiveness and add auto-scrolling to logs view on new log entries . PR [#675](https://github.com/fastapilabs/cloud/pull/675) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Refactor reset password logic to improve token handling . PR [#674](https://github.com/fastapilabs/cloud/pull/674) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix `can_signup`. PR [#662](https://github.com/fastapilabs/cloud/pull/662) by [@patrick91](https://github.com/patrick91).
 * 🐛 Restructure `new-app` route to avoid conflict with app named `new`. PR [#654](https://github.com/fastapilabs/cloud/pull/654) by [@alejsdev](https://github.com/alejsdev).
