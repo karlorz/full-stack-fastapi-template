@@ -1,7 +1,7 @@
 import type { Log } from "@/client"
 import { Box, Text } from "@chakra-ui/react"
 import { useVirtualizer } from "@tanstack/react-virtual"
-import React from "react"
+import React, { useEffect } from "react"
 
 interface LogLineProps {
   time: string
@@ -32,6 +32,16 @@ const Logs = ({ logs }: LogsProps) => {
     getScrollElement: () => parentRef.current,
     estimateSize: () => 22,
   })
+
+  useEffect(() => {
+    if (logs.length > 0) {
+      const lastIndex = logs.length - 1
+      rowVirtualizer.scrollToIndex(lastIndex, {
+        align: "end",
+        behavior: "smooth",
+      })
+    }
+  }, [logs.length, rowVirtualizer])
 
   return (
     <>
@@ -84,13 +94,14 @@ const Logs = ({ logs }: LogsProps) => {
               const log = logs[virtualItem.index]
               return (
                 <div
+                  data-index={virtualItem.index}
+                  ref={rowVirtualizer.measureElement}
                   key={virtualItem.key}
                   style={{
                     position: "absolute",
                     top: 0,
                     left: 0,
                     width: "100%",
-                    height: `${virtualItem.size}px`,
                     transform: `translateY(${virtualItem.start}px)`,
                   }}
                 >
