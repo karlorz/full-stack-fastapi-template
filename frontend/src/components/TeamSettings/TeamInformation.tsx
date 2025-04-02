@@ -22,8 +22,6 @@ import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
 import PendingTeamInformation from "../PendingComponents/PendingTeamInformation"
 import Team from "../Teams/Team"
-import { Button } from "../ui/button"
-import { DialogRoot, DialogTrigger } from "../ui/dialog"
 import { Field } from "../ui/field"
 import DeleteTeam from "./DeleteTeam"
 import TransferTeam from "./TransferTeam"
@@ -75,20 +73,7 @@ const TeamInformationContent = () => {
       {!team.is_personal_team && (
         <>
           <CustomCard title="Team Members" data-testid="team-members">
-            {currentUserRole === "admin" && (
-              <DialogRoot size={{ base: "xs", md: "md" }} placement="center">
-                <DialogTrigger asChild>
-                  <Button
-                    variant="solid"
-                    mb={4}
-                    marginLeft={{ base: "inherit", md: "auto" }}
-                  >
-                    Invite Member
-                  </Button>
-                </DialogTrigger>
-                <NewInvitation teamId={team.id} />
-              </DialogRoot>
-            )}
+            {currentUserRole === "admin" && <NewInvitation teamId={team.id} />}
             <Tabs.Root
               variant="subtle"
               p={0}

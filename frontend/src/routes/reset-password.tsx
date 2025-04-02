@@ -1,9 +1,9 @@
 import { Button, Heading, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
+import { Lock } from "lucide-react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { Lock } from "@/assets/icons"
 import CustomAuthContainer from "@/components/Auth/CustomContainer"
 import { PasswordInput } from "@/components/ui/password-input"
 import { LoginService, type NewPassword } from "../client"
@@ -84,20 +84,25 @@ function ResetPassword() {
           Please enter your new password and confirm it to reset your password.
         </Text>
         <PasswordInput
-          startElement={<Lock />}
+          startElement={<Lock size={16} />}
           type="new_password"
           errors={errors}
           {...register("new_password", passwordRules())}
           placeholder="New Password"
         />
         <PasswordInput
-          startElement={<Lock />}
+          startElement={<Lock size={16} />}
           type="confirm_password"
           errors={errors}
           {...register("confirm_password", confirmPasswordRules(getValues))}
           placeholder="Confirm Password"
         />
-        <Button variant="solid" type="submit" size="md">
+        <Button
+          variant="solid"
+          type="submit"
+          size="md"
+          loading={mutation.isPending}
+        >
           Reset Password
         </Button>
       </CustomAuthContainer>

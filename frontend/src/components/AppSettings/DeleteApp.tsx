@@ -1,6 +1,6 @@
 import { Box, Circle, Container, Flex, Heading, Text } from "@chakra-ui/react"
+import { TriangleAlert } from "lucide-react"
 
-import { Warning } from "@/assets/icons"
 import DeleteConfirmation from "./DeleteConfirmation"
 
 const DeleteApp = ({ appSlug, appId }: { appSlug: string; appId: string }) => {
@@ -18,7 +18,7 @@ const DeleteApp = ({ appSlug, appId }: { appSlug: string; appId: string }) => {
             flexDir={{ base: "column", md: "row" }}
           >
             <Circle size="40px" bg="error.base" color="white">
-              <Warning boxSize="18px" />
+              <TriangleAlert size={16} />
             </Circle>
             <Box>
               <Heading size="md" fontWeight="bold" mb={2}>

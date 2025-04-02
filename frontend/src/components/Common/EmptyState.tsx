@@ -1,6 +1,6 @@
-import { Center, Heading, type IconProps, Text } from "@chakra-ui/react"
-import type { FC } from "react"
+import { Center, Heading, Text } from "@chakra-ui/react"
 
+import type { LucideIcon } from "lucide-react"
 import CustomCard from "./CustomCard"
 
 interface EmptyStateProps {
@@ -8,7 +8,7 @@ interface EmptyStateProps {
   description?: string
   buttonText?: string
   buttonLink?: string
-  icon: FC<IconProps>
+  icon: LucideIcon
 }
 
 const EmptyState = ({
@@ -25,9 +25,7 @@ const EmptyState = ({
       flexDirection="column"
     >
       <Center>
-        <IconComponent
-          boxSize={IconComponent.displayName === "EmptyBox" ? 10 : 6}
-        />
+        <IconComponent />
       </Center>
       <Heading size="md" textAlign="center">
         {title}

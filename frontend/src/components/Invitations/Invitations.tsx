@@ -8,10 +8,10 @@ import {
   Table,
 } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
+import { MailQuestion } from "lucide-react"
 import { useState } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
-import { EmailPending } from "@/assets/icons"
 import { InvitationsService } from "@/client/services"
 import {
   PaginationItems,
@@ -135,7 +135,7 @@ function Invitations({ teamId }: { teamId: string }) {
           <EmptyState
             title="No invitations sent yet"
             description="Send invites to add members to your team and start collaborating."
-            icon={EmailPending}
+            icon={MailQuestion}
           />
         </Center>
       )}

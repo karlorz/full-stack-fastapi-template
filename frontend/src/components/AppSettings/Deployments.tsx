@@ -1,9 +1,10 @@
-import { EmptyBox } from "@/assets/icons"
-import type { DeploymentPublic } from "@/client"
-import { Status } from "@/components/Deployment/Status"
 import { Center, Flex, Separator, Text } from "@chakra-ui/react"
 import { Link as RouterLink } from "@tanstack/react-router"
+import { PackageOpen } from "lucide-react"
 import { Fragment } from "react"
+
+import type { DeploymentPublic } from "@/client"
+import { Status } from "@/components/Deployment/Status"
 import EmptyState from "../Common/EmptyState"
 
 const Deployments = ({
@@ -44,7 +45,7 @@ const Deployments = ({
         <Center w="full">
           <EmptyState
             title="You don't have any deployments yet"
-            icon={EmptyBox}
+            icon={PackageOpen}
           />
         </Center>
       )}

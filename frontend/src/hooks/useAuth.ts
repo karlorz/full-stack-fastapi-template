@@ -6,7 +6,6 @@ import {
 import { useNavigate } from "@tanstack/react-router"
 import { AxiosError } from "axios"
 import { usePostHog } from "posthog-js/react"
-import { useState } from "react"
 import {
   type ApiError,
   type Body_login_login_access_token as LoginFormData,
@@ -30,7 +29,6 @@ const useCurrentUser = () => {
 }
 
 const useAuth = () => {
-  const [emailSent, setEmailSent] = useState(false)
   const queryClient = useQueryClient()
   const { showErrorToast } = useCustomToast()
   const navigate = useNavigate()
@@ -40,10 +38,6 @@ const useAuth = () => {
   const signUpMutation = useMutation({
     mutationFn: (data: UserRegister) =>
       UsersService.registerUser({ requestBody: data }),
-
-    onSuccess: () => {
-      setEmailSent(true)
-    },
     onError: (err: ApiError) => {
       let errDetail = (err.body as any)?.detail
 
@@ -111,8 +105,6 @@ const useAuth = () => {
   }
 
   return {
-    emailSent,
-    setEmailSent,
     signUpMutation,
     loginMutation,
     logout,

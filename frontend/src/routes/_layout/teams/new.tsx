@@ -35,7 +35,7 @@ function NewTeam() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<TeamCreate>({
     mode: "onBlur",
     criteriaMode: "all",
@@ -87,7 +87,12 @@ function NewTeam() {
                 {...register("name", { required: "Name is required" })}
               />
             </Field>
-            <Button variant="solid" my={4} type="submit" loading={isSubmitting}>
+            <Button
+              variant="solid"
+              my={4}
+              type="submit"
+              loading={mutation.isPending}
+            >
               Create Team
             </Button>
           </form>

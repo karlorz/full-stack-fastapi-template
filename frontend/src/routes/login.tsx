@@ -4,9 +4,9 @@ import {
   createFileRoute,
   redirect,
 } from "@tanstack/react-router"
+import { Lock, Mail } from "lucide-react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { Email, Lock } from "@/assets/icons"
 import { Button } from "@/components/ui/button"
 import { Field } from "@/components/ui/field"
 import { InputGroup } from "@/components/ui/input-group"
@@ -70,7 +70,7 @@ function Login() {
             invalid={!!errors.username}
             errorText={errors.username?.message}
           >
-            <InputGroup w="100%" startElement={<Email />}>
+            <InputGroup w="100%" startElement={<Mail size={16} />}>
               <Input
                 id="username"
                 {...register("username", {
@@ -85,7 +85,7 @@ function Login() {
           </Field>
           <PasswordInput
             type="password"
-            startElement={<Lock />}
+            startElement={<Lock size={16} />}
             {...register("password", passwordRules())}
             placeholder="Password"
             errors={errors}
@@ -96,7 +96,7 @@ function Login() {
           <Button
             variant="solid"
             type="submit"
-            loading={isSubmitting}
+            loading={loginMutation.isPending}
             size="md"
           >
             Log In

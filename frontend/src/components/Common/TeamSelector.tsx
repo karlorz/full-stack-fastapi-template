@@ -2,14 +2,12 @@ import {
   Box,
   Button,
   Flex,
-  type IconProps,
   MenuItemGroup,
   MenuSeparator,
   Text,
 } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 
-import { Plus, Users } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
 import {
   MenuContent,
@@ -18,13 +16,12 @@ import {
   MenuTrigger,
 } from "@/components/ui/menu"
 import { getInitials } from "@/utils"
-import type { FC } from "react"
-import { ArrowDown } from "../../assets/icons"
+import { ChevronDown, type LucideIcon, Plus, Users } from "lucide-react"
 import TeamIcon from "./TeamIcon"
 
 interface MenuItemLinkProps {
   to: string
-  icon?: FC<IconProps>
+  icon?: LucideIcon
   initials?: string
   label: string | undefined
   onClick?: () => void
@@ -51,7 +48,7 @@ const MenuItemLink = ({
         onClick={onClick}
       >
         <TeamIcon bg={bg} icon={icon} initials={initials || ""} />
-        <Box width="120px" truncate>
+        <Box maxW="120px" truncate>
           {label}
           {slug && (
             <Text fontSize="2xs" color="gray.600">
@@ -98,7 +95,7 @@ const TeamSelector = ({
                 </Text>
               )}
             </Box>
-            <ArrowDown color="black" />
+            <ChevronDown color="black" />
           </Button>
         </MenuTrigger>
         <MenuContent p={4} w="100%" portalled={false}>

@@ -102,7 +102,11 @@ const ChangeRole = ({ userRole, teamId, user }: ChangeRoleProps) => {
                 </Button>
               </DialogActionTrigger>
               <DialogActionTrigger asChild>
-                <Button variant="solid" type="submit" loading={isSubmitting}>
+                <Button
+                  variant="solid"
+                  type="submit"
+                  loading={mutation.isPending}
+                >
                   Confirm
                 </Button>
               </DialogActionTrigger>

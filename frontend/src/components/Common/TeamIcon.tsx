@@ -1,16 +1,16 @@
-import { Circle, type IconProps } from "@chakra-ui/react"
-import type { FC } from "react"
+import { Circle } from "@chakra-ui/react"
+import type { LucideIcon } from "lucide-react"
 
 interface TeamIconProps {
   bg: string
-  icon?: FC<IconProps>
+  icon?: LucideIcon
   initials?: string
 }
 
 const TeamIcon = ({ bg, icon: IconComponent, initials }: TeamIconProps) => {
   return (
-    <Circle bg={bg} size="30px" color="white">
-      {initials ? initials : IconComponent && <IconComponent size="sm" />}
+    <Circle bg={bg} size="30px" color="white" p={2}>
+      {initials ? initials : IconComponent && <IconComponent />}
     </Circle>
   )
 }

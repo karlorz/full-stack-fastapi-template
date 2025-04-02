@@ -37,7 +37,7 @@ function NewApp() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<AppCreate>({
     mode: "onBlur",
     criteriaMode: "all",
@@ -82,7 +82,12 @@ function NewApp() {
                 {...register("name", { required: "Name is required" })}
               />
             </Field>
-            <Button my={4} type="submit" loading={isSubmitting} variant="solid">
+            <Button
+              my={4}
+              type="submit"
+              loading={mutation.isPending}
+              variant="solid"
+            >
               Create App
             </Button>
           </form>

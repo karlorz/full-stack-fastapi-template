@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Trash } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 import { type TeamsRemoveMemberFromTeamData, TeamsService } from "@/client"
@@ -16,7 +17,6 @@ import {
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 import { DialogTitle } from "@chakra-ui/react"
-import { Trash } from "../../assets/icons"
 import { MenuItem } from "../ui/menu"
 
 interface RemoveProps {
@@ -58,7 +58,7 @@ const RemoveUser = ({ teamId, userId }: RemoveProps) => {
       >
         <DialogTrigger asChild>
           <MenuItem value="remove-user" color="error.base" cursor="pointer">
-            <Trash fontSize="16px" />
+            <Trash size={16} />
             Remove User
           </MenuItem>
         </DialogTrigger>
@@ -97,7 +97,7 @@ const RemoveUser = ({ teamId, userId }: RemoveProps) => {
                   variant="solid"
                   colorPalette="red"
                   type="submit"
-                  loading={isSubmitting}
+                  loading={mutation.isPending}
                 >
                   Confirm
                 </Button>

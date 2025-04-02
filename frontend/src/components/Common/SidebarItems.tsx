@@ -1,4 +1,4 @@
-import { Box, Flex, type IconProps, Text } from "@chakra-ui/react"
+import { Box, Flex, Text } from "@chakra-ui/react"
 import {
   type AnyRoute,
   Link,
@@ -8,9 +8,8 @@ import {
   type UseLinkPropsOptions,
 } from "@tanstack/react-router"
 
-import { Apps, Home, Settings } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
-import type { FC } from "react"
+import { Home, LayoutGrid, type LucideIcon, Settings } from "lucide-react"
 import TeamSelector from "./TeamSelector"
 
 // https://github.com/TanStack/router/issues/1194#issuecomment-1956736102
@@ -25,7 +24,7 @@ export function link<
 }
 
 type Item = {
-  icon: FC<IconProps>
+  icon: LucideIcon
   title: string
 } & ToOptions
 
@@ -40,7 +39,7 @@ const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
       }),
     },
     {
-      icon: Apps,
+      icon: LayoutGrid,
       title: "Apps",
       ...link({
         to: "/$team/apps",
@@ -82,9 +81,8 @@ const SidebarItems = ({
             background: "gray.subtle",
           }}
           alignItems="center"
-          fontSize="sm"
         >
-          <IconComponent />
+          <IconComponent size={18} />
           {title}
         </Flex>
       </Link>

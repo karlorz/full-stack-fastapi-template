@@ -5,10 +5,10 @@ import {
   createFileRoute,
   redirect,
 } from "@tanstack/react-router"
+import { Mail } from "lucide-react"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { Email } from "@/assets/icons"
 import CustomAuthContainer from "@/components/Auth/CustomContainer"
 import { Button } from "@/components/ui/button"
 import { Field } from "@/components/ui/field"
@@ -17,7 +17,7 @@ import { Tooltip } from "@/components/ui/tooltip"
 import { LoginService } from "../client"
 import BackgroundPanel from "../components/Auth/BackgroundPanel"
 import EmailSent from "../components/Common/EmailSent"
-import useAuth, { isLoggedIn } from "../hooks/useAuth"
+import { isLoggedIn } from "../hooks/useAuth"
 import useCustomToast from "../hooks/useCustomToast"
 import { emailPattern, handleError } from "../utils"
 
@@ -40,12 +40,11 @@ function RecoverPassword() {
   const [showTooltip, setShowTooltip] = useState(false)
   let timeoutId: NodeJS.Timeout
   const [userEmail, setUserEmail] = useState("")
-  const { emailSent, setEmailSent } = useAuth()
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormData>()
   const { showErrorToast } = useCustomToast()
 
@@ -69,7 +68,6 @@ function RecoverPassword() {
   const mutation = useMutation({
     mutationFn: recoverPassword,
     onSuccess: () => {
-      setEmailSent(true)
       reset()
     },
     onError: handleError.bind(showErrorToast),
@@ -82,61 +80,63 @@ function RecoverPassword() {
 
   return (
     <BackgroundPanel>
-      {emailSent ? (
-        <EmailSent email={userEmail} />
-      ) : (
-        <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
-          <Heading>Password Recovery</Heading>
-          <Text>
-            Don't worry! We'll help you recover your account, no need to create
-            a new one... yet.
-          </Text>
-          <Text>
-            Just enter your email address below and we'll send you a link to
-            reset your password.
-          </Text>
-          <Field invalid={!!errors.email} errorText={errors.email?.message}>
-            <InputGroup w="100%" startElement={<Email />}>
-              <Input
-                id="email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: emailPattern,
-                })}
-                placeholder="Email"
-                type="email"
-              />
-            </InputGroup>
-          </Field>
-          <Button
-            variant="solid"
-            type="submit"
-            loading={isSubmitting}
-            size="md"
-          >
-            Continue
-          </Button>
-          <RouterLink className="main-link" to="/login">
-            Back to Login
-          </RouterLink>
-          <Text mt={4}>
-            Cannot recover your account? {""}
-            <Tooltip
-              content="Just checking... are you sure you need help? 🧐"
-              open={showTooltip}
+      <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
+        {mutation.isSuccess ? (
+          <EmailSent email={userEmail} />
+        ) : (
+          <>
+            <Heading>Password Recovery</Heading>
+            <Text>
+              Don't worry! We'll help you recover your account, no need to
+              create a new one... yet.
+            </Text>
+            <Text>
+              Just enter your email address below and we'll send you a link to
+              reset your password.
+            </Text>
+            <Field invalid={!!errors.email} errorText={errors.email?.message}>
+              <InputGroup w="100%" startElement={<Mail size={16} />}>
+                <Input
+                  id="email"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: emailPattern,
+                  })}
+                  placeholder="Email"
+                  type="email"
+                />
+              </InputGroup>
+            </Field>
+            <Button
+              variant="solid"
+              type="submit"
+              loading={mutation.isPending}
+              size="md"
             >
-              <Link
-                color="main.dark"
-                fontWeight="bold"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
+              Continue
+            </Button>
+            <RouterLink className="main-link" to="/login">
+              Back to Login
+            </RouterLink>
+            <Text mt={4}>
+              Cannot recover your account? {""}
+              <Tooltip
+                content="Just checking... are you sure you need help? 🧐"
+                open={showTooltip}
               >
-                Contact Support
-              </Link>
-            </Tooltip>
-          </Text>
-        </CustomAuthContainer>
-      )}
+                <Link
+                  color="main.dark"
+                  fontWeight="bold"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  Contact Support
+                </Link>
+              </Tooltip>
+            </Text>
+          </>
+        )}
+      </CustomAuthContainer>
     </BackgroundPanel>
   )
 }

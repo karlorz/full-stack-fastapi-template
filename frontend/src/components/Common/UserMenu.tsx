@@ -1,8 +1,8 @@
 import { Box, Button, Flex, Text } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
+import { LogOut, Settings } from "lucide-react"
 import { Suspense } from "react"
 
-import { LogOut, Settings } from "@/assets/icons.tsx"
 import {
   MenuContent,
   MenuItem,
@@ -31,16 +31,7 @@ const UserMenu = () => {
       <Flex>
         <MenuRoot>
           <MenuTrigger asChild p={2}>
-            <Button
-              bg="whiteAlpha.200"
-              color="whiteAlpha.900"
-              _hover={{ bg: "whiteAlpha.300" }}
-              _expanded={{ bg: "whiteAlpha.300" }}
-              className="navbar-button"
-              w="100%"
-              px={4}
-              data-testid="user-menu"
-            >
+            <Button bg="whiteAlpha.200" w="100%" px={4} data-testid="user-menu">
               My Account
             </Button>
           </MenuTrigger>
@@ -49,7 +40,7 @@ const UserMenu = () => {
               Logged in as:
             </Text>
             <Suspense fallback={<SkeletonText noOfLines={1} width={100} />}>
-              <Text truncate maxWidth="200px" px={4} py={2}>
+              <Text truncate maxW="md" px={4} py={2}>
                 <CurrentUserEmail />
               </Text>
             </Suspense>
@@ -63,10 +54,8 @@ const UserMenu = () => {
                 py={2}
                 style={{ cursor: "pointer" }}
               >
-                <Settings />
-                <Box flex="1" truncate maxWidth="150px">
-                  User Settings
-                </Box>
+                <Settings size={16} />
+                <Box>User Settings</Box>
               </MenuItem>
             </Link>
 
@@ -79,10 +68,8 @@ const UserMenu = () => {
               onClick={handleLogout}
               style={{ cursor: "pointer" }}
             >
-              <LogOut />
-              <Box truncate maxWidth="150px">
-                Log Out
-              </Box>
+              <LogOut size={16} />
+              <Box>Log Out</Box>
             </MenuItem>
           </MenuContent>
         </MenuRoot>

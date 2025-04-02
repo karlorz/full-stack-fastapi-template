@@ -9,11 +9,11 @@ import {
 import { createFileRoute } from "@tanstack/react-router"
 import countries from "country-list"
 import Lottie from "lottie-react"
+import { Building, Globe, Lightbulb, Mail, User, Users } from "lucide-react"
 import { useState } from "react"
 import { Controller, type SubmitHandler, useForm } from "react-hook-form"
 
 import emailSent from "@/assets/email.json"
-import { Building, Email, Globe, User, Users } from "@/assets/icons"
 import { type TeamSize, UsersService } from "@/client"
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
 import CustomAuthContainer from "@/components/Auth/CustomContainer"
@@ -30,7 +30,6 @@ import {
 import useCustomToast from "@/hooks/useCustomToast"
 import { emailPattern } from "@/utils"
 import { Select } from "chakra-react-select"
-import { Bulb } from "../assets/icons"
 
 interface WaitlistForm {
   email: string
@@ -115,19 +114,14 @@ function Waitlist() {
       <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
         {isSuccess ? (
           <Box>
-            <Heading textAlign="center">Thank You!</Heading>
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              mt={4}
-            >
+            <Heading>Thank You!</Heading>
+            <Box>
               <Lottie
                 animationData={emailSent}
                 loop={false}
                 style={{ width: 75, height: 75 }}
               />
-              <Text mt={4} textAlign="center">
+              <Text>
                 You've been added to our waitlist. We'll notify you at{" "}
                 <b>{submittedEmail}</b> when you're invited to create your
                 account.
@@ -142,7 +136,7 @@ function Waitlist() {
             </Box>
 
             <Field invalid={!!errors.email} errorText={errors.email?.message}>
-              <InputGroup w="100%" startElement={<Email />}>
+              <InputGroup w="100%" startElement={<Mail size={16} />}>
                 <Input
                   id="email"
                   {...register("email", {
@@ -157,7 +151,7 @@ function Waitlist() {
             </Field>
 
             <Field invalid={!!errors.name} errorText={errors.name?.message}>
-              <InputGroup w="100%" startElement={<User />}>
+              <InputGroup w="100%" startElement={<User size={16} />}>
                 <Input
                   id="name"
                   {...register("name")}
@@ -172,7 +166,7 @@ function Waitlist() {
               invalid={!!errors.organization}
               errorText={errors.organization?.message}
             >
-              <InputGroup w="100%" startElement={<Building />}>
+              <InputGroup w="100%" startElement={<Building size={16} />}>
                 <Input
                   id="organization"
                   {...register("organization")}
@@ -201,7 +195,7 @@ function Waitlist() {
                   >
                     <SelectTrigger>
                       <Group display="flex" alignItems="center" flexGrow={1}>
-                        <Users color="fg.subtle" />
+                        <Users color="fg.subtle" size="sm" />
                         <SelectValueText placeholder="Team Size" />
                       </Group>
                     </SelectTrigger>
@@ -218,7 +212,7 @@ function Waitlist() {
             </Field>
 
             <Field invalid={!!errors.role} errorText={errors.role?.message}>
-              <InputGroup w="100%" startElement={<User />}>
+              <InputGroup w="100%" startElement={<User size={16} />}>
                 <Input
                   id="role"
                   placeholder="Your Role"
@@ -247,7 +241,7 @@ function Waitlist() {
                     }
                     placeholder={
                       <>
-                        <Globe color="fg.subtle" mr={2} />
+                        <Globe color="fg.subtle" size={16} />
                         Select Country
                       </>
                     }
@@ -260,7 +254,7 @@ function Waitlist() {
               invalid={!!errors.use_case}
               errorText={errors.use_case?.message}
             >
-              <InputGroup w="100%" startElement={<Bulb />}>
+              <InputGroup w="100%" startElement={<Lightbulb size={16} />}>
                 <Input
                   id="use_case"
                   {...register("use_case")}

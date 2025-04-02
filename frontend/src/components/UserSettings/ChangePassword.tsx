@@ -1,8 +1,8 @@
 import { Box, Container, Text, VStack } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
+import { Lock } from "lucide-react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { Lock } from "@/assets/icons"
 import { type UpdatePassword, UsersService } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
 import { confirmPasswordRules, handleError, passwordRules } from "@/utils"
@@ -20,7 +20,7 @@ const ChangePassword = () => {
     handleSubmit,
     reset,
     getValues,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<UpdatePasswordForm>({
     mode: "onBlur",
     criteriaMode: "all",
@@ -50,27 +50,32 @@ const ChangePassword = () => {
           <VStack gap={4} w={{ base: "100%", md: "md" }}>
             <PasswordInput
               type="current_password"
-              startElement={<Lock />}
+              startElement={<Lock size={16} />}
               {...register("current_password", passwordRules())}
               placeholder="Current Password"
               errors={errors}
             />
             <PasswordInput
               type="new_password"
-              startElement={<Lock />}
+              startElement={<Lock size={16} />}
               {...register("new_password", passwordRules())}
               placeholder="New Password"
               errors={errors}
             />
             <PasswordInput
               type="confirm_password"
-              startElement={<Lock />}
+              startElement={<Lock size={16} />}
               {...register("confirm_password", confirmPasswordRules(getValues))}
               placeholder="Confirm Password"
               errors={errors}
             />
           </VStack>
-          <Button variant="solid" mt={4} type="submit" loading={isSubmitting}>
+          <Button
+            variant="solid"
+            mt={4}
+            type="submit"
+            loading={mutation.isPending}
+          >
             Save
           </Button>
         </Box>

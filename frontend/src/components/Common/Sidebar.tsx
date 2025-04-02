@@ -6,9 +6,8 @@ import {
   Separator,
   Text,
 } from "@chakra-ui/react"
-import { FaBars } from "react-icons/fa"
+import { LogOut, Menu, User } from "lucide-react"
 
-import { LogOut, User } from "@/assets/icons.tsx"
 import type { TeamsPublic } from "@/client"
 import {
   DrawerBody,
@@ -56,7 +55,7 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
             position="fixed"
             m={1}
           >
-            <FaBars />
+            <Menu size={16} />
           </IconButton>
         </DrawerTrigger>
         <DrawerContent maxW="xs">
@@ -93,21 +92,19 @@ const Sidebar = ({ teams }: { teams: TeamsPublic }) => {
                     alignItems="center"
                     fontSize="sm"
                   >
-                    <User />
+                    <User size={16} />
                     User Settings
                   </Flex>
                 </Link>
                 <Flex
                   as="button"
-                  onClick={() => {
-                    logout()
-                  }}
+                  onClick={() => logout()}
                   alignItems="center"
                   gap={4}
                   px={4}
                   py={2}
                 >
-                  <LogOut />
+                  <LogOut size={16} />
                   <Text>Log Out</Text>
                 </Flex>
               </DrawerBody>

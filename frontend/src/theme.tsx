@@ -20,10 +20,6 @@ export const system = createSystem(defaultConfig, {
       borderColor: "main.light",
       outline: "none",
     },
-    // TODO: Remove this later. ref: https://github.com/chakra-ui/chakra-ui/pull/9523
-    '[data-scope="select"][data-part="value-text"]': {
-      color: "fg.muted/80",
-    },
     h2: {
       fontSize: "1.2rem",
       fontFamily: "heading",

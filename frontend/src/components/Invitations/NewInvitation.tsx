@@ -18,7 +18,9 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogRoot,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Field } from "@/components/ui/field"
 import { emailPattern, extractErrorMessage } from "@/utils"
@@ -42,8 +44,6 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
   const mutation = useMutation({
     mutationFn: (data: InvitationCreate) =>
       InvitationsService.createInvitation({ requestBody: data }),
-    onSuccess: () => reset(),
-    onError: () => reset(),
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["invitations"] }),
   })
@@ -63,116 +63,130 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
   }
 
   return (
-    <DialogContent>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogCloseTrigger />
-        {mutation.isPending || mutation.isIdle ? (
-          <>
-            <DialogHeader>
-              <DialogTitle>Team Invitation</DialogTitle>
-            </DialogHeader>
-            <DialogBody>
-              <Text mb={4}>
-                Fill in the email address to invite someone to your team.
-              </Text>
-              <Field
-                required
-                invalid={!!errors.email}
-                errorText={errors.email?.message}
-              >
-                <Input
-                  id="email"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: emailPattern,
-                  })}
-                  placeholder="Email address"
-                  type="email"
-                  data-testid="invitation-email"
-                />
-              </Field>
-            </DialogBody>
-            <DialogFooter>
-              <Button
-                variant="solid"
-                type="submit"
-                loading={isSubmitting || mutation.isPending}
-                mt={4}
-              >
-                Send Invitation
-              </Button>
-            </DialogFooter>
-          </>
-        ) : mutation.isSuccess ? (
-          <>
-            <DialogHeader>
-              <DialogTitle>Invitation Sent!</DialogTitle>
-            </DialogHeader>
-            <DialogBody>
-              <Center>
-                <Lottie
-                  animationData={emailSent}
-                  loop={false}
-                  style={{ width: 75, height: 75 }}
-                />
-              </Center>
-              <Text my={4}>
-                The invitation has been sent to <b>{mutation.data?.email}</b>.
-                They just need to accept it to join your team.
-              </Text>
-              <Text mt={2}>
-                You can manage invitations from your team dashboard or send
-                another one.
-              </Text>
-            </DialogBody>
-            <DialogFooter>
-              <DialogActionTrigger asChild>
-                <Button variant="solid" onClick={handleClose}>
-                  Ok
-                </Button>
-              </DialogActionTrigger>
-            </DialogFooter>
-          </>
-        ) : (
-          <>
-            <DialogHeader>
-              <DialogTitle>Invitation Failed</DialogTitle>
-            </DialogHeader>
-            <DialogBody>
-              <Center>
-                <Lottie
-                  animationData={warning}
-                  loop={false}
-                  style={{ width: 75, height: 75 }}
-                />
-              </Center>
-              {mutation.error && (
-                <Text
-                  color="error.base"
-                  fontWeight="bold"
-                  textAlign="center"
+    <DialogRoot size={{ base: "xs", md: "md" }} placement="center">
+      <DialogTrigger asChild>
+        <Button
+          variant="solid"
+          mb={4}
+          marginLeft={{ base: "inherit", md: "auto" }}
+        >
+          Invite Member
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogCloseTrigger />
+          {mutation.isPending || mutation.isIdle ? (
+            <>
+              <DialogHeader>
+                <DialogTitle>Team Invitation</DialogTitle>
+              </DialogHeader>
+              <DialogBody>
+                <Text mb={4}>
+                  Fill in the email address to invite someone to your team.
+                </Text>
+                <Field
+                  required
+                  invalid={!!errors.email}
+                  errorText={errors.email?.message}
+                >
+                  <Input
+                    id="email"
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: emailPattern,
+                    })}
+                    placeholder="Email address"
+                    type="email"
+                    data-testid="invitation-email"
+                  />
+                </Field>
+              </DialogBody>
+              <DialogFooter>
+                <Button
+                  variant="solid"
+                  type="submit"
+                  loading={isSubmitting || mutation.isPending}
                   mt={4}
                 >
-                  {extractErrorMessage(mutation.error as ApiError)}
+                  Send Invitation
+                </Button>
+              </DialogFooter>
+            </>
+          ) : mutation.isSuccess ? (
+            <>
+              <DialogHeader>
+                <DialogTitle>Invitation Sent!</DialogTitle>
+              </DialogHeader>
+              <DialogBody>
+                <Center>
+                  <Lottie
+                    animationData={emailSent}
+                    loop={false}
+                    style={{ width: 75, height: 75 }}
+                  />
+                </Center>
+                <Text my={4}>
+                  The invitation has been sent to <b>{mutation.data?.email}</b>.
+                  They just need to accept it to join your team.
                 </Text>
-              )}
-              <Text my={4}>
-                Oops! Something went wrong while sending the invitation. Please
-                try again or double-check the information.
-              </Text>
-              <Text mt={2}>
-                If the problem continues, please contact our support team.
-              </Text>
-            </DialogBody>
-            <DialogFooter>
-              <Button variant="solid" mt={4} onClick={handleClose}>
-                Ok
-              </Button>
-            </DialogFooter>
-          </>
-        )}
-      </form>
-    </DialogContent>
+                <Text mt={2}>
+                  You can manage invitations from your team dashboard or send
+                  another one.
+                </Text>
+              </DialogBody>
+              <DialogFooter>
+                <DialogActionTrigger asChild>
+                  <Button variant="solid" onClick={handleClose}>
+                    Ok
+                  </Button>
+                </DialogActionTrigger>
+              </DialogFooter>
+            </>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle>Invitation Failed</DialogTitle>
+              </DialogHeader>
+              <DialogBody>
+                <Center>
+                  <Lottie
+                    animationData={warning}
+                    loop={false}
+                    style={{ width: 75, height: 75 }}
+                  />
+                </Center>
+                {mutation.error && (
+                  <Text
+                    color="error.base"
+                    fontWeight="bold"
+                    textAlign="center"
+                    mt={4}
+                  >
+                    {extractErrorMessage(mutation.error as ApiError)}
+                  </Text>
+                )}
+                <Text my={4}>
+                  Oops! Something went wrong while sending the invitation.
+                  Please try again or double-check the information.
+                </Text>
+                <Text mt={2}>
+                  If the problem continues, please contact our support team.
+                </Text>
+              </DialogBody>
+              <DialogFooter>
+                <DialogActionTrigger asChild>
+                  <Button variant="solid" mt={4} onClick={handleClose}>
+                    Ok
+                  </Button>
+                </DialogActionTrigger>
+              </DialogFooter>
+            </>
+          )}
+        </form>
+      </DialogContent>
+    </DialogRoot>
   )
 }
 

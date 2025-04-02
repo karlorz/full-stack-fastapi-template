@@ -4,10 +4,10 @@ import { handleError } from "@/utils"
 import { Box, Flex, Grid, GridItem, IconButton, Input } from "@chakra-ui/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Eye, EyeOff, History, PackageOpen, Trash } from "lucide-react"
 import { Fragment, useEffect, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 
-import { EmptyBox, Eye, EyeCrossed, Restore, Trash } from "@/assets/icons"
 import { Button } from "@/components/ui/button"
 import { Field } from "@/components/ui/field"
 import { InputGroup } from "@/components/ui/input-group"
@@ -81,7 +81,7 @@ const EnvironmentVariableFields = ({
                   cursor: "pointer",
                 }}
               >
-                {show ? <EyeCrossed /> : <Eye />}
+                {show ? <EyeOff size={16} /> : <Eye size={16} />}
               </IconButton>
             )
           }
@@ -113,7 +113,7 @@ const EnvironmentVariableFields = ({
                 cursor: "pointer",
               }}
             >
-              {deleted ? <Restore /> : <Trash />}
+              {deleted ? <History /> : <Trash />}
             </IconButton>
           </Tooltip>
         )}
@@ -318,7 +318,7 @@ const EnvironmentVariables = ({
         <GridItem colSpan={4} display="flex" justifyContent="center">
           <EmptyState
             title="You don't have any environment variables yet"
-            icon={EmptyBox}
+            icon={PackageOpen}
           />
         </GridItem>
       )}

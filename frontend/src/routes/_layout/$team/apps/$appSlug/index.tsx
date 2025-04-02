@@ -1,8 +1,8 @@
 import { Box, Container, Heading, Link, Text } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, notFound } from "@tanstack/react-router"
+import { ExternalLink } from "lucide-react"
 
-import { ExternalLink } from "@/assets/icons"
 import { AppsService, DeploymentsService } from "@/client"
 import DeleteApp from "@/components/AppSettings/DeleteApp"
 import Deployments from "@/components/AppSettings/Deployments"
@@ -86,7 +86,7 @@ function AppDetail() {
             rel="noopener noreferrer"
           >
             {app.url}
-            <ExternalLink mx="2px" />
+            <ExternalLink size={16} />
           </Link>
         )}
         <Text>Last Updated: {new Date(app?.updated_at).toLocaleString()}</Text>

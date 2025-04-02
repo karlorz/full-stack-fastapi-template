@@ -1,4 +1,3 @@
-import { Comment, Document, Help } from "@/assets/icons.tsx"
 import {
   PopoverArrow,
   PopoverBody,
@@ -19,6 +18,8 @@ import {
   Textarea,
 } from "@chakra-ui/react"
 
+import { CircleHelp, FileText, MessageSquareText } from "lucide-react"
+
 const Footer = () => {
   return (
     // TODO: Add links to help and docs once available
@@ -27,10 +28,8 @@ const Footer = () => {
         <PopoverRoot>
           <PopoverTrigger asChild>
             <Link mx={2} display="flex" alignItems="center" cursor="pointer">
-              <Comment />
-              <Box as="span" ml={1}>
-                Feedback
-              </Box>
+              <MessageSquareText size={16} />
+              <Box as="span">Feedback</Box>
             </Link>
           </PopoverTrigger>
           <PopoverContent>
@@ -57,16 +56,12 @@ const Footer = () => {
           </PopoverContent>
         </PopoverRoot>
         <Link mx={2} display="flex" alignItems="center">
-          <Help />
-          <Box as="span" ml={1}>
-            Help
-          </Box>
+          <CircleHelp size={16} />
+          <Box as="span">Help</Box>
         </Link>
         <Link mx={2} display="flex" alignItems="center">
-          <Document />
-          <Box as="span" ml={1}>
-            Docs
-          </Box>
+          <FileText size={16} />
+          <Box as="span">Docs</Box>
         </Link>
       </Flex>
     </Box>

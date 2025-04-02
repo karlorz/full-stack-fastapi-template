@@ -11,10 +11,10 @@ import {
   createFileRoute,
   useNavigate,
 } from "@tanstack/react-router"
+import { PackageOpen } from "lucide-react"
 import { Fragment } from "react"
 import { z } from "zod"
 
-import { EmptyBox } from "@/assets/icons"
 import { AppsService } from "@/client"
 import CustomCard from "@/components/Common/CustomCard"
 import EmptyState from "@/components/Common/EmptyState"
@@ -169,7 +169,7 @@ function Apps() {
           <EmptyState
             title="You don't have any app yet"
             description="Create your first app to get started and deploy it to the cloud."
-            icon={EmptyBox}
+            icon={PackageOpen}
           />
         </Flex>
       )}

@@ -1,6 +1,5 @@
 "use client"
 
-import { Eye, EyeCrossed } from "@/assets/icons"
 import type {
   ButtonProps,
   GroupProps,
@@ -16,6 +15,7 @@ import {
   mergeRefs,
   useControllableState,
 } from "@chakra-ui/react"
+import { Eye, EyeOff } from "lucide-react"
 import { forwardRef, useRef } from "react"
 import { Field } from "./field"
 import { InputGroup } from "./input-group"
@@ -43,7 +43,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
       defaultVisible,
       visible: visibleProp,
       onVisibleChange,
-      visibilityIcon = { on: <Eye />, off: <EyeCrossed /> },
+      visibilityIcon = { on: <Eye size={16} />, off: <EyeOff size={16} /> },
       startElement,
       type,
       errors,

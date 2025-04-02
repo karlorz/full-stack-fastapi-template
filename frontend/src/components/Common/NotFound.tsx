@@ -1,4 +1,3 @@
-import { NotFound as NotFoundIcon } from "@/assets/icons"
 import { Button } from "@/components/ui/button"
 import { Center, Flex, Text } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
@@ -16,7 +15,6 @@ const NotFound = () => {
         p={4}
       >
         <Flex alignItems="center" zIndex={1}>
-          <NotFoundIcon boxSize={{ base: "100px", md: "150px" }} mb={4} />
           <Flex flexDir="column" ml={4} align="center" justify="center" p={4}>
             <Text
               fontSize={{ base: "6xl", md: "8xl" }}

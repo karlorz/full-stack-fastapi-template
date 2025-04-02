@@ -1,4 +1,3 @@
-import { User } from "@/assets/icons"
 import { TeamsService } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
 import { Route } from "@/routes/_layout/$team"
@@ -11,6 +10,7 @@ import {
 } from "@tanstack/react-query"
 import { Select } from "chakra-react-select"
 import { Controller, useForm } from "react-hook-form"
+
 import { Button } from "../ui/button"
 import { Field } from "../ui/field"
 
@@ -39,7 +39,7 @@ const TransferTeam = ({ adminUsers }: TransferTeamProps) => {
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { errors },
   } = useForm<TransferTeamForm>({
     mode: "onBlur",
     defaultValues: {
@@ -101,12 +101,7 @@ const TransferTeam = ({ adminUsers }: TransferTeamProps) => {
                 onChange={(selectedOption) =>
                   field.onChange(selectedOption?.value)
                 }
-                placeholder={
-                  <>
-                    <User color="fg.subtle" mr={2} />
-                    Select User
-                  </>
-                }
+                placeholder={<>Select User</>}
                 data-testid="user-select"
               />
             )}
@@ -120,7 +115,7 @@ const TransferTeam = ({ adminUsers }: TransferTeamProps) => {
           display={{ base: "block", md: "inline-block" }}
           mt={{ base: 4, md: 0 }}
           alignSelf={{ base: "flex-start", md: "auto" }}
-          loading={isSubmitting}
+          loading={mutation.isPending}
         >
           Transfer Team
         </Button>
