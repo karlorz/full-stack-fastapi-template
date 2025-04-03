@@ -357,6 +357,7 @@
 
 ### Upgrades
 
+* ⬆️ Update `package-lock.json`. PR [#685](https://github.com/fastapilabs/cloud/pull/685) by [@alejsdev](https://github.com/alejsdev).
 * ⬆️ Upgrade tanstack/react-router. PR [#680](https://github.com/fastapilabs/cloud/pull/680) by [@alejsdev](https://github.com/alejsdev).
 * 📌 Update uv.lock. PR [#652](https://github.com/fastapilabs/cloud/pull/652) by [@tiangolo](https://github.com/tiangolo).
 * ⬆️ Upgrade Python to 3.13. PR [#648](https://github.com/fastapilabs/cloud/pull/648) by [@tiangolo](https://github.com/tiangolo).
