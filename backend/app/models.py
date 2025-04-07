@@ -101,7 +101,7 @@ class User(UserBase, table=True):
         cascade_delete=True,
     )
 
-    @computed_field
+    @computed_field(return_type="Team | None")
     @hybrid_property
     def personal_team(self) -> "Team | None":
         return next((team for team in self.owned_teams if team.is_personal_team), None)
@@ -287,7 +287,7 @@ class App(AppBase, table=True):
     def url(self) -> str:
         return f"https://{self.slug}.{CommonSettings.get_settings().DEPLOYMENTS_DOMAIN}"
 
-    @computed_field
+    @computed_field(return_type=bool | None)
     @hybrid_property
     def is_fresh(self) -> bool | None:
         deployments = sorted(self.deployments, key=lambda x: x.updated_at, reverse=True)
@@ -425,7 +425,7 @@ class WaitingListUser(WaitingListUserBase, table=True):
     allowed_at: datetime | None = Field(default=None, index=True)
     invitation_sent_at: datetime | None = Field(default=None, index=True)
 
-    @computed_field
+    @computed_field(return_type=bool)
     @hybrid_property
     def can_signup(self) -> bool:
         return (
