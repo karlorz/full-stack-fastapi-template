@@ -21,6 +21,7 @@
 
 ### Features
 
+* 🛂 Migrate frontend to Shadcn. PR [#679](https://github.com/fastapilabs/cloud/pull/679) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Implement polling and enhance deployment view with real-time updates. PR [#672](https://github.com/fastapilabs/cloud/pull/672) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add support to transfer a team. PR [#656](https://github.com/fastapilabs/cloud/pull/656) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add API to stream build logs. PR [#666](https://github.com/fastapilabs/cloud/pull/666) by [@patrick91](https://github.com/patrick91).
