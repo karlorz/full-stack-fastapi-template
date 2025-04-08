@@ -1,22 +1,19 @@
-import { Center, Text } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import Lottie from "lottie-react"
+import { useState } from "react"
 
 import group from "@/assets/group.json"
 import { type InvitationPublic, InvitationsService } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
-  DialogActionTrigger,
-  DialogBody,
-  DialogCloseTrigger,
+  Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogRoot,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useState } from "react"
 
 interface AcceptInvitationProps {
   token: string
@@ -47,43 +44,33 @@ const AcceptInvitation = ({ token, invitation }: AcceptInvitationProps) => {
   }
 
   return (
-    <DialogRoot
-      size={{ base: "xs", md: "md" }}
-      open={isOpen}
-      onOpenChange={(e) => setIsOpen(e.open)}
-      placement="center"
-    >
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
-        <DialogCloseTrigger />
         {mutation.isPending || mutation.isIdle ? (
           <>
             <DialogHeader>
               <DialogTitle>Team Invitation</DialogTitle>
+              <DialogDescription
+                className="space-y-4"
+                data-testid="accept-invitation"
+              >
+                <p>
+                  Hi <span className="font-bold">{invitation?.email}</span>,
+                </p>
+                <p>
+                  You have been invited by{" "}
+                  <span className="font-bold">{invitation?.sender.email}</span>{" "}
+                  to join{" "}
+                  <span className="font-bold">{invitation?.team.name}</span>.
+                  Accept to build and deploy apps with the team.
+                </p>
+              </DialogDescription>
             </DialogHeader>
-            <DialogBody data-testid="accept-invitation">
-              <Text>
-                Hi <strong>{invitation?.email},</strong>
-              </Text>
-              <Text my={4}>
-                You have been invited by{" "}
-                <strong>{invitation?.sender.email}</strong> to join{" "}
-                <strong>{invitation?.team.name}</strong>. Accept to build and
-                deploy apps with the team.
-              </Text>
-            </DialogBody>
-            <DialogFooter gap={3}>
-              <DialogActionTrigger asChild>
-                <Button
-                  variant="subtle"
-                  colorPalette="gray"
-                  onClick={handleClose}
-                >
-                  Cancel
-                </Button>
-              </DialogActionTrigger>
-              <Button variant="solid" onClick={handleJoinTeam}>
-                Join Team
+            <DialogFooter className="gap-3">
+              <Button variant="outline" onClick={handleClose}>
+                Cancel
               </Button>
+              <Button onClick={handleJoinTeam}>Join Team</Button>``
             </DialogFooter>
           </>
         ) : mutation.isSuccess ? (
@@ -91,49 +78,38 @@ const AcceptInvitation = ({ token, invitation }: AcceptInvitationProps) => {
             <DialogHeader>
               <DialogTitle>Invitation Accepted!</DialogTitle>
             </DialogHeader>
-            <DialogBody>
-              <Center>
-                <Lottie
-                  animationData={group}
-                  loop={false}
-                  style={{ width: 75, height: 75 }}
-                />
-              </Center>
-              <Text>
-                You are now a member of <strong>{invitation?.team.name}</strong>
-                . Now you can start building and deploying apps with the team.
-              </Text>
-            </DialogBody>
+            <div className="flex flex-col items-center space-y-4">
+              <Lottie
+                animationData={group}
+                loop={false}
+                style={{ width: 75, height: 75 }}
+              />
+              <DialogDescription>
+                You are now a member of{" "}
+                <span className="font-bold">{invitation?.team.name}</span>. Now
+                you can start building and deploying apps with the team.
+              </DialogDescription>
+            </div>
             <DialogFooter>
-              <DialogActionTrigger>
-                <Button variant="solid" onClick={handleClose}>
-                  Ok
-                </Button>
-              </DialogActionTrigger>
+              <Button onClick={handleClose}>Ok</Button>
             </DialogFooter>
           </>
         ) : (
           <>
             <DialogHeader>
               <DialogTitle>Error</DialogTitle>
-            </DialogHeader>
-            <DialogBody>
-              <Text>
+              <DialogDescription>
                 An error occurred while processing your request. Please try
                 again later.
-              </Text>
-            </DialogBody>
+              </DialogDescription>
+            </DialogHeader>
             <DialogFooter>
-              <DialogActionTrigger asChild>
-                <Button variant="solid" onClick={handleClose}>
-                  Ok
-                </Button>
-              </DialogActionTrigger>
+              <Button onClick={handleClose}>Ok</Button>
             </DialogFooter>
           </>
         )}
       </DialogContent>
-    </DialogRoot>
+    </Dialog>
   )
 }
 

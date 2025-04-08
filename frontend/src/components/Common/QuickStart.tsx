@@ -1,7 +1,7 @@
-import { Code, Flex, Separator, Stack, Tabs, Text } from "@chakra-ui/react"
-
-import { ClipboardIconButton, ClipboardRoot } from "../ui/clipboard"
-import CustomCard from "./CustomCard"
+import { Copy } from "lucide-react"
+import { Button } from "../ui/button"
+import { Separator } from "../ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
 
 export interface CodeWithCopyProps {
   code: string
@@ -15,72 +15,76 @@ const UV_INSTALL_COMMAND =
   "uv add --upgrade --default-index https://fastapi-cli.pages.dev/simple --index-strategy unsafe-best-match --index https://pypi.python.org/simple fastapi-cli fastapi-cloud-cli"
 
 const CodeWithCopy = ({ code }: CodeWithCopyProps) => (
-  <Flex>
-    <Code p={2}>{code}</Code>
-    <ClipboardRoot value={code}>
-      <ClipboardIconButton variant="ghost" />
-    </ClipboardRoot>
-  </Flex>
+  <div className="flex items-center gap-2 bg-muted p-2 rounded-md">
+    <code className="text-sm flex-1">{code}</code>
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-8 w-8"
+      onClick={() => navigator.clipboard.writeText(code)}
+    >
+      <Copy className="h-4 w-4" />
+    </Button>
+  </div>
 )
 
 const InstallInstructions = () => (
-  <>
-    <Tabs.Root defaultValue="uv" variant="subtle" h="10rem">
-      <Tabs.List>
-        <Tabs.Trigger value="uv">uv</Tabs.Trigger>
-        <Tabs.Trigger value="pip">pip</Tabs.Trigger>
-      </Tabs.List>
-      <Tabs.Content value="uv">
-        <CodeWithCopy code={UV_INSTALL_COMMAND} />
-      </Tabs.Content>
-      <Tabs.Content value="pip">
-        <CodeWithCopy code={PIP_INSTALL_COMMAND} />
-      </Tabs.Content>
-    </Tabs.Root>
-  </>
+  <Tabs defaultValue="uv" className="h-40">
+    <TabsList>
+      <TabsTrigger value="uv">uv</TabsTrigger>
+      <TabsTrigger value="pip">pip</TabsTrigger>
+    </TabsList>
+    <TabsContent value="uv">
+      <CodeWithCopy code={UV_INSTALL_COMMAND} />
+    </TabsContent>
+    <TabsContent value="pip">
+      <CodeWithCopy code={PIP_INSTALL_COMMAND} />
+    </TabsContent>
+  </Tabs>
 )
 
 const QuickStart = () => {
   return (
-    <CustomCard data-testid="fastapi-cli" w="100%">
-      <Stack direction={{ base: "column", md: "row" }}>
-        <Flex flexDir="column" gap={2} flex="1">
-          <Text>
-            FastAPI Cloud CLI is your primary tool for managing your apps.
-            Before you start, make sure you have it installed.
-          </Text>
+    <div className="flex flex-col md:flex-row" data-testid="fastapi-cli">
+      <div className="flex-1 flex flex-col gap-2 p-6">
+        <p>
+          FastAPI Cloud CLI is your primary tool for managing your apps. Before
+          you start, make sure you have it installed.
+        </p>
+        <InstallInstructions />
+      </div>
 
-          <InstallInstructions />
-        </Flex>
-        <Separator orientation="vertical" p={2} h="auto" />
-        <Flex flexDir="column" gap={2} flex="1">
-          <Text>
-            Once you have FastAPI Cloud CLI installed, you can deploy your app,
-            make sure you have your{" "}
-            <a
-              className="main-link"
-              href="https://fastapi.tiangolo.com/virtual-environments/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              virtual environment
-            </a>{" "}
-            activated. Then follow the instructions below to deploy your app:
-          </Text>
-          <Text>
-            1. Login to FastAPI Cloud: <Code>fastapi login</Code>
-          </Text>
+      <Separator className="md:h-auto" orientation="vertical" />
 
-          <Text>
-            2. Deploy your app: <Code>fastapi deploy</Code>
-          </Text>
-
-          <Text>
-            And that's it! Your app will be deployed to the cloud in seconds.
-          </Text>
-        </Flex>
-      </Stack>
-    </CustomCard>
+      <div className="flex-1 flex flex-col gap-2 p-6">
+        <p>
+          Once you have FastAPI Cloud CLI installed, you can deploy your app,
+          make sure you have your{" "}
+          <a
+            className="text-primary hover:underline"
+            href="https://fastapi.tiangolo.com/virtual-environments/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            virtual environment
+          </a>{" "}
+          activated. Then follow the instructions below to deploy your app:
+        </p>
+        <p>
+          1. Login to FastAPI Cloud:{" "}
+          <code className="text-sm bg-muted px-2 py-1 rounded">
+            fastapi login
+          </code>
+        </p>
+        <p>
+          2. Deploy your app:{" "}
+          <code className="text-sm bg-muted px-2 py-1 rounded">
+            fastapi deploy
+          </code>
+        </p>
+        <p>And that's it! Your app will be deployed to the cloud in seconds.</p>
+      </div>
+    </div>
   )
 }
 

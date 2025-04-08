@@ -1,11 +1,9 @@
-import { Box, Center, Flex, Image } from "@chakra-ui/react"
-import { Link, Outlet, createFileRoute, redirect } from "@tanstack/react-router"
-import { Suspense } from "react"
-
-import logo from "@/assets/logo-text-white.svg"
-import { TeamsService } from "@/client"
 import { useSuspenseQuery } from "@tanstack/react-query"
-import Footer from "../components/Common/Footer"
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
+
+import { TeamsService } from "@/client"
+import { cn } from "@/lib/utils"
+import { Suspense } from "react"
 import Sidebar from "../components/Common/Sidebar"
 import UserMenu from "../components/Common/UserMenu"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
@@ -37,60 +35,32 @@ function Layout() {
   })
 
   return (
-    <>
-      <Flex minHeight="100vh" flexDirection="column" bg="bg.subtle">
-        {/* Sidebar */}
-        <Box
-          position="fixed"
-          top="0"
-          left="0"
-          height="100vh"
-          width={{ md: "280px" }}
-        >
-          <Suspense>
-            <Sidebar teams={teams} />
-          </Suspense>
-        </Box>
-        <Flex flexDir="column" flex="1" ml={{ base: 0, md: "250px" }}>
-          {/* Navbar */}
-          <Box
-            bg="gradient"
-            id="navbar"
-            display={{ base: "none", md: "flex" }}
-            justifyContent="space-between"
-            position="fixed"
-            top="0"
-            right="0"
-            w="100%"
-            h="64px"
-            zIndex="2"
-            p={4}
-          >
-            <Center>
-              <Link to="/">
-                <Image src={logo} alt="Logo" p={4} width={180} />
-              </Link>
-            </Center>
-            <Flex gap={2} alignItems="center">
-              <Appearance />
-              <UserMenu />
-            </Flex>
-          </Box>
-          {/* Main Content */}
-          <Flex
-            w={{ base: "100%", md: "80%" }}
-            flexDir="column"
-            flex={1}
-            mt={{ base: "0", md: "64px" }}
-            mx="auto"
-            p={10}
-          >
+    <div className="min-h-screen bg-background">
+      {/* Sidebar */}
+      <div className="fixed left-0 top-0 z-40 h-full w-[280px] border-r">
+        <Suspense>
+          <Sidebar teams={teams} />
+        </Suspense>
+      </div>
+
+      <div className={cn("flex min-h-screen flex-col", "md:pl-[280px]")}>
+        {/* Navbar */}
+        <header className="sticky top-0 z-50 hidden h-16 items-center justify-end bg-background border-b px-6 md:flex">
+          <div className="flex items-center gap-2">
+            <Appearance />
+            <UserMenu />
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="flex-1 px-4 py-6 md:px-8">
+          <div className="mx-auto w-full max-w-[1200px]">
             <Outlet />
-          </Flex>
-        </Flex>
-        <Footer />
-      </Flex>
+          </div>
+        </main>
+      </div>
+
       <TeamInvitation />
-    </>
+    </div>
   )
 }

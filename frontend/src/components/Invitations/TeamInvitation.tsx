@@ -1,4 +1,3 @@
-import { Spinner } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
@@ -6,6 +5,7 @@ import { useEffect } from "react"
 import { InvitationsService, type UserPublic, UsersService } from "@/client"
 import { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
+import { Loader2 } from "lucide-react"
 import AcceptInvitation from "./AcceptInvitation"
 import NoMatchingAccount from "./NoMatchingAccount"
 import TeamInvitationNoAuth from "./TeamInvitationNoAuth"
@@ -45,7 +45,11 @@ const TeamInvitation = () => {
   //TODO: Improve handling of loading and error states
 
   if (isLoading) {
-    return <Spinner />
+    return (
+      <div className="flex justify-center">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    )
   }
 
   if (error) {

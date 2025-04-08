@@ -1,4 +1,3 @@
-import { Container, Heading, Text } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
 
 import UserInformation from "@/components/UserSettings/UserInformation"
@@ -9,12 +8,12 @@ export const Route = createFileRoute("/_layout/settings")({
 
 function UserSettings() {
   return (
-    <Container maxW="full" p={0}>
-      <Heading size="xl" pb={2}>
-        User Settings
-      </Heading>
-      <Text>View and manage settings related to your account.</Text>
+    <div className="w-full p-0">
+      <h1 className="text-2xl font-extrabold tracking-tight">User Settings</h1>
+      <p className="text-sm text-muted-foreground">
+        View and manage settings related to your account.
+      </p>
       <UserInformation />
-    </Container>
+    </div>
   )
 }

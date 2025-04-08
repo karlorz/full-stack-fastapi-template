@@ -1,6 +1,6 @@
-import { Flex } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
-import VerifyEmailUpdate from "../components/UserSettings/VerifyEmailUpdate"
+
+import VerifyEmailUpdate from "@/components/UserSettings/VerifyEmailUpdate"
 
 export const Route = createFileRoute("/verify-update-email")({
   component: VerifyUpdateEmail,
@@ -8,10 +8,8 @@ export const Route = createFileRoute("/verify-update-email")({
 
 function VerifyUpdateEmail() {
   return (
-    <>
-      <Flex flexDir={{ base: "column", md: "row" }} justify="center" h="100vh">
-        <VerifyEmailUpdate />
-      </Flex>
-    </>
+    <div className="flex flex-col md:flex-row justify-center min-h-screen">
+      <VerifyEmailUpdate />
+    </div>
   )
 }

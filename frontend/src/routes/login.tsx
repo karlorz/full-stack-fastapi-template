@@ -1,22 +1,47 @@
-import { Box, Heading, Input, Text } from "@chakra-ui/react"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Link as RouterLink,
   createFileRoute,
   redirect,
 } from "@tanstack/react-router"
-import { Lock, Mail } from "lucide-react"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { Loader2Icon, Lock, Mail } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
+import type { Body_login_login_access_token as AccessToken } from "@/client"
+import BackgroundPanel from "@/components/Auth/BackgroundPanel"
+import TeamInvitation from "@/components/Invitations/TeamInvitation"
 import { Button } from "@/components/ui/button"
-import { Field } from "@/components/ui/field"
-import { InputGroup } from "@/components/ui/input-group"
-import { emailPattern, passwordRules } from "@/utils"
-import type { Body_login_login_access_token as AccessToken } from "../client"
-import BackgroundPanel from "../components/Auth/BackgroundPanel"
-import CustomAuthContainer from "../components/Auth/CustomContainer"
-import TeamInvitation from "../components/Invitations/TeamInvitation"
-import { PasswordInput } from "../components/ui/password-input"
-import useAuth, { isLoggedIn } from "../hooks/useAuth"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import useAuth, { isLoggedIn } from "@/hooks/useAuth"
+
+const formSchema = z.object({
+  username: z
+    .string()
+    .nonempty("Email is required")
+    .email("Invalid email address"),
+  password: z
+    .string()
+    .nonempty("Password is required")
+    .min(8, "Password must be at least 8 characters"),
+}) satisfies z.ZodType<AccessToken>
+
+type FormData = z.infer<typeof formSchema>
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -35,11 +60,8 @@ function Login() {
   const redirectDecoded = redirectRaw ? decodeURIComponent(redirectRaw) : "/"
   const redirectUrl = redirectDecoded.startsWith("/") ? redirectDecoded : "/"
   const { loginMutation } = useAuth()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<AccessToken>({
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
@@ -48,11 +70,14 @@ function Login() {
     },
   })
 
-  const onSubmit: SubmitHandler<AccessToken> = async (data) => {
-    if (isSubmitting) return
+  async function onSubmit(values: AccessToken) {
+    if (loginMutation.isPending) return
 
     try {
-      await loginMutation.mutateAsync({ redirect: redirectUrl, formData: data })
+      await loginMutation.mutateAsync({
+        redirect: redirectUrl,
+        formData: values,
+      })
     } catch {
       // error is handled by useAuth hook
     }
@@ -61,51 +86,96 @@ function Login() {
   return (
     <>
       <BackgroundPanel>
-        <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
-          <Box>
-            <Heading>Welcome!</Heading>
-            <Text>Sign in to your account</Text>
-          </Box>
-          <Field
-            invalid={!!errors.username}
-            errorText={errors.username?.message}
-          >
-            <InputGroup w="100%" startElement={<Mail size={16} />}>
-              <Input
-                id="username"
-                {...register("username", {
-                  pattern: emailPattern,
-                })}
-                placeholder="Email"
-                type="email"
-                required
-                variant="outline"
-              />
-            </InputGroup>
-          </Field>
-          <PasswordInput
-            type="password"
-            startElement={<Lock size={16} />}
-            {...register("password", passwordRules())}
-            placeholder="Password"
-            errors={errors}
-          />
-          <RouterLink className="main-link" to="/recover-password">
-            Forgot Password?
-          </RouterLink>
-          <Button
-            variant="solid"
-            type="submit"
-            loading={loginMutation.isPending}
-            size="md"
-          >
-            Log In
-          </Button>
-          {/* <AuthOptions
-            description={"Don't have an account?"}
-            path={"/signup"}
-          /> */}
-        </CustomAuthContainer>
+        <Card>
+          <CardHeader>
+            <CardTitle>Welcome!</CardTitle>
+            <CardDescription>Sign in to your account</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          <Input
+                            data-testid="email-input"
+                            placeholder="user@example.com"
+                            className="pl-10"
+                            type="email"
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          <Input
+                            data-testid="password-input"
+                            type="password"
+                            placeholder="••••••••"
+                            className="pl-10"
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="text-right">
+                  <RouterLink
+                    to="/recover-password"
+                    className="text-primary text-sm text-muted-foreground hover:underline"
+                  >
+                    Forgot Password?
+                  </RouterLink>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loginMutation.isPending}
+                >
+                  {loginMutation.isPending ? (
+                    <>
+                      <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait
+                    </>
+                  ) : (
+                    "Log In"
+                  )}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+          <div className="text-center text-sm text-muted-foreground">
+            Don&apos;t have an account?{" "}
+            <RouterLink to="/signup" className="text-primary hover:underline">
+              Sign up
+            </RouterLink>
+          </div>
+        </Card>
       </BackgroundPanel>
       <TeamInvitation />
     </>

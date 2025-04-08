@@ -1,10 +1,11 @@
-import { Center, Flex, Separator, Text } from "@chakra-ui/react"
 import { Link as RouterLink } from "@tanstack/react-router"
 import { PackageOpen } from "lucide-react"
 import { Fragment } from "react"
 
 import type { DeploymentPublic } from "@/client"
 import { Status } from "@/components/Deployment/Status"
+import { Separator } from "@/components/ui/separator"
+import { cn } from "@/lib/utils"
 import EmptyState from "../Common/EmptyState"
 
 const Deployments = ({
@@ -17,37 +18,37 @@ const Deployments = ({
           {deployments.map((deployment: DeploymentPublic) => (
             <Fragment key={deployment.id}>
               <RouterLink to={`./deployments/${deployment.id}`}>
-                <Flex
-                  key={deployment.id}
-                  align="center"
-                  justify="space-between"
-                  mb={2}
-                  p={4}
-                  cursor="pointer"
+                <div
+                  className={cn(
+                    "flex items-center justify-between mb-2 cursor-pointer",
+                    "hover:bg-muted/50 transition-colors",
+                  )}
                 >
-                  <Flex justify="space-between" width="100%">
-                    <Flex direction="column">
-                      <Text className="main-link">{deployment.id}</Text>
+                  <div className="flex justify-between w-full">
+                    <div className="flex flex-col">
+                      <span className="text-primary hover:underline">
+                        {deployment.id}
+                      </span>
                       <Status deployment={deployment} />
-                    </Flex>
-                    <Text fontSize="xs" color="gray.500">
+                    </div>
+                    <span className="text-muted-foreground text-sm">
                       Created At:{" "}
                       {new Date(deployment.created_at).toLocaleString()}
-                    </Text>
-                  </Flex>
-                </Flex>
+                    </span>
+                  </div>
+                </div>
               </RouterLink>
-              <Separator />
+              <Separator className="my-2" />
             </Fragment>
           ))}
         </>
       ) : (
-        <Center w="full">
+        <div className="flex justify-center w-full">
           <EmptyState
             title="You don't have any deployments yet"
             icon={PackageOpen}
           />
-        </Center>
+        </div>
       )}
     </>
   )

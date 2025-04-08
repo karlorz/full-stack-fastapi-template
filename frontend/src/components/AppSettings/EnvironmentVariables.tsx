@@ -1,19 +1,29 @@
-import { AppsService } from "@/client"
-import useCustomToast from "@/hooks/useCustomToast"
-import { handleError } from "@/utils"
-import { Box, Flex, Grid, GridItem, IconButton, Input } from "@chakra-ui/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Eye, EyeOff, History, PackageOpen, Trash } from "lucide-react"
 import { Fragment, useEffect, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
-
-import { Button } from "@/components/ui/button"
-import { Field } from "@/components/ui/field"
-import { InputGroup } from "@/components/ui/input-group"
-import { Tooltip } from "@/components/ui/tooltip"
-import useToggle from "@/hooks/useToggle"
 import { z } from "zod"
+
+import { AppsService } from "@/client"
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import useCustomToast from "@/hooks/useCustomToast"
+import useToggle from "@/hooks/useToggle"
+import { cn } from "@/lib/utils"
+import { handleError } from "@/utils"
 import EmptyState from "../Common/EmptyState"
 
 const EnvironmentVariableFields = ({
@@ -21,8 +31,7 @@ const EnvironmentVariableFields = ({
   index,
   edited,
   deleted,
-  register,
-  error,
+  form,
   onDelete,
   disabled,
 }: {
@@ -30,95 +39,109 @@ const EnvironmentVariableFields = ({
   index: number
   edited: boolean
   deleted: boolean
-  register: any
-  error?: { name?: { message?: string }; value?: { message?: string } }
+  form: ReturnType<typeof useForm<Schema>>
   onDelete: () => void
   disabled: boolean
 }) => {
   const [show, toggleShow] = useToggle(false)
-  let [color, backgroundColor] = ["", ""]
-
-  if (deleted) {
-    color = "red.500"
-    backgroundColor = "red.100"
-  } else if (edited && !item.new) {
-    backgroundColor = "yellow.50"
-  }
 
   return (
-    <Box
-      key={item.id}
-      as="li"
-      display="contents"
-      data-testid="environment-variable"
-    >
-      <Field invalid={!!error?.name} errorText={error?.name?.message}>
-        <Input
-          {...register(`environmentVariables.${index}.name`)}
-          id={`${item.id}-name`}
-          textDecoration={deleted ? "line-through" : ""}
-          backgroundColor={backgroundColor}
-          color={color}
-          disabled={disabled}
-          autoComplete="off"
-          spellCheck="false"
-          placeholder="MY_COOL_ENV_VAR"
-          data-1p-ignore
-        />
-      </Field>
-      <Field invalid={!!error?.value} errorText={error?.value?.message}>
-        <InputGroup
-          w="100%"
-          endElement={
-            !disabled && (
-              <IconButton
-                size="xs"
+    <div key={item.id} className="contents" data-testid="environment-variable">
+      <FormField
+        control={form.control}
+        name={`environmentVariables.${index}.name`}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <Input
+                {...field}
+                id={`${item.id}-name`}
+                className={cn(
+                  deleted && "line-through text-destructive",
+                  edited && !item.new && "bg-yellow-50",
+                  "w-full",
+                )}
+                disabled={disabled}
+                autoComplete="off"
+                spellCheck="false"
+                placeholder="MY_COOL_ENV_VAR"
+                data-1p-ignore
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name={`environmentVariables.${index}.value`}
+        render={({ field }) => (
+          <FormItem className="flex flex-col min-h-[60px]">
+            <FormControl>
+              <div className="relative w-full">
+                <Input
+                  {...field}
+                  id={`${item.id}-value`}
+                  className={cn(
+                    deleted && "line-through text-destructive",
+                    edited && !item.new && "bg-yellow-50",
+                    "w-full pr-10",
+                  )}
+                  disabled={disabled}
+                  type={show ? "text" : "password"}
+                  autoComplete="off"
+                  spellCheck="false"
+                  placeholder="My secret value"
+                  data-1p-ignore
+                />
+                {!disabled && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    type="button"
+                    className="absolute right-2 top-1/2 -translate-y-1/2"
+                    onClick={() => toggleShow()}
+                  >
+                    {show ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <div className="flex min-h-[36px]">
+        {!disabled && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                aria-label={deleted ? "Restore" : "Mark for deletion"}
                 variant="ghost"
-                color="inherit"
-                onClick={() => toggleShow()}
-                aria-label={show ? "Hide password" : "Show password"}
-                _hover={{
-                  cursor: "pointer",
-                }}
+                size="icon"
+                type="button"
+                onClick={onDelete}
               >
-                {show ? <EyeOff size={16} /> : <Eye size={16} />}
-              </IconButton>
-            )
-          }
-        >
-          <Input
-            {...register(`environmentVariables.${index}.value`)}
-            id={`${item.id}-value`}
-            textDecoration={deleted ? "line-through" : ""}
-            backgroundColor={backgroundColor}
-            color={color}
-            disabled={disabled}
-            type={show ? "text" : "password"}
-            autoComplete="off"
-            spellCheck="false"
-            placeholder="My secret value"
-            data-1p-ignore
-          />
-        </InputGroup>
-      </Field>
-      <Flex gap={2} align="center">
-        {disabled ? null : (
-          <Tooltip content={deleted ? "Restore" : "Mark for deletion"}>
-            <IconButton
-              variant="ghost"
-              color="inherit"
-              aria-label={deleted ? "Restore" : "Mark for deletion"}
-              onClick={() => onDelete()}
-              _hover={{
-                cursor: "pointer",
-              }}
-            >
-              {deleted ? <History /> : <Trash />}
-            </IconButton>
+                {deleted ? (
+                  <History className="h-4 w-4" />
+                ) : (
+                  <Trash className="h-4 w-4" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {deleted ? "Restore" : "Mark for deletion"}
+            </TooltipContent>
           </Tooltip>
         )}
-      </Flex>
-    </Box>
+      </div>
+    </div>
   )
 }
 
@@ -184,23 +207,14 @@ const EnvironmentVariables = ({
 }) => {
   const queryClient = useQueryClient()
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    watch,
-    formState,
-    setValue,
-    getValues,
-  } = useForm<Schema>({
+  const form = useForm<Schema>({
     defaultValues: { environmentVariables },
     resolver: zodResolver(formSchema),
     mode: "onBlur",
   })
 
   const { fields, append, remove } = useFieldArray({
-    control,
+    control: form.control,
     name: "environmentVariables",
   })
 
@@ -208,7 +222,7 @@ const EnvironmentVariables = ({
 
   const initialEnvironmentVariablesCount = environmentVariables.length
   const hasEnvironmentVariables =
-    watch("environmentVariables").length > 0 ||
+    form.watch("environmentVariables").length > 0 ||
     initialEnvironmentVariablesCount > 0
 
   const shouldShowAddEnvironmentVariable =
@@ -218,23 +232,23 @@ const EnvironmentVariables = ({
   const { showErrorToast } = useCustomToast()
 
   useEffect(() => {
-    reset({ environmentVariables })
-  }, [environmentVariables, reset])
+    form.reset({ environmentVariables })
+  }, [environmentVariables, form.reset])
 
   const handleDelete = (index: number) => {
-    const item = getValues(`environmentVariables.${index}`)
+    const item = form.getValues(`environmentVariables.${index}`)
 
     if (!item.deleted) {
       // instead of marking new items as deleted, we just remove them
       if (item.new) {
         remove(index)
       } else {
-        setValue(`environmentVariables.${index}.deleted`, true, {
+        form.setValue(`environmentVariables.${index}.deleted`, true, {
           shouldDirty: true,
         })
       }
     } else {
-      setValue(`environmentVariables.${index}.deleted`, false, {
+      form.setValue(`environmentVariables.${index}.deleted`, false, {
         shouldDirty: true,
       })
     }
@@ -264,7 +278,7 @@ const EnvironmentVariables = ({
   })
 
   const onSubmit = (data: Schema) => {
-    const { dirtyFields } = formState
+    const { dirtyFields } = form.formState
 
     const dataToSend: { [name: string]: string | null } = {}
 
@@ -301,101 +315,97 @@ const EnvironmentVariables = ({
   }
 
   return (
-    <Grid
-      mt="4"
-      templateColumns="1fr 1fr 80px"
-      gap={4}
-      as="form"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      {hasEnvironmentVariables ? (
-        <>
-          <Box textTransform="capitalize">Name</Box>
-          <Box textTransform="capitalize">Value</Box>
-          <Box textTransform="capitalize" />
-        </>
-      ) : (
-        <GridItem colSpan={4} display="flex" justifyContent="center">
-          <EmptyState
-            title="You don't have any environment variables yet"
-            icon={PackageOpen}
-          />
-        </GridItem>
-      )}
-
-      <Box as="ul" display="contents" data-testid="environment-variables-list">
-        {fields.map((item, index) => (
-          <Fragment key={item.id}>
-            {index > 0 && index === initialEnvironmentVariablesCount ? (
-              <Box as="li" display="contents">
-                <GridItem colSpan={2} textAlign="center">
-                  New environment variables
-                </GridItem>
-                <Box />
-              </Box>
-            ) : null}
-            <EnvironmentVariableFields
-              index={index}
-              item={item}
-              edited={Object.values(
-                formState.dirtyFields.environmentVariables?.[index] ?? [],
-              ).some((x) => x)}
-              register={register}
-              error={formState.errors.environmentVariables?.[index]}
-              deleted={watch(`environmentVariables.${index}.deleted`) || false}
-              onDelete={() => handleDelete(index)}
-              disabled={!isEditing}
-            />
-          </Fragment>
-        ))}
-      </Box>
-
-      {shouldShowAddEnvironmentVariable ? (
-        <GridItem colSpan={3}>
-          <Button variant="outline" type="button" onClick={handleAddNew}>
-            Add Environment Variable
-          </Button>
-        </GridItem>
-      ) : null}
-
-      {shouldShowFooter ? (
-        <GridItem colSpan={3} display="flex" justifyContent="flex-end" gap={2}>
-          {isEditing ? (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4">
+        <div className="grid grid-cols-[1fr_1fr_80px] gap-4">
+          {hasEnvironmentVariables ? (
             <>
-              <Button
-                variant="subtle"
-                colorPalette="gray"
-                type="button"
-                onClick={() => {
-                  setIsEditing(false)
-                  reset()
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="solid"
-                type="submit"
-                disabled={isPending}
-                loading={isPending}
-              >
-                Save
-              </Button>
+              <div className="capitalize">Name</div>
+              <div className="capitalize">Value</div>
+              <div className="capitalize" />
             </>
           ) : (
-            <>
-              <Button
-                variant="outline"
-                type="button"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit
-              </Button>
-            </>
+            <div className="col-span-3 flex justify-center">
+              <EmptyState
+                title="You don't have any environment variables yet"
+                icon={PackageOpen}
+              />
+            </div>
           )}
-        </GridItem>
-      ) : null}
-    </Grid>
+
+          <div className="contents" data-testid="environment-variables-list">
+            {fields.map((item, index) => (
+              <Fragment key={item.id}>
+                {index > 0 && index === initialEnvironmentVariablesCount && (
+                  <div className="contents">
+                    <div className="col-span-2 text-center">
+                      New environment variables
+                    </div>
+                    <div />
+                  </div>
+                )}
+                <EnvironmentVariableFields
+                  index={index}
+                  item={item}
+                  edited={Object.values(
+                    form.formState.dirtyFields.environmentVariables?.[index] ??
+                      [],
+                  ).some((x) => x)}
+                  form={form}
+                  deleted={
+                    form.watch(`environmentVariables.${index}.deleted`) || false
+                  }
+                  onDelete={() => handleDelete(index)}
+                  disabled={!isEditing}
+                />
+              </Fragment>
+            ))}
+          </div>
+
+          {shouldShowAddEnvironmentVariable && (
+            <div className="col-span-3">
+              <Button variant="outline" type="button" onClick={handleAddNew}>
+                Add Environment Variable
+              </Button>
+            </div>
+          )}
+
+          {shouldShowFooter && (
+            <div className="col-span-3 flex justify-end gap-2">
+              {isEditing ? (
+                <>
+                  <Button
+                    variant="secondary"
+                    type="button"
+                    onClick={() => {
+                      setIsEditing(false)
+                      form.reset()
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isPending}
+                    className={isPending ? "opacity-50 cursor-not-allowed" : ""}
+                  >
+                    Save
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      </form>
+    </Form>
   )
 }
 

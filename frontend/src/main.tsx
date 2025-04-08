@@ -12,7 +12,9 @@ import { routeTree } from "./routeTree.gen"
 import * as Sentry from "@sentry/react"
 import { PostHogProvider } from "posthog-js/react"
 import { ApiError, OpenAPI } from "./client"
-import { CustomProvider } from "./components/ui/custom-provider"
+import "./index.css"
+import { Toaster } from "sonner"
+import { ThemeProvider } from "./components/theme-provider"
 
 const posthogOptions = {
   api_host: import.meta.env.VITE_APP_PUBLIC_POSTHOG_HOST,
@@ -39,8 +41,7 @@ const queryClient = new QueryClient({
   }),
 })
 
-const router = createRouter({ routeTree, context: { queryClient } })
-
+export const router = createRouter({ routeTree, context: { queryClient } })
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router
@@ -60,11 +61,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       apiKey={import.meta.env.VITE_APP_PUBLIC_POSTHOG_KEY as string}
       options={posthogOptions}
     >
-      <CustomProvider>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <RouterProvider router={router} />
-        </QueryClientProvider>
-      </CustomProvider>
+          <Toaster />
+        </ThemeProvider>
+      </QueryClientProvider>
     </PostHogProvider>
   </StrictMode>,
 )

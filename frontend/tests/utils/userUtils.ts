@@ -4,8 +4,8 @@ import { findLastEmail } from "./mailcatcher"
 export async function logInUser(page: Page, email: string, password: string) {
   await page.goto("/login")
 
-  await page.getByPlaceholder("Email").fill(email)
-  await page.getByPlaceholder("Password", { exact: true }).fill(password)
+  await page.getByTestId("email-input").fill(email)
+  await page.getByTestId("password-input").fill(password)
   await page.getByRole("button", { name: "Log In" }).click()
   await page.waitForURL("/")
 
@@ -16,7 +16,7 @@ export async function logInUser(page: Page, email: string, password: string) {
 
 export async function logOutUser(page: Page) {
   await page.getByTestId("user-menu").click()
-  await page.getByRole("menuitem", { name: "Log out" }).click()
+  await page.getByRole("menuitem", { name: "Log Out" }).click()
   await page.goto("/login")
 }
 
@@ -54,7 +54,7 @@ export async function viewInvitation(
 
 export async function createApp(page: Page, teamSlug: string, appName: string) {
   await page.goto(`/${teamSlug}/new-app`)
-  await page.getByPlaceholder("App Name").fill(appName)
+  await page.getByTestId("app-name-input").fill(appName)
   await page.getByRole("button", { name: "Create App" }).click()
   await expect(page.getByTestId("app-created-success")).toBeVisible()
 }

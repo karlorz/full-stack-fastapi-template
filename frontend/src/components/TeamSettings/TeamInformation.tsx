@@ -1,31 +1,47 @@
-import { Container, Flex, Input, Tabs, Text } from "@chakra-ui/react"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query"
+import { Suspense, useState } from "react"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
 
 import { type TeamUpdate, TeamsService } from "@/client"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useCurrentUser } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
-import {
-  fetchTeamBySlug,
-  getCurrentUserRole,
-  handleError,
-  nameRules,
-} from "@/utils"
-import { Suspense } from "react"
-import CustomCard from "../Common/CustomCard"
-import EditableField from "../Common/EditableField"
+import { fetchTeamBySlug, getCurrentUserRole, handleError } from "@/utils"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
 import PendingTeamInformation from "../PendingComponents/PendingTeamInformation"
 import Team from "../Teams/Team"
-import { Field } from "../ui/field"
 import DeleteTeam from "./DeleteTeam"
 import TransferTeam from "./TransferTeam"
 
-const TeamInformationContent = ({ team: teamSlug }: { team: string }) => {
+const formSchema = z.object({
+  name: z.string().nonempty("Name is required").max(50),
+})
+
+const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
+  const [isEditing, setIsEditing] = useState(false)
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const currentUser = useCurrentUser()
@@ -33,6 +49,14 @@ const TeamInformationContent = ({ team: teamSlug }: { team: string }) => {
     queryKey: ["team", teamSlug],
     queryFn: () => fetchTeamBySlug(teamSlug),
   })
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: team.name,
+    },
+  })
+
   const currentUserRole = getCurrentUserRole(team, currentUser)
   const isCurrentUserOwner = team.owner_id === currentUser?.id
   const adminUsers = team.user_links.filter(
@@ -52,81 +76,133 @@ const TeamInformationContent = ({ team: teamSlug }: { team: string }) => {
     },
   })
 
-  return (
-    <Container maxW="full" my={4} px={0} pt={10}>
-      <CustomCard title="Team Name" data-testid="team-name-card">
-        {currentUserRole === "admin" ? (
-          <EditableField
-            type="name"
-            value={team.name}
-            onSubmit={(newName) => mutation.mutate({ name: newName })}
-            rules={nameRules()}
-          />
-        ) : (
-          <Field w="50%">
-            <Input value={team.name} disabled />
-          </Field>
-        )}
-      </CustomCard>
-      {!team.is_personal_team && (
-        <>
-          <CustomCard title="Team Members" data-testid="team-members">
-            {currentUserRole === "admin" && <NewInvitation teamId={team.id} />}
-            <Tabs.Root
-              variant="subtle"
-              p={0}
-              height="30rem"
-              defaultValue="active"
-            >
-              <Tabs.List>
-                <Tabs.Trigger value="active">Active Members</Tabs.Trigger>
-                {currentUserRole === "admin" && (
-                  <Tabs.Trigger value="pending">
-                    Pending Invitations
-                  </Tabs.Trigger>
-                )}
-              </Tabs.List>
-              <Tabs.Content value="active" px={0}>
-                <Team team={teamSlug} />
-              </Tabs.Content>
-              {currentUserRole === "admin" && (
-                <Tabs.Content value="pending" px={0}>
-                  <Invitations teamId={team.id} />
-                </Tabs.Content>
-              )}
-            </Tabs.Root>
-          </CustomCard>
-          {isCurrentUserOwner && (
-            <Flex
-              direction={{ base: "column", md: "row" }}
-              gap={4}
-              justifyContent="space-between"
-            >
-              <CustomCard title="Transfer Ownership" width="100%">
-                <Text mb={4}>
-                  You are the <b>current team owner.</b> You can transfer
-                  ownership to a team admin by selecting their name from the
-                  list below.
-                </Text>
-                <TransferTeam adminUsers={adminUsers} team={teamSlug} />
-              </CustomCard>
-            </Flex>
-          )}
-          {currentUserRole === "admin" && (
-            <CustomCard>
-              <DeleteTeam teamId={team.id} team={teamSlug} />
-            </CustomCard>
-          )}
-        </>
-      )}
-    </Container>
-  )
-}
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    mutation.mutate({ name: values.name })
+    setIsEditing(false)
+  }
 
-const TeamInformation = ({ team }: { team: string }) => {
   return (
     <Suspense fallback={<PendingTeamInformation />}>
-      <TeamInformationContent team={team} />
+      <div className="pt-10">
+        <Card data-testid="team-name">
+          <CardHeader>
+            <CardTitle>Team Name</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {currentUserRole === "admin" ? (
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="w-1/2 space-y-4"
+                >
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="flex gap-2">
+                            <Input
+                              {...field}
+                              disabled={!isEditing}
+                              data-testid="team-name-input"
+                            />
+                            {!isEditing ? (
+                              <Button
+                                type="button"
+                                onClick={() => setIsEditing(true)}
+                              >
+                                Edit
+                              </Button>
+                            ) : (
+                              <div className="flex gap-2">
+                                <Button type="submit">Save</Button>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={() => {
+                                    setIsEditing(false)
+                                    form.reset({ name: team.name })
+                                  }}
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            ) : (
+              <Input value={team.name} disabled className="w-1/2" />
+            )}
+          </CardContent>
+        </Card>
+
+        {!team.is_personal_team && (
+          <>
+            <Card className="mt-4" data-testid="team-members">
+              <CardHeader>
+                <div className="flex justify-between">
+                  <CardTitle>Team Members</CardTitle>
+                  {currentUserRole === "admin" && (
+                    <NewInvitation teamId={team.id} />
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="active">
+                  <TabsList>
+                    <TabsTrigger value="active">Active Members</TabsTrigger>
+                    {currentUserRole === "admin" && (
+                      <TabsTrigger value="pending">
+                        Pending Invitations
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
+                  <TabsContent value="active">
+                    <Team team={team} />
+                  </TabsContent>
+                  {currentUserRole === "admin" && (
+                    <TabsContent value="pending">
+                      <Invitations team={team} />
+                    </TabsContent>
+                  )}
+                </Tabs>
+              </CardContent>
+            </Card>
+
+            {isCurrentUserOwner && (
+              <Card className="mt-4 gap-0">
+                <CardHeader>
+                  <CardTitle>Transfer Ownership</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>
+                    You are the{" "}
+                    <span className="font-bold">current team owner.</span> You
+                    can transfer ownership to a team admin by selecting their
+                    name from the list below.
+                  </CardDescription>
+                  <TransferTeam adminUsers={adminUsers} team={teamSlug} />
+                </CardContent>
+              </Card>
+            )}
+
+            {currentUserRole === "admin" && (
+              <Card className="mt-4">
+                <CardContent>
+                  <DeleteTeam team={team} />
+                </CardContent>
+              </Card>
+            )}
+          </>
+        )}
+      </div>
     </Suspense>
   )
 }

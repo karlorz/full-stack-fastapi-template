@@ -1,9 +1,16 @@
-import { Box, Container, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { Link as RouterLink } from "@tanstack/react-router"
+import { Loader2 } from "lucide-react"
 import { useEffect } from "react"
 
-import { UsersService } from "../../client"
+import { UsersService } from "@/client"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 const VerifyEmailUpdate = () => {
   const token = new URLSearchParams(window.location.search).get("token")
@@ -32,50 +39,54 @@ const VerifyEmailUpdate = () => {
   const loading = mutation.isPending || mutation.isIdle
 
   return (
-    <>
-      <Container
-        maxW={{ base: "xs", md: "md" }}
-        flexDir="column"
-        alignItems="stretch"
-        justifyContent="center"
-        centerContent
-        gap={4}
-      >
+    <div className="max-w-md mx-auto mt-8">
+      <Card>
         {loading && (
-          <Box>
-            <Text fontWeight="bolder" fontSize="2xl">
-              Verifying Email
-            </Text>
-            <Text>Verifying your email, please wait...</Text>
-          </Box>
+          <CardHeader>
+            <CardTitle>Verifying Email</CardTitle>
+            <CardDescription className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Verifying your email, please wait...
+            </CardDescription>
+          </CardHeader>
         )}
+
         {mutation.isSuccess && (
-          <Box data-testid="result">
-            <Text fontWeight="bolder" fontSize="2xl">
-              Success!
-            </Text>
-            <Text>Your email address has been updated successfully.</Text>
-            <RouterLink className="main-link" to="/">
-              Go to Your Dashboard
-            </RouterLink>
-          </Box>
+          <>
+            <CardHeader>
+              <CardTitle>Success!</CardTitle>
+            </CardHeader>
+            <CardContent data-testid="result">
+              <p className="mb-4">
+                Your email address has been updated successfully.
+              </p>
+              <RouterLink
+                to="/"
+                className="text-primary hover:underline font-medium"
+              >
+                Go to Your Dashboard
+              </RouterLink>
+            </CardContent>
+          </>
         )}
 
         {mutation.isError && (
-          <Box data-testid="error">
-            <Text fontWeight="bolder" fontSize="2xl">
-              Email Verification Failed
-            </Text>
-            <Text>
-              There was an error verifying your email. Please try again.
-            </Text>
-            <Text color="error.base">
-              Error detail: {(mutation.error as any).body?.detail}
-            </Text>
-          </Box>
+          <>
+            <CardHeader>
+              <CardTitle>Email Verification Failed</CardTitle>
+            </CardHeader>
+            <CardContent data-testid="error">
+              <p className="mb-4">
+                There was an error verifying your email. Please try again.
+              </p>
+              <p className="text-destructive">
+                Error detail: {(mutation.error as any).body?.detail}
+              </p>
+            </CardContent>
+          </>
         )}
-      </Container>
-    </>
+      </Card>
+    </div>
   )
 }
 

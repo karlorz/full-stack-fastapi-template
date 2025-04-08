@@ -1,28 +1,26 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { ArrowLeftRight } from "lucide-react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { FaExchangeAlt } from "react-icons/fa"
 import {
   type Role,
   type TeamUpdateMember,
   TeamsService,
   type UserPublic,
-} from "../../client"
-import useCustomToast from "../../hooks/useCustomToast"
-import { handleError } from "../../utils"
-import { Button } from "../ui/button"
+} from "@/client"
+import { Button } from "@/components/ui/button"
 import {
-  DialogActionTrigger,
-  DialogBody,
-  DialogCloseTrigger,
+  Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogRoot,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog"
-import { MenuItem } from "../ui/menu"
+} from "@/components/ui/dialog"
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import useCustomToast from "@/hooks/useCustomToast"
+import { handleError } from "@/utils"
 
 interface ChangeRoleProps {
   userRole?: string
@@ -60,61 +58,42 @@ const ChangeRole = ({ userRole, teamId, user }: ChangeRoleProps) => {
   }
 
   return (
-    <>
-      <DialogRoot
-        size={{ base: "xs", md: "md" }}
-        role="alertdialog"
-        placement="center"
-      >
-        <DialogTrigger asChild>
-          <MenuItem value="change-role" cursor="pointer">
-            <FaExchangeAlt fontSize="16px" />
-            Change Role
-          </MenuItem>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogCloseTrigger />
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <DialogHeader>
-              <DialogTitle>Change Role</DialogTitle>
-            </DialogHeader>
-            <DialogBody>
+    <Dialog>
+      <DialogTrigger asChild>
+        <DropdownMenuItem>
+          <ArrowLeftRight className="h-4 w-4 mr-2" />
+          Change Role
+        </DropdownMenuItem>
+      </DialogTrigger>
+      <DialogContent>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogHeader>
+            <DialogTitle>Change Role</DialogTitle>
+            <DialogDescription>
               {userRole === "member" ? (
                 <>
                   Are you sure you want to promote the user to{" "}
-                  <strong>Admin</strong>?
+                  <span className="font-bold">Admin</span>?
                 </>
               ) : (
                 <>
                   Are you sure you want to demote the user to{" "}
-                  <strong>Member</strong>?
+                  <span className="font-bold">Member</span>?
                 </>
               )}
-            </DialogBody>
-            <DialogFooter gap={3}>
-              <DialogActionTrigger asChild>
-                <Button
-                  variant="subtle"
-                  colorPalette="gray"
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </Button>
-              </DialogActionTrigger>
-              <DialogActionTrigger asChild>
-                <Button
-                  variant="solid"
-                  type="submit"
-                  loading={mutation.isPending}
-                >
-                  Confirm
-                </Button>
-              </DialogActionTrigger>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </DialogRoot>
-    </>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button type="button" variant="secondary" disabled={isSubmitting}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting || mutation.isPending}>
+              Confirm
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 

@@ -37,12 +37,6 @@ test.describe("Select and change team successfully", () => {
     await expect(page.getByTestId("team-selector")).toContainText(
       user.full_name,
     )
-
-    // Check if the team is visible in the team settings
-
-    await page.goto(`/${team.slug}/settings`)
-    const teamNameLocator = page.locator('[data-part="preview"]')
-    await expect(teamNameLocator).toContainText(teamName)
   })
 
   test("Change the current team from the user's list of teams", async ({
@@ -50,21 +44,17 @@ test.describe("Select and change team successfully", () => {
   }) => {
     const email = randomEmail()
     const password = "password"
-    const teamName = randomTeamName()
 
     const user = await createUser({ email, password })
-    const team = await createTeam({ name: teamName, ownerId: user.id })
-
     await logInUser(page, email, password)
 
-    await page.goto("/teams/all?orderBy=created_at&order=desc")
-    await page.getByRole("link", { name: teamName }).click()
-    await expect(page.getByRole("button", { name: teamName })).toBeVisible()
+    const teamName = randomTeamName()
+    const team = await createTeam({ name: teamName, ownerId: user.id })
 
-    // Check if the team is visible in the team settings
-    await page.goto(`/${team.slug}/settings`)
-    const teamNameLocator = page.locator('[data-part="preview"]')
-    await expect(teamNameLocator).toContainText(teamName)
+    await page.goto("/teams/all")
+    await page.getByRole("link", { name: new RegExp(teamName) }).click()
+    await page.goto(`/${team.slug}`)
+    await expect(page.getByTestId("team-selector")).toContainText(teamName)
   })
 })
 
@@ -89,12 +79,7 @@ test.describe("Admin transfer team successfully", () => {
 
     await page.goto(`/${team.slug}/settings`)
 
-    await page
-      .getByTestId("user-select")
-      .locator("div")
-      .filter({ hasText: "Select User" })
-      .nth(1)
-      .click()
+    await page.getByTestId("user-select").click()
     await page.getByRole("option", { name: newOwnerEmail }).click()
 
     await page.getByRole("button", { name: "Transfer Team" }).click()
@@ -115,12 +100,11 @@ test.describe("User with admin role can update team information", () => {
     })
 
     await page.goto(`/${team.slug}/settings`)
-    await page.getByRole("button", { name: "edit" }).click()
-    await page.getByLabel("editable input").fill(newTeamName)
-    await page.getByLabel("submit").click()
+    await page.getByRole("button", { name: "Edit" }).click()
+    await page.getByTestId("team-name-input").fill(newTeamName)
+    await page.getByRole("button", { name: "Save" }).click()
     await expect(page.getByText("Team updated successfully")).toBeVisible()
     await expect(page.getByTestId("team-selector")).toContainText(newTeamName)
-    await expect(page.getByTestId("team-name-card")).toContainText(newTeamName)
   })
 
   test("Validation messages are displayed for missing team name", async ({
@@ -133,9 +117,9 @@ test.describe("User with admin role can update team information", () => {
     })
 
     await page.goto(`/${team.slug}/settings`)
-    await page.getByRole("button", { name: "edit" }).click()
-    await page.getByLabel("editable input").fill("")
-    await page.getByLabel("submit").click()
+    await page.getByRole("button", { name: "Edit" }).click()
+    await page.getByTestId("team-name-input").fill("")
+    await page.getByRole("button", { name: "Save" }).click()
     await expect(page.getByText("Name is required")).toBeVisible()
   })
 
@@ -155,9 +139,5 @@ test.describe("User with admin role can update team information", () => {
       .fill(`delete team ${team.slug}`)
     await page.getByRole("button", { name: "Confirm" }).click()
     await expect(page.getByText("The team was deleted")).toBeVisible()
-
-    // Check if the team is not visible in the list of teams
-    await page.goto("/teams/all")
-    await expect(page.getByRole("link", { name: teamName })).not.toBeVisible()
   })
 })

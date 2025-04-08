@@ -1,4 +1,3 @@
-import type { RegisterOptions } from "react-hook-form"
 import {
   type ApiError,
   AppsService,
@@ -8,64 +7,6 @@ import {
   TeamsService,
   type UserPublic,
 } from "./client"
-
-export const emailPattern = {
-  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-  message: "Invalid email address",
-}
-
-export const nameRules = () => {
-  const rules: RegisterOptions = {
-    maxLength: {
-      value: 255,
-      message: "Name cannot be more than 255 characters",
-    },
-    minLength: {
-      value: 3,
-      message: "Name must be at least 3 characters",
-    },
-    required: "Name is required",
-  }
-
-  return rules
-}
-
-export const passwordRules = (isRequired = true) => {
-  const rules: RegisterOptions = {
-    minLength: {
-      value: 8,
-      message: "Password must be at least 8 characters",
-    },
-    maxLength: {
-      value: 255,
-      message: "Password cannot be more than 255 characters",
-    },
-  }
-
-  if (isRequired) {
-    rules.required = "Password is required"
-  }
-
-  return rules
-}
-
-export const confirmPasswordRules = (
-  getValues: () => { password?: string; new_password?: string },
-  isRequired = true,
-) => {
-  const rules: RegisterOptions = {
-    validate: (value: string) => {
-      const password = getValues().password || getValues().new_password
-      return value === password ? true : "Passwords do not match"
-    },
-  }
-
-  if (isRequired) {
-    rules.required = "Password confirmation is required"
-  }
-
-  return rules
-}
 
 export function getCurrentUserRole(
   team: TeamWithUserPublic,

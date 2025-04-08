@@ -1,6 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react"
 import { Link, useRouterState } from "@tanstack/react-router"
-import { AlertTriangle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
@@ -8,55 +6,31 @@ const NotFound = () => {
   const { location } = useRouterState()
 
   return (
-    <Box minHeight="100vh" position="relative">
-      <Flex
-        height="100vh"
-        align="center"
-        justify="center"
-        flexDir="column"
-        data-testid="not-found"
-        color="gray.700"
-        p={4}
-      >
-        <Flex
-          alignItems="center"
-          zIndex={1}
-          flexDir={{ base: "column", md: "row" }}
-          gap={4}
-        >
-          <AlertTriangle size={64} strokeWidth={1.5} />
-          <Flex flexDir="column" align={{ base: "center", md: "start" }} p={4}>
-            <Text
-              fontSize={{ base: "3xl", md: "4xl" }}
-              fontWeight="bold"
-              mb={2}
-            >
-              404!
-            </Text>
-            <Text
-              fontSize="md"
-              color="gray.600"
-              mb={4}
-              textAlign={{ base: "center", md: "left" }}
-            >
-              The page you are looking for at{" "}
-              <Text as="span" fontWeight="semibold">
-                {location.pathname}
-              </Text>{" "}
-              was not found.
-            </Text>
-            <Flex gap={4} flexDir={{ base: "column", md: "row" }}>
-              <Link to="/">
-                <Button variant="solid">Go to Home</Button>
-              </Link>
-              <Button variant="outline" onClick={() => window.history.back()}>
-                Go Back
-              </Button>
-            </Flex>
-          </Flex>
-        </Flex>
-      </Flex>
-    </Box>
+    <div
+      className="flex h-screen flex-col items-center justify-center p-4 text-muted-foreground"
+      data-testid="not-found"
+    >
+      <div className="z-10 flex items-center">
+        <div className="flex flex-col items-center justify-center p-4">
+          <h1 className="mb-4 text-[6rem] font-bold leading-none md:text-[8rem]">
+            404
+          </h1>
+          <h2 className="mb-2 text-2xl font-bold">Oops!</h2>
+        </div>
+      </div>
+      <p className="z-10 mb-4 text-center text-lg">
+        The page you are looking for at <span>{location.pathname}</span> was not
+        found.
+      </p>
+
+      <div className="z-10">
+        <Link to="/">
+          <Button variant="default" className="mt-4">
+            Go Back
+          </Button>
+        </Link>
+      </div>
+    </div>
   )
 }
 

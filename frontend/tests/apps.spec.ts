@@ -59,7 +59,7 @@ test.describe("User can manage apps succesfully", () => {
     await logInUser(page, email, password)
 
     await page.goto(`/${team.slug}/new-app`)
-    await page.getByPlaceholder("App Name").fill(appName)
+    await page.getByTestId("app-name-input").fill(appName)
     await page.getByRole("button", { name: "Create App" }).click()
     await expect(page.getByText("App created")).toBeVisible()
   })

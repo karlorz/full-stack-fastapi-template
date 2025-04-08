@@ -1,38 +1,55 @@
-import { Alert, Input, Text, VStack } from "@chakra-ui/react"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link as RouterLink } from "@tanstack/react-router"
+import { AlertTriangle } from "lucide-react"
 import { useForm } from "react-hook-form"
+import { z } from "zod"
 
-import { TeamsService, UsersService } from "../../client"
-import useAuth from "../../hooks/useAuth"
-import useCustomToast from "../../hooks/useCustomToast"
-import { handleError } from "../../utils"
-import { Button } from "../ui/button"
+import { TeamsService, UsersService } from "@/client"
+import { Alert, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 import {
-  DialogActionTrigger,
-  DialogBody,
-  DialogCloseTrigger,
+  Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogRoot,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog"
-import { Field } from "../ui/field"
+} from "@/components/ui/dialog"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import useAuth from "@/hooks/useAuth"
+import useCustomToast from "@/hooks/useCustomToast"
+import { handleError } from "@/utils"
 
-interface DeleteInput {
-  confirmation: string
-}
+const formSchema = z.object({
+  confirmation: z
+    .string()
+    .min(1, "Field is required")
+    .refine((value) => value === "delete my account", {
+      message: "Confirmation does not match",
+    }),
+})
+
+type FormData = z.infer<typeof formSchema>
 
 const DeleteConfirmation = () => {
   const queryClient = useQueryClient()
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting, errors },
-    watch,
-  } = useForm<DeleteInput>()
+
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    mode: "onBlur",
+    criteriaMode: "all",
+  })
+
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const { logout } = useAuth()
 
@@ -67,126 +84,116 @@ const DeleteConfirmation = () => {
     mutation.mutate()
   }
 
-  const confirmationValue = watch("confirmation")
+  const confirmationValue = form.watch("confirmation")
 
   return (
-    <DialogRoot
-      size={{ base: "xs", md: "md" }}
-      role="alertdialog"
-      placement="center"
-    >
+    <Dialog>
       <DialogTrigger asChild>
         <Button
-          variant="solid"
-          colorPalette="red"
-          display={{ base: "block", md: "inline-block" }}
-          mt={{ base: 4, md: 0 }}
-          alignSelf={{ base: "flex-start", md: "auto" }}
+          variant="destructive"
+          className="md:inline-block block md:mt-0 mt-4 self-start md:self-auto"
         >
           Delete Account
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogCloseTrigger />
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          data-testid="delete-confirmation-user"
-        >
-          <DialogHeader>
-            <DialogTitle>Delete Account</DialogTitle>
-          </DialogHeader>
-          {ownsTeams ? (
-            <>
-              <DialogBody>
-                <Alert.Root status="warning">
-                  <Alert.Indicator />
-                  <Alert.Content>
-                    <Alert.Title>
-                      Warning: This action cannot be undone.
-                    </Alert.Title>
-                  </Alert.Content>
-                </Alert.Root>
-                <Text my={4}>
-                  You must remove or transfer ownership of your teams before
-                  deleting your account. Please visit the{" "}
-                  <RouterLink className="main-link" to="/teams/all">
-                    teams page
-                  </RouterLink>{" "}
-                  to manage your teams.
-                </Text>
-              </DialogBody>
-
-              <DialogFooter>
-                <DialogActionTrigger asChild>
-                  <Button variant="solid">Ok</Button>
-                </DialogActionTrigger>
-              </DialogFooter>
-            </>
-          ) : (
-            <>
-              <DialogBody>
-                <VStack gap={4}>
-                  <Alert.Root status="warning">
-                    <Alert.Indicator />
-                    <Alert.Content>
-                      <Alert.Title>
-                        Warning: This action cannot be undone.
-                      </Alert.Title>
-                    </Alert.Content>
-                  </Alert.Root>
+      <DialogContent className="sm:max-w-md">
+        {ownsTeams ? (
+          <>
+            <DialogHeader>
+              <DialogTitle>Delete Account</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Warning: This action cannot be undone.</AlertTitle>
+              </Alert>
+              <DialogDescription>
+                You must remove or transfer ownership of your teams before
+                deleting your account. Please visit the{" "}
+                <RouterLink
+                  className="text-primary hover:underline"
+                  to="/teams/all"
+                >
+                  teams page
+                </RouterLink>{" "}
+                to manage your teams.
+              </DialogDescription>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => form.reset()}
+                >
+                  Ok
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </>
+        ) : (
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              data-testid="delete-confirmation-user"
+            >
+              <DialogHeader>
+                <DialogTitle>Delete Account</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>
+                    Warning: This action cannot be undone.
+                  </AlertTitle>
+                </Alert>
+                <DialogDescription>
                   {/* TODO: Update this text when the other features are completed*/}
-                  <Text w="100%">
-                    All your account data will be{" "}
-                    <strong>permanently deleted.</strong>
-                  </Text>
-                  <Text>
-                    Type <strong>delete my account</strong> below to confirm and
-                    click the confirm button.
-                  </Text>
-                  <Field
-                    invalid={!!errors.confirmation}
-                    errorText={errors.confirmation?.message}
-                  >
-                    <Input
-                      id="confirmation"
-                      placeholder={`Type "delete my account" to confirm`}
-                      {...register("confirmation", {
-                        required: "Field is required",
-                        validate: (value) =>
-                          value === "delete my account"
-                            ? true
-                            : "Confirmation does not match",
-                      })}
-                    />
-                  </Field>
-                </VStack>
-              </DialogBody>
-              <DialogFooter gap={3}>
-                <DialogActionTrigger asChild>
+                  All your account data will be{" "}
+                  <span className="font-bold">permanently deleted.</span> Type{" "}
+                  <span className="font-bold">delete my account</span> below to
+                  confirm and click the confirm button.
+                </DialogDescription>
+                <FormField
+                  control={form.control}
+                  name="confirmation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder='Type "delete my account" to confirm'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <DialogFooter className="gap-3">
+                <DialogClose asChild>
                   <Button
-                    variant="subtle"
-                    colorPalette="gray"
-                    disabled={isSubmitting}
+                    type="button"
+                    variant="secondary"
+                    disabled={mutation.isPending}
+                    onClick={() => form.reset()}
                   >
                     Cancel
                   </Button>
-                </DialogActionTrigger>
-                <DialogActionTrigger asChild>
-                  <Button
-                    variant="solid"
-                    colorPalette="red"
-                    type="submit"
-                    disabled={confirmationValue !== "delete my account"}
-                  >
-                    Confirm
-                  </Button>
-                </DialogActionTrigger>
+                </DialogClose>
+                <Button
+                  type="submit"
+                  variant="destructive"
+                  disabled={confirmationValue !== "delete my account"}
+                >
+                  Confirm
+                </Button>
               </DialogFooter>
-            </>
-          )}
-        </form>
+            </form>
+          </Form>
+        )}
       </DialogContent>
-    </DialogRoot>
+    </Dialog>
   )
 }
 

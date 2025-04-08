@@ -1,51 +1,64 @@
-import { Alert, Input, Text, VStack } from "@chakra-ui/react"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
+import { AlertTriangle } from "lucide-react"
 import { useForm } from "react-hook-form"
+import { z } from "zod"
 
-import { TeamsService } from "@/client"
-import useCustomToast from "@/hooks/useCustomToast"
-import { handleError } from "@/utils"
-import { Button } from "../ui/button"
+import { type TeamPublic, TeamsService } from "@/client"
+import { Alert, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 import {
-  DialogActionTrigger,
-  DialogBody,
-  DialogCloseTrigger,
+  Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog"
-import { DialogRoot } from "../ui/dialog"
-import { Field } from "../ui/field"
+} from "@/components/ui/dialog"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import useCustomToast from "@/hooks/useCustomToast"
+import { handleError } from "@/utils"
 
-interface DeleteProps {
-  teamId: string
-  team: string
-}
+const createFormSchema = (teamSlug: string) =>
+  z.object({
+    confirmation: z
+      .string()
+      .min(1, "Field is required")
+      .refine((value) => value === `delete team ${teamSlug}`, {
+        message: "Confirmation does not match",
+      }),
+  })
 
-interface DeleteInput {
-  confirmation: string
-}
+type FormData = z.infer<ReturnType<typeof createFormSchema>>
 
-const DeleteConfirmation = ({ teamId, team }: DeleteProps) => {
+const DeleteConfirmation = ({ team }: { team: TeamPublic }) => {
   const queryClient = useQueryClient()
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting, errors },
-    watch,
-  } = useForm<DeleteInput>({
+
+  const form = useForm<FormData>({
+    resolver: zodResolver(createFormSchema(team.slug)),
     mode: "onBlur",
     criteriaMode: "all",
+    defaultValues: {
+      confirmation: "",
+    },
   })
+
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const navigate = useNavigate()
 
   const mutation = useMutation({
     mutationFn: async () => {
-      await TeamsService.deleteTeam({ teamId: teamId })
+      await TeamsService.deleteTeam({ teamId: team.id })
     },
     onSuccess: () => {
       showSuccessToast("The team was deleted successfully")
@@ -62,96 +75,78 @@ const DeleteConfirmation = ({ teamId, team }: DeleteProps) => {
     mutation.mutate()
   }
 
-  const confirmationValue = watch("confirmation")
+  const confirmationValue = form.watch("confirmation")
 
   return (
-    <DialogRoot
-      size={{ base: "xs", md: "md" }}
-      role="alertdialog"
-      placement="center"
-    >
+    <Dialog>
       <DialogTrigger asChild>
         <Button
-          variant="solid"
-          colorPalette="red"
-          display={{ base: "block", md: "inline-block" }}
-          mt={{ base: 4, md: 0 }}
-          alignSelf={{ base: "flex-start", md: "auto" }}
+          variant="destructive"
+          className="md:inline-block block md:mt-0 mt-4 self-start md:self-auto"
         >
           Delete Team
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogCloseTrigger />
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          data-testid="delete-confirmation-team"
-        >
-          <DialogHeader>
-            <DialogTitle>Delete Team</DialogTitle>
-          </DialogHeader>
-          <DialogBody>
-            <VStack gap={4}>
-              <Alert.Root status="warning">
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Title>
-                    Warning: This action cannot be undone.
-                  </Alert.Title>
-                </Alert.Content>
-              </Alert.Root>
-              {/* TODO: Update this text when the other features are completed*/}
-              <Text w="100%">
-                This team will be <strong>permanently deleted.</strong>
-              </Text>
-              <Text>
-                Type <strong>delete team {team}</strong> below to confirm and
-                click the confirm button.
-              </Text>
-
-              <Field
-                invalid={!!errors.confirmation}
-                errorText={errors.confirmation?.message}
-              >
-                <Input
-                  id="confirmation"
-                  placeholder={`Type "delete team ${team}" to confirm`}
-                  {...register("confirmation", {
-                    required: "Field is required",
-                    validate: (value) =>
-                      value === `delete team ${team}`
-                        ? true
-                        : "Confirmation does not match",
-                  })}
-                  type="text"
-                />
-              </Field>
-            </VStack>
-          </DialogBody>
-          <DialogFooter gap={3}>
-            <DialogActionTrigger asChild>
+      <DialogContent className="sm:max-w-md">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            data-testid="delete-confirmation-team"
+          >
+            <DialogHeader>
+              <DialogTitle>Delete Team</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Warning: This action cannot be undone.</AlertTitle>
+              </Alert>
+              <DialogDescription>
+                {/* TODO: Update this text when the other features are completed*/}
+                This team will be{" "}
+                <span className="font-bold">permanently deleted.</span> Type{" "}
+                <span className="font-bold">delete team {team.slug}</span> below
+                to confirm and click the confirm button.
+              </DialogDescription>
+              <FormField
+                control={form.control}
+                name="confirmation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        placeholder={`Type "delete team ${team.slug}" to confirm`}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <DialogFooter className="gap-3">
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={mutation.isPending}
+                  onClick={() => form.reset()}
+                >
+                  Cancel
+                </Button>
+              </DialogClose>
               <Button
-                variant="subtle"
-                colorPalette="gray"
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-            </DialogActionTrigger>
-            <DialogActionTrigger asChild>
-              <Button
-                variant="solid"
-                colorPalette="red"
                 type="submit"
-                disabled={confirmationValue !== `delete team ${team}`}
+                variant="destructive"
+                disabled={confirmationValue !== `delete team ${team.slug}`}
               >
                 Confirm
               </Button>
-            </DialogActionTrigger>
-          </DialogFooter>
-        </form>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
-    </DialogRoot>
+    </Dialog>
   )
 }
 

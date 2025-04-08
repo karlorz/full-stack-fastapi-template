@@ -1,5 +1,6 @@
 import { Navigate, createFileRoute } from "@tanstack/react-router"
-import { isLoggedIn } from "../hooks/useAuth"
+
+import { isLoggedIn } from "@/hooks/useAuth"
 
 export const Route = createFileRoute("/team-invitation")({
   component: () => {

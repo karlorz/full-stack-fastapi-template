@@ -40,9 +40,8 @@ test.describe("App environment variables", () => {
     await page.goto(`/${team.slug}/apps/${app.slug}`)
 
     await expect(
-      page.getByRole("heading", { name: "Environment Variables", exact: true }),
+      page.getByText("Environment Variables", { exact: true }),
     ).toBeVisible()
-
     await expect(
       page.getByText("You don't have any environment variables yet"),
     ).toBeVisible()

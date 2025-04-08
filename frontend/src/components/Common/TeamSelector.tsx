@@ -1,22 +1,17 @@
-import {
-  Box,
-  Button,
-  Flex,
-  MenuItemGroup,
-  MenuSeparator,
-  Text,
-} from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
+import { ChevronDown, type LucideIcon, Plus, Users } from "lucide-react"
 
 import type { TeamsPublic } from "@/client"
+import { Button } from "@/components/ui/button"
 import {
-  MenuContent,
-  MenuItem,
-  MenuRoot,
-  MenuTrigger,
-} from "@/components/ui/menu"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { getInitials } from "@/utils"
-import { ChevronDown, type LucideIcon, Plus, Users } from "lucide-react"
 import TeamIcon from "./TeamIcon"
 
 interface MenuItemLinkProps {
@@ -35,28 +30,19 @@ const MenuItemLink = ({
   label,
   onClick,
   initials,
-  bg,
   slug,
 }: MenuItemLinkProps) => {
   return (
-    <Link to={to}>
-      <MenuItem
-        closeOnSelect
-        value={slug || ""}
-        gap={2}
-        px={4}
-        onClick={onClick}
-      >
-        <TeamIcon bg={bg} icon={icon} initials={initials || ""} />
-        <Box maxW="120px" truncate>
-          {label}
-          {slug && (
-            <Text fontSize="2xs" color="gray.600">
-              /{slug}
-            </Text>
-          )}
-        </Box>
-      </MenuItem>
+    <Link to={to} className="block">
+      <DropdownMenuItem onClick={onClick}>
+        <div className="flex items-center gap-2">
+          <TeamIcon icon={icon} initials={initials || ""} />
+          <div className="max-w-[120px] truncate">
+            <span>{label}</span>
+            {slug && <p className="text-xs text-muted-foreground">/{slug}</p>}
+          </div>
+        </div>
+      </DropdownMenuItem>
     </Link>
   )
 }
@@ -64,7 +50,10 @@ const MenuItemLink = ({
 const TeamSelector = ({
   teams,
   currentTeamSlug,
-}: { teams: TeamsPublic; currentTeamSlug: string }) => {
+}: {
+  teams: TeamsPublic
+  currentTeamSlug: string
+}) => {
   const personalTeam = teams?.data.find((t) => t.is_personal_team)
   const selectedTeam = teams?.data.find((t) => t.slug === currentTeamSlug)
   const otherTeams = teams?.data.filter(
@@ -72,39 +61,40 @@ const TeamSelector = ({
   )
 
   return (
-    <Flex py={6} justify="center">
-      <MenuRoot>
-        <MenuTrigger asChild>
-          <Button py={6} bg="transparent" data-testid="team-selector">
-            <TeamIcon
-              bg={selectedTeam?.is_personal_team ? "gradient" : "main.dark"}
-              icon={selectedTeam?.is_personal_team ? undefined : Users}
-              initials={
-                selectedTeam?.is_personal_team
-                  ? getInitials(selectedTeam.name)
-                  : undefined
-              }
-            />
-            <Box mx={2} textAlign="left">
-              <Text width="120px" truncate color="fg.muted">
-                {selectedTeam?.name}
-              </Text>
-              {selectedTeam === personalTeam && (
-                <Text fontSize="sm" color="gray.500">
-                  Personal Team
-                </Text>
-              )}
-            </Box>
-            <ChevronDown color="black" />
+    <div className="flex justify-center py-6">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="py-6 w-full"
+            data-testid="team-selector"
+          >
+            <div className="flex items-center w-full">
+              <TeamIcon
+                icon={selectedTeam?.is_personal_team ? undefined : Users}
+                initials={
+                  selectedTeam?.is_personal_team
+                    ? getInitials(selectedTeam.name)
+                    : undefined
+                }
+              />
+              <div className="mx-2 text-left">
+                <p className="w-[120px] truncate text-muted-foreground">
+                  {selectedTeam?.name}
+                </p>
+                {selectedTeam === personalTeam && (
+                  <p className="text-sm text-muted-foreground">Personal Team</p>
+                )}
+              </div>
+              <ChevronDown className="text-foreground" />
+            </div>
           </Button>
-        </MenuTrigger>
-        <MenuContent p={4} w="100%" portalled={false}>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-[280px]">
           {selectedTeam !== personalTeam && (
             <>
-              <MenuItemGroup title="Personal Team">
-                <Text fontWeight="bold" mx={4} my={2} fontSize="xs">
-                  Personal Team
-                </Text>
+              <DropdownMenuGroup>
+                <p className="px-4 py-2 text-xs font-bold">Personal Team</p>
                 <MenuItemLink
                   to={`/${personalTeam?.slug}/`}
                   label={personalTeam?.name}
@@ -114,31 +104,23 @@ const TeamSelector = ({
                   bg="gradient"
                   slug={personalTeam?.slug}
                 />
-              </MenuItemGroup>
-              <MenuSeparator />
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
             </>
           )}
           {otherTeams?.length > 0 && (
             <>
-              <MenuItemGroup title="Teams">
-                <Flex justifyContent="space-between">
-                  <Text fontWeight="bold" mx={4} my={2} fontSize="xs">
-                    Teams
-                  </Text>
+              <DropdownMenuGroup>
+                <div className="flex justify-between px-4 py-2">
+                  <p className="text-xs font-bold">Teams</p>
                   {otherTeams?.length > 3 && (
-                    <Box textAlign="end" my={2}>
-                      <Link to="/teams/all">
-                        <Button
-                          variant="ghost"
-                          color="main.dark"
-                          textDecoration="underline"
-                        >
-                          View all teams
-                        </Button>
-                      </Link>
-                    </Box>
+                    <Link to="/teams/all">
+                      <Button variant="ghost" size="sm" className="underline">
+                        View all teams
+                      </Button>
+                    </Link>
                   )}
-                </Flex>
+                </div>
                 {otherTeams?.slice(0, 3).map((team) => (
                   <MenuItemLink
                     key={team.id}
@@ -149,8 +131,8 @@ const TeamSelector = ({
                     slug={team.slug}
                   />
                 ))}
-              </MenuItemGroup>
-              <MenuSeparator m={1} />
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
             </>
           )}
           <MenuItemLink
@@ -159,9 +141,9 @@ const TeamSelector = ({
             label="Add new team"
             bg="main.light"
           />
-        </MenuContent>
-      </MenuRoot>
-    </Flex>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   )
 }
 

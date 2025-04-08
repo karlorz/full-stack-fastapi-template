@@ -23,7 +23,7 @@
         "noNonNullAssertion": "off"
       }
     },
-    "ignore": ["src/client"]
+    "ignore": ["src/client", "src/components/ui"]
   },
   "formatter": {
     "indentStyle": "space"

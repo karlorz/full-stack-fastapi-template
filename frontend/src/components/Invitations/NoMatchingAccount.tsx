@@ -1,20 +1,17 @@
-import { Box, Text } from "@chakra-ui/react"
+import { useNavigate } from "@tanstack/react-router"
+import { useState } from "react"
 
 import type { InvitationPublic, UserPublic } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
-  DialogActionTrigger,
-  DialogBody,
-  DialogCloseTrigger,
+  Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogRoot,
   DialogTitle,
 } from "@/components/ui/dialog"
 import useAuth from "@/hooks/useAuth"
-import { useNavigate } from "@tanstack/react-router"
-import { useState } from "react"
 
 interface NoMatchingAccountProps {
   invitation: InvitationPublic | undefined
@@ -41,45 +38,37 @@ const NoMatchingAccount = ({
   }
 
   return (
-    <DialogRoot
-      size={{ base: "xs", md: "md" }}
-      open={isOpen}
-      onOpenChange={(e) => setIsOpen(e.open)}
-      placement="center"
-    >
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
-        <DialogCloseTrigger />
         <DialogHeader>
           <DialogTitle>Oops!</DialogTitle>
         </DialogHeader>
-        <DialogBody data-testid="no-matching-account">
-          <Text>You are not the invited user for this invitation.</Text>
-          <Box my={6} boxShadow="xs" px={8} py={4} borderRadius="lg">
-            <Text>
-              Logged in as: <strong>{currentUser?.email}</strong>
-            </Text>
-            <Text>
-              Invited user: <strong>{invitation?.email}</strong>
-            </Text>
-          </Box>
-          <Text>
+        <div className="space-y-4" data-testid="no-matching-account">
+          <DialogDescription>
+            You are not the invited user for this invitation.
+          </DialogDescription>
+          <div className="my-6 rounded-lg border p-4 shadow-sm">
+            <p>
+              Logged in as:{" "}
+              <span className="font-bold">{currentUser?.email}</span>
+            </p>
+            <p>
+              Invited user:{" "}
+              <span className="font-bold">{invitation?.email}</span>
+            </p>
+          </div>
+          <DialogDescription>
             Please switch to the correct account to accept the invitation.
-          </Text>
-        </DialogBody>
-        <DialogFooter gap={3}>
-          <DialogActionTrigger>
-            <Button variant="subtle" colorPalette="gray" onClick={handleClose}>
-              Cancel
-            </Button>
-          </DialogActionTrigger>
-          <DialogActionTrigger>
-            <Button variant="solid" onClick={handleSwitchAccount}>
-              Switch Account
-            </Button>
-          </DialogActionTrigger>
+          </DialogDescription>
+        </div>
+        <DialogFooter className="gap-3">
+          <Button variant="outline" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button onClick={handleSwitchAccount}>Switch Account</Button>
         </DialogFooter>
       </DialogContent>
-    </DialogRoot>
+    </Dialog>
   )
 }
 

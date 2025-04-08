@@ -1,4 +1,3 @@
-import { Flex, Text } from "@chakra-ui/react"
 import Lottie, { type LottieOptions } from "lottie-react"
 
 import building from "@/assets/building.json"
@@ -26,17 +25,17 @@ export function Status({
   deployment: { status },
 }: { deployment: { status: DeploymentStatus } }) {
   const config = STATUS_CONFIG[status]
-  if (!config) return <Text fontSize="xs">{status}</Text>
+  if (!config) return <span className="text-sm">{status}</span>
 
   return (
-    <Flex alignItems="center" gap={1}>
+    <div className="flex items-center gap-1">
       <Lottie
         animationData={config.animation}
         loop={config.loop}
         autoplay
         style={{ width: 20, height: 20 }}
       />
-      <Text fontSize="xs">{config.text}</Text>
-    </Flex>
+      <span className="text-sm">{config.text}</span>
+    </div>
   )
 }

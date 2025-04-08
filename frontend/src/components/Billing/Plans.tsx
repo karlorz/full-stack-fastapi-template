@@ -1,66 +1,57 @@
-import { Box, Button, Flex, Icon, List, Text, VStack } from "@chakra-ui/react"
+import { Check, X } from "lucide-react"
 import React from "react"
-import { FaCheckCircle } from "react-icons/fa"
-import { FaCircleXmark } from "react-icons/fa6"
 
+import { Button } from "../../components/ui/button"
+import { Card } from "../../components/ui/card"
+import { cn } from "../../lib/utils"
 import { items } from "./PlansData"
 
 const Plans = () => {
   const listItems = items.map(
     ({ value, title, description, price, features }) => (
-      <Box
-        p={8}
-        borderRadius="md"
+      <Card
         key={value}
-        _hover={{ boxShadow: "sm", transform: "scale(1.05)" }}
-        transition="all 0.3s ease-in-out"
-        mb={8}
-        flex="1"
+        className={cn(
+          "p-8 flex-1 mb-8",
+          "transition-all duration-300 ease-in-out",
+          "hover:shadow-sm hover:scale-105",
+        )}
       >
-        <VStack gap={6}>
-          <Box p={4} w="full" textAlign="center">
-            <Text textTransform="uppercase" fontWeight="bold">
-              {title}
-            </Text>
-          </Box>
-          <Text fontSize="md">{description}</Text>
-          <Flex textAlign="center" flexDir="column">
-            <Text fontSize="4xl" fontWeight="bold">
-              $ {price}
-            </Text>
-            <Text fontSize="sm">per month</Text>
-          </Flex>
-          <List.Root>
+        <div className="flex flex-col gap-6">
+          <div className="p-4 w-full text-center">
+            <p className="uppercase font-bold">{title}</p>
+          </div>
+          <p className="text-md">{description}</p>
+          <div className="text-center flex flex-col">
+            <p className="text-4xl font-bold">$ {price}</p>
+            <p className="text-sm">per month</p>
+          </div>
+          <ul className="space-y-2">
             {Object.values(features).map((feature, index) => (
-              <List.Item key={index}>
+              <li key={index} className="flex items-center gap-2">
                 {feature.value ? (
-                  <FaCheckCircle color="main.dark" />
+                  <Check className="text-primary h-4 w-4" />
                 ) : (
-                  <FaCircleXmark />
+                  <X className="h-4 w-4 text-muted-foreground" />
                 )}
-                <Text
-                  fontSize="sm"
-                  textDecoration={feature.value ? "none" : "line-through"}
-                  ml={2}
+                <span
+                  className={cn(
+                    "text-sm",
+                    !feature.value && "line-through text-muted-foreground",
+                  )}
                 >
                   {feature.name}
-                </Text>
-              </List.Item>
+                </span>
+              </li>
             ))}
-          </List.Root>
-          <Button variant="solid" mt={6}>
-            Choose Plan
-          </Button>
-        </VStack>
-      </Box>
+          </ul>
+          <Button className="mt-6">Choose Plan</Button>
+        </div>
+      </Card>
     ),
   )
 
-  return (
-    <Flex direction={{ base: "column", md: "row" }} gap={10}>
-      {listItems}
-    </Flex>
-  )
+  return <div className="flex flex-col md:flex-row gap-10">{listItems}</div>
 }
 
 export default Plans

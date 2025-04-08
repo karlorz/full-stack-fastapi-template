@@ -1,12 +1,10 @@
-import { Box, Button, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "@tanstack/react-router"
-import Lottie from "lottie-react"
 import { useEffect } from "react"
 
-import warning from "@/assets/failed.json"
 import { UsersService } from "@/client"
-import CustomAuthContainer from "./CustomContainer"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "../ui/button"
 
 const EmailVerification = () => {
   const router = useRouter()
@@ -38,51 +36,53 @@ const EmailVerification = () => {
 
   return (
     <>
-      <CustomAuthContainer>
-        {loading && (
-          <Box>
-            <Text fontWeight="bolder" fontSize="2xl">
-              Verifying Email
-            </Text>
-            <Text>Verifying your email, please wait...</Text>
-          </Box>
-        )}
-        {mutation.isSuccess && (
-          <Box data-testid="result">
-            <Text fontWeight="bolder" fontSize="md">
-              Successful Email Verification
-            </Text>
-            <Text>
-              Your email has been verified. You can now login to your account.
-            </Text>
-            <Button variant="solid" mt={4} onClick={handleOkClick}>
-              Ok
-            </Button>
-          </Box>
-        )}
+      {loading && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Verifying Email</CardTitle>
+          </CardHeader>
+          <CardContent>Verifying your email, please wait...</CardContent>
+        </Card>
+      )}
 
-        {mutation.isError && (
-          <Box data-testid="error">
-            <Lottie
-              animationData={warning}
-              loop={false}
-              style={{ width: 75, height: 75 }}
-            />
-            <Text fontWeight="bolder" fontSize="md" mt={4}>
-              Email Verification Failed
-            </Text>
-            <Text>
-              There was an error verifying your email. Please try again.
-            </Text>
-            <Text color="error.base">
-              Error detail: {(mutation.error as any).body?.detail}
-            </Text>
-            <Button variant="solid" mt={4} onClick={handleOkClick}>
-              Ok
+      {mutation.isSuccess && (
+        <Card data-testid="result">
+          <CardHeader>
+            <CardTitle>Successful Email Verification</CardTitle>
+          </CardHeader>
+          <CardContent>
+            Your email has been verified. You can now login to your account.
+            <Button
+              variant="default"
+              className="w-full mt-4"
+              onClick={handleOkClick}
+            >
+              Continue to Login
             </Button>
-          </Box>
-        )}
-      </CustomAuthContainer>
+          </CardContent>
+        </Card>
+      )}
+
+      {mutation.isError && (
+        <Card data-testid="error">
+          <CardHeader>
+            <CardTitle>Email Verification Failed</CardTitle>
+          </CardHeader>
+          <CardContent>
+            There was an error verifying your email. Please try again.
+            <p className="text-sm text-destructive">
+              Error detail: {(mutation.error as any).body?.detail}
+            </p>
+            <Button
+              variant="default"
+              className="w-full mt-4"
+              onClick={handleOkClick}
+            >
+              Back to Home
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </>
   )
 }

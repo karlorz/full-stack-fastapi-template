@@ -1,68 +1,14 @@
-import {
-  Badge,
-  Box,
-  Container,
-  Flex,
-  Heading,
-  Separator,
-  Text,
-} from "@chakra-ui/react"
-import {
-  Link as RouterLink,
-  createFileRoute,
-  useNavigate,
-} from "@tanstack/react-router"
-import { Fragment } from "react"
-import { z } from "zod"
+import { createFileRoute } from "@tanstack/react-router"
 
 import { type TeamPublic, TeamsService, UsersService } from "@/client"
-import CustomCard from "@/components/Common/CustomCard"
+import { DataTable } from "@/components/Common/DataTable"
 import PendingTeams from "@/components/PendingComponents/PendingTeams"
-import {
-  PaginationItems,
-  PaginationNextTrigger,
-  PaginationPrevTrigger,
-  PaginationRoot,
-} from "@/components/ui/pagination"
+import { ALL_TEAMS_COLUMNS } from "@/components/Teams/columns"
 import { isLoggedIn } from "@/hooks/useAuth"
-
-const PER_PAGE = 5
-
-function getTeamsQueryOptions({
-  page,
-  orderBy = "created_at",
-  order,
-}: {
-  page: number
-  orderBy?: "created_at"
-  order?: "asc" | "desc"
-}) {
-  return {
-    queryFn: () =>
-      TeamsService.readTeams({
-        skip: (page - 1) * PER_PAGE,
-        limit: PER_PAGE,
-        orderBy,
-        order,
-      }),
-    queryKey: ["teams", { page, orderBy, order }],
-  }
-}
-const teamsSearchSchema = z.object({
-  page: z.number().catch(1).optional(),
-  orderBy: z.enum(["created_at"]).optional(),
-  order: z.enum(["asc", "desc"]).optional(),
-})
 
 export const Route = createFileRoute("/_layout/teams/all")({
   component: AllTeams,
-  validateSearch: (search) => teamsSearchSchema.parse(search),
-  loaderDeps: ({ search: { page, orderBy, order } }) => ({
-    page,
-    orderBy,
-    order,
-  }),
-  loader: async ({ context, deps }) => {
+  loader: async ({ context }) => {
     const userPromise = isLoggedIn()
       ? context.queryClient.ensureQueryData({
           queryKey: ["currentUser"],
@@ -70,13 +16,10 @@ export const Route = createFileRoute("/_layout/teams/all")({
         })
       : new Promise<null>((resolve) => resolve(null))
 
-    const teamsPromise = context.queryClient.fetchQuery(
-      getTeamsQueryOptions({
-        page: deps.page || 1,
-        orderBy: deps.orderBy,
-        order: deps.order,
-      }),
-    )
+    const teamsPromise = context.queryClient.ensureQueryData({
+      queryKey: ["teams"],
+      queryFn: () => TeamsService.readTeams(),
+    })
 
     const [currentUser, teams] = await Promise.all([userPromise, teamsPromise])
 
@@ -86,70 +29,26 @@ export const Route = createFileRoute("/_layout/teams/all")({
 })
 
 function AllTeams() {
-  const navigate = useNavigate({ from: Route.fullPath })
-  const setPage = (page: number) =>
-    navigate({
-      search: (prev: { [key: string]: string }) => ({ ...prev, page }),
-    })
+  const { teams, currentUser } = Route.useLoaderData()
 
-  const {
-    teams: { data, count },
-    currentUser,
-  } = Route.useLoaderData()
-
-  const teams: TeamPublic[] = data.slice(0, PER_PAGE)
-
+  const teamsData = teams.data.map((team: TeamPublic) => ({
+    ...team,
+    isOwner: team.owner_id === currentUser?.id,
+    isPersonalTeam: team.is_personal_team,
+  }))
   return (
-    <Container maxW="full" p={0}>
-      <Box mb={10}>
-        <Heading size="xl" pb={2}>
-          Teams
-        </Heading>
-        <Text>View all your teams</Text>
-      </Box>
+    <div className="container p-0">
+      <div className="mb-10">
+        <h1 className="text-2xl font-extrabold tracking-tight">Teams</h1>
+        <p className="text-sm text-muted-foreground">View all your teams.</p>
+      </div>
 
-      <CustomCard>
-        <Flex direction="column" data-testid="teams">
-          {teams.map((team) => (
-            <Fragment key={team.id}>
-              <RouterLink to={`/${team.slug}/`}>
-                <Flex
-                  key={team.id}
-                  align="center"
-                  mb={2}
-                  py={4}
-                  cursor="pointer"
-                >
-                  <Text>{team.name}</Text>
-                  {team.is_personal_team ? (
-                    <Badge ml={2}>Personal</Badge>
-                  ) : team.owner_id === currentUser?.id ? (
-                    <Badge ml={2} colorScheme="purple">
-                      Owner
-                    </Badge>
-                  ) : (
-                    <Badge ml={2}>Member</Badge>
-                  )}
-                </Flex>
-              </RouterLink>
-              <Separator />
-            </Fragment>
-          ))}
-        </Flex>
-        <Flex justifyContent="flex-end" mt={4}>
-          <PaginationRoot
-            count={count}
-            pageSize={PER_PAGE}
-            onPageChange={({ page }) => setPage(page)}
-          >
-            <Flex>
-              <PaginationPrevTrigger />
-              <PaginationItems />
-              <PaginationNextTrigger />
-            </Flex>
-          </PaginationRoot>
-        </Flex>
-      </CustomCard>
-    </Container>
+      <DataTable
+        dataTestId="teams-table"
+        columns={ALL_TEAMS_COLUMNS}
+        data={teamsData}
+        getRowLink={(team) => `/${team.slug}/`}
+      />
+    </div>
   )
 }

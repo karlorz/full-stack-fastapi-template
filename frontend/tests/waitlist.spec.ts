@@ -2,10 +2,6 @@ import { type Page, expect, test } from "@playwright/test"
 
 test.use({ storageState: { cookies: [], origins: [] } })
 
-type OptionsType = {
-  exact?: boolean
-}
-
 const fillForm = async (
   page: Page,
   data: {
@@ -18,31 +14,25 @@ const fillForm = async (
     use_case?: string
   },
 ) => {
-  if (data.email) await page.getByPlaceholder("Email").fill(data.email)
-  if (data.name) await page.getByPlaceholder("Full Name").fill(data.name)
+  if (data.email) await page.getByTestId("email-input").fill(data.email)
+  if (data.name) await page.getByTestId("full-name-input").fill(data.name)
   if (data.organization)
-    await page.getByPlaceholder("Organization").fill(data.organization)
+    await page.getByTestId("organization-input").fill(data.organization)
   if (data.team_size) {
     await page.getByTestId("team-size-select").click()
     await page.getByRole("option", { name: data.team_size }).click()
   }
-  if (data.role) await page.getByPlaceholder("Your Role").fill(data.role)
+  if (data.role) await page.getByTestId("role-input").fill(data.role)
   if (data.country) {
     await page.getByTestId("country-select").click()
     await page.getByRole("option", { name: data.country }).click()
   }
   if (data.use_case)
-    await page
-      .getByPlaceholder("How do you plan to use FastAPI Cloud? (Optional)")
-      .fill(data.use_case)
+    await page.getByTestId("use-case-input").fill(data.use_case)
 }
 
-const verifyInput = async (
-  page: Page,
-  placeholder: string,
-  options?: OptionsType,
-) => {
-  const input = page.getByPlaceholder(placeholder, options)
+const verifyInput = async (page: Page, testID: string) => {
+  const input = page.getByTestId(testID)
   await expect(input).toBeVisible()
   await expect(input).toHaveText("")
   await expect(input).toBeEditable()
@@ -52,7 +42,7 @@ test("Title is visible", async ({ page }) => {
   await page.goto("/waitlist")
 
   await expect(
-    page.getByRole("heading", { name: "Join the Waitlist" }),
+    page.locator("div").filter({ hasText: /^Join the Waitlist$/ }),
   ).toBeVisible()
   await expect(page.getByText("Sign up to get early access")).toBeVisible()
 })
@@ -60,11 +50,11 @@ test("Title is visible", async ({ page }) => {
 test("All inputs are visible, empty and editable", async ({ page }) => {
   await page.goto("/waitlist")
 
-  await verifyInput(page, "Email")
-  await verifyInput(page, "Full Name")
-  await verifyInput(page, "Organization")
-  await verifyInput(page, "Your Role")
-  await verifyInput(page, "How do you plan to use FastAPI Cloud? (Optional)")
+  await verifyInput(page, "email-input")
+  await verifyInput(page, "full-name-input")
+  await verifyInput(page, "organization-input")
+  await verifyInput(page, "role-input")
+  await verifyInput(page, "use-case-input")
 })
 
 test("Join Waitlist button is visible", async ({ page }) => {
@@ -84,7 +74,7 @@ test("Submit waitlist form with only required field (email)", async ({
   await page.getByRole("button", { name: "Join Waitlist" }).click()
 
   // Verify success message
-  await expect(page.getByRole("heading", { name: "Thank You!" })).toBeVisible()
+  await expect(page.getByText("Thank You!")).toBeVisible()
   await expect(
     page.getByText("You've been added to our waitlist"),
   ).toBeVisible()
@@ -107,7 +97,7 @@ test("Submit waitlist form with all fields", async ({ page }) => {
   await page.getByRole("button", { name: "Join Waitlist" }).click()
 
   // Verify success message
-  await expect(page.getByRole("heading", { name: "Thank You!" })).toBeVisible()
+  await expect(page.getByText("Thank You!")).toBeVisible()
   await expect(
     page.getByText("You've been added to our waitlist"),
   ).toBeVisible()
@@ -130,11 +120,11 @@ test("Success message replaces form after submission", async ({ page }) => {
   await page.getByRole("button", { name: "Join Waitlist" }).click()
 
   // Verify form is no longer visible
-  await expect(page.getByPlaceholder("Email")).not.toBeVisible()
+  await expect(page.getByTestId("email-input")).not.toBeVisible()
   await expect(
     page.getByRole("button", { name: "Join Waitlist" }),
   ).not.toBeVisible()
 
   // Verify success message is visible
-  await expect(page.getByRole("heading", { name: "Thank You!" })).toBeVisible()
+  await expect(page.getByText("Thank You!")).toBeVisible()
 })

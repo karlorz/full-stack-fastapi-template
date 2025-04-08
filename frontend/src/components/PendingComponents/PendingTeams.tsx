@@ -1,42 +1,34 @@
-import {
-  Box,
-  Container,
-  Flex,
-  Heading,
-  Separator,
-  Skeleton,
-  Text,
-} from "@chakra-ui/react"
 import { Fragment } from "react"
-import CustomCard from "../Common/CustomCard"
+
+import { Card } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const PendingTeams = () => (
-  <Container maxW="full" p={0}>
-    <Box mb={10}>
-      <Heading size="xl" pb={2}>
-        Teams
-      </Heading>
-      <Text>View all your teams</Text>
-    </Box>
+  <div className="w-full p-0">
+    <div className="mb-10">
+      <h1 className="text-3xl font-bold pb-2">Teams</h1>
+      <p>View all your teams</p>
+    </div>
 
-    <CustomCard>
-      <Flex direction="column">
+    <Card className="p-6">
+      <div className="flex flex-col">
         {[...Array(5)].map((_, index) => (
           <Fragment key={index}>
-            <Flex align="center" mb={2} py={4}>
-              <Skeleton h="20px" w="150px" />
-              <Skeleton h="20px" w="50px" ml={2} />
-            </Flex>
+            <div className="flex items-center mb-2 py-4">
+              <Skeleton className="h-5 w-[150px]" />
+              <Skeleton className="h-5 w-[50px] ml-2" />
+            </div>
             <Separator />
           </Fragment>
         ))}
-      </Flex>
-      <Flex justifyContent="flex-end" mt={4}>
-        <Skeleton h="40px" w="100px" />
-        <Skeleton h="40px" w="100px" ml={2} />
-      </Flex>
-    </CustomCard>
-  </Container>
+      </div>
+      <div className="flex justify-end mt-4 gap-2">
+        <Skeleton className="h-10 w-[100px]" />
+        <Skeleton className="h-10 w-[100px]" />
+      </div>
+    </Card>
+  </div>
 )
 
 export default PendingTeams

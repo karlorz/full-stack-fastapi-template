@@ -1,7 +1,6 @@
-import { Center, Heading, Text } from "@chakra-ui/react"
-
 import type { LucideIcon } from "lucide-react"
-import CustomCard from "./CustomCard"
+
+import { Card, CardContent, CardDescription } from "@/components/ui/card"
 
 interface EmptyStateProps {
   title: string
@@ -17,21 +16,17 @@ const EmptyState = ({
   icon: IconComponent,
 }: EmptyStateProps) => {
   return (
-    <CustomCard
-      w="100%"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="column"
-    >
-      <Center>
-        <IconComponent />
-      </Center>
-      <Heading size="md" textAlign="center">
-        {title}
-      </Heading>
-      <Text textAlign={{ base: "center", md: "inherit" }}>{description}</Text>
-    </CustomCard>
+    <Card className="w-full flex items-center justify-center flex-col p-6">
+      <CardContent className="flex flex-col items-center space-y-4 pt-6">
+        <IconComponent className="h-8 w-8 text-muted-foreground" />
+        <h3 className="text-lg font-semibold text-center m-1">{title}</h3>
+        <CardDescription>
+          {description && (
+            <p className="text-center text-muted-foreground">{description}</p>
+          )}
+        </CardDescription>
+      </CardContent>
+    </Card>
   )
 }
 

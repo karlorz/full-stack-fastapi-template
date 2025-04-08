@@ -1,37 +1,53 @@
-import { Badge, Box, Container, Flex, Table, Text } from "@chakra-ui/react"
+import { Download } from "lucide-react"
 import React, { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
-import { FaFileDownload } from "react-icons/fa"
 
-import CustomCard from "../Common/CustomCard"
-import { Skeleton } from "../ui/skeleton"
+import { Badge } from "../../components/ui/badge"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card"
+import { Skeleton } from "../../components/ui/skeleton"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../components/ui/table"
 import { billings } from "./Billings"
 import CurrentPlan from "./CurrentPlan"
 import PaymentMethod from "./PaymentMethod"
 
 function BillingTableBody() {
   return (
-    <Table.Body>
+    <TableBody>
       {billings.map(({ id, invoice, amount, date, status }) => {
         const data = [
           invoice,
           amount,
           date,
-          <Badge key={status} colorScheme={status === "Paid" ? "green" : "red"}>
+          <Badge
+            key={status}
+            variant={status === "Paid" ? "default" : "destructive"}
+          >
             {status}
           </Badge>,
-          <FaFileDownload key="download" cursor="pointer" />,
+          <Download key="download" className="h-4 w-4 cursor-pointer" />,
         ]
 
         return (
-          <Table.Root key={id} interactive>
+          <TableRow key={id} className="hover:bg-muted/50">
             {data.map((item, index) => (
-              <Table.Cell key={index}>{item}</Table.Cell>
+              <TableCell key={index}>{item}</TableCell>
             ))}
-          </Table.Root>
+          </TableRow>
         )
       })}
-    </Table.Body>
+    </TableBody>
   )
 }
 
@@ -39,68 +55,80 @@ function BillingTable() {
   const headers = ["Invoice", "Amount", "Date", "Status", "Actions"]
 
   return (
-    <Table.Root size={{ base: "sm", md: "md" }} variant="outline">
-      <Table.Header>
-        <Table.Row>
+    <Table>
+      <TableHeader>
+        <TableRow>
           {headers.map((header) => (
-            <Table.ColumnHeader
-              key={header}
-              style={{ textTransform: "capitalize" }}
-            >
+            <TableHead key={header} className="capitalize">
               {header}
-            </Table.ColumnHeader>
+            </TableHead>
           ))}
-        </Table.Row>
-      </Table.Header>
+        </TableRow>
+      </TableHeader>
       <ErrorBoundary
         fallbackRender={({ error }) => (
-          <Table.Body>
-            <Table.Row>
-              <Table.Cell colSpan={4}>
+          <TableBody>
+            <TableRow>
+              <TableCell colSpan={4}>
                 Something went wrong: {error.message}
-              </Table.Cell>
-            </Table.Row>
-          </Table.Body>
+              </TableCell>
+            </TableRow>
+          </TableBody>
         )}
       >
         <Suspense
           fallback={
-            <Table.Body>
-              {new Array(5).fill(null).map((_, index) => (
-                <Table.Row key={index}>
-                  <Table.Cell colSpan={5}>
-                    <Box width="100%">
-                      <Skeleton height="20px" />
-                    </Box>
-                  </Table.Cell>
-                </Table.Row>
+            <TableBody>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell colSpan={5}>
+                    <Skeleton className="h-5 w-full" />
+                  </TableCell>
+                </TableRow>
               ))}
-            </Table.Body>
+            </TableBody>
           }
         >
           <BillingTableBody />
         </Suspense>
       </ErrorBoundary>
-    </Table.Root>
+    </Table>
   )
 }
 
 const Billing = () => {
   return (
-    <Container maxW="full" my={4} p={0}>
-      <CustomCard title="Billing Email">
-        <Text>team1@domain.com</Text>
-      </CustomCard>
-      <CustomCard title="Current Plan">
-        <Flex p={4} flexDir={{ base: "column", md: "row" }} gap={4}>
-          <CurrentPlan />
-          <PaymentMethod />
-        </Flex>
-      </CustomCard>
-      <CustomCard title="Invoice History">
-        <BillingTable />
-      </CustomCard>
-    </Container>
+    <div className="container my-4 p-0">
+      <Card className="mb-4">
+        <CardHeader>
+          <CardTitle>Billing Email</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>team1@domain.com</p>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-4">
+        <CardHeader>
+          <CardTitle>Current Plan</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col md:flex-row gap-4 p-4">
+            <CurrentPlan />
+            <PaymentMethod />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Invoice History</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <BillingTable />
+        </CardContent>
+      </Card>
+    </div>
   )
 }
 

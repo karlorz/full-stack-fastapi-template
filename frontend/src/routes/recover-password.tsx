@@ -1,5 +1,4 @@
-import { Heading, Input, Link, Text } from "@chakra-ui/react"
-import { useMutation } from "@tanstack/react-query"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Link as RouterLink,
   createFileRoute,
@@ -7,23 +6,48 @@ import {
 } from "@tanstack/react-router"
 import { Mail } from "lucide-react"
 import { useState } from "react"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
-import CustomAuthContainer from "@/components/Auth/CustomContainer"
+import { LoginService } from "@/client"
+import BackgroundPanel from "@/components/Auth/BackgroundPanel"
+import EmailSent from "@/components/Common/EmailSent"
 import { Button } from "@/components/ui/button"
-import { Field } from "@/components/ui/field"
-import { InputGroup } from "@/components/ui/input-group"
-import { Tooltip } from "@/components/ui/tooltip"
-import { LoginService } from "../client"
-import BackgroundPanel from "../components/Auth/BackgroundPanel"
-import EmailSent from "../components/Common/EmailSent"
-import { isLoggedIn } from "../hooks/useAuth"
-import useCustomToast from "../hooks/useCustomToast"
-import { emailPattern, handleError } from "../utils"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { isLoggedIn } from "@/hooks/useAuth"
+import useCustomToast from "@/hooks/useCustomToast"
+import { handleError } from "@/utils"
+import { useMutation } from "@tanstack/react-query"
 
-interface FormData {
-  email: string
-}
+const formSchema = z.object({
+  email: z
+    .string()
+    .nonempty("Email is required")
+    .email("Invalid email address"),
+})
+
+type FormData = z.infer<typeof formSchema>
 
 export const Route = createFileRoute("/recover-password")({
   component: RecoverPassword,
@@ -37,16 +61,28 @@ export const Route = createFileRoute("/recover-password")({
 })
 
 function RecoverPassword() {
-  const [showTooltip, setShowTooltip] = useState(false)
-  let timeoutId: NodeJS.Timeout
-  const [userEmail, setUserEmail] = useState("")
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormData>()
   const { showErrorToast } = useCustomToast()
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [userEmail, setUserEmail] = useState("")
+  let timeoutId: NodeJS.Timeout
+
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    mode: "onBlur",
+    criteriaMode: "all",
+    defaultValues: {
+      email: "",
+    },
+  })
+
+  const mutation = useMutation({
+    mutationFn: (email: string) => LoginService.recoverPassword({ email }),
+    onSuccess: (_, variables) => {
+      setUserEmail(variables)
+      form.reset()
+    },
+    onError: handleError.bind(showErrorToast),
+  })
 
   const handleMouseEnter = () => {
     timeoutId = setTimeout(() => {
@@ -59,84 +95,92 @@ function RecoverPassword() {
     setShowTooltip(false)
   }
 
-  const recoverPassword = async (data: FormData) => {
-    await LoginService.recoverPassword({
-      email: data.email,
-    })
-  }
-
-  const mutation = useMutation({
-    mutationFn: recoverPassword,
-    onSuccess: () => {
-      reset()
-    },
-    onError: handleError.bind(showErrorToast),
-  })
-
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    mutation.mutate(data)
-    setUserEmail(data.email)
+  async function onSubmit(values: FormData) {
+    if (mutation.isPending) return
+    mutation.mutate(values.email)
   }
 
   return (
     <BackgroundPanel>
-      <CustomAuthContainer onSubmit={handleSubmit(onSubmit)}>
-        {mutation.isSuccess ? (
-          <EmailSent email={userEmail} />
-        ) : (
-          <>
-            <Heading>Password Recovery</Heading>
-            <Text>
+      {mutation.isSuccess ? (
+        <EmailSent email={userEmail} />
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Password Recovery</CardTitle>
+            <CardDescription>
               Don't worry! We'll help you recover your account, no need to
               create a new one... yet.
-            </Text>
-            <Text>
-              Just enter your email address below and we'll send you a link to
-              reset your password.
-            </Text>
-            <Field invalid={!!errors.email} errorText={errors.email?.message}>
-              <InputGroup w="100%" startElement={<Mail size={16} />}>
-                <Input
-                  id="email"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: emailPattern,
-                  })}
-                  placeholder="Email"
-                  type="email"
-                />
-              </InputGroup>
-            </Field>
-            <Button
-              variant="solid"
-              type="submit"
-              loading={mutation.isPending}
-              size="md"
-            >
-              Continue
-            </Button>
-            <RouterLink className="main-link" to="/login">
-              Back to Login
-            </RouterLink>
-            <Text mt={4}>
-              Cannot recover your account? {""}
-              <Tooltip
-                content="Just checking... are you sure you need help? 🧐"
-                open={showTooltip}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
               >
-                <Link
-                  color="main.dark"
-                  fontWeight="bold"
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          <Input
+                            data-testid="email-input"
+                            placeholder="user@example.com"
+                            className="pl-10"
+                            type="email"
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={form.formState.isSubmitting}
                 >
-                  Contact Support
-                </Link>
-              </Tooltip>
-            </Text>
-          </>
-        )}
-      </CustomAuthContainer>
+                  {form.formState.isSubmitting ? "Sending..." : "Continue"}
+                </Button>
+
+                <div className="text-center">
+                  <RouterLink
+                    to="/login"
+                    className="text-sm text-primary hover:underline"
+                  >
+                    Back to Login
+                  </RouterLink>
+                </div>
+
+                <div className="text-center text-sm text-muted-foreground">
+                  Cannot recover your account?{" "}
+                  <TooltipProvider>
+                    <Tooltip open={showTooltip}>
+                      <TooltipTrigger
+                        className="text-primary hover:underline"
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                      >
+                        Contact Support
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Just checking... are you sure you need help? 🧐
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      )}
     </BackgroundPanel>
   )
 }

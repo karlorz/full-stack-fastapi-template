@@ -1,27 +1,21 @@
-import { Box, Heading, Text } from "@chakra-ui/react"
 import Lottie from "lottie-react"
 
 import emailSent from "@/assets/email.json"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 const EmailSent = ({ email }: { email: string }) => {
   return (
-    <>
-      <Box data-testid="email-sent">
-        <Heading>One More Step</Heading>
-        <Lottie
-          animationData={emailSent}
-          loop={false}
-          style={{ width: 75, height: 75 }}
-        />
-        <Box>
-          <Text>
-            We've sent you an email at <b>{email}</b>. Please follow the
-            instructions. Check your spam folder if you don't see it in your
-            inbox.
-          </Text>
-        </Box>
-      </Box>
-    </>
+    <Card data-testid="email-sent">
+      <CardHeader>
+        <CardTitle>One More Step!</CardTitle>
+      </CardHeader>
+      <CardContent className="text-sm space-y-4">
+        <Lottie animationData={emailSent} loop={false} className="h-20 w-20" />
+        We've sent you an email at <span className="font-bold">{email}</span>.
+        Please follow the instructions. Check your spam folder if you don't see
+        it in your inbox.
+      </CardContent>
+    </Card>
   )
 }
 

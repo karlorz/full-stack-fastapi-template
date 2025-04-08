@@ -1,20 +1,26 @@
 import { TeamsService } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
 import { fetchTeamBySlug, handleError } from "@/utils"
-import { Container, Flex } from "@chakra-ui/react"
 import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query"
-import { Select } from "chakra-react-select"
-import { Controller, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 
-import { Button } from "../ui/button"
-import { Field } from "../ui/field"
+import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormField, FormMessage } from "@/components/ui/form"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface TransferTeamForm {
   userId: string
+  team: string
 }
 
 interface AdminUser {
@@ -35,23 +41,14 @@ const TransferTeam = ({ adminUsers, team: teamSlug }: TransferTeamProps) => {
     queryFn: () => fetchTeamBySlug(teamSlug),
   })
   const queryClient = useQueryClient()
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<TransferTeamForm>({
-    mode: "onBlur",
+
+  const form = useForm<TransferTeamForm>({
     defaultValues: {
       userId: "",
     },
   })
 
   const { showSuccessToast, showErrorToast } = useCustomToast()
-
-  const selectOptions = adminUsers.map((admin) => ({
-    value: admin.user.id,
-    label: admin.user.email,
-  }))
 
   const mutation = useMutation({
     mutationFn: async (userId: string) => {
@@ -71,55 +68,68 @@ const TransferTeam = ({ adminUsers, team: teamSlug }: TransferTeamProps) => {
     },
   })
 
-  const onSubmit = ({ userId }: TransferTeamForm) => mutation.mutate(userId)
+  const onSubmit = (values: TransferTeamForm) => mutation.mutate(values.userId)
 
   return (
-    <Container maxW="full" p={0}>
-      <Flex
-        as="form"
-        align="center"
-        flexDir={{ base: "column", md: "row" }}
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Field
-          invalid={!!errors.userId}
-          errorText={errors.userId?.message}
-          w={{ base: "100%", md: "xs" }}
-          data-testid="user-select"
+    <div className="pt-4">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-1/2 space-y-4"
         >
-          <Controller
-            control={control}
+          <FormField
+            control={form.control}
             name="userId"
             rules={{ required: "Please select a user" }}
             render={({ field }) => (
-              <Select
-                options={selectOptions}
-                value={selectOptions.find(
-                  (option) => option.value === field.value,
-                )}
-                onChange={(selectedOption) =>
-                  field.onChange(selectedOption?.value)
-                }
-                placeholder={<>Select User</>}
-                data-testid="user-select"
-              />
+              <FormControl>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      value={field.value}
+                    >
+                      <SelectTrigger
+                        data-testid="user-select"
+                        className="w-full"
+                      >
+                        <SelectValue placeholder="Select User" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {adminUsers.length > 0 ? (
+                          adminUsers.map((admin) => (
+                            <SelectItem
+                              key={admin.user.id}
+                              value={admin.user.id}
+                            >
+                              {admin.user.email}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="no-option" disabled>
+                            No options available
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={mutation.isPending}
+                    className="w-full md:w-auto"
+                  >
+                    {mutation.isPending ? "Transferring..." : "Transfer Team"}
+                  </Button>
+                  <FormMessage />
+                </div>
+              </FormControl>
             )}
           />
-        </Field>
-
-        <Button
-          variant="solid"
-          type="submit"
-          ml={{ base: 0, md: 4 }}
-          display={{ base: "block", md: "inline-block" }}
-          mt={{ base: 4, md: 0 }}
-          alignSelf={{ base: "flex-start", md: "auto" }}
-          loading={mutation.isPending}
-        >
-          Transfer Team
-        </Button>
-      </Flex>
-    </Container>
+        </form>
+      </Form>
+    </div>
   )
 }
 

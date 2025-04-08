@@ -1,36 +1,29 @@
-import {
-  Container,
-  Flex,
-  Heading,
-  Separator,
-  Skeleton,
-  Text,
-} from "@chakra-ui/react"
-import { Fragment } from "react/jsx-runtime"
-import CustomCard from "../Common/CustomCard"
+import { Fragment } from "react"
+
+import { Card } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const PendingApps = () => (
-  <Container maxW="full" p={0}>
-    <Heading size="xl" pb={2}>
-      Apps
-    </Heading>
-    <Text textAlign="inherit">View and manage apps related to your team.</Text>
-    <Flex justifyContent={{ base: "inherit", md: "end" }} my={4}>
-      <Skeleton h="40px" w="100px" />
-    </Flex>
-    <CustomCard>
-      <Flex direction="column">
+  <div className="w-full p-0">
+    <h1 className="text-3xl font-bold pb-2">Apps</h1>
+    <p className="text-inherit">View and manage apps related to your team.</p>
+    <div className="flex justify-start md:justify-end my-4">
+      <Skeleton className="h-10 w-[100px]" />
+    </div>
+    <Card className="p-6">
+      <div className="flex flex-col">
         {[...Array(5)].map((_, index) => (
           <Fragment key={index}>
-            <Flex align="center" mb={2} py={4}>
-              <Skeleton h="20px" w="150px" />
-            </Flex>
+            <div className="flex items-center mb-2 py-4">
+              <Skeleton className="h-5 w-[150px]" />
+            </div>
             <Separator />
           </Fragment>
         ))}
-      </Flex>
-    </CustomCard>
-  </Container>
+      </div>
+    </Card>
+  </div>
 )
 
 export default PendingApps

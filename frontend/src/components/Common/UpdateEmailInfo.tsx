@@ -1,10 +1,8 @@
-import { Button, Text } from "@chakra-ui/react"
-
+import { Button } from "@/components/ui/button"
 import {
-  DialogActionTrigger,
-  DialogBody,
-  DialogCloseTrigger,
+  DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -12,33 +10,29 @@ import {
 
 const UpdateEmailInfo = () => {
   return (
-    <>
-      <DialogContent>
-        <DialogCloseTrigger />
-        <DialogHeader>
-          <DialogTitle>Email Update Verification</DialogTitle>
-        </DialogHeader>
-        <DialogBody data-testid="verification-email-modal">
-          <Text>
-            Your email update is pending verification. Please check your inbox
-            (and spam folder) for a verification link to complete the update
-            process.
-          </Text>
-          <br />
-          <Text>
-            <strong>
-              Your email will not be updated until the verification is
-              completed.
-            </strong>
-          </Text>
-        </DialogBody>
-        <DialogFooter>
-          <DialogActionTrigger>
-            <Button variant="solid">Ok</Button>
-          </DialogActionTrigger>
-        </DialogFooter>
-      </DialogContent>
-    </>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Email Update Verification</DialogTitle>
+      </DialogHeader>
+
+      <div className="space-y-4" data-testid="verification-email-modal">
+        <DialogDescription>
+          Your email update is pending vserification. Please check your inbox
+          (and spam folder) for a verification link to complete the update
+          process.
+        </DialogDescription>
+
+        <DialogDescription className="font-bold">
+          Your email will not be updated until the verification is completed.
+        </DialogDescription>
+      </div>
+
+      <DialogFooter>
+        <DialogClose>
+          <Button>Ok</Button>
+        </DialogClose>
+      </DialogFooter>
+    </DialogContent>
   )
 }
 

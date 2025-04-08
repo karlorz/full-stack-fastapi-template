@@ -1,4 +1,3 @@
-import { Box, Flex, Text } from "@chakra-ui/react"
 import { Link, type ToOptions, linkOptions } from "@tanstack/react-router"
 
 import type { TeamsPublic } from "@/client"
@@ -10,30 +9,30 @@ type Item = {
   title: string
 } & ToOptions
 
-const getSidebarItems = ({ team }: { team: string }): Array<Item> => {
+const getSidebarItems = ({ teamSlug }: { teamSlug: string }): Array<Item> => {
   return [
     {
       icon: Home,
       title: "Dashboard",
       ...linkOptions({
-        to: "/$team/",
-        params: { team },
+        to: "/$teamSlug/",
+        params: { teamSlug },
       }),
     },
     {
       icon: LayoutGrid,
       title: "Apps",
       ...linkOptions({
-        to: "/$team/apps",
-        params: { team },
+        to: "/$teamSlug/apps",
+        params: { teamSlug },
       }),
     },
     {
       icon: Settings,
       title: "Team Settings",
       ...linkOptions({
-        to: "/$team/settings",
-        params: { team },
+        to: "/$teamSlug/settings",
+        params: { teamSlug },
       }),
     },
   ]
@@ -50,34 +49,31 @@ const SidebarItems = ({
   teams,
   currentTeamSlug,
 }: SidebarItemsProps) => {
-  const items = getSidebarItems({ team: currentTeamSlug })
+  const items = getSidebarItems({ teamSlug: currentTeamSlug })
 
   const listItems = items.map(
     ({ icon: IconComponent, title, to, params }, index) => (
-      <Link to={to} params={params} onClick={onClose} key={index}>
-        <Flex
-          gap={4}
-          px={4}
-          py={2}
-          _hover={{
-            background: "gray.subtle",
-          }}
-          alignItems="center"
-        >
-          <IconComponent size={18} />
-          {title}
-        </Flex>
+      <Link
+        to={to}
+        params={params}
+        onClick={onClose}
+        key={index}
+        className="flex items-center gap-4 px-4 py-2 text-sm hover:bg-accent rounded-md"
+      >
+        <IconComponent className="h-4 w-4" />
+        <span>{title}</span>
       </Link>
     ),
   )
+
   return (
-    <>
+    <div className="space-y-4">
       <TeamSelector teams={teams} currentTeamSlug={currentTeamSlug} />
-      <Text fontSize="xs" px={4} py={2} fontWeight="bold">
-        Menu
-      </Text>
-      <Box>{listItems}</Box>
-    </>
+      <div className="px-4 py-2">
+        <h3 className="text-xs font-semibold text-foreground">Menu</h3>
+      </div>
+      <nav className="space-y-1">{listItems}</nav>
+    </div>
   )
 }
 

@@ -1,34 +1,35 @@
-import { Container, HStack, Link, Text, VStack } from "@chakra-ui/react"
 import React from "react"
 
-import { Button } from "../ui/button"
+import { Button } from "../../components/ui/button"
+import { Card, CardContent } from "../../components/ui/card"
+import { cn } from "../../lib/utils"
 
 const CurrentPlan = () => {
   return (
-    <Container p={8} borderRadius="lg">
-      <HStack gap={4} flexDirection={["column", "row"]}>
-        <VStack gap={4} align="start">
-          <Text fontSize="md" fontWeight="bold">
-            Team
-          </Text>
-          <Text>
-            Current plan ends on{" "}
-            <Text as="span" fontWeight="bold">
-              June 23, 2024
-            </Text>
-            .
-          </Text>
-          <Text>
-            Need any help? Contact us at{" "}
-            <Text as="span" fontWeight="bold">
-              billing@fastapilabs.com
-            </Text>
-          </Text>
-          <Link color="error.base">Cancel Subscription</Link>
-        </VStack>
-        <Button variant="outline">Upgrade</Button>
-      </HStack>
-    </Container>
+    <Card>
+      <CardContent className="p-8">
+        <div
+          className={cn(
+            "flex gap-4",
+            "flex-col md:flex-row items-start justify-between",
+          )}
+        >
+          <div className="flex flex-col gap-4">
+            <p className="font-bold">Team</p>
+            <p>
+              Current plan ends on{" "}
+              <span className="font-bold">June 23, 2024</span>.
+            </p>
+            <p>
+              Need any help? Contact us at{" "}
+              <span className="font-bold">billing@fastapilabs.com</span>
+            </p>
+            <Button variant="destructive">Cancel Subscription</Button>
+          </div>
+          <Button variant="outline">Upgrade</Button>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 

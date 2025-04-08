@@ -1,5 +1,5 @@
 import type { Log } from "@/client"
-import { Box, Text } from "@chakra-ui/react"
+import { cn } from "@/lib/utils"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import React, { useEffect } from "react"
 
@@ -7,22 +7,39 @@ interface LogLineProps {
   time: string
   message: string
 }
-
 interface LogsProps {
   logs: Log[]
 }
-
 const LogLine = ({ time, message }: LogLineProps) => {
   const timestamp = new Date(time).toLocaleString()
   return (
-    <Box _hover={{ bg: "whiteAlpha.50" }} transition="background 0.2s">
-      <Text as="span" color="gray.400">
-        [{timestamp}]
-      </Text>{" "}
-      <Text as="span">{message}</Text>
-    </Box>
+    <div className="hover:bg-white/5 transition-colors">
+      <span className="text-muted-foreground">[{timestamp}]</span>{" "}
+      <span>{message}</span>
+    </div>
   )
 }
+
+const LogContainer = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "h-[400px] p-6 overflow-y-auto rounded-md bg-black text-white",
+      "font-mono text-sm",
+      "[&::-webkit-scrollbar]:w-4 [&::-webkit-scrollbar]:rounded-lg",
+      "[&::-webkit-scrollbar-thumb]:rounded-lg",
+      "[&::-webkit-scrollbar-thumb]:bg-white/20",
+      "[&::-webkit-scrollbar]:bg-white/10",
+      "[&::-webkit-scrollbar-corner]:bg-white/10",
+      className,
+    )}
+    {...props}
+  />
+))
+LogContainer.displayName = "LogContainer"
 
 const Logs = ({ logs }: LogsProps) => {
   const parentRef = React.useRef(null)
@@ -45,43 +62,12 @@ const Logs = ({ logs }: LogsProps) => {
 
   return (
     <>
-      <Box
-        ref={parentRef}
-        h="400px"
-        p={6}
-        overflowY="auto"
-        borderRadius="md"
-        bg="gray.950"
-        color="white"
-        fontFamily="monospace"
-        fontSize="sm"
-        css={{
-          "&::-webkit-scrollbar": {
-            borderRadius: "8px",
-            width: "16px",
-            backgroundColor: "rgba(255, 255, 255, 0.1)",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            borderRadius: "8px",
-            backgroundColor: "rgba(255, 255, 255, 0.2)",
-          },
-          "&::-webkit-scrollbar-corner": {
-            backgroundColor: "rgba(255, 255, 255, 0.1)",
-          },
-        }}
-      >
+      <LogContainer ref={parentRef}>
         {logs.length === 0 ? (
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            height="100%"
-            textAlign="center"
-          >
-            <Text>No logs to show</Text>
-            <Text>New logs will appear here when available</Text>
-          </Box>
+          <div className="flex h-full flex-col items-center justify-center text-center">
+            <p>No logs to show</p>
+            <p>New logs will appear here when available</p>
+          </div>
         ) : (
           <div
             style={{
@@ -113,7 +99,7 @@ const Logs = ({ logs }: LogsProps) => {
             })}
           </div>
         )}
-      </Box>
+      </LogContainer>
     </>
   )
 }

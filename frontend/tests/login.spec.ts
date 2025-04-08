@@ -2,21 +2,13 @@ import { type Page, expect, test } from "@playwright/test"
 
 test.use({ storageState: { cookies: [], origins: [] } })
 
-type OptionsType = {
-  exact?: boolean
-}
-
 const fillForm = async (page: Page, email: string, password: string) => {
-  await page.getByPlaceholder("Email").fill(email)
-  await page.getByPlaceholder("Password", { exact: true }).fill(password)
+  await page.getByTestId("email-input").fill(email)
+  await page.getByTestId("password-input").fill(password)
 }
 
-const verifyInput = async (
-  page: Page,
-  placeholder: string,
-  options?: OptionsType,
-) => {
-  const input = page.getByPlaceholder(placeholder, options)
+const verifyInput = async (page: Page, placeholder: string) => {
+  const input = page.getByTestId(placeholder)
   await expect(input).toBeVisible()
   await expect(input).toHaveText("")
   await expect(input).toBeEditable()
@@ -25,14 +17,14 @@ const verifyInput = async (
 test("Title is visible", async ({ page }) => {
   await page.goto("/login")
 
-  await expect(page.getByRole("heading", { name: "Welcome!" })).toBeVisible()
+  await expect(page.getByText("Welcome!")).toBeVisible()
 })
 
 test("Inputs are visible, empty and editable", async ({ page }) => {
   await page.goto("/login")
 
-  await verifyInput(page, "Email")
-  await verifyInput(page, "Password", { exact: true })
+  await verifyInput(page, "email-input")
+  await verifyInput(page, "password-input")
 })
 
 test("Log In button is visible", async ({ page }) => {
@@ -97,7 +89,7 @@ test("Successful log out", async ({ page }) => {
   await expect(page.getByTestId("result")).toContainText("Hi, Sebastian")
 
   await page.getByTestId("user-menu").click()
-  await page.getByRole("menuitem", { name: "Log out" }).click()
+  await page.getByRole("menuitem", { name: "Log Out" }).click()
   await page.reload()
   await page.waitForURL("/login")
 })
@@ -113,7 +105,7 @@ test("Logged-out user cannot access protected routes", async ({ page }) => {
   await expect(page.getByTestId("result")).toContainText("Hi, Sebastian")
 
   await page.getByTestId("user-menu").click()
-  await page.getByRole("menuitem", { name: "Log out" }).click()
+  await page.getByRole("menuitem", { name: "Log Out" }).click()
   await page.goto("/settings")
   await page.waitForURL("/login?redirect=%2Fsettings")
 })

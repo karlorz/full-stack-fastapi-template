@@ -1,19 +1,16 @@
-import { Text } from "@chakra-ui/react"
 import { useNavigate } from "@tanstack/react-router"
+import { useState } from "react"
 
 import type { InvitationPublic } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
-  DialogActionTrigger,
-  DialogBody,
-  DialogCloseTrigger,
+  Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogRoot,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useState } from "react"
 
 interface AcceptInvitationProps {
   invitation: InvitationPublic | undefined
@@ -36,36 +33,32 @@ const TeamInvitationNoAuth = ({
   }
 
   return (
-    <DialogRoot
-      size={{ base: "xs", md: "md" }}
-      open={isOpen}
-      onOpenChange={(e) => setIsOpen(e.open)}
-      placement="center"
-    >
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
-        <DialogCloseTrigger />
         <DialogHeader>
           <DialogTitle>Team Invitation</DialogTitle>
         </DialogHeader>
-        <DialogBody data-testid="noauth-invitation">
-          <Text>
-            Hi <strong>{invitation?.email},</strong>
-          </Text>
-          <Text my={4}>
-            You have been invited by <strong>{invitation?.sender.email}</strong>{" "}
-            to join <strong>{invitation?.team.name}</strong>. Please log in, and
-            if you're not registered yet, sign up to accept the invitation.
-          </Text>
-        </DialogBody>
-        <DialogFooter gap={3}>
-          <DialogActionTrigger asChild>
-            <Button variant="solid" onClick={handleClose}>
-              Ok
-            </Button>
-          </DialogActionTrigger>
+        <div className="space-y-4" data-testid="noauth-invitation">
+          <DialogDescription asChild>
+            <div>
+              <p>
+                Hi <span className="font-bold">{invitation?.email}</span>,
+              </p>
+              <p className="mt-4">
+                You have been invited by{" "}
+                <span className="font-bold">{invitation?.sender.email}</span> to
+                join <span className="font-bold">{invitation?.team.name}</span>.
+                Please log in, and if you're not registered yet, sign up to
+                accept the invitation.
+              </p>
+            </div>
+          </DialogDescription>
+        </div>
+        <DialogFooter>
+          <Button onClick={handleClose}>Ok</Button>
         </DialogFooter>
       </DialogContent>
-    </DialogRoot>
+    </Dialog>
   )
 }
 
