@@ -424,9 +424,29 @@ In `fastapicloud.com`:
 * Add a `CNAME` record pointing `customdomain.fastapicloud.com` to `customdomain-fastapicloud.fastapicloud.dev`.
 * Add a `CNAME` record pointing `api.fastapicloud.com` to `customdomain.fastapicloud.com`.
 
-## Deploy Backend and Builder
+## Deploy Backend code
 
-Go to GitHub Actions and "dispatch" a workflow run for the "Deploy Backend" and "Deploy Builder" workflows, select the environment to use.
+In this part, we will deploy the multiple backend components to the cluster.
+
+This part needs the environments and secrets to be already set in the GitHub repo, from [Save Environment Variables](#save-environment-variables) above.
+
+In GitHub Actions in the repo, do the following.
+
+Go to Deploy Backend: https://github.com/fastapilabs/cloud/actions/workflows/deploy-backend.yml
+
+* Click on "Run workflow".
+
+* (Optional) if manually deploying an in-progress branch to a development environment, select the branch to deploy.
+
+* Select the environment to use, e.g. `development`, `staging`.
+
+* Click on "Run workflow".
+
+Do the same process for:
+
+* Deploy Backend (above): https://github.com/fastapilabs/cloud/actions/workflows/deploy-backend.yml
+* Deploy Builder: https://github.com/fastapilabs/cloud/actions/workflows/deploy-builder.yml
+* Deploy Messenger: https://github.com/fastapilabs/cloud/actions/workflows/deploy-messenger.yml
 
 ## Create a new Environment from Scratch
 
