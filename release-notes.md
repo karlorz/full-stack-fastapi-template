@@ -375,6 +375,7 @@
 
 ### Docs
 
+* 📝 Update README for infra deployment, include deploying all cloud backend parts, clarify instructions. PR [#688](https://github.com/fastapilabs/cloud/pull/688) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update `frontend/README.md`. PR [#660](https://github.com/fastapilabs/cloud/pull/660) by [@alejsdev](https://github.com/alejsdev).
 * 📝 Update README format. PR [#643](https://github.com/fastapilabs/cloud/pull/643) by [@tiangolo](https://github.com/tiangolo).
 * 🍱 Update architecture diagram. PR [#635](https://github.com/fastapilabs/cloud/pull/635) by [@tiangolo](https://github.com/tiangolo).
