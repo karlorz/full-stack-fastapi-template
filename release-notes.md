@@ -400,6 +400,7 @@
 
 ### Internal
 
+* 🧑‍💻 Add symlink to biome.json in root folder. PR [#690](https://github.com/fastapilabs/cloud/pull/690) by [@patrick91](https://github.com/patrick91).
 * 🔧 Add npm and docker package ecosystems to Dependabot configuration. PR [#683](https://github.com/fastapilabs/cloud/pull/683) by [@alejsdev](https://github.com/alejsdev).
 * 🔧 Set Node version to 20 in the local .nvmrc file. PR [#682](https://github.com/fastapilabs/cloud/pull/682) by [@tiangolo](https://github.com/tiangolo).
 * 🍱 Update architecture diagram to have white background, for dark mode GitHub. PR [#681](https://github.com/fastapilabs/cloud/pull/681) by [@tiangolo](https://github.com/tiangolo).
