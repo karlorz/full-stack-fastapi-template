@@ -169,6 +169,7 @@
 
 ### Refactors
 
+* 💄 Update email templates styles for consistency. PR [#676](https://github.com/fastapilabs/cloud/pull/676) by [@alejsdev](https://github.com/alejsdev).
 * ⬆️  Bump backend dependencies and tweak `computed_field` for compatibility with Pydantic and SQLModel. PR [#687](https://github.com/fastapilabs/cloud/pull/687) by [@patrick91](https://github.com/patrick91).
 * 💄 Polish UI. PR [#677](https://github.com/fastapilabs/cloud/pull/677) by [@alejsdev](https://github.com/alejsdev).
 * 🔧 Add Bento and Sofie to allowed sign ups. PR [#678](https://github.com/fastapilabs/cloud/pull/678) by [@tiangolo](https://github.com/tiangolo).
