@@ -217,46 +217,61 @@ test.describe("Delete account successfully", () => {
 
 // Appearance
 
-test("Theme toggle dropdown is visible", async ({ page }) => {
-  await page.goto("/")
-  await expect(page.getByRole("button", { name: "Toggle theme" })).toBeVisible()
-})
+test.describe("Theme settings", () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
 
-test("User can switch between theme modes", async ({ page }) => {
-  await page.goto("/")
+  let email: string
+  let password: string
 
-  await page.getByRole("button", { name: "Toggle theme" }).click()
+  test.beforeEach(async ({ page }) => {
+    email = randomEmail()
+    password = "password"
+    await createUser({ email, password })
+    await logInUser(page, email, password)
+    await page.goto("/")
+  })
 
-  await page.getByRole("menuitem", { name: "Light" }).click()
-  const hasNoThemeClass = await page.evaluate(
-    () => !document.documentElement.classList.contains("dark"),
-  )
-  expect(hasNoThemeClass).toBe(true)
+  test("Theme toggle dropdown is visible", async ({ page }) => {
+    await expect(
+      page.getByRole("button", { name: "Toggle theme" }),
+    ).toBeVisible()
+  })
 
-  await page.getByRole("button", { name: "Toggle theme" }).click()
-  await page.getByRole("menuitem", { name: "Dark" }).click()
-  const isDarkMode = await page.evaluate(() =>
-    document.documentElement.classList.contains("dark"),
-  )
-  expect(isDarkMode).toBe(true)
-})
+  test("User can switch to dark mode", async ({ page }) => {
+    await page.getByTestId("theme-button").click()
+    await page.getByTestId("dark-mode").click()
 
-test("Selected theme is preserved across sessions", async ({ page }) => {
-  await page.goto("/")
+    const isDarkMode = await page.evaluate(() =>
+      document.documentElement.classList.contains("dark"),
+    )
+    expect(isDarkMode).toBe(true)
+  })
 
-  await page.getByRole("button", { name: "Toggle theme" }).click()
-  await page.getByRole("menuitem", { name: "Dark" }).click()
+  test("User can switch to light mode", async ({ page }) => {
+    await page.getByTestId("theme-button").click()
+    await page.getByTestId("light-mode").click()
 
-  let isDarkMode = await page.evaluate(() =>
-    document.documentElement.classList.contains("dark"),
-  )
-  expect(isDarkMode).toBe(true)
+    const hasNoThemeClass = await page.evaluate(
+      () => !document.documentElement.classList.contains("dark"),
+    )
+    expect(hasNoThemeClass).toBe(true)
+  })
 
-  await logOutUser(page)
-  await logInUser(page, "sebastian@fastapilabs.com", "secretsecret")
+  test("Selected theme is preserved across sessions", async ({ page }) => {
+    await page.getByRole("button", { name: "Toggle theme" }).click()
+    await page.getByRole("menuitem", { name: "Dark" }).click()
 
-  isDarkMode = await page.evaluate(() =>
-    document.documentElement.classList.contains("dark"),
-  )
-  expect(isDarkMode).toBe(true)
+    let isDarkMode = await page.evaluate(() =>
+      document.documentElement.classList.contains("dark"),
+    )
+    expect(isDarkMode).toBe(true)
+
+    await logOutUser(page)
+    await logInUser(page, email, password)
+
+    isDarkMode = await page.evaluate(() =>
+      document.documentElement.classList.contains("dark"),
+    )
+    expect(isDarkMode).toBe(true)
+  })
 })

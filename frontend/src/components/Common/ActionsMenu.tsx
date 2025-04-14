@@ -18,7 +18,7 @@ interface ActionsMenuProps {
 
 const ActionsMenu = ({ userRole, team, value }: ActionsMenuProps) => {
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
           <MoreVertical className="h-4 w-4" />

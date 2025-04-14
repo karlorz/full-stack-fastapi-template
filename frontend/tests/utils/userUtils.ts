@@ -2,12 +2,17 @@ import { type APIRequestContext, type Page, expect } from "@playwright/test"
 import { findLastEmail } from "./mailcatcher"
 
 export async function logInUser(page: Page, email: string, password: string) {
-  await page.goto("/login")
+  await page.waitForLoadState("load")
+
+  await page.goto("/login", { waitUntil: "networkidle" })
+
+  await page.waitForSelector('[data-testid="email-input"]')
 
   await page.getByTestId("email-input").fill(email)
   await page.getByTestId("password-input").fill(password)
   await page.getByRole("button", { name: "Log In" }).click()
-  await page.waitForURL("/")
+
+  await page.waitForURL("/", { waitUntil: "networkidle" })
 
   await expect(
     page.getByText("Welcome back, nice to see you again!"),
@@ -17,7 +22,6 @@ export async function logInUser(page: Page, email: string, password: string) {
 export async function logOutUser(page: Page) {
   await page.getByTestId("user-menu").click()
   await page.getByRole("menuitem", { name: "Log Out" }).click()
-  await page.goto("/login")
 }
 
 export async function sendInvitation(

@@ -70,7 +70,7 @@ const AcceptInvitation = ({ token, invitation }: AcceptInvitationProps) => {
               <Button variant="outline" onClick={handleClose}>
                 Cancel
               </Button>
-              <Button onClick={handleJoinTeam}>Join Team</Button>``
+              <Button onClick={handleJoinTeam}>Join Team</Button>
             </DialogFooter>
           </>
         ) : mutation.isSuccess ? (
