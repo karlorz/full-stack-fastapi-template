@@ -92,17 +92,19 @@ const useAuth = () => {
   })
 
   const logout = (redirect?: string) => {
+    queryClient.removeQueries()
+
     localStorage.removeItem("current_team")
     localStorage.removeItem("access_token")
-    queryClient.invalidateQueries()
-    const search = redirect ? { redirect } : undefined
-    navigate({ to: "/login", search })
 
     try {
       posthog.reset(true)
     } catch (error) {
       // do nothing
     }
+
+    const search = redirect ? { redirect } : undefined
+    navigate({ to: "/login", search })
   }
 
   return {
