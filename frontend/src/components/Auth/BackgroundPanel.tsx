@@ -13,8 +13,8 @@ const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
           <img
             src={logo}
             alt="FastAPI Cloud"
-            className="h-14
-          w-auto primary"
+            className="h-6
+          w-auto dark:invert-0 invert"
           />
         </a>
         {children}

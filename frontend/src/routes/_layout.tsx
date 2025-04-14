@@ -1,12 +1,14 @@
-import { useSuspenseQuery } from "@tanstack/react-query"
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
 import { TeamsService } from "@/client"
-import { cn } from "@/lib/utils"
-import { Suspense } from "react"
-import Sidebar from "../components/Common/Sidebar"
-import UserMenu from "../components/Common/UserMenu"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
+import { AppSidebar } from "../components/Sidebar/AppSidebar"
 import Appearance from "../components/UserSettings/Appearance"
 import { isLoggedIn } from "../hooks/useAuth"
 
@@ -35,32 +37,27 @@ function Layout() {
   })
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Sidebar */}
-      <div className="fixed left-0 top-0 z-40 h-full w-[280px] border-r">
-        <Suspense>
-          <Sidebar teams={teams} />
-        </Suspense>
-      </div>
-
-      <div className={cn("flex min-h-screen flex-col", "md:pl-[280px]")}>
-        {/* Navbar */}
-        <header className="sticky top-0 z-50 hidden h-16 items-center justify-end bg-background border-b px-6 md:flex">
-          <div className="flex items-center gap-2">
-            <Appearance />
-            <UserMenu />
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <main className="flex-1 px-4 py-6 md:px-8">
-          <div className="mx-auto w-full max-w-[1200px]">
-            <Outlet />
-          </div>
-        </main>
-      </div>
+    <>
+      <SidebarProvider>
+        <AppSidebar teams={teams} />
+        <SidebarInset>
+          <header className="sticky top-0 flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+            <div className="md:hidden flex items-center gap-2 px-4">
+              <SidebarTrigger className="-ml-1" />
+            </div>
+            <div className="ml-auto flex items-center pr-4">
+              <Appearance />
+            </div>
+          </header>
+          <main className="flex-1 px-4 py-6 md:px-8">
+            <div className="mx-auto w-full max-w-[1200px]">
+              <Outlet />
+            </div>
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
 
       <TeamInvitation />
-    </div>
+    </>
   )
 }
