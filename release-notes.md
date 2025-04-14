@@ -170,6 +170,7 @@
 
 ### Refactors
 
+* ♻️ Refactor Sidebar. PR [#694](https://github.com/fastapilabs/cloud/pull/694) by [@alejsdev](https://github.com/alejsdev).
 * 💄 Update email templates styles for consistency. PR [#676](https://github.com/fastapilabs/cloud/pull/676) by [@alejsdev](https://github.com/alejsdev).
 * ⬆️  Bump backend dependencies and tweak `computed_field` for compatibility with Pydantic and SQLModel. PR [#687](https://github.com/fastapilabs/cloud/pull/687) by [@patrick91](https://github.com/patrick91).
 * 💄 Polish UI. PR [#677](https://github.com/fastapilabs/cloud/pull/677) by [@alejsdev](https://github.com/alejsdev).
