@@ -81,7 +81,8 @@ jobs:
         push: true
         tags: |
           ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-        context: ./backend/
+        context: .
+        file: ./backend/Dockerfile
     - name: Set up Python
       uses: actions/setup-python@v5
       with:

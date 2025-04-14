@@ -82,7 +82,7 @@ jobs:
         push: true
         tags: |
           ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-        context: ./backend/
+        context: ./
         file: ./backend/Dockerfile
     - name: Update messenger deployment
       run: envsubst < infra/k8s/messenger/messenger.yaml | kubectl apply -f -

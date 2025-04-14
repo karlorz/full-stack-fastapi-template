@@ -46,7 +46,8 @@ services:
 
   prestart:
     build:
-      context: ./backend
+      context: .
+      dockerfile: backend/Dockerfile
     # command: sleep infinity  # Infinite loop to keep container alive doing nothing
     depends_on:
       db:
@@ -67,7 +68,8 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: .
+      dockerfile: backend/Dockerfile
     # command: sleep infinity  # Infinite loop to keep container alive doing nothing
     ports:
       - "8000:8000"
@@ -129,8 +131,8 @@ services:
 
   builder:
     build:
-      context: ./backend
-      dockerfile: Dockerfile.builder
+      context: .
+      dockerfile: backend/Dockerfile.builder
     ports:
       - "8001:8001"
     privileged: true
@@ -181,7 +183,8 @@ services:
 
   messenger:
     build:
-      context: ./backend
+      context: .
+      dockerfile: backend/Dockerfile
     depends_on:
       localstack:
         condition: service_healthy
