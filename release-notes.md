@@ -126,6 +126,7 @@
 
 ### Fixes
 
+* 🐛 Fix logout refresh bug. PR [#695](https://github.com/fastapilabs/cloud/pull/695) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Allow scrolling when dropdown menu is open. PR [#689](https://github.com/fastapilabs/cloud/pull/689) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Improve logs responsiveness and add auto-scrolling to logs view on new log entries . PR [#675](https://github.com/fastapilabs/cloud/pull/675) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Refactor reset password logic to improve token handling . PR [#674](https://github.com/fastapilabs/cloud/pull/674) by [@alejsdev](https://github.com/alejsdev).
