@@ -1,38 +1,34 @@
 <mjml>
   <mj-head>
     <mj-font name="Ubuntu" href="https://fonts.googleapis.com/css?family=Ubuntu" />
-    <mj-style>
-      .gradient-bg {
-        background: linear-gradient(90deg, #00667A 0%, #3B2174 100%);
-      }
-    </mj-style>
+    <mj-attributes>
+      <mj-text font-family="Ubuntu" />
+      <mj-button background-color="#01507f" font-family="Ubuntu" border-radius="4px" padding="20px 25px" />
+    </mj-attributes>
   </mj-head>
   <mj-body background-color="#fafbfc">
-    <mj-section css-class="gradient-bg" padding="20px">
-      <mj-column>
-        <mj-image src="{{ server_host }}/assets/images/logo.png" align="center" width="150px"></mj-image>
-      </mj-column>
-    </mj-section>
     <mj-section background-color="#fff" padding="40px 20px">
-      <mj-column vertical-align="middle" width="100%">
-        <mj-text align="center" padding="35px" font-size="20px" font-family="Ubuntu" color="#333">Your data has been updated!</mj-text>
-        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Ubuntu" color="#555"><span>Thank you for updating your data on the waiting list for <strong>FastAPI Cloud</strong>.</span></mj-text>
-        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Ubuntu" color="#555"><span>We updated the information for your email: {{ email }}</span></mj-text>
-        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Ubuntu" color="#555">
-          <span>Knowing a bit more about you, we will probably <strong>let you in faster</strong> now. 😎</span>
-        </mj-text>
-        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Ubuntu" color="#555">
-          <span>We will let you know when you are invited to create your account.</span>
-        </mj-text>
-        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Ubuntu" color="#555">
-          <span>The force is strong with this one. But still, patience, young Padawan. ☕️</span>
-        </mj-text>
-        <mj-divider border-color="#ccc" border-width="2px"></mj-divider>
-      </mj-column>
-    </mj-section>
-    <mj-section background-color="#00667A" padding="10px">
       <mj-column>
-        <mj-text align="center" color="white" font-size="14px" font-family="Ubuntu">© 2024 FastAPI Cloud</mj-text>
+        <mj-image src="{{ server_host }}/assets/images/logo.png" align="center" width="150px" alt="FastAPI Cloud Logo"></mj-image>
+      </mj-column>
+      <mj-column vertical-align="middle" width="100%">
+        <mj-text align="center" padding="35px" font-size="24px" color="#333">Waiting List Updated</mj-text>
+        <mj-text font-size="16px" padding-left="25px" padding-right="25px" color="#555">
+          Hello,
+        </mj-text>
+        <mj-text font-size="16px" padding-left="25px" padding-right="25px" color="#555">
+          Your profile (<strong>{{ email }}</strong>) has been updated on the FastAPI Cloud waiting list. We'll send you an invitation as soon as a spot becomes available.
+        </mj-text>
+        <mj-text font-size="16px" padding-left="25px" padding-right="25px" color="#555">
+          Stay tuned! ☕️<br />
+          The FastAPI Cloud team
+        </mj-text>
+        <mj-spacer height="20px" />
+        <mj-divider border-color="#eee" border-width="1px"></mj-divider>
+        <mj-text font-size="14px" padding="20px 25px" color="#777">
+          Questions? Contact us at <a href="mailto:support@fastapicloud.com" style="color: #01507f; text-decoration: none; font-weight: bold;">support@fastapicloud.com</a>
+        </mj-text>
+        <mj-text align="center" color="#777" font-size="14px">© 2025 FastAPI Cloud. All rights reserved.</mj-text>
       </mj-column>
     </mj-section>
   </mj-body>

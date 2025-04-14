@@ -1,28 +1,38 @@
 <mjml>
   <mj-head>
     <mj-font name="Ubuntu" href="https://fonts.googleapis.com/css?family=Ubuntu" />
-        <mj-style>
-      .gradient-bg {
-        background: linear-gradient(90deg, #00667A 0%, #3B2174 100%);
-      }
-    </mj-style>
+    <mj-attributes>
+      <mj-text font-family="Ubuntu" />
+      <mj-button background-color="#01507f" font-family="Ubuntu" border-radius="4px" padding="20px 25px" />
+    </mj-attributes>
   </mj-head>
   <mj-body background-color="#fafbfc">
-    <mj-section css-class="gradient-bg" padding="20px">
-      <mj-column>
-        <mj-image src="{{ server_host }}/assets/images/logo.png" align="center" width="150px"></mj-image>
-      </mj-column>
-    </mj-section>
     <mj-section background-color="#fff" padding="40px 20px">
-      <mj-column vertical-align="middle" width="100%">
-        <mj-text align="center" padding="35px" font-size="20px" font-family="Ubuntu" color="#333">Account Deletion</mj-text>
-        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Ubuntu" color="#555"><span>Your account has been successfully deleted. We're sorry to see you go. If you have any feedback for us, please let us know by emailing us at <a href="mailto:feedback@fastapicloud.com">feedback@fastapicloud.com</a>.</span></mj-text>
-        <mj-divider border-color="#ccc" border-width="2px"></mj-divider>
-      </mj-column>
-    </mj-section>
-    <mj-section background-color="#00667A" padding="10px">
       <mj-column>
-        <mj-text align="center" color="white" font-size="14px" font-family="Ubuntu">© 2024 FastAPI Cloud</mj-text>
+        <mj-image src="{{ server_host }}/assets/images/logo.png" align="center" width="150px" alt="FastAPI Cloud Logo"></mj-image>
+      </mj-column>
+      <mj-column vertical-align="middle" width="100%">
+        <mj-text align="center" padding="35px" font-size="24px" color="#333">Account Deletion Confirmation</mj-text>
+        <mj-text font-size="16px" padding-left="25px" padding-right="25px" color="#555">
+          Hello {{ username }},
+        </mj-text>
+        <mj-text font-size="16px" padding-left="25px" padding-right="25px" color="#555">
+          Your FastAPI Cloud account has been successfully deleted. We're sorry to see you go.
+        </mj-text>
+        <mj-text font-size="16px" padding-left="25px" padding-right="25px" color="#555">
+          All your data and associated resources have been permanently removed from our systems.
+        </mj-text>
+        <mj-text font-size="16px" padding-left="25px" padding-right="25px" color="#555">
+          Thank you for being part of our journey!<br />
+          The FastAPI Cloud team
+        </mj-text>
+        <mj-spacer height="20px" />
+        <mj-divider border-color="#eee" border-width="1px"></mj-divider>
+        <mj-text font-size="14px" padding="20px 25px" color="#777">
+          If you have any feedback for us or would like to share why you left, please contact us at <a href="mailto:feedback@fastapicloud.com" style="color: #01507f; text-decoration: none; font-weight: bold;">feedback@fastapicloud.com</a>.<br /><br />
+          If you change your mind, you're always welcome to <a href="{{ server_host }}/signup" style="color: #01507f; text-decoration: none; font-weight: bold;">create a new account</a>.
+        </mj-text>
+        <mj-text align="center" color="#777" font-size="14px">© 2025 FastAPI Cloud. All rights reserved.</mj-text>
       </mj-column>
     </mj-section>
   </mj-body>

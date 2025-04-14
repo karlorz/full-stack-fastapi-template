@@ -1,29 +1,37 @@
 <mjml>
   <mj-head>
     <mj-font name="Ubuntu" href="https://fonts.googleapis.com/css?family=Ubuntu" />
-    <mj-style>
-      .gradient-bg {
-        background: linear-gradient(90deg, #00667A 0%, #3B2174 100%);
-      }
-    </mj-style>
+    <mj-attributes>
+      <mj-text font-family="Ubuntu" />
+      <mj-button background-color="#01507f" font-family="Ubuntu" border-radius="4px" padding="20px 25px" />
+    </mj-attributes>
   </mj-head>
   <mj-body background-color="#fafbfc">
-    <mj-section css-class="gradient-bg" padding="20px">
-      <mj-column>
-        <mj-image src="{{ server_host }}/assets/images/logo.png" align="center" width="150px"></mj-image>
-      </mj-column>
-    </mj-section>
     <mj-section background-color="#fff" padding="40px 20px">
-      <mj-column vertical-align="middle" width="100%">
-        <mj-text align="center" padding="35px" font-size="20px" font-family="Ubuntu" color="#333">New Account</mj-text>
-        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Ubuntu" color="#555"><span>Welcome to your new account!</span></mj-text>
-        <mj-button align="center" font-size="18px" background-color="#00667A" border-radius="8px" color="#fff" href="{{ link }}" padding="15px 30px">Go to Dashboard</mj-button>
-        <mj-divider border-color="#ccc" border-width="2px"></mj-divider>
-      </mj-column>
-    </mj-section>
-    <mj-section background-color="#00667A" padding="10px">
       <mj-column>
-        <mj-text align="center" color="white" font-size="14px" font-family="Ubuntu">© 2024 FastAPI Cloud</mj-text>
+        <mj-image src="{{ server_host }}/assets/images/logo.png" align="center" width="150px" alt="FastAPI Cloud Logo"></mj-image>
+      </mj-column>
+      <mj-column vertical-align="middle" width="100%">
+        <mj-text align="center" padding="35px" font-size="24px" color="#333">Welcome to FastAPI Cloud!</mj-text>
+        <mj-text font-size="16px" padding-left="25px" padding-right="25px" color="#555">
+          Hello {{ username }},
+        </mj-text>
+        <mj-text font-size="16px" padding-left="25px" padding-right="25px" color="#555">
+          Thank you for creating your FastAPI Cloud account. Your account has been successfully set up and is ready to use.
+        </mj-text>
+        <mj-button href="{{ link }}" font-size="16px" font-weight="bold">
+          Go to Dashboard
+        </mj-button>
+        <mj-text font-size="16px" padding-left="25px" padding-right="25px" color="#555">
+          Happy deploying!<br />
+          The FastAPI Cloud team
+        </mj-text>
+        <mj-spacer height="20px" />
+        <mj-divider border-color="#eee" border-width="1px"></mj-divider>
+        <mj-text font-size="14px" padding="20px 25px" color="#777">
+          If you need any assistance, please don't hesitate to contact our support team at <a href="mailto:support@fastapicloud.com" style="color: #01507f; text-decoration: none; font-weight: bold;">support@fastapicloud.com</a>
+        </mj-text>
+        <mj-text align="center" color="#777" font-size="14px">© 2025 FastAPI Cloud. All rights reserved.</mj-text>
       </mj-column>
     </mj-section>
   </mj-body>
