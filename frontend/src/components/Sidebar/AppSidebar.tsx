@@ -73,11 +73,14 @@ export function AppSidebar({ teams }: { teams: TeamsPublic }) {
 
   return (
     <Sidebar collapsible="icon">
-      <a href="/" className="flex items-center self-center font-medium py-8">
+      <a
+        href="/"
+        className="flex items-center self-center font-medium pt-8 pb-4"
+      >
         <img
           src={logo}
           alt="FastAPI Cloud"
-          className="h-6 w-auto dark:invert-0 invert"
+          className="h-8 w-auto dark:invert-0 invert"
         />
       </a>
       <SidebarHeader>

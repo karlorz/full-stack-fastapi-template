@@ -21,7 +21,7 @@ export function NavMain({ items }: { items: Item[] }) {
           const isActive = matchRoute({ to: item.to, params: item.params })
 
           return (
-            <SidebarMenuItem key={item.title}>
+            <SidebarMenuItem key={item.title} className="px-2">
               <RouterLink to={item.to} params={item.params}>
                 <SidebarMenuButton
                   tooltip={item.title}
