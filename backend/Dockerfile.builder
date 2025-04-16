@@ -8,7 +8,7 @@ RUN curl -L https://depot.dev/install-cli.sh | sh
 
 # Install uv
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
-COPY --from=ghcr.io/astral-sh/uv:0.4.23 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.5.11 /uv /uvx /bin/
 
 # Compile bytecode
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#compiling-bytecode
@@ -36,22 +36,22 @@ RUN useradd --create-home -r user -u 1000
 # Set user by non-root ID for Knative security compatibility
 USER 1000
 
-WORKDIR /app/backend/
+WORKDIR /app/
 
 # Place executables in the environment at the front of the path
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#using-the-environment
-ENV PATH="/app/backend/.venv/bin:$PATH"
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Install dependencies
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
 RUN --mount=type=cache,target=/user/.cache/uv \
-    --mount=type=bind,source=backend/uv.lock,target=uv.lock \
-    --mount=type=bind,source=backend/pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --no-install-project
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --all-packages --no-install-package app
 
 COPY --chown=user:user ./backend/scripts /app/backend/scripts
 
-COPY --chown=user:user ./backend/pyproject.toml ./backend/uv.lock ./backend/alembic.ini /app/backend/
+COPY --chown=user:user ./backend/pyproject.toml ./backend/alembic.ini /app/backend/
 
 COPY --chown=user:user ./backend/app /app/backend/app
 
@@ -60,6 +60,10 @@ COPY --chown=user:user ./backend/builder-context /app/backend/builder-context
 # Sync the project
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
 RUN --mount=type=cache,target=/user/.cache/uv \
-    uv sync
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --package app
+
+WORKDIR /app/backend/
 
 CMD ["sh", "-c", "fastapi run app/builder.py --port ${PORT:-8001}"]
