@@ -3,7 +3,7 @@
 ## Requirements
 
 * [Docker](https://www.docker.com/).
-* [uv](https://docs.astral.sh/uv/) for Python package and environment management.
+* [uv](https://docs.astral.sh/uv/) for Python package and environment management using [uv workspaces](https://docs.astral.sh/uv/concepts/projects/workspaces/).
 
 ## Local Development
 
@@ -36,8 +36,9 @@ Read more about the Docker Compose setup in [development.md](../development.md),
 Then you can start the local development server:
 
 ```bash
-cd backend
+uv sync --all-packages
 source .venv/bin/activate
+cd backend
 fastapi dev app/main.py
 ```
 
@@ -49,19 +50,19 @@ You could also start the app through the editor debugger.
 
 By default, the dependencies are managed with [uv](https://docs.astral.sh/uv/), go there and install it.
 
-From `./backend/` you can install all the dependencies with:
+From the top level directory of the repo, install all the dependencies with:
 
-```console
-$ uv sync
+```bash
+uv sync --all-packages
 ```
 
 Then you can activate the virtual environment with:
 
-```console
-$ source .venv/bin/activate
+```bash
+source .venv/bin/activate
 ```
 
-Make sure your editor is using the correct Python virtual environment, with the interpreter at `backend/.venv/bin/python`.
+Make sure your editor is using the correct Python virtual environment, with the interpreter at `.venv/bin/python`.
 
 Modify or add SQLModel models for data and SQL tables in `./backend/app/models.py`, API endpoints in `./backend/app/api/`, CRUD (Create, Read, Update, Delete) utils in `./backend/app/crud.py`.
 
@@ -116,8 +117,8 @@ If there's a syntax error, it will just stop with an error. But as the container
 To test the backend run:
 
 ```bash
-cd backend
 source .venv/bin/activate
+cd backend
 bash scripts/test.sh
 ```
 
@@ -139,7 +140,7 @@ Then run the tests:
 docker compose exec backend bash scripts/tests-start.sh
 ```
 
-That `/app/scripts/tests-start.sh` script just calls `pytest` after making sure that the rest of the stack is running. If you need to pass extra arguments to `pytest`, you can pass them to that command and they will be forwarded.
+That `app/scripts/tests-start.sh` script just calls `pytest` after making sure that the rest of the stack is running. If you need to pass extra arguments to `pytest`, you can pass them to that command and they will be forwarded.
 
 For example, to stop on first error:
 

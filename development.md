@@ -173,7 +173,7 @@ Then you can run the backend development server with:
 ```bash
 cd backend
 source .venv/bin/activate
-fastapi dev backend/app/main.py
+fastapi dev app/main.py
 ```
 
 If you want to start the frontend in Docker to test the backend (but don't want to start the local development frontend server), you can do:
