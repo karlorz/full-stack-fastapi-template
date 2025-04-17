@@ -3,4 +3,4 @@ name = "fastapi-cloud"
 version = "0.1.0"
 
 [tool.uv.workspace]
-members = ["backend"]
+members = ["backend", "packages/*"]
