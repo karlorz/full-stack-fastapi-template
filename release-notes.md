@@ -365,6 +365,7 @@
 
 ### Upgrades
 
+* ⬆️ Upgrade @tanstack/react-query-devtools to latest version and add ReactQueryDevTools to the root route. PR [#728](https://github.com/fastapilabs/cloud/pull/728) by [@alejsdev](https://github.com/alejsdev).
 * ⬆️ Update `package-lock.json`. PR [#685](https://github.com/fastapilabs/cloud/pull/685) by [@alejsdev](https://github.com/alejsdev).
 * ⬆️ Upgrade tanstack/react-router. PR [#680](https://github.com/fastapilabs/cloud/pull/680) by [@alejsdev](https://github.com/alejsdev).
 * 📌 Update uv.lock. PR [#652](https://github.com/fastapilabs/cloud/pull/652) by [@tiangolo](https://github.com/tiangolo).
