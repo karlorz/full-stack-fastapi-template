@@ -47,13 +47,15 @@ ENV PATH="/app/.venv/bin:$PATH"
 RUN --mount=type=cache,target=/user/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --all-packages --no-install-package app
+    uv sync --frozen --all-packages --no-install-package app --no-install-package duck
 
 COPY --chown=user:user ./backend/scripts /app/backend/scripts
 
 COPY --chown=user:user ./backend/pyproject.toml ./backend/alembic.ini /app/backend/
 
 COPY --chown=user:user ./backend/app /app/backend/app
+
+COPY --chown=user:user ./packages /app/packages
 
 COPY --chown=user:user ./backend/builder-context /app/backend/builder-context
 
@@ -62,7 +64,7 @@ COPY --chown=user:user ./backend/builder-context /app/backend/builder-context
 RUN --mount=type=cache,target=/user/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --package app
+    uv sync --frozen --all-packages
 
 WORKDIR /app/backend/
 
