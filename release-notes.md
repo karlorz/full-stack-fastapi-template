@@ -408,6 +408,7 @@
 
 ### Internal
 
+* 👷 Fix CI for uv workspaces and internal subpackages. PR [#734](https://github.com/fastapilabs/cloud/pull/734) by [@tiangolo](https://github.com/tiangolo).
 * ➕ Add `duck`. PR [#726](https://github.com/fastapilabs/cloud/pull/726) by [@patrick91](https://github.com/patrick91).
 * 🧑‍💻 Implement uv workspaces. PR [#692](https://github.com/fastapilabs/cloud/pull/692) by [@patrick91](https://github.com/patrick91).
 * 🧑‍💻 Move backend code inside `/app/backend` in docker. PR [#691](https://github.com/fastapilabs/cloud/pull/691) by [@patrick91](https://github.com/patrick91).
