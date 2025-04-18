@@ -49,7 +49,7 @@ const useAuth = () => {
       showErrorToast(errDetail)
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] })
+      queryClient.invalidateQueries()
     },
   })
 

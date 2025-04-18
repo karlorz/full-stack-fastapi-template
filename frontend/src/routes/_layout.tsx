@@ -1,12 +1,13 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
-import { TeamsService } from "@/client"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useSuspenseQuery } from "@tanstack/react-query"
+
+import { getTeamsQueryOptions } from "@/queries/teams"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
 import { AppSidebar } from "../components/Sidebar/AppSidebar"
 import Appearance from "../components/UserSettings/Appearance"
@@ -23,18 +24,12 @@ export const Route = createFileRoute("/_layout")({
     }
   },
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData({
-      queryFn: () => TeamsService.readTeams({}),
-      queryKey: ["teams"],
-    })
+    await context.queryClient.ensureQueryData(getTeamsQueryOptions())
   },
 })
 
 function Layout() {
-  const { data: teams } = useSuspenseQuery({
-    queryKey: ["teams"],
-    queryFn: () => TeamsService.readTeams({}),
-  })
+  const { data: teams } = useSuspenseQuery(getTeamsQueryOptions())
 
   return (
     <>

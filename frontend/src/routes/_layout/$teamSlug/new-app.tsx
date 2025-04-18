@@ -1,4 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import Lottie from "lottie-react"
 import { useState } from "react"
@@ -25,23 +29,30 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { extractErrorMessage, fetchTeamBySlug } from "@/utils"
+import { getTeamQueryOptions } from "@/queries/teams"
+import { extractErrorMessage } from "@/utils"
 
 export const Route = createFileRoute("/_layout/$teamSlug/new-app")({
   component: NewApp,
-  loader: ({ params }) => fetchTeamBySlug(params.teamSlug),
+  loader: ({ context, params: { teamSlug } }) =>
+    context.queryClient.ensureQueryData(getTeamQueryOptions(teamSlug)),
 })
 
 function NewApp() {
+  const { teamSlug } = Route.useParams()
   const navigate = useNavigate()
-  const team = Route.useLoaderData()
   const queryClient = useQueryClient()
   const [isOpen, setIsOpen] = useState(false)
 
   const form = useForm<AppCreate>({
     mode: "onBlur",
     criteriaMode: "all",
+    defaultValues: {
+      name: "",
+    },
   })
+
+  const { data: team } = useSuspenseQuery(getTeamQueryOptions(teamSlug))
 
   const mutation = useMutation({
     mutationFn: (data: AppCreate) =>
@@ -138,8 +149,11 @@ function NewApp() {
                   onClick={() => {
                     setIsOpen(false)
                     navigate({
-                      to: "/$teamSlug/apps/$app",
-                      params: { teamSlug: team.slug, app: mutation.data?.slug },
+                      to: "/$teamSlug/apps/$appSlug",
+                      params: {
+                        teamSlug,
+                        appSlug: mutation.data?.slug,
+                      },
                     })
                   }}
                 >

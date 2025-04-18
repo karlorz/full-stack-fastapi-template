@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { type TeamPublic, TeamsService, UsersService } from "@/client"
@@ -8,34 +9,26 @@ import { isLoggedIn } from "@/hooks/useAuth"
 
 export const Route = createFileRoute("/_layout/teams/all")({
   component: AllTeams,
-  loader: async ({ context }) => {
-    const userPromise = isLoggedIn()
-      ? context.queryClient.ensureQueryData({
-          queryKey: ["currentUser"],
-          queryFn: () => (isLoggedIn() ? UsersService.readUserMe() : null),
-        })
-      : new Promise<null>((resolve) => resolve(null))
-
-    const teamsPromise = context.queryClient.ensureQueryData({
-      queryKey: ["teams"],
-      queryFn: () => TeamsService.readTeams(),
-    })
-
-    const [currentUser, teams] = await Promise.all([userPromise, teamsPromise])
-
-    return { teams, currentUser }
-  },
   pendingComponent: PendingTeams,
 })
 
 function AllTeams() {
-  const { teams, currentUser } = Route.useLoaderData()
+  const { data: currentUser } = useSuspenseQuery({
+    queryKey: ["currentUser"],
+    queryFn: () => (isLoggedIn() ? UsersService.readUserMe() : null),
+  })
+
+  const { data: teams } = useSuspenseQuery({
+    queryKey: ["teams"],
+    queryFn: () => TeamsService.readTeams(),
+  })
 
   const teamsData = teams.data.map((team: TeamPublic) => ({
     ...team,
     isOwner: team.owner_id === currentUser?.id,
     isPersonalTeam: team.is_personal_team,
   }))
+
   return (
     <div className="container p-0">
       <div className="mb-10">

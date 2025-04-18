@@ -1,4 +1,8 @@
-import { useMutation } from "@tanstack/react-query"
+import {
+  queryOptions,
+  useMutation,
+  useSuspenseQuery,
+} from "@tanstack/react-query"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { formatDate } from "date-fns"
 import { useState } from "react"
@@ -16,6 +20,15 @@ const deviceSearchSchema = z.object({
   code: z.string(),
 })
 
+const getDeviceQueryOptions = (code: string) =>
+  queryOptions({
+    queryKey: ["device", code],
+    queryFn: () =>
+      LoginService.deviceAuthorizationInfo({
+        userCode: code,
+      }),
+  })
+
 export const Route = createFileRoute("/_layout/device")({
   component: AuthorizeDevice,
   errorComponent: CodeNotFound,
@@ -31,10 +44,8 @@ export const Route = createFileRoute("/_layout/device")({
   loaderDeps: ({ search }) => ({
     code: search.code,
   }),
-  loader: async ({ deps }) => {
-    return await LoginService.deviceAuthorizationInfo({
-      userCode: deps.code,
-    })
+  loader: async ({ context, deps: { code } }) => {
+    await context.queryClient.ensureQueryData(getDeviceQueryOptions(code))
   },
 })
 
@@ -52,11 +63,12 @@ function CodeNotFound() {
 }
 
 function AuthorizeDevice() {
-  const deviceAuthInfo = Route.useLoaderData()
   const { code } = Route.useSearch()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<boolean>(false)
   const { showErrorToast } = useCustomToast()
+
+  const { data: deviceAuthInfo } = useSuspenseQuery(getDeviceQueryOptions(code))
 
   const mutation = useMutation({
     mutationFn: async () => {

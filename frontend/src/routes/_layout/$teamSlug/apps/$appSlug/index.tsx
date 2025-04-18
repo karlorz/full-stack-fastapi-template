@@ -1,48 +1,27 @@
-import { useQuery } from "@tanstack/react-query"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, notFound } from "@tanstack/react-router"
 import { ExternalLink } from "lucide-react"
 
-import { AppsService, DeploymentsService } from "@/client"
 import DeleteApp from "@/components/AppSettings/DeleteApp"
 import Deployments from "@/components/AppSettings/Deployments"
 import EnvironmentVariables from "@/components/AppSettings/EnvironmentVariables"
 import PendingApp from "@/components/PendingComponents/PendingApp"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { fetchTeamBySlug } from "@/utils"
+import { getAppQueryOptions, getEnvVarQueryOptions } from "@/queries/apps"
+import { getDeploymentsQueryOptions } from "@/queries/deployments"
+import { getTeamQueryOptions } from "@/queries/teams"
 
 export const Route = createFileRoute("/_layout/$teamSlug/apps/$appSlug/")({
   component: AppDetail,
-  loader: async ({ context, params }) => {
+  loader: async ({ context, params: { teamSlug, appSlug } }) => {
     try {
-      const team = await fetchTeamBySlug(params.teamSlug)
+      const team = await context.queryClient.ensureQueryData(
+        getTeamQueryOptions(teamSlug),
+      )
 
-      if (!team) {
-        throw notFound({ routeId: "/" })
-      }
-
-      const apps = await AppsService.readApps({
-        teamId: team.id,
-        slug: params.appSlug,
-      })
-
-      if (apps.data.length === 0) {
-        throw notFound({ routeId: "/" })
-      }
-
-      const deployments = await DeploymentsService.readDeployments({
-        appId: apps.data[0].id,
-        orderBy: "created_at",
-        limit: 5,
-      })
-
-      const app = apps.data[0]
-
-      await context.queryClient.ensureQueryData({
-        queryKey: ["apps", app.id, "environmentVariables"],
-        queryFn: () => AppsService.readEnvironmentVariables({ appId: app.id }),
-      })
-
-      return { app, deployments }
+      await context.queryClient.ensureQueryData(
+        getAppQueryOptions(team.id, appSlug),
+      )
     } catch (error) {
       throw notFound({ routeId: "/" })
     }
@@ -51,24 +30,16 @@ export const Route = createFileRoute("/_layout/$teamSlug/apps/$appSlug/")({
 })
 
 function AppDetail() {
-  const { app, deployments: initialDeployments } = Route.useLoaderData()
+  const { teamSlug, appSlug } = Route.useParams()
 
-  const { data: deployments } = useQuery({
-    queryKey: ["deployments", app.id],
-    queryFn: () =>
-      DeploymentsService.readDeployments({
-        appId: app.id,
-        orderBy: "created_at",
-        limit: 5,
-      }),
-    initialData: initialDeployments,
-    refetchInterval: 10000,
-  })
-
-  const { data: environmentVariables } = useQuery({
-    queryKey: ["apps", app.id, "environmentVariables"],
-    queryFn: () => AppsService.readEnvironmentVariables({ appId: app.id }),
-  })
+  const { data: team } = useSuspenseQuery(getTeamQueryOptions(teamSlug))
+  const { data: app } = useSuspenseQuery(getAppQueryOptions(team.id, appSlug))
+  const { data: deployments } = useSuspenseQuery(
+    getDeploymentsQueryOptions(app.id),
+  )
+  const { data: environmentVariables } = useSuspenseQuery(
+    getEnvVarQueryOptions(app.id),
+  )
 
   return (
     <div className="container max-w-full p-0">

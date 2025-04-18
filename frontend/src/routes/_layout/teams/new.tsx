@@ -39,6 +39,9 @@ function NewTeam() {
   const form = useForm<TeamCreate>({
     mode: "onBlur",
     criteriaMode: "all",
+    defaultValues: {
+      name: "",
+    },
   })
 
   const mutation = useMutation({

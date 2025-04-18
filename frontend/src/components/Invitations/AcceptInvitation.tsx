@@ -30,6 +30,7 @@ const AcceptInvitation = ({ token, invitation }: AcceptInvitationProps) => {
       InvitationsService.acceptInvitation({ requestBody: { token: token } }),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["invitations"] })
+      queryClient.invalidateQueries({ queryKey: ["teams"] })
     },
   })
 

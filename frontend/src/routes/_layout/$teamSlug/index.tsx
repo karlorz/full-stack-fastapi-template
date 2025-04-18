@@ -10,31 +10,19 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useCurrentUser } from "@/hooks/useAuth"
 import {
-  deploymentStatusMessage,
-  fetchLastApp,
-  fetchLastAppsInLast30Days,
-  fetchTeamBySlug,
-  getLastDeploymentStatus,
-} from "@/utils"
+  getLastAppQueryOptions,
+  getRecentAppsQueryOptions,
+} from "@/queries/apps"
+import { getTeamQueryOptions } from "@/queries/teams"
+import { deploymentStatusMessage, getLastDeploymentStatus } from "@/utils"
+import { useSuspenseQuery } from "@tanstack/react-query"
 
 export const Route = createFileRoute("/_layout/$teamSlug/")({
   component: Dashboard,
-  loader: async ({ params: { teamSlug } }) => {
+  loader: async ({ context, params: { teamSlug } }) => {
     try {
-      const teamData = await fetchTeamBySlug(teamSlug)
-
-      const apps = await fetchLastAppsInLast30Days(teamData.id)
-      const lastApp = await fetchLastApp(teamData.id)
-      const lastDeploymentStatus = lastApp?.id
-        ? await getLastDeploymentStatus(lastApp.id)
-        : null
-
-      return { apps, lastApp, lastDeploymentStatus }
-    } catch (error) {
-      if (localStorage.getItem("current_team") === teamSlug) {
-        localStorage.removeItem("current_team")
-      }
-
+      await context.queryClient.ensureQueryData(getTeamQueryOptions(teamSlug))
+    } catch {
       throw notFound({ routeId: "/" })
     }
   },
@@ -48,7 +36,14 @@ const CurrentUser = () => {
 }
 
 function Dashboard() {
-  const { apps, lastApp, lastDeploymentStatus } = Route.useLoaderData()
+  const { teamSlug } = Route.useParams()
+  const { data: team } = useSuspenseQuery(getTeamQueryOptions(teamSlug))
+  const { data: apps } = useSuspenseQuery(getRecentAppsQueryOptions(team.id))
+  const { data: lastApp } = useSuspenseQuery(getLastAppQueryOptions(team.id))
+  const { data: lastDeploymentStatus } = useSuspenseQuery({
+    queryKey: ["deployments", lastApp?.id, "last"],
+    queryFn: () => (lastApp?.id ? getLastDeploymentStatus(lastApp.id) : null),
+  })
 
   return (
     <div className="w-full p-0 space-y-6">
@@ -81,7 +76,7 @@ function Dashboard() {
             <p className="text-muted-foreground">
               {deploymentStatusMessage(lastDeploymentStatus)}
             </p>
-            <RouterLink to={`/$teamSlug/apps/${lastApp?.slug}/`}>
+            <RouterLink to={`/$teamSlug/apps/${lastApp?.slug}`}>
               {lastApp && (
                 <Button variant="outline" className="mt-4">
                   View App

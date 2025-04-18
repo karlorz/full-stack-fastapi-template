@@ -1,36 +1,38 @@
-import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
+import { useSuspenseQuery } from "@tanstack/react-query"
+import {
+  Link as RouterLink,
+  createFileRoute,
+  notFound,
+} from "@tanstack/react-router"
 import { PackageOpen } from "lucide-react"
 
-import { AppsService } from "@/client"
 import { ALL_APPS_COLUMNS } from "@/components/Apps/columns"
 import { DataTable } from "@/components/Common/DataTable"
 import EmptyState from "@/components/Common/EmptyState"
 import PendingApps from "@/components/PendingComponents/PendingApps"
 import { Button } from "@/components/ui/button"
-import { fetchTeamBySlug } from "@/utils"
+import { getAppsQueryOptions } from "@/queries/apps"
+import { getTeamQueryOptions } from "@/queries/teams"
 
 export const Route = createFileRoute("/_layout/$teamSlug/apps/")({
   component: Apps,
-  loader: async ({ context, params }) => {
-    const team = await context.queryClient.fetchQuery({
-      queryFn: () => fetchTeamBySlug(params.teamSlug),
-      queryKey: ["team", { slug: params.teamSlug }],
-    })
-
-    const apps = await context.queryClient.ensureQueryData({
-      queryKey: ["apps", { teamId: team.id }],
-      queryFn: () => AppsService.readApps({ teamId: team.id }),
-    })
-
-    return { apps }
+  loader: async ({ context, params: { teamSlug } }) => {
+    try {
+      await context.queryClient.ensureQueryData(getTeamQueryOptions(teamSlug))
+    } catch (error) {
+      throw notFound({ routeId: "/" })
+    }
   },
   pendingComponent: PendingApps,
 })
 
 function Apps() {
-  const { apps } = Route.useLoaderData()
+  const { teamSlug } = Route.useParams()
 
-  if (apps?.data.length === 0) {
+  const { data: team } = useSuspenseQuery(getTeamQueryOptions(teamSlug))
+  const { data: appsData } = useSuspenseQuery(getAppsQueryOptions(team.id))
+
+  if (appsData?.data.length === 0) {
     return (
       <div className="container p-0">
         <div className="flex justify-between">
@@ -77,7 +79,7 @@ function Apps() {
       <DataTable
         dataTestId="apps-table"
         columns={ALL_APPS_COLUMNS}
-        data={apps.data}
+        data={appsData.data}
         getRowLink={(app) => `${app.slug}`}
       />
     </div>

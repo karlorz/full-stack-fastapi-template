@@ -1,36 +1,34 @@
-import { useQuery } from "@tanstack/react-query"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, notFound } from "@tanstack/react-router"
 
-import { AppsService, DeploymentsService } from "@/client"
 import Logs from "@/components/Deployment/Logs"
 import { Status } from "@/components/Deployment/Status"
 import PendingDeployment from "@/components/PendingComponents/PendingDeployment"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { fetchTeamBySlug } from "@/utils"
+import { getAppQueryOptions } from "@/queries/apps"
+import {
+  getDeploymentQueryOptions,
+  getLogsQueryOptions,
+} from "@/queries/deployments"
+import { getTeamQueryOptions } from "@/queries/teams"
 
 export const Route = createFileRoute(
   "/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId",
 )({
   component: DeploymentDetail,
-  loader: async ({ params }) => {
+  loader: async ({ context, params: { appSlug, teamSlug, deploymentId } }) => {
     try {
-      const team = await fetchTeamBySlug(params.teamSlug)
-      const apps = await AppsService.readApps({
-        teamId: team.id,
-        slug: params.appSlug,
-      })
-      const app = apps.data[0]
+      const team = await context.queryClient.ensureQueryData(
+        getTeamQueryOptions(teamSlug),
+      )
 
-      const deployment = await DeploymentsService.readDeployment({
-        appId: app.id,
-        deploymentId: params.deploymentId,
-      })
+      const app = await context.queryClient.ensureQueryData(
+        getAppQueryOptions(team.id, appSlug),
+      )
 
-      const { logs } = await DeploymentsService.readDeploymentLogs({
-        deploymentId: deployment.id,
-      })
-
-      return { deployment, logs }
+      await context.queryClient.ensureQueryData(
+        getDeploymentQueryOptions(app.id, deploymentId),
+      )
     } catch (error) {
       throw notFound({ routeId: "/" })
     }
@@ -39,29 +37,14 @@ export const Route = createFileRoute(
 })
 
 function DeploymentDetail() {
-  const { deployment: initialDeployment, logs: initialLogs } =
-    Route.useLoaderData()
+  const { teamSlug, appSlug, deploymentId } = Route.useParams()
 
-  const { data: deployment } = useQuery({
-    queryKey: ["deployments", initialDeployment.id],
-    queryFn: () =>
-      DeploymentsService.readDeployment({
-        appId: initialDeployment.app_id,
-        deploymentId: initialDeployment.id,
-      }),
-    initialData: initialDeployment,
-    refetchInterval: 5000,
-  })
-
-  const { data } = useQuery({
-    queryKey: ["deployment-logs", initialDeployment.id],
-    queryFn: () =>
-      DeploymentsService.readDeploymentLogs({
-        deploymentId: initialDeployment.id,
-      }),
-    initialData: { logs: initialLogs },
-    refetchInterval: 5000,
-  })
+  const { data: team } = useSuspenseQuery(getTeamQueryOptions(teamSlug))
+  const { data: app } = useSuspenseQuery(getAppQueryOptions(team.id, appSlug))
+  const { data: deployment } = useSuspenseQuery(
+    getDeploymentQueryOptions(app.id, deploymentId),
+  )
+  const { data: logsData } = useSuspenseQuery(getLogsQueryOptions(deploymentId))
 
   return (
     <div className="container p-0 mx-auto w-full">
@@ -86,7 +69,7 @@ function DeploymentDetail() {
           <CardTitle>Logs</CardTitle>
         </CardHeader>
         <CardContent>
-          <Logs logs={data.logs} />
+          <Logs logs={logsData.logs} />
         </CardContent>
       </Card>
     </div>

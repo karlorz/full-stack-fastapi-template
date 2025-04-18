@@ -38,6 +38,17 @@ export const fetchTeamBySlug = async (teamSlug: string) => {
   return TeamsService.readTeam({ teamId: teams.data[0].id })
 }
 
+export const fetchAppBySlug = async (teamId: string, appSlug: string) => {
+  const apps = await AppsService.readApps({ teamId })
+  const app = apps.data.find((app) => app.slug === appSlug)
+
+  if (!app) {
+    throw new Error("App not found")
+  }
+
+  return AppsService.readApp({ appId: app.id })
+}
+
 export const getInitials = (name: string): string => {
   return name
     .split(" ")
