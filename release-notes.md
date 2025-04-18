@@ -408,6 +408,7 @@
 
 ### Internal
 
+* 👷 Run tests/deploy/lint when packages change too. PR [#735](https://github.com/fastapilabs/cloud/pull/735) by [@patrick91](https://github.com/patrick91).
 * 👷 Fix CI for uv workspaces and internal subpackages. PR [#734](https://github.com/fastapilabs/cloud/pull/734) by [@tiangolo](https://github.com/tiangolo).
 * ➕ Add `duck`. PR [#726](https://github.com/fastapilabs/cloud/pull/726) by [@patrick91](https://github.com/patrick91).
 * 🧑‍💻 Implement uv workspaces. PR [#692](https://github.com/fastapilabs/cloud/pull/692) by [@patrick91](https://github.com/patrick91).
