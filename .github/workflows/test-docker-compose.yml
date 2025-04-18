@@ -29,6 +29,9 @@ jobs:
           changed:
             - backend/**
             - frontend/**
+            - packages/**
+            - uv.lock
+            - pyproject.toml
             - .env
             - compose.yml
             - .github/workflows/test-docker-compose.yml

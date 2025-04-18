@@ -28,6 +28,9 @@ jobs:
         filters: |
           changed:
             - backend/**
+            - packages/**
+            - uv.lock
+            - pyproject.toml
             - .env
             - scripts/lint.sh
             - .github/workflows/lint-backend.yml

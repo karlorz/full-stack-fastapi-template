@@ -34,6 +34,9 @@ jobs:
         filters: |
           changed:
             - backend/**
+            - packages/**
+            - uv.lock
+            - pyproject.toml
             - .env
             - .github/workflows/deploy-backend.yml
 
