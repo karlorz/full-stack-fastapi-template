@@ -171,6 +171,7 @@
 
 ### Refactors
 
+* ♻️ Refactor loaders to avoid using stale data. PR [#732](https://github.com/fastapilabs/cloud/pull/732) by [@alejsdev](https://github.com/alejsdev).
 * 🍱 Update logo. PR [#727](https://github.com/fastapilabs/cloud/pull/727) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add scramble text effect to NotFound component and improve styling. PR [#723](https://github.com/fastapilabs/cloud/pull/723) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor Sidebar. PR [#694](https://github.com/fastapilabs/cloud/pull/694) by [@alejsdev](https://github.com/alejsdev).
