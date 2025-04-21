@@ -209,6 +209,40 @@ def test_create_app_reserved_name(client: TestClient, db: Session) -> None:
     assert len(data["slug"].split("-")[-1]) == 8
 
 
+def test_create_app_too_short_name(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User Reserved Name",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    app_in = {"name": "app", "team_id": str(team.id)}
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/",
+        headers=user_auth_headers,
+        json=app_in,
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert app_in["name"] in data["slug"]
+    assert data["slug"] != app_in["name"]
+    slug: str = data["slug"]
+    prefix, _, suffix = slug.rpartition("-")
+    assert prefix == "app"
+    assert len(suffix) == 8
+
+
 def test_create_app_with_empty_name(client: TestClient, db: Session) -> None:
     user = create_user(
         session=db,
