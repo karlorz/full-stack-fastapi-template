@@ -48,9 +48,7 @@ const useAuth = () => {
 
       showErrorToast(errDetail)
     },
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
+    onSettled: () => queryClient.invalidateQueries(),
   })
 
   const login = async (data: {

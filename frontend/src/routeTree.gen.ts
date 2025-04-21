@@ -11,7 +11,6 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as WaitlistImport } from './routes/waitlist'
 import { Route as VerifyUpdateEmailImport } from './routes/verify-update-email'
 import { Route as VerifyEmailImport } from './routes/verify-email'
 import { Route as TeamInvitationImport } from './routes/team-invitation'
@@ -33,12 +32,6 @@ import { Route as LayoutTeamSlugAppsAppSlugIndexImport } from './routes/_layout/
 import { Route as LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdImport } from './routes/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId'
 
 // Create/Update Routes
-
-const WaitlistRoute = WaitlistImport.update({
-  id: '/waitlist',
-  path: '/waitlist',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const VerifyUpdateEmailRoute = VerifyUpdateEmailImport.update({
   id: '/verify-update-email',
@@ -215,13 +208,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyUpdateEmailImport
       parentRoute: typeof rootRoute
     }
-    '/waitlist': {
-      id: '/waitlist'
-      path: '/waitlist'
-      fullPath: '/waitlist'
-      preLoaderRoute: typeof WaitlistImport
-      parentRoute: typeof rootRoute
-    }
     '/_layout/device': {
       id: '/_layout/device'
       path: '/device'
@@ -345,7 +331,6 @@ export interface FileRoutesByFullPath {
   '/team-invitation': typeof TeamInvitationRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-update-email': typeof VerifyUpdateEmailRoute
-  '/waitlist': typeof WaitlistRoute
   '/device': typeof LayoutDeviceRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
@@ -367,7 +352,6 @@ export interface FileRoutesByTo {
   '/team-invitation': typeof TeamInvitationRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-update-email': typeof VerifyUpdateEmailRoute
-  '/waitlist': typeof WaitlistRoute
   '/device': typeof LayoutDeviceRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
@@ -391,7 +375,6 @@ export interface FileRoutesById {
   '/team-invitation': typeof TeamInvitationRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-update-email': typeof VerifyUpdateEmailRoute
-  '/waitlist': typeof WaitlistRoute
   '/_layout/device': typeof LayoutDeviceRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
@@ -416,7 +399,6 @@ export interface FileRouteTypes {
     | '/team-invitation'
     | '/verify-email'
     | '/verify-update-email'
-    | '/waitlist'
     | '/device'
     | '/settings'
     | '/'
@@ -437,7 +419,6 @@ export interface FileRouteTypes {
     | '/team-invitation'
     | '/verify-email'
     | '/verify-update-email'
-    | '/waitlist'
     | '/device'
     | '/settings'
     | '/'
@@ -459,7 +440,6 @@ export interface FileRouteTypes {
     | '/team-invitation'
     | '/verify-email'
     | '/verify-update-email'
-    | '/waitlist'
     | '/_layout/device'
     | '/_layout/settings'
     | '/_layout/'
@@ -483,7 +463,6 @@ export interface RootRouteChildren {
   TeamInvitationRoute: typeof TeamInvitationRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   VerifyUpdateEmailRoute: typeof VerifyUpdateEmailRoute
-  WaitlistRoute: typeof WaitlistRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -495,7 +474,6 @@ const rootRouteChildren: RootRouteChildren = {
   TeamInvitationRoute: TeamInvitationRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   VerifyUpdateEmailRoute: VerifyUpdateEmailRoute,
-  WaitlistRoute: WaitlistRoute,
 }
 
 export const routeTree = rootRoute
@@ -515,8 +493,7 @@ export const routeTree = rootRoute
         "/signup",
         "/team-invitation",
         "/verify-email",
-        "/verify-update-email",
-        "/waitlist"
+        "/verify-update-email"
       ]
     },
     "/_layout": {
@@ -555,9 +532,6 @@ export const routeTree = rootRoute
     },
     "/verify-update-email": {
       "filePath": "verify-update-email.tsx"
-    },
-    "/waitlist": {
-      "filePath": "waitlist.tsx"
     },
     "/_layout/device": {
       "filePath": "_layout/device.tsx",

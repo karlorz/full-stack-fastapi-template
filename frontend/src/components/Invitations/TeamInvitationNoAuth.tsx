@@ -35,11 +35,12 @@ const TeamInvitationNoAuth = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="space-y-2">
           <DialogTitle>Team Invitation</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4" data-testid="noauth-invitation">
-          <DialogDescription asChild>
+          <DialogDescription
+            className="space-y-4"
+            data-testid="noauth-invitation"
+          >
             <div>
               <p>
                 Hi <span className="font-bold">{invitation?.email}</span>,
@@ -53,7 +54,7 @@ const TeamInvitationNoAuth = ({
               </p>
             </div>
           </DialogDescription>
-        </div>
+        </DialogHeader>
         <DialogFooter>
           <Button onClick={handleClose}>Ok</Button>
         </DialogFooter>

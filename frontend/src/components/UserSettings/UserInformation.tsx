@@ -73,9 +73,7 @@ const UserInformationContent = () => {
       setIsEditingEmail(false)
     },
     onError: handleError.bind(showErrorToast),
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
+    onSettled: () => queryClient.invalidateQueries(),
   })
 
   const fullNameMutation = useMutation({
@@ -88,9 +86,7 @@ const UserInformationContent = () => {
       setIsEditingName(false)
     },
     onError: handleError.bind(showErrorToast),
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
+    onSettled: () => queryClient.invalidateQueries(),
   })
 
   const onSubmitName = (values: NameFormValues) => {
@@ -103,7 +99,7 @@ const UserInformationContent = () => {
 
   return (
     <>
-      <div className="container my-4 px-0 pt-10">
+      <div className="pt-10">
         <div className="flex flex-col md:flex-row gap-4">
           <Card className="flex-1">
             <CardHeader>

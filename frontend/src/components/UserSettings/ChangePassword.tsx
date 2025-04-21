@@ -57,7 +57,7 @@ const ChangePassword = () => {
     onError: handleError.bind(showErrorToast),
   })
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = (data: FormData) => {
     const { confirm_password, ...updateData } = data
     mutation.mutate(updateData)
   }

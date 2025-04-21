@@ -4,15 +4,13 @@ import {
   createFileRoute,
   redirect,
 } from "@tanstack/react-router"
-import { Loader2Icon, Lock, Mail, User } from "lucide-react"
+import { Lock, Mail, User } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import type { UserRegister } from "@/client"
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
 import EmailSent from "@/components/Common/EmailSent"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -29,6 +27,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
 
 const formSchema = z
@@ -78,9 +77,12 @@ function SignUp() {
     },
   })
 
-  async function onSubmit(values: UserRegister) {
+  const onSubmit = (values: FormData) => {
     if (signUpMutation.isPending) return
-    signUpMutation.mutate(values, {
+
+    const { confirm_password, ...data } = values
+
+    signUpMutation.mutate(data, {
       onSuccess: () => {
         setUserEmail(values.email)
       },
@@ -203,21 +205,13 @@ function SignUp() {
                     Privacy Policy
                   </RouterLink>
                 </div>
-
-                <Button
+                <LoadingButton
                   type="submit"
                   className="w-full"
-                  disabled={signUpMutation.isPending}
+                  loading={signUpMutation.isPending}
                 >
-                  {signUpMutation.isPending ? (
-                    <>
-                      <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                      Please wait
-                    </>
-                  ) : (
-                    "Sign Up"
-                  )}
-                </Button>
+                  Sign Up
+                </LoadingButton>
               </form>
             </Form>
           </CardContent>

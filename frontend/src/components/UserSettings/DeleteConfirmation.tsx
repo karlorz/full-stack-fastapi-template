@@ -29,6 +29,7 @@ import { Input } from "@/components/ui/input"
 import useAuth from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
+import { LoadingButton } from "../ui/loading-button"
 
 const formSchema = z.object({
   confirmation: z
@@ -42,16 +43,15 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>
 
 const DeleteConfirmation = () => {
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const queryClient = useQueryClient()
+  const { logout } = useAuth()
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
     criteriaMode: "all",
   })
-
-  const { showSuccessToast, showErrorToast } = useCustomToast()
-  const { logout } = useAuth()
 
   const { data: userTeams } = useQuery({
     queryKey: ["teams"],
@@ -67,20 +67,16 @@ const DeleteConfirmation = () => {
   const ownsTeams = (nonPersonalUserTeams?.length ?? 0) > 0
 
   const mutation = useMutation({
-    mutationFn: async () => {
-      await UsersService.deleteUserMe()
-    },
+    mutationFn: () => UsersService.deleteUserMe(),
     onSuccess: () => {
       showSuccessToast("Your account was deleted successfully")
       logout()
     },
     onError: handleError.bind(showErrorToast),
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
+    onSettled: () => queryClient.invalidateQueries(),
   })
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     mutation.mutate()
   }
 
@@ -99,7 +95,7 @@ const DeleteConfirmation = () => {
       <DialogContent className="sm:max-w-md">
         {ownsTeams ? (
           <>
-            <DialogHeader>
+            <DialogHeader className="space-y-2">
               <DialogTitle>Delete Account</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
@@ -181,13 +177,13 @@ const DeleteConfirmation = () => {
                     Cancel
                   </Button>
                 </DialogClose>
-                <Button
+                <LoadingButton
                   type="submit"
-                  variant="destructive"
+                  loading={mutation.isPending}
                   disabled={confirmationValue !== "delete my account"}
                 >
                   Confirm
-                </Button>
+                </LoadingButton>
               </DialogFooter>
             </form>
           </Form>

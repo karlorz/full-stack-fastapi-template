@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
 import { extractErrorMessage } from "@/utils"
 
 export const Route = createFileRoute("/_layout/teams/new")({
@@ -54,9 +55,7 @@ function NewTeam() {
     onError: () => {
       setIsOpen(true)
     },
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
+    onSettled: () => queryClient.invalidateQueries(),
   })
 
   const onSubmit: SubmitHandler<TeamCreate> = (data) => {
@@ -108,9 +107,12 @@ function NewTeam() {
                             data-testid="team-name-input"
                             {...field}
                           />
-                          <Button disabled={mutation.isPending} type="submit">
-                            {mutation.isPending ? "Creating..." : "Create Team"}
-                          </Button>
+                          <LoadingButton
+                            type="submit"
+                            loading={mutation.isPending}
+                          >
+                            Create Team
+                          </LoadingButton>
                         </div>
                       </FormControl>
                       <FormMessage />

@@ -31,6 +31,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
 import { extractErrorMessage } from "@/utils"
 
 const invitationSchema = z.object({
@@ -68,12 +69,7 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
   })
 
   const onSubmit = (data: FormData) => {
-    const updatedData: InvitationCreate = {
-      email: data.email,
-      role: "member",
-      team_id: teamId,
-    }
-    mutation.mutate(updatedData)
+    mutation.mutate({ email: data.email, role: "member", team_id: teamId })
   }
 
   const handleClose = () => {
@@ -120,9 +116,9 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
                   />
                 </div>
                 <DialogFooter>
-                  <Button type="submit" disabled={mutation.isPending}>
-                    {mutation.isPending ? "Loading..." : "Send Invitation"}
-                  </Button>
+                  <LoadingButton loading={mutation.isPending} type="submit">
+                    Send Invitation
+                  </LoadingButton>
                 </DialogFooter>
               </>
             ) : mutation.isSuccess ? (

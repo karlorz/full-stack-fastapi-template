@@ -12,7 +12,6 @@ import { z } from "zod"
 import { LoginService } from "@/client"
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
 import EmailSent from "@/components/Common/EmailSent"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -29,6 +28,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Tooltip,
   TooltipContent,
@@ -95,8 +95,9 @@ function RecoverPassword() {
     setShowTooltip(false)
   }
 
-  async function onSubmit(values: FormData) {
+  const onSubmit = (values: FormData) => {
     if (mutation.isPending) return
+
     mutation.mutate(values.email)
   }
 
@@ -141,15 +142,13 @@ function RecoverPassword() {
                     </FormItem>
                   )}
                 />
-
-                <Button
+                <LoadingButton
                   type="submit"
                   className="w-full"
-                  disabled={form.formState.isSubmitting}
+                  loading={mutation.isPending}
                 >
-                  {form.formState.isSubmitting ? "Sending..." : "Continue"}
-                </Button>
-
+                  Continue
+                </LoadingButton>
                 <div className="text-center">
                   <RouterLink
                     to="/login"

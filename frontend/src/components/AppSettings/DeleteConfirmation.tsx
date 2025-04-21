@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { LoadingButton } from "../ui/loading-button"
 
 interface DeleteProps {
   appId: string
@@ -47,7 +48,9 @@ const createFormSchema = (appSlug: string) =>
 type FormData = z.infer<ReturnType<typeof createFormSchema>>
 
 const DeleteConfirmation = ({ appId, appSlug }: DeleteProps) => {
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const form = useForm<FormData>({
     resolver: zodResolver(createFormSchema(appSlug)),
@@ -57,24 +60,18 @@ const DeleteConfirmation = ({ appId, appSlug }: DeleteProps) => {
       confirmation: "",
     },
   })
-  const { showSuccessToast, showErrorToast } = useCustomToast()
-  const navigate = useNavigate()
 
   const mutation = useMutation({
-    mutationFn: async () => {
-      await AppsService.deleteApp({ appId })
-    },
+    mutationFn: () => AppsService.deleteApp({ appId }),
     onSuccess: () => {
       showSuccessToast("The app was deleted successfully")
       navigate({ to: "/" })
     },
     onError: handleError.bind(showErrorToast),
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
+    onSettled: () => queryClient.invalidateQueries(),
   })
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     mutation.mutate()
   }
 
@@ -96,7 +93,7 @@ const DeleteConfirmation = ({ appId, appSlug }: DeleteProps) => {
             onSubmit={form.handleSubmit(onSubmit)}
             data-testid="delete-confirmation-app"
           >
-            <DialogHeader>
+            <DialogHeader className="space-y-2">
               <DialogTitle>Delete App</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
@@ -136,13 +133,13 @@ const DeleteConfirmation = ({ appId, appSlug }: DeleteProps) => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button
+              <LoadingButton
                 type="submit"
-                variant="destructive"
+                loading={mutation.isPending}
                 disabled={confirmationValue !== `delete app ${appSlug}`}
               >
                 Confirm
-              </Button>
+              </LoadingButton>
             </DialogFooter>
           </form>
         </Form>

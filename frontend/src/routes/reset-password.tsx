@@ -8,7 +8,6 @@ import { LoginService } from "@/client"
 import { isLoggedIn } from "@/hooks/useAuth"
 
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -25,6 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 import { useMutation } from "@tanstack/react-query"
@@ -80,7 +80,7 @@ function ResetPassword() {
     onError: handleError.bind(showErrorToast),
   })
 
-  async function onSubmit(values: FormData) {
+  const onSubmit = (values: FormData) => {
     if (mutation.isPending) return
 
     const token = new URLSearchParams(window.location.search).get("token")
@@ -151,16 +151,13 @@ function ResetPassword() {
                   </FormItem>
                 )}
               />
-
-              <Button
+              <LoadingButton
                 type="submit"
                 className="w-full"
-                disabled={form.formState.isSubmitting}
+                loading={mutation.isPending}
               >
-                {form.formState.isSubmitting
-                  ? "Resetting..."
-                  : "Reset Password"}
-              </Button>
+                Reset Password
+              </LoadingButton>
             </form>
           </Form>
         </CardContent>

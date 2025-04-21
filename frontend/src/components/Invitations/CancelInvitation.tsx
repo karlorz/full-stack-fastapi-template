@@ -18,16 +18,14 @@ const CancelInvitation = ({ id }: { id: string }) => {
   const { showSuccessToast, showErrorToast } = useCustomToast()
 
   const mutation = useMutation({
-    mutationFn: async (data: InvitationsData["DeleteInvitation"]) => {
-      await InvitationsService.deleteInvitation(data)
-    },
+    mutationFn: (data: InvitationsData["DeleteInvitation"]) =>
+      InvitationsService.deleteInvitation(data),
     onSuccess: () => {
       showSuccessToast("The invitation was cancelled")
     },
     onError: handleError.bind(showErrorToast),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["invitations"] })
-    },
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["invitations"] }),
   })
 
   const handleCancel = () => {

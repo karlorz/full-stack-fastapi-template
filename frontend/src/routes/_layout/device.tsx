@@ -10,8 +10,8 @@ import { z } from "zod"
 
 import { LoginService } from "@/client"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { LoadingButton } from "@/components/ui/loading-button"
 import { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
@@ -107,14 +107,13 @@ function AuthorizeDevice() {
               )}
             </AlertDescription>
           </Alert>
-          <Button
-            variant="default"
-            disabled={mutation.isPending}
+          <LoadingButton
+            type="submit"
+            loading={mutation.isPending}
             onClick={() => mutation.mutate()}
           >
-            {mutation.isPending ? "Authorizing..." : "Authorize"}
-          </Button>
-
+            Authorize
+          </LoadingButton>
           {error && <p className="text-destructive">{error}</p>}
         </div>
       ) : (

@@ -29,6 +29,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
 import { getTeamQueryOptions } from "@/queries/teams"
 import { extractErrorMessage } from "@/utils"
 
@@ -64,9 +65,7 @@ function NewApp() {
     onError: () => {
       setIsOpen(true)
     },
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
+    onSettled: () => queryClient.invalidateQueries(),
   })
 
   const onSubmit: SubmitHandler<AppCreate> = (data) => {
@@ -108,9 +107,12 @@ function NewApp() {
                             data-testid="app-name-input"
                             {...field}
                           />
-                          <Button disabled={mutation.isPending} type="submit">
-                            {mutation.isPending ? "Creating..." : "Create App"}
-                          </Button>
+                          <LoadingButton
+                            type="submit"
+                            loading={mutation.isPending}
+                          >
+                            Create App
+                          </LoadingButton>
                         </div>
                       </FormControl>
                       <FormMessage />

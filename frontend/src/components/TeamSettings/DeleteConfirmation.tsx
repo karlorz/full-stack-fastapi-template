@@ -28,6 +28,7 @@ import {
 import { Input } from "@/components/ui/input"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
+import { LoadingButton } from "../ui/loading-button"
 
 const createFormSchema = (teamSlug: string) =>
   z.object({
@@ -42,7 +43,9 @@ const createFormSchema = (teamSlug: string) =>
 type FormData = z.infer<ReturnType<typeof createFormSchema>>
 
 const DeleteConfirmation = ({ team }: { team: TeamPublic }) => {
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const form = useForm<FormData>({
     resolver: zodResolver(createFormSchema(team.slug)),
@@ -53,25 +56,18 @@ const DeleteConfirmation = ({ team }: { team: TeamPublic }) => {
     },
   })
 
-  const { showSuccessToast, showErrorToast } = useCustomToast()
-  const navigate = useNavigate()
-
   const mutation = useMutation({
-    mutationFn: async () => {
-      await TeamsService.deleteTeam({ teamId: team.id })
-    },
+    mutationFn: () => TeamsService.deleteTeam({ teamId: team.id }),
     onSuccess: () => {
       showSuccessToast("The team was deleted successfully")
       localStorage.removeItem("current_team")
       navigate({ to: "/" })
     },
     onError: handleError.bind(showErrorToast),
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
+    onSettled: () => queryClient.invalidateQueries(),
   })
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     mutation.mutate()
   }
 
@@ -93,7 +89,7 @@ const DeleteConfirmation = ({ team }: { team: TeamPublic }) => {
             onSubmit={form.handleSubmit(onSubmit)}
             data-testid="delete-confirmation-team"
           >
-            <DialogHeader>
+            <DialogHeader className="space-y-2">
               <DialogTitle>Delete Team</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
@@ -135,13 +131,13 @@ const DeleteConfirmation = ({ team }: { team: TeamPublic }) => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button
+              <LoadingButton
                 type="submit"
-                variant="destructive"
+                loading={mutation.isPending}
                 disabled={confirmationValue !== `delete team ${team.slug}`}
               >
                 Confirm
-              </Button>
+              </LoadingButton>
             </DialogFooter>
           </form>
         </Form>

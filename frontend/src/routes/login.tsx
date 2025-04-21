@@ -4,14 +4,13 @@ import {
   createFileRoute,
   redirect,
 } from "@tanstack/react-router"
-import { Loader2Icon, Lock, Mail } from "lucide-react"
+import { Lock, Mail } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 import type { Body_login_login_access_token as AccessToken } from "@/client"
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
 import TeamInvitation from "@/components/Invitations/TeamInvitation"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -28,6 +27,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
 
 const formSchema = z.object({
@@ -70,7 +70,7 @@ function Login() {
     },
   })
 
-  async function onSubmit(values: AccessToken) {
+  const onSubmit = async (values: AccessToken) => {
     if (loginMutation.isPending) return
 
     try {
@@ -146,26 +146,18 @@ function Login() {
                 <div className="text-right">
                   <RouterLink
                     to="/recover-password"
-                    className="text-primary text-sm text-muted-foreground hover:underline"
+                    className="text-primary text-sm hover:underline"
                   >
                     Forgot Password?
                   </RouterLink>
                 </div>
-
-                <Button
+                <LoadingButton
                   type="submit"
                   className="w-full"
-                  disabled={loginMutation.isPending}
+                  loading={loginMutation.isPending}
                 >
-                  {loginMutation.isPending ? (
-                    <>
-                      <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                      Please wait
-                    </>
-                  ) : (
-                    "Log In"
-                  )}
-                </Button>
+                  Log In
+                </LoadingButton>
               </form>
             </Form>
           </CardContent>

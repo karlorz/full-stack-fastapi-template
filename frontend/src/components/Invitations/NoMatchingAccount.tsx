@@ -40,27 +40,26 @@ const NoMatchingAccount = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader className="space-y-2">
           <DialogTitle>Oops!</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4" data-testid="no-matching-account">
-          <DialogDescription>
-            You are not the invited user for this invitation.
-          </DialogDescription>
-          <div className="my-6 rounded-lg border p-4 shadow-sm">
-            <p>
+        <DialogDescription
+          className="space-y-4"
+          data-testid="no-matching-account"
+        >
+          You are not the invited user for this invitation.
+          <div className="flex-col py-2">
+            <div>
               Logged in as:{" "}
               <span className="font-bold">{currentUser?.email}</span>
-            </p>
-            <p>
+            </div>
+            <div>
               Invited user:{" "}
               <span className="font-bold">{invitation?.email}</span>
-            </p>
+            </div>
           </div>
-          <DialogDescription>
-            Please switch to the correct account to accept the invitation.
-          </DialogDescription>
-        </div>
+          Please switch to the correct account to accept the invitation.
+        </DialogDescription>
         <DialogFooter className="gap-3">
           <Button variant="outline" onClick={handleClose}>
             Cancel

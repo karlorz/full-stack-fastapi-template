@@ -40,6 +40,8 @@ const formSchema = z.object({
   name: z.string().nonempty("Name is required").max(50),
 })
 
+type FormData = z.infer<typeof formSchema>
+
 const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
   const [isEditing, setIsEditing] = useState(false)
   const queryClient = useQueryClient()
@@ -50,7 +52,7 @@ const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
     queryFn: () => fetchTeamBySlug(teamSlug),
   })
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: team.name,
@@ -71,12 +73,10 @@ const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
       showSuccessToast("Team updated successfully")
     },
     onError: handleError.bind(showErrorToast),
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
+    onSettled: () => queryClient.invalidateQueries(),
   })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: FormData) => {
     mutation.mutate({ name: values.name })
     setIsEditing(false)
   }

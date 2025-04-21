@@ -49,22 +49,17 @@ const AcceptInvitation = ({ token, invitation }: AcceptInvitationProps) => {
       <DialogContent>
         {mutation.isPending || mutation.isIdle ? (
           <>
-            <DialogHeader>
+            <DialogHeader className="space-y-2">
               <DialogTitle>Team Invitation</DialogTitle>
               <DialogDescription
                 className="space-y-4"
                 data-testid="accept-invitation"
               >
-                <p>
-                  Hi <span className="font-bold">{invitation?.email}</span>,
-                </p>
-                <p>
-                  You have been invited by{" "}
-                  <span className="font-bold">{invitation?.sender.email}</span>{" "}
-                  to join{" "}
-                  <span className="font-bold">{invitation?.team.name}</span>.
-                  Accept to build and deploy apps with the team.
-                </p>
+                Hi <span className="font-bold">{invitation?.email}</span>, You
+                have been invited by{" "}
+                <span className="font-bold">{invitation?.sender.email}</span> to
+                join <span className="font-bold">{invitation?.team.name}</span>.
+                Accept to build and deploy apps with the team.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="gap-3">
