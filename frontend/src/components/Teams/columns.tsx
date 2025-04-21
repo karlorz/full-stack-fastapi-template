@@ -3,7 +3,7 @@ import type { ColumnDef } from "@tanstack/react-table"
 import type { TeamPublic } from "@/client"
 import { Badge } from "@/components/ui/badge"
 import { Link } from "lucide-react"
-import ActionsMenu from "../Common/ActionsMenu"
+import ActionsMenu from "./ActionsMenu"
 
 export type TeamMember = {
   id: string

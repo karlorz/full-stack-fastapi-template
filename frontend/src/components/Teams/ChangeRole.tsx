@@ -1,13 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { ArrowLeftRight } from "lucide-react"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { useState } from "react"
 
-import {
-  type Role,
-  type TeamUpdateMember,
-  TeamsService,
-  type UserPublic,
-} from "@/client"
+import { type Role, TeamsService, type UserPublic } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -16,82 +11,99 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { LoadingButton } from "@/components/ui/loading-button"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 
 interface ChangeRoleProps {
-  userRole?: string
-  teamId?: string
+  userRole: Role
+  teamId: string
   user: UserPublic
+  onActionComplete: () => void
 }
 
-const ChangeRole = ({ userRole, teamId, user }: ChangeRoleProps) => {
+const ChangeRole = ({
+  userRole,
+  teamId,
+  user,
+  onActionComplete,
+}: ChangeRoleProps) => {
+  const [open, setOpen] = useState(false)
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
-  const {
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm<TeamUpdateMember>()
 
   const mutation = useMutation({
-    mutationFn: (data: { newRole: Role }) =>
+    mutationFn: (newRole: Role) =>
       TeamsService.updateMemberInTeam({
-        teamId: teamId!,
-        requestBody: { role: data.newRole },
+        teamId,
         userId: user.id,
+        requestBody: { role: newRole },
       }),
     onSuccess: () => {
-      showSuccessToast("The role was updated successfully")
+      showSuccessToast("Role updated successfully")
+      setOpen(false)
+      onActionComplete()
     },
     onError: handleError.bind(showErrorToast),
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
+    onSettled: () => queryClient.invalidateQueries(),
   })
 
-  const onSubmit: SubmitHandler<TeamUpdateMember> = async () => {
+  const handleChangeRole = () => {
     const newRole = userRole === "admin" ? "member" : "admin"
-    mutation.mutate({ newRole })
+    mutation.mutate(newRole)
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <DropdownMenuItem>
-          <ArrowLeftRight className="h-4 w-4 mr-2" />
-          Change Role
-        </DropdownMenuItem>
-      </DialogTrigger>
-      <DialogContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogHeader>
-            <DialogTitle>Change Role</DialogTitle>
-            <DialogDescription>
-              {userRole === "member" ? (
-                <>
-                  Are you sure you want to promote the user to{" "}
-                  <span className="font-bold">Admin</span>?
-                </>
-              ) : (
-                <>
-                  Are you sure you want to demote the user to{" "}
-                  <span className="font-bold">Member</span>?
-                </>
-              )}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2">
-            <Button type="button" variant="secondary" disabled={isSubmitting}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting || mutation.isPending}>
-              Confirm
-            </Button>
-          </DialogFooter>
-        </form>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DropdownMenuItem
+        onSelect={(e) => {
+          e.preventDefault()
+          setOpen(true)
+        }}
+        className="flex items-center"
+      >
+        <ArrowLeftRight className="h-4 w-4 mr-2" />
+        <span>Change Role</span>
+      </DropdownMenuItem>
+
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader className="space-y-2">
+          <DialogTitle>Change Role</DialogTitle>
+          <DialogDescription>
+            {userRole === "member" ? (
+              <>
+                Promote <span className="font-semibold">{user.email}</span> to{" "}
+                <span className="font-bold">Admin</span>?
+              </>
+            ) : (
+              <>
+                Demote <span className="font-semibold">{user.email}</span> to{" "}
+                <span className="font-bold">Member</span>?
+              </>
+            )}
+          </DialogDescription>
+        </DialogHeader>
+
+        <DialogFooter className="sm:justify-end gap-3 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={mutation.isPending}
+            className="sm:w-auto w-full"
+          >
+            Cancel
+          </Button>
+          <LoadingButton
+            type="button"
+            onClick={handleChangeRole}
+            loading={mutation.isPending}
+          >
+            Confirm
+          </LoadingButton>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

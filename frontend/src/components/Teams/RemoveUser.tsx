@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Trash } from "lucide-react"
-import { useForm } from "react-hook-form"
+import { useState } from "react"
 
-import { type TeamsRemoveMemberFromTeamData, TeamsService } from "@/client"
+import { TeamsService } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -14,77 +14,88 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { LoadingButton } from "@/components/ui/loading-button"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 
 interface RemoveProps {
-  teamId?: string
+  teamId: string
   userId: string
+  onActionComplete: () => void
 }
 
-const RemoveUser = ({ teamId, userId }: RemoveProps) => {
+const RemoveUser = ({ teamId, userId, onActionComplete }: RemoveProps) => {
+  const [open, setOpen] = useState(false)
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
-  const {
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm<TeamsRemoveMemberFromTeamData>()
 
   const mutation = useMutation({
-    mutationFn: async (data: TeamsRemoveMemberFromTeamData) => {
-      await TeamsService.removeMemberFromTeam(data)
-    },
+    mutationFn: () => TeamsService.removeMemberFromTeam({ teamId, userId }),
     onSuccess: () => {
       showSuccessToast("The user was removed successfully")
+      setOpen(false)
+      onActionComplete()
     },
     onError: handleError.bind(showErrorToast),
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
+    onSettled: () => queryClient.invalidateQueries(),
   })
 
-  const onSubmit = async () => {
-    mutation.mutate({ teamId: teamId!, userId })
+  const handleRemove = () => {
+    mutation.mutate()
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <DropdownMenuItem className="text-destructive">
-          <Trash className="h-4 w-4 mr-2" />
-          Remove User
+        <DropdownMenuItem
+          className="flex items-center"
+          onSelect={(e) => {
+            e.preventDefault()
+            setOpen(true)
+          }}
+        >
+          <Trash className="h-4 w-4 mr-2 text-destructive" />
+          <span className="text-destructive">Remove User</span>
         </DropdownMenuItem>
       </DialogTrigger>
-      <DialogContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogHeader>
-            <DialogTitle>Remove User</DialogTitle>
-            <DialogDescription className="space-y-2">
-              <p>
-                This user will no longer have access to this team. All{" "}
-                <span className="font-bold">
-                  associated data and permissions will be revoked.
-                </span>
-              </p>
-              <p>
-                To restore access, you'll need to invite this user to the team
-                again.
-              </p>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2">
-            <Button type="button" variant="secondary" disabled={isSubmitting}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="destructive"
-              disabled={isSubmitting || mutation.isPending}
-            >
-              Confirm
-            </Button>
-          </DialogFooter>
-        </form>
+
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader className="space-y-2">
+          <DialogTitle>Remove User</DialogTitle>
+          <DialogDescription>
+            This user will no longer have access to this team. All{" "}
+            <span className="font-bold">
+              associated data and permissions will be revoked.
+            </span>
+            To restore access, you'll need to invite this user again.
+          </DialogDescription>
+        </DialogHeader>
+
+        {mutation.isError && (
+          <p className="text-sm text-destructive">
+            Failed to remove user. Please try again.
+          </p>
+        )}
+
+        <DialogFooter className="sm:justify-end gap-3 pt-2">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={mutation.isPending}
+            onClick={() => setOpen(false)}
+            className="sm:w-auto w-full"
+          >
+            Cancel
+          </Button>
+          <LoadingButton
+            type="button"
+            onClick={handleRemove}
+            variant="destructive"
+            loading={mutation.isPending}
+          >
+            Confirm
+          </LoadingButton>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

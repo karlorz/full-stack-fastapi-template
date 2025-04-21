@@ -1,4 +1,4 @@
-import type { TeamPublic, UserPublic } from "@/client"
+import type { Role, TeamPublic, UserPublic } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -6,19 +6,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreVertical } from "lucide-react"
-import ChangeRole from "../Teams/ChangeRole"
-import RemoveUser from "../Teams/RemoveUser"
-import type { TeamMember } from "../Teams/columns"
+import { useState } from "react"
+import ChangeRole from "./ChangeRole"
+import RemoveUser from "./RemoveUser"
+import type { TeamMember } from "./columns"
 
 interface ActionsMenuProps {
-  userRole?: string
-  team?: TeamPublic
-  value: UserPublic | TeamPublic | TeamMember
+  userRole: Role
+  team: TeamPublic
+  value: UserPublic | TeamMember
 }
 
 const ActionsMenu = ({ userRole, team, value }: ActionsMenuProps) => {
+  const [open, setOpen] = useState(false)
+
   return (
-    <DropdownMenu modal={false}>
+    <DropdownMenu open={open} onOpenChange={setOpen} modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
           <MoreVertical className="h-4 w-4" />
@@ -30,8 +33,13 @@ const ActionsMenu = ({ userRole, team, value }: ActionsMenuProps) => {
           userRole={userRole}
           teamId={team?.id}
           user={value as UserPublic}
+          onActionComplete={() => setOpen(false)}
         />
-        <RemoveUser userId={value.id} teamId={team?.id} />
+        <RemoveUser
+          userId={value.id}
+          teamId={team?.id}
+          onActionComplete={() => setOpen(false)}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   )
