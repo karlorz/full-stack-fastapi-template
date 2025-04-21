@@ -1,8 +1,9 @@
+import json
 from pathlib import Path
 import pulumi
+import pulumi_aws as aws
 import pulumi_awsx as awsx
 import pulumi_eks as eks
-import pulumi_aws as aws
 from pulumi_deployment_workflow import iam, s3, sqs
 from pulumi_deployment_workflow.config import (
     account_id,
@@ -15,6 +16,8 @@ from pulumi_deployment_workflow.config import (
     stack_name,
     aws_load_balancer_name,
 )
+import pulumi_kubernetes as k8s
+import pulumi_kubernetes.helm.v4 as helm
 
 
 ### AWS Resources ###
@@ -302,6 +305,144 @@ repository_messenger = aws.ecr.Repository(
     },
 )
 
+# Create an IAM Role for the Service Account
+external_secrets_iam_role = aws.iam.Role(
+    "external-secrets-role",
+    assume_role_policy=pulumi.Output.json_dumps(
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Federated": pulumi.Output.format(
+                            "arn:aws:iam::{account_id}:oidc-provider/oidc.eks.{region}.amazonaws.com/id/{oidc_id}",
+                            account_id=account_id,
+                            region=region,
+                            oidc_id=oidc_id,
+                        )
+                    },
+                    "Action": [
+                        "sts:AssumeRoleWithWebIdentity",
+                    ],
+                    "Condition": {
+                        "StringEquals": {
+                            pulumi.Output.format(
+                                "oidc.eks.{region}.amazonaws.com/id/{oidc_id}:aud",
+                                region=region,
+                                oidc_id=oidc_id,
+                            ): "sts.amazonaws.com"
+                        }
+                    },
+                }
+            ],
+        }
+    ),
+)
+
+# Create an IAM Policy for the External Secrets Operator
+external_secrets_policy = aws.iam.Policy(
+    "external-secrets-policy",
+    policy=pulumi.Output.json_dumps(
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "secretsmanager:GetSecretValue",
+                        "secretsmanager:DescribeSecret",
+                        "secretsmanager:ListSecrets",
+                        "kms:Decrypt",
+                        "ssm:GetParameter",
+                        "ssm:GetParametersByPath",
+                    ],
+                    "Resource": "*",  # Adjust to specific resources for better security
+                }
+            ],
+        }
+    ),
+)
+
+# Attach the updated policy to the external-secrets-iam role
+aws.iam.RolePolicyAttachment(
+    "external-secrets-policy-attachment",
+    role=external_secrets_iam_role.name,
+    policy_arn=external_secrets_policy.arn,
+)
+
+k8s_provider = k8s.Provider("k8s-provider", 
+    kubeconfig=eks_cluster.kubeconfig.apply(lambda k: json.dumps(k))
+)
+
+k8s_labels = {
+    "app.kubernetes.io/managed-by": "pulumi",
+    "app.kubernetes.io/environment": stack_name,
+}
+
+ns_map: dict[str, any] = {
+    "cert-manager": {},
+    "external-secrets": {},
+    "fastapicloud": {},
+    "knative-serving": {},
+    "kourier-system": {
+        "labels": {
+            "networking.knative.dev/ingress-provider": "kourier",
+        },
+    },
+    "vector-agent": {},
+    "vector-aggregator": {},
+}
+for k, ns in ns_map.items():
+    ns_map[k]["resource"] = k8s.core.v1.Namespace(
+        k,
+        metadata=k8s.meta.v1.ObjectMetaArgs(
+            name=k,
+            labels={**ns.get("labels", {}), **k8s_labels},
+        ),
+        opts=pulumi.ResourceOptions(provider=k8s_provider),
+    )
+
+# Ensure the Helm chart configuration includes the correct service account annotations
+external_secrets_sa_name="external-secrets"
+external_secrets_sa_namespace="external-secrets"
+custom_external_secrets_chart = helm.Chart(
+    "external-secrets",
+    helm.ChartArgs(
+        chart="./helm/charts/external-secrets",
+        namespace=external_secrets_sa_namespace,
+        values={
+            "external-secrets": {
+                "serviceAccount": {
+                    "name": external_secrets_sa_name,
+                    "annotations": {
+                        "eks.amazonaws.com/role-arn": external_secrets_iam_role.arn,
+                    },
+                },
+            },
+            "config": {
+                "parameter-store": {
+                    "provider": {
+                        "aws": {
+                            "service": "ParameterStore",
+                            "region": region,
+                        },
+                    },
+                },
+            },
+        },
+    ),
+    opts=pulumi.ResourceOptions(provider=k8s_provider),
+)
+
+external_secrets_pod_identity_association = aws.eks.PodIdentityAssociation(
+    "externalsecrets",
+    cluster_name=eks_cluster,
+    namespace="external-secrets",
+    service_account=external_secrets_sa_name,
+    role_arn=external_secrets_iam_role.arn,
+)
+
 # Export values to use elsewhere
 pulumi.export("kubeconfig_data", eks_cluster.kubeconfig)
 pulumi.export("cluster_name", cluster_name)
@@ -321,3 +462,4 @@ pulumi.export("aws_lb_controller_role_arn", aws_lb_controller_role.arn)
 pulumi.export("fastapicloud_iam_role_arn", fastapicloud_iam_role.arn)
 pulumi.export("ecr_iam_role_arn", ecr_iam_role.arn)
 pulumi.export("builder_queue_name", sqs.builder_queue.name)
+pulumi.export("external_secrets_iam_role_arn", external_secrets_iam_role.arn)

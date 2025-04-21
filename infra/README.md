@@ -68,10 +68,12 @@ Set up `kubectl`:
 # Get the cluster name
 export CLUSTER_NAME=$(aws eks --region us-east-1 list-clusters --profile $ENVIRONMENT --query 'clusters[0]' --output text)
 # Configure kubectl with that cluster
-aws eks --region us-east-1 update-kubeconfig --name $CLUSTER_NAME --profile development
+aws eks --region us-east-1 update-kubeconfig --name $CLUSTER_NAME --profile $ENVIRONMENT
 ```
 
 ### Configure the kubectl context/environment
+
+##### [Optional] Install [kctx](https://github.com/ahmetb/kubectx) and [kube-ps1](https://github.com/jonmosco/kube-ps1)
 
 After running the steps above for each AWS environment, each with have a `kubectl` "context".
 
@@ -247,13 +249,13 @@ This script expects some environment variables to be set. If running on the GitH
 Set the NATS environment variables from a downloaded credentials file:
 
 ```bash
-export NATS_LOGS_WRITE_CREDS="$(cat ./NGS-fastapicloud-logs.creds)"
+export NATS_LOGGING_WRITE_CREDS="$(cat ./NGS-fastapicloud-logs.creds)"
 ```
 
 Confirm the env var has contents:
 
 ```bash
-echo $NATS_LOGS_WRITE_CREDS
+echo $NATS_LOGGING_WRITE_CREDS
 ```
 
 Set `CLOUDFLARE_API_TOKEN_SSL` with the Cloudflare SSL user API token for Knative serving:

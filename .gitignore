@@ -2,3 +2,4 @@ __pycache__
 app.egg-info
 *.pyc
 .env.override
+compose.override.y*ml
