@@ -412,6 +412,7 @@
 
 ### Internal
 
+* 🔧 Add configuration for running python tests in vscode (and forks). PR [#736](https://github.com/fastapilabs/cloud/pull/736) by [@patrick91](https://github.com/patrick91).
 * ➕ Add `external-secrets` to kubernetes cluster. PR [#733](https://github.com/fastapilabs/cloud/pull/733) by [@siryur](https://github.com/siryur).
 * 👷 Run tests/deploy/lint when packages change too. PR [#735](https://github.com/fastapilabs/cloud/pull/735) by [@patrick91](https://github.com/patrick91).
 * 👷 Fix CI for uv workspaces and internal subpackages. PR [#734](https://github.com/fastapilabs/cloud/pull/734) by [@tiangolo](https://github.com/tiangolo).
