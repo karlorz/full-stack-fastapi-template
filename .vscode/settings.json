@@ -1,9 +1,9 @@
 {
-    "yaml.schemas": {
-        "kubernetes": [
-            "**/k8s/*.yaml",
-            "**/kubernetes/*.yaml"
-        ]
-    },
-    "python.envFile": "${workspaceFolder}/.env.vscode"
+  "yaml.schemas": {
+    "kubernetes": ["**/k8s/*.yaml", "**/kubernetes/*.yaml"]
+  },
+  "python.envFile": "${workspaceFolder}/.env.vscode",
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": ["backend", "packages"]
 }
