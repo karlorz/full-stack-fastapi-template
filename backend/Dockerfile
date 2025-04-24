@@ -49,4 +49,6 @@ RUN --mount=type=cache,target=/user/.cache/uv \
 
 WORKDIR /app/backend/
 
-CMD ["sh", "-c", "fastapi run --port ${PORT:-8000}"]
+ENV FORWARDED_ALLOW_IPS='*'
+
+CMD ["sh", "-c", "fastapi run --proxy-headers --port ${PORT:-8000}"]

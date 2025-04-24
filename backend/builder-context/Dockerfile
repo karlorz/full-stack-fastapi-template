@@ -45,4 +45,6 @@ RUN rm install_dependencies.sh
 
 COPY --chown=user:user . .
 
-CMD ["sh", "-c", "fastapi run --host 0.0.0.0 --port ${PORT:-8000}"]
+ENV FORWARDED_ALLOW_IPS='*'
+
+CMD ["sh", "-c", "fastapi run --proxy-headers --host 0.0.0.0 --port ${PORT:-8000}"]
