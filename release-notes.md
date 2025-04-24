@@ -171,6 +171,7 @@
 
 ### Refactors
 
+* ♻️ Enable forward proxy headers in FastAPI apps, API and customer's apps. PR [#745](https://github.com/fastapilabs/cloud/pull/745) by [@tiangolo](https://github.com/tiangolo).
 * 🍱 Update logo for favicon and email templates. PR [#753](https://github.com/fastapilabs/cloud/pull/753) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Make app slug names have a default of 5 characters minimum, shorter app names will get a slug. PR [#742](https://github.com/fastapilabs/cloud/pull/742) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Fix the opening/closing of Change Role and Remove User dialogs. PR [#743](https://github.com/fastapilabs/cloud/pull/743) by [@alejsdev](https://github.com/alejsdev).
