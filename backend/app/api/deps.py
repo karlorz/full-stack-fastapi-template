@@ -70,19 +70,23 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
         token_data = TokenPayload(**payload)
     except (InvalidTokenError, ValidationError):
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
         )
     splitted_sub = token_data.sub.split("-", maxsplit=1) if token_data.sub else []
     if len(splitted_sub) == 0 or splitted_sub[0] != TokenType.user:
         raise HTTPException(
-            status_code=404, detail="The token is not a valid user token"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
         )
     user = session.get(User, splitted_sub[1])
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
+        )
     if not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
+        )
     return user
 
 
