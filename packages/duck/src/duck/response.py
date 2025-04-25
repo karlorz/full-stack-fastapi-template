@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 import json
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, Mapping, Self
+from urllib.parse import urlencode
 
 if TYPE_CHECKING:
     from fastapi import Response as FastAPIResponse
@@ -24,7 +26,26 @@ class Response:
     status_code: int
     body: str | None = None
     cookies: list[Cookie] | None = None
-    headers: dict[str, str] | None = None
+    headers: Mapping[str, str] | None = None
+
+    @classmethod
+    def redirect(
+        cls,
+        url: str,
+        query_params: Mapping[str, str | list[str]] | None = None,
+        headers: Mapping[str, str] | None = None,
+        cookies: list[Cookie] | None = None,
+    ) -> Self:
+        headers = headers or {}
+
+        if query_params:
+            url = url + "?" + urlencode(query_params)
+
+        return cls(
+            status_code=302,
+            headers={"Location": url, **headers},
+            cookies=cookies,
+        )
 
     def json(self) -> str | None:
         if self.body is None:
