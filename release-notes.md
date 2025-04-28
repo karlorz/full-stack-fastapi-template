@@ -418,6 +418,7 @@
 
 ### Internal
 
+* ⬆ Bump @tanstack/router-devtools from 1.114.34 to 1.117.1 in /frontend. PR [#807](https://github.com/fastapilabs/cloud/pull/807) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump tw-animate-css from 1.2.5 to 1.2.8 in /frontend. PR [#805](https://github.com/fastapilabs/cloud/pull/805) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-dropdown-menu from 2.1.6 to 2.1.12 in /frontend. PR [#802](https://github.com/fastapilabs/cloud/pull/802) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/router-vite-plugin from 1.114.34 to 1.117.2 in /frontend. PR [#803](https://github.com/fastapilabs/cloud/pull/803) by [@dependabot[bot]](https://github.com/apps/dependabot).
