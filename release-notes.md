@@ -418,6 +418,7 @@
 
 ### Internal
 
+* ⬆️ Add Docker Compose and uv to Dependabot config. PR [#792](https://github.com/fastapilabs/cloud/pull/792) by [@alejsdev](https://github.com/alejsdev).
 * ⬆ Bump @radix-ui/react-separator from 1.1.2 to 1.1.4 in /frontend. PR [#795](https://github.com/fastapilabs/cloud/pull/795) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump form-data from 4.0.0 to 4.0.2 in /frontend. PR [#797](https://github.com/fastapilabs/cloud/pull/797) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump vite from 5.4.17 to 6.3.3 in /frontend. PR [#798](https://github.com/fastapilabs/cloud/pull/798) by [@dependabot[bot]](https://github.com/apps/dependabot).
