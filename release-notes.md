@@ -174,6 +174,7 @@
 
 ### Refactors
 
+* ♻️ Update HTTP status codes. PR [#801](https://github.com/fastapilabs/cloud/pull/801) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Enable forward proxy headers in FastAPI apps, API and customer's apps. PR [#745](https://github.com/fastapilabs/cloud/pull/745) by [@tiangolo](https://github.com/tiangolo).
 * 🍱 Update logo for favicon and email templates. PR [#753](https://github.com/fastapilabs/cloud/pull/753) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Make app slug names have a default of 5 characters minimum, shorter app names will get a slug. PR [#742](https://github.com/fastapilabs/cloud/pull/742) by [@tiangolo](https://github.com/tiangolo).
