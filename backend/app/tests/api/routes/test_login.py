@@ -28,7 +28,7 @@ def test_get_access_token_incorrect_password(client: TestClient, user: User) -> 
         "password": "incorrect",
     }
     r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
-    assert r.status_code == 400
+    assert r.status_code == 401
 
 
 def test_use_access_token(logged_in_client: TestClient) -> None:
@@ -88,8 +88,8 @@ def test_reset_password_invalid_token(logged_in_client: TestClient) -> None:
     response = r.json()
 
     assert "detail" in response
-    assert r.status_code == 400
-    assert response["detail"] == "Invalid token"
+    assert r.status_code == 401
+    assert response["detail"] == "Invalid credentials"
 
 
 def test_reset_password_email_not_found(client: TestClient) -> None:
@@ -129,7 +129,7 @@ def test_reset_password_inactive_user(client: TestClient, db: Session) -> None:
     response = r.json()
 
     assert "detail" in response
-    assert r.status_code == 400
+    assert r.status_code == 403
     assert response["detail"] == "Inactive user"
 
 
@@ -150,7 +150,7 @@ def test_login_user_inactive(client: TestClient, db: Session) -> None:
         "password": "test12345",
     }
     r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
-    assert r.status_code == 400
+    assert r.status_code == 403
     assert r.json() == {"detail": "Inactive user"}
 
 
@@ -168,5 +168,5 @@ def test_login_user_not_verified(client: TestClient, db: Session) -> None:
         "password": "test12345",
     }
     r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
-    assert r.status_code == 400
+    assert r.status_code == 403
     assert r.json() == {"detail": "Email not verified"}

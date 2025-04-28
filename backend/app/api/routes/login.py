@@ -8,6 +8,7 @@ from fastapi import (
     Form,
     HTTPException,
     Request,
+    status,
 )
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
@@ -59,11 +60,18 @@ def login_access_token(
         session=session, email=form_data.username, password=form_data.password
     )
     if not user:
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+        )
     elif not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user"
+        )
     elif not user.is_verified:
-        raise HTTPException(status_code=400, detail="Email not verified")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Email not verified"
+        )
 
     # The user is authenticated, now generate access token
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -144,7 +152,7 @@ async def device_authorization_info(
     auth_data = get_device_authorization_data_by_user_code(user_code, redis)
 
     if auth_data is None:
-        raise HTTPException(status_code=404, detail="Not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
 
     return DeviceAuthorizationInfo(
         device_code=auth_data.device_code,
@@ -207,7 +215,9 @@ async def authorize_device(
     device_data = get_device_authorization_data_by_user_code(data.user_code, redis)
 
     if device_data is None:
-        raise HTTPException(status_code=404, detail="Code not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Code not found"
+        )
 
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
@@ -248,7 +258,7 @@ def recover_password(email: str, session: SessionDep) -> Message:
 
     if not user:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="The user with this email does not exist in the system.",
         )
     password_reset_token = generate_password_reset_token(email=email)
@@ -256,7 +266,10 @@ def recover_password(email: str, session: SessionDep) -> Message:
         email_to=user.email, email=email, token=password_reset_token
     )
     if not settings.emails_enabled:
-        raise HTTPException(status_code=500, detail="No email provided")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="No email service configured",
+        )
     send_email(
         email_to=user.email,
         subject=email_data.subject,
@@ -272,15 +285,21 @@ def reset_password(session: SessionDep, body: NewPassword) -> Message:
     """
     email = verify_password_reset_token(token=body.token)
     if not email:
-        raise HTTPException(status_code=400, detail="Invalid token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     user = crud.get_user_by_email(session=session, email=email)
     if not user:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="The user with this email does not exist in the system.",
         )
     elif not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user"
+        )
     hashed_password = get_password_hash(password=body.new_password)
     user.hashed_password = hashed_password
     session.add(user)

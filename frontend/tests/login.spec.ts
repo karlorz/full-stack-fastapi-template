@@ -73,7 +73,7 @@ test("Log in with invalid password", async ({ page }) => {
   await fillForm(page, "sebastian@fastapilabs.com", "changethat")
   await page.getByRole("button", { name: "Log In" }).click()
 
-  await expect(page.getByText("Incorrect email or password")).toBeVisible()
+  await expect(page.getByText("Invalid credentials")).toBeVisible()
 })
 
 // Log out

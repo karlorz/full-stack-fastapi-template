@@ -82,7 +82,7 @@ test("Expired or invalid reset link", async ({ page }) => {
   await page.getByTestId("confirm-password-input").fill(newPassword)
   await page.getByRole("button", { name: "Reset Password" }).click()
 
-  await expect(page.getByText("Invalid token")).toBeVisible()
+  await expect(page.getByText("Invalid credentials")).toBeVisible()
 })
 
 test("Weak new password validation", async ({ page, request }) => {

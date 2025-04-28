@@ -26,7 +26,12 @@ OpenAPI.TOKEN = async () => {
 }
 
 const handleApiError = (error: Error) => {
-  if (error instanceof ApiError && [401, 403].includes(error.status)) {
+  if (
+    error instanceof ApiError &&
+    [401, 403].includes(error.status) &&
+    !window.location.pathname.startsWith("/login") &&
+    !window.location.pathname.startsWith("/reset-password")
+  ) {
     localStorage.removeItem("current_team")
     localStorage.removeItem("access_token")
     window.location.href = "/login"
