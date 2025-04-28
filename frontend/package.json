@@ -60,7 +60,7 @@
     "@hey-api/openapi-ts": "^0.57.1",
     "@playwright/test": "1.51.1",
     "@tanstack/router-devtools": "^1.114.32",
-    "@tanstack/router-vite-plugin": "^1.114.32",
+    "@tanstack/router-vite-plugin": "^1.117.2",
     "@types/country-list": "^2.1.4",
     "@types/node": "^20.17.28",
     "@types/react": "^19.0.12",
