@@ -416,6 +416,7 @@
 
 ### Internal
 
+* ⬆ Bump form-data from 4.0.0 to 4.0.2 in /frontend. PR [#797](https://github.com/fastapilabs/cloud/pull/797) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump vite from 5.4.17 to 6.3.3 in /frontend. PR [#798](https://github.com/fastapilabs/cloud/pull/798) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump lucide-react from 0.479.0 to 0.503.0 in /frontend. PR [#799](https://github.com/fastapilabs/cloud/pull/799) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-collapsible from 1.1.3 to 1.1.8 in /frontend. PR [#794](https://github.com/fastapilabs/cloud/pull/794) by [@dependabot[bot]](https://github.com/apps/dependabot).
