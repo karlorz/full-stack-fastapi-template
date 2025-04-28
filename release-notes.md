@@ -416,6 +416,7 @@
 
 ### Internal
 
+* ⬆ Bump tailwindcss from 4.1.1 to 4.1.4 in /frontend. PR [#791](https://github.com/fastapilabs/cloud/pull/791) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🔧 Update Dependabot config. PR [#784](https://github.com/fastapilabs/cloud/pull/784) by [@alejsdev](https://github.com/alejsdev).
 * ⬆ Bump astral-sh/setup-uv from 5 to 6. PR [#777](https://github.com/fastapilabs/cloud/pull/777) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🔧 Add configuration for running python tests in vscode (and forks). PR [#736](https://github.com/fastapilabs/cloud/pull/736) by [@patrick91](https://github.com/patrick91).
