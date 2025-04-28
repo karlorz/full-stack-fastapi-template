@@ -416,6 +416,7 @@
 
 ### Internal
 
+* ⬆ Bump @radix-ui/react-select from 2.1.6 to 2.2.2 in /frontend. PR [#796](https://github.com/fastapilabs/cloud/pull/796) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-router from 1.114.34 to 1.117.1 in /frontend. PR [#793](https://github.com/fastapilabs/cloud/pull/793) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump tailwind-merge from 3.1.0 to 3.2.0 in /frontend. PR [#790](https://github.com/fastapilabs/cloud/pull/790) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump posthog-js from 1.234.6 to 1.236.7 in /frontend. PR [#788](https://github.com/fastapilabs/cloud/pull/788) by [@dependabot[bot]](https://github.com/apps/dependabot).
