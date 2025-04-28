@@ -418,6 +418,7 @@
 
 ### Internal
 
+* ⬆ Bump @radix-ui/react-dropdown-menu from 2.1.6 to 2.1.12 in /frontend. PR [#802](https://github.com/fastapilabs/cloud/pull/802) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/router-vite-plugin from 1.114.34 to 1.117.2 in /frontend. PR [#803](https://github.com/fastapilabs/cloud/pull/803) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆️ Add Docker Compose and uv to Dependabot config. PR [#792](https://github.com/fastapilabs/cloud/pull/792) by [@alejsdev](https://github.com/alejsdev).
 * ⬆ Bump @radix-ui/react-separator from 1.1.2 to 1.1.4 in /frontend. PR [#795](https://github.com/fastapilabs/cloud/pull/795) by [@dependabot[bot]](https://github.com/apps/dependabot).
