@@ -196,10 +196,6 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     user_create = UserCreate.model_validate(user_in)
     user = crud.create_user(session=session, user_create=user_create, is_verified=False)
 
-    # TODO: uncomment when email service is ready
-    # if not settings.emails_enabled:
-    #     raise HTTPException(status_code=500, detail="No email configuration provided")
-
     token = generate_verification_email_token(email=user_in.email)
     email_data = generate_verification_email(email_to=user_in.email, token=token)
     send_email(

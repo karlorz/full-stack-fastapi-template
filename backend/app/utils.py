@@ -64,9 +64,9 @@ def render_email_template(*, template_name: str, context: dict[str, Any]) -> str
 
 def is_allowed_recipient(email_to: str) -> bool:
     settings = MainSettings.get_settings()
-    # TODO: Uncomment when GA
-    # if get_common_settings().ENVIRONMENT == "production":
-    #     return True
+    common_settings = CommonSettings.get_settings()
+    if common_settings.ENVIRONMENT == "production":
+        return True
     if settings.SMTP_HOST in {
         "mailcatcher",
         "localhost",
@@ -80,16 +80,19 @@ def is_allowed_recipient(email_to: str) -> bool:
 
 def is_signup_allowed(email_to: str, session: Session) -> bool:
     settings = MainSettings.get_settings()
+    if email_to.endswith(tuple(settings.ALLOWED_SIGNUP_DOMAINS)):
+        return True
 
-    # TODO: Uncomment when GA
-    # if settings.ENVIRONMENT == "production":
+    common_settings = CommonSettings.get_settings()
+
     statement = select(WaitingListUser).where(
         col(WaitingListUser.email) == email_to,
     )
     user = session.exec(statement).first()
-
-    if (user and user.can_signup) or (
-        email_to.endswith(tuple(settings.ALLOWED_SIGNUP_DOMAINS))
+    if (
+        common_settings.ENVIRONMENT in {"production", "local"}
+        and user
+        and user.can_signup
     ):
         return True
 
@@ -131,18 +134,6 @@ def send_email(
         smtp_options["password"] = settings.SMTP_PASSWORD
     response = message.send(to=email_to, smtp=smtp_options)
     logging.info(f"send email result: {response}")
-
-
-def generate_test_email(email_to: str) -> EmailData:
-    settings = MainSettings.get_settings()
-
-    project_name = settings.PROJECT_NAME
-    subject = f"{project_name} - Test email"
-    html_content = render_email_template(
-        template_name="test_email.html",
-        context={"project_name": settings.PROJECT_NAME, "email": email_to},
-    )
-    return EmailData(html_content=html_content, subject=subject)
 
 
 def generate_reset_password_email(email_to: str, email: str, token: str) -> EmailData:
