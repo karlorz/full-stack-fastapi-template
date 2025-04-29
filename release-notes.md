@@ -418,6 +418,7 @@
 
 ### Internal
 
+* ⬆ Bump @sentry/vite-plugin from 2.23.0 to 3.3.1 in /frontend. PR [#810](https://github.com/fastapilabs/cloud/pull/810) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @vitejs/plugin-react-swc from 3.8.1 to 3.9.0 in /frontend. PR [#811](https://github.com/fastapilabs/cloud/pull/811) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump zod from 3.24.2 to 3.24.3 in /frontend. PR [#812](https://github.com/fastapilabs/cloud/pull/812) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/router-devtools from 1.114.34 to 1.117.1 in /frontend. PR [#807](https://github.com/fastapilabs/cloud/pull/807) by [@dependabot[bot]](https://github.com/apps/dependabot).
