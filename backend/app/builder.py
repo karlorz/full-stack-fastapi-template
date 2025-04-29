@@ -478,6 +478,7 @@ def depot_build_exec(
             "DEPOT_BUILD_ID": build_id,
             "DEPOT_TOKEN": build_token,
             "DEPOT_PROJECT_ID": project_id,
+            "DEPOT_NO_SUMMARY_LINK": "true",
         },
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
