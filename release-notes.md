@@ -419,6 +419,7 @@
 
 ### Internal
 
+* ⬆ Bump @playwright/test from 1.51.1 to 1.52.0 in /frontend. PR [#806](https://github.com/fastapilabs/cloud/pull/806) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @sentry/vite-plugin from 2.23.0 to 3.3.1 in /frontend. PR [#810](https://github.com/fastapilabs/cloud/pull/810) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @vitejs/plugin-react-swc from 3.8.1 to 3.9.0 in /frontend. PR [#811](https://github.com/fastapilabs/cloud/pull/811) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump zod from 3.24.2 to 3.24.3 in /frontend. PR [#812](https://github.com/fastapilabs/cloud/pull/812) by [@dependabot[bot]](https://github.com/apps/dependabot).
