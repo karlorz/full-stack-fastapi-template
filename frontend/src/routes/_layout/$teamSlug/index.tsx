@@ -53,7 +53,7 @@ function Dashboard() {
             Hi, <CurrentUser />
           </div>
           <p className="text-muted-foreground">
-            Welcome back, nice to see you again!
+            Welcome to FastAPI Cloud, nice to see you here!
           </p>
         </CardContent>
       </Card>

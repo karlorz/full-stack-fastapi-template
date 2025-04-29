@@ -1,4 +1,5 @@
-import { Copy } from "lucide-react"
+import { Check, Copy } from "lucide-react"
+import { useState } from "react"
 import { Button } from "../ui/button"
 import { Separator } from "../ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
@@ -8,25 +9,37 @@ export interface CodeWithCopyProps {
   padding?: number
 }
 
-const PIP_INSTALL_COMMAND =
-  "pip install --upgrade --index-url https://pypi.fastapicloud.com/simple --extra-index-url https://pypi.python.org/simple fastapi-cli fastapi-cloud-cli"
+const PIP_INSTALL_COMMAND = `pip install --upgrade --index-url https://pypi.fastapicloud.com/simple --extra-index-url https://pypi.python.org/simple fastapi-cli fastapi-cloud-cli "fastapi[standard]"`
 
-const UV_INSTALL_COMMAND =
-  "uv add --upgrade --default-index https://fastapi-cli.pages.dev/simple --index-strategy unsafe-best-match --index https://pypi.python.org/simple fastapi-cli fastapi-cloud-cli"
+const UV_INSTALL_COMMAND = `uv add --upgrade --default-index https://fastapi-cli.pages.dev/simple --index-strategy unsafe-best-match --index https://pypi.python.org/simple fastapi-cli fastapi-cloud-cli "fastapi[standard]"`
 
-const CodeWithCopy = ({ code }: CodeWithCopyProps) => (
-  <div className="flex items-center gap-2 bg-muted p-2 rounded-md">
-    <code className="text-sm flex-1">{code}</code>
-    <Button
-      variant="ghost"
-      size="icon"
-      className="h-8 w-8"
-      onClick={() => navigator.clipboard.writeText(code)}
-    >
-      <Copy className="h-4 w-4" />
-    </Button>
-  </div>
-)
+const CodeWithCopy = ({ code }: CodeWithCopyProps) => {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="flex items-center gap-2 bg-muted p-2 rounded-md">
+      <code className="text-sm flex-1">{code}</code>
+      <Button
+        variant="ghost"
+        size="icon"
+        className={`h-8 w-8 transition-all cursor-pointer ${
+          copied
+            ? "text-zinc-900 dark:text-zinc-100 hover:text-zinc-700 dark:hover:text-zinc-300"
+            : "hover:bg-primary/10 dark:hover:bg-primary/20"
+        }`}
+        onClick={handleCopy}
+      >
+        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+      </Button>
+    </div>
+  )
+}
 
 const InstallInstructions = () => (
   <Tabs defaultValue="uv" className="h-40">
