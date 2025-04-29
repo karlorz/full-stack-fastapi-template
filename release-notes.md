@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Add `DEPOT_NO_SUMMARY_LINK` to hide depot's summary link in builds. PR [#752](https://github.com/fastapilabs/cloud/pull/752) by [@patrick91](https://github.com/patrick91).
 * ✨ Add `Response.redirect` and tests. PR [#747](https://github.com/fastapilabs/cloud/pull/747) by [@patrick91](https://github.com/patrick91).
 * 🛂 Migrate frontend to Shadcn. PR [#679](https://github.com/fastapilabs/cloud/pull/679) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Implement polling and enhance deployment view with real-time updates. PR [#672](https://github.com/fastapilabs/cloud/pull/672) by [@alejsdev](https://github.com/alejsdev).
