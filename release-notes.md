@@ -421,6 +421,7 @@
 
 ### Internal
 
+* ⬆ Bump posthog-js from 1.236.7 to 1.237.0 in /frontend. PR [#828](https://github.com/fastapilabs/cloud/pull/828) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @types/node from 20.17.30 to 22.15.3 in /frontend. PR [#827](https://github.com/fastapilabs/cloud/pull/827) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump postgres from 12 to 17. PR [#804](https://github.com/fastapilabs/cloud/pull/804) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @playwright/test from 1.51.1 to 1.52.0 in /frontend. PR [#806](https://github.com/fastapilabs/cloud/pull/806) by [@dependabot[bot]](https://github.com/apps/dependabot).
