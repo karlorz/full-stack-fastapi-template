@@ -72,7 +72,7 @@ class SettingsEnv(BaseSettings):
 
 
 class CommonSettings(SettingsEnv):
-    DEPLOYMENTS_DOMAIN: str = "fastapicloud.club"
+    DEPLOYMENTS_DOMAIN: str = "fastapicloud.dev"
     ENVIRONMENT: Literal["local", "development", "staging", "production"] = "local"
     BUILDER_API_KEY: str
     DEPLOYMENTS_BUCKET_NAME: str

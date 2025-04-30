@@ -83,7 +83,7 @@ def redis() -> Generator[Redis, None, None]:
 def common_settings() -> CommonSettings:
     return CommonSettings(
         ENVIRONMENT="local",
-        DEPLOYMENTS_DOMAIN="fastapicloud.club",
+        DEPLOYMENTS_DOMAIN="fastapicloud.dev",
         BUILDER_API_KEY="peWaQz7UE5uqQcAUpchvq1tyDyq918zaCed84tJJEB8=",
         DEPLOYMENTS_BUCKET_NAME="fastapicloud-deployments",
         BUILDER_API_URL="http://localhost:8001",

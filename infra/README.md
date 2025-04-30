@@ -309,7 +309,7 @@ The previous file is not really used directly.
 
 Instead, one of two Kustomize "overlays" is used, one for production, one for staging, and one for development.
 
-These overlays extend the `base` Kustomize configuration and add the Knative domain used for production (`fastapicloud.dev`), staging (`fastapicloud.club`), or development (`fastapicloud.site`).
+These overlays extend the `base` Kustomize configuration and add the Knative domain used for production (`fastapicloud.dev`), staging (`fastapicloud.club`), or development (`fastapicloud.space`).
 
 ### Save Environment Variables
 
