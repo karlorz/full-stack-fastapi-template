@@ -291,11 +291,13 @@ external-secrets:
       #   memory: 32Mi
 
 config:
-  {}
-  # secrets-manager:
-  #   annotations: {}
-  #   provider:
-  #     aws:
-  #       service: SecretsManager
-  #       region: us-east-1
-  #       # role: "arn:aws:iam::XYZZYXXYZZYX:role/external-secrets-4ee8c22"
+  kind: SecretStore
+  stores:
+    {}
+    # secrets-manager:
+    #   annotations: {}
+    #   provider:
+    #     aws:
+    #       service: SecretsManager
+    #       region: us-east-1
+    #       # role: "arn:aws:iam::XYZZYXXYZZYX:role/external-secrets-4ee8c22"

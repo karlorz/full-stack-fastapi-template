@@ -54,6 +54,7 @@ jobs:
           work-dir: infra
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          CLOUDFLARE_API_TOKEN_SSL: ${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}
 
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-pulumi-preview:  # This job does nothing and is only used for the branch protection

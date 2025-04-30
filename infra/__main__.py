@@ -18,7 +18,12 @@ from pulumi_deployment_workflow.config import (
 )
 import pulumi_kubernetes as k8s
 import pulumi_kubernetes.helm.v4 as helm
+import os
 
+
+CLOUDFLARE_API_KEY = os.environ.get("CLOUDFLARE_API_TOKEN_SSL", "")
+
+assert CLOUDFLARE_API_KEY, "CLOUDFLARE_API_TOKEN_SSL environment variable is not set"
 
 ### AWS Resources ###
 
@@ -406,10 +411,13 @@ for k, ns in ns_map.items():
 # Ensure the Helm chart configuration includes the correct service account annotations
 external_secrets_sa_name="external-secrets"
 external_secrets_sa_namespace="external-secrets"
+external_secrets_parameter_store_kind="ClusterSecretStore"
+external_secrets_parameter_store_name="external-parameter-store"
 custom_external_secrets_chart = helm.Chart(
     "external-secrets",
     helm.ChartArgs(
         chart="./helm/charts/external-secrets",
+        dependency_update=True,
         namespace=external_secrets_sa_namespace,
         values={
             "external-secrets": {
@@ -421,7 +429,9 @@ custom_external_secrets_chart = helm.Chart(
                 },
             },
             "config": {
-                "parameter-store": {
+                "kind": external_secrets_parameter_store_kind,
+                # This is being done because of the helm chart logic
+                external_secrets_parameter_store_name.replace("external-", ""): {
                     "provider": {
                         "aws": {
                             "service": "ParameterStore",
@@ -435,12 +445,30 @@ custom_external_secrets_chart = helm.Chart(
     opts=pulumi.ResourceOptions(provider=k8s_provider),
 )
 
-external_secrets_pod_identity_association = aws.eks.PodIdentityAssociation(
-    "externalsecrets",
-    cluster_name=eks_cluster,
-    namespace="external-secrets",
-    service_account=external_secrets_sa_name,
-    role_arn=external_secrets_iam_role.arn,
+cloudflare_credentials_secret = aws.ssm.Parameter("cloudflare-credentials",
+    name="cloudflare-credentials",
+    type=aws.ssm.ParameterType.STRING,
+    value=CLOUDFLARE_API_KEY)
+
+cert_manager_chart = helm.Chart(
+    "cert-manager",
+    helm.ChartArgs(
+        chart="./helm/charts/cert-manager",
+        dependency_update=True,
+        namespace="cert-manager",
+        values={
+            # TODO:
+            # "externalSecrets": {
+            #     "cloudflare": {
+            #         "enabled": True,
+            #         "key": cloudflare_credentials_secret.name,
+            #     },
+            #     "kind": external_secrets_parameter_store_kind,
+            #     "name": external_secrets_parameter_store_name,
+            # },
+        },
+    ),
+    opts=pulumi.ResourceOptions(provider=k8s_provider),
 )
 
 # Export values to use elsewhere

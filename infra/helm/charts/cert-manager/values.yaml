@@ -1,0 +1,14 @@
+cert-manager:
+  enabled: true
+  crds:
+    enabled: true
+
+externalSecrets:
+  name: external-secrets-store
+  kind: SecretStore
+  cloudflare:
+    enabled: false
+    # secretName: cloudflare-api-credentials
+    remoteRef:
+      key: cloudflare-credentials
+      # property: api-token
