@@ -63,7 +63,7 @@
     "@tanstack/router-vite-plugin": "^1.117.2",
     "@types/country-list": "^2.1.4",
     "@types/node": "^22.15.3",
-    "@types/react": "^19.0.12",
+    "@types/react": "^19.1.2",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react-swc": "^3.9.0",
     "dotenv": "^16.4.5",
