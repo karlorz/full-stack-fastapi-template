@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react"
 import {
   MutationCache,
   QueryCache,
@@ -5,19 +6,20 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
+import type { PostHogConfig } from "posthog-js"
+import { PostHogProvider } from "posthog-js/react"
 import React, { StrictMode } from "react"
 import ReactDOM from "react-dom/client"
 import { routeTree } from "./routeTree.gen"
 
-import * as Sentry from "@sentry/react"
-import { PostHogProvider } from "posthog-js/react"
-import { ApiError, OpenAPI } from "./client"
-import "./index.css"
 import { Toaster } from "sonner"
+import { ApiError, OpenAPI } from "./client"
 import { ThemeProvider } from "./components/theme-provider"
+import "./index.css"
 
-const posthogOptions = {
+const posthogOptions: Partial<PostHogConfig> = {
   api_host: import.meta.env.VITE_APP_PUBLIC_POSTHOG_HOST,
+  persistence: "memory",
 }
 
 OpenAPI.BASE = import.meta.env.VITE_API_URL
