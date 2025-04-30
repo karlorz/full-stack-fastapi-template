@@ -421,6 +421,7 @@
 
 ### Internal
 
+* ⬆ Bump @types/react from 19.1.0 to 19.1.2 in /frontend. PR [#829](https://github.com/fastapilabs/cloud/pull/829) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-query from 5.74.3 to 5.74.11 in /frontend. PR [#826](https://github.com/fastapilabs/cloud/pull/826) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump posthog-js from 1.236.7 to 1.237.0 in /frontend. PR [#828](https://github.com/fastapilabs/cloud/pull/828) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @types/node from 20.17.30 to 22.15.3 in /frontend. PR [#827](https://github.com/fastapilabs/cloud/pull/827) by [@dependabot[bot]](https://github.com/apps/dependabot).
