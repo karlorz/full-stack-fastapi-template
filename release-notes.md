@@ -176,6 +176,7 @@
 
 ### Refactors
 
+* 💄 UI tweaks. PR [#841](https://github.com/fastapilabs/cloud/pull/841) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update deployments domain in the configuration files. PR [#830](https://github.com/fastapilabs/cloud/pull/830) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update Quickstart. PR [#821](https://github.com/fastapilabs/cloud/pull/821) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Enable secret alpha in code, emails and waitlist. PR [#809](https://github.com/fastapilabs/cloud/pull/809) by [@tiangolo](https://github.com/tiangolo).
