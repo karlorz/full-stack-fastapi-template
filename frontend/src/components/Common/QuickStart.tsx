@@ -23,12 +23,12 @@ const CodeWithCopy = ({ code }: CodeWithCopyProps) => {
   }
 
   return (
-    <div className="flex items-center gap-2 bg-muted p-2 rounded-md">
-      <code className="text-sm flex-1">{code}</code>
+    <div className="flex items-center gap-2 bg-muted my-2 rounded-md">
+      <code className="text-xs flex-1 px-4 py-3">{code}</code>
       <Button
         variant="ghost"
         size="icon"
-        className={`h-8 w-8 transition-all cursor-pointer ${
+        className={`transition-all cursor-pointer mr-2 ${
           copied
             ? "text-zinc-900 dark:text-zinc-100 hover:text-zinc-700 dark:hover:text-zinc-300"
             : "hover:bg-primary/10 dark:hover:bg-primary/20"
@@ -42,7 +42,7 @@ const CodeWithCopy = ({ code }: CodeWithCopyProps) => {
 }
 
 const InstallInstructions = () => (
-  <Tabs defaultValue="uv" className="h-40">
+  <Tabs defaultValue="uv" className="h-40 my-2">
     <TabsList>
       <TabsTrigger value="uv">uv</TabsTrigger>
       <TabsTrigger value="pip">pip</TabsTrigger>
@@ -58,44 +58,45 @@ const InstallInstructions = () => (
 
 const QuickStart = () => {
   return (
-    <div className="flex flex-col md:flex-row" data-testid="fastapi-cli">
-      <div className="flex-1 flex flex-col gap-2 p-6">
-        <p>
-          FastAPI Cloud CLI is your primary tool for managing your apps. Before
-          you start, make sure you have it installed.
-        </p>
-        <InstallInstructions />
+    <div className="flex flex-col gap-6 md:flex-row" data-testid="fastapi-cli">
+      <div className="flex-1 flex flex-col">
+        <h1 className="font-semibold mb-4">Installation</h1>
+        <div className="text-sm text-muted-foreground">
+          <p>
+            Get started by installing FastAPI Cloud CLI, your primary tool for
+            deploying FastAPI apps to the cloud.
+          </p>
+          <InstallInstructions />
+        </div>
       </div>
 
       <Separator className="md:h-auto" orientation="vertical" />
 
-      <div className="flex-1 flex flex-col gap-2 p-6">
-        <p>
-          Once you have FastAPI Cloud CLI installed, you can deploy your app,
-          make sure you have your{" "}
-          <a
-            className="text-primary hover:underline"
-            href="https://fastapi.tiangolo.com/virtual-environments/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            virtual environment
-          </a>{" "}
-          activated. Then follow the instructions below to deploy your app:
-        </p>
-        <p>
-          1. Login to FastAPI Cloud:{" "}
-          <code className="text-sm bg-muted px-2 py-1 rounded">
-            fastapi login
-          </code>
-        </p>
-        <p>
-          2. Deploy your app:{" "}
-          <code className="text-sm bg-muted px-2 py-1 rounded">
-            fastapi deploy
-          </code>
-        </p>
-        <p>And that's it! Your app will be deployed to the cloud in seconds.</p>
+      <div className="flex-1 flex flex-col">
+        <h1 className="font-semibold mb-4">Deploying your app</h1>
+        <div className="text-sm text-muted-foreground">
+          <p>
+            Before deploying, ensure you have a {""}
+            <a
+              className="text-primary hover:underline"
+              href="https://fastapi.tiangolo.com/virtual-environments/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              virtual environment
+            </a>{" "}
+            activated.
+          </p>
+          <p className="mt-2">
+            1. Login to FastAPI Cloud: <CodeWithCopy code={"fastapi login"} />
+          </p>
+          <p>
+            2. Deploy your app: <CodeWithCopy code={"fastapi deploy"} />
+          </p>
+          <p>
+            And that's it! Your app will be deployed to the cloud in seconds.
+          </p>
+        </div>
       </div>
     </div>
   )

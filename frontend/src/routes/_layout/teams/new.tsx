@@ -38,7 +38,7 @@ function NewTeam() {
   const [isOpen, setIsOpen] = useState(false)
 
   const form = useForm<TeamCreate>({
-    mode: "onBlur",
+    mode: "onSubmit",
     criteriaMode: "all",
     defaultValues: {
       name: "",
@@ -97,7 +97,13 @@ function NewTeam() {
                 <FormField
                   control={form.control}
                   name="name"
-                  rules={{ required: "Name is required", minLength: 3 }}
+                  rules={{
+                    required: "Name is required",
+                    minLength: {
+                      value: 3,
+                      message: "Name must be at least 3 characters",
+                    },
+                  }}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>

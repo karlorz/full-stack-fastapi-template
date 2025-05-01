@@ -6,8 +6,10 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 const PendingApps = () => (
   <div className="w-full p-0">
-    <h1 className="text-3xl font-bold pb-2">Apps</h1>
-    <p className="text-inherit">View and manage apps related to your team.</p>
+    <h1 className="text-2xl font-extrabold tracking-tight">Apps</h1>
+    <p className="text-sm text-muted-foreground">
+      View and manage apps related to your team.
+    </p>
     <div className="flex justify-start md:justify-end my-4">
       <Skeleton className="h-10 w-[100px]" />
     </div>

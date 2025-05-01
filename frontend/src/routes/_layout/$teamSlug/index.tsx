@@ -48,11 +48,11 @@ function Dashboard() {
   return (
     <div className="w-full p-0 space-y-6">
       <Card data-testid="result">
-        <CardContent className="pt-6">
+        <CardContent>
           <div className="text-2xl truncate max-w-full">
             Hi, <CurrentUser />
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Welcome to FastAPI Cloud, nice to see you here!
           </p>
         </CardContent>
@@ -68,12 +68,12 @@ function Dashboard() {
       </Card>
 
       <div className="flex flex-col md:flex-row gap-4">
-        <Card className="w-full md:w-[55%]">
+        <Card className="w-full">
           <CardHeader>
             <CardTitle>{lastApp?.name}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {deploymentStatusMessage(lastDeploymentStatus)}
             </p>
             <RouterLink to={`/$teamSlug/apps/${lastApp?.slug}`}>
@@ -86,7 +86,7 @@ function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="w-full md:w-[45%]">
+        <Card className="w-full">
           <CardHeader>
             <CardTitle>Statistics</CardTitle>
           </CardHeader>
