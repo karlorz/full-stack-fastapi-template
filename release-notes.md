@@ -424,6 +424,7 @@
 
 ### Internal
 
+* ⬆ Bump @radix-ui/react-avatar from 1.1.3 to 1.1.7 in /frontend. PR [#839](https://github.com/fastapilabs/cloud/pull/839) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump tailwindcss from 4.1.4 to 4.1.5 in /frontend. PR [#840](https://github.com/fastapilabs/cloud/pull/840) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump axios from 1.6.2 to 1.9.0 in /frontend. PR [#838](https://github.com/fastapilabs/cloud/pull/838) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-popover from 1.1.6 to 1.1.11 in /frontend. PR [#837](https://github.com/fastapilabs/cloud/pull/837) by [@dependabot[bot]](https://github.com/apps/dependabot).
