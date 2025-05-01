@@ -424,6 +424,7 @@
 
 ### Internal
 
+* ⬆ Bump @radix-ui/react-popover from 1.1.6 to 1.1.11 in /frontend. PR [#837](https://github.com/fastapilabs/cloud/pull/837) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @types/react from 19.1.0 to 19.1.2 in /frontend. PR [#829](https://github.com/fastapilabs/cloud/pull/829) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-query from 5.74.3 to 5.74.11 in /frontend. PR [#826](https://github.com/fastapilabs/cloud/pull/826) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump posthog-js from 1.236.7 to 1.237.0 in /frontend. PR [#828](https://github.com/fastapilabs/cloud/pull/828) by [@dependabot[bot]](https://github.com/apps/dependabot).
