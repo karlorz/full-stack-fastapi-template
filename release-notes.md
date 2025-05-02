@@ -425,6 +425,7 @@
 
 ### Internal
 
+* ⬆ Bump date-fns from 3.6.0 to 4.1.0 in /frontend. PR [#845](https://github.com/fastapilabs/cloud/pull/845) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-dialog from 1.1.6 to 1.1.11 in /frontend. PR [#843](https://github.com/fastapilabs/cloud/pull/843) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-query-devtools from 5.74.3 to 5.75.0 in /frontend. PR [#846](https://github.com/fastapilabs/cloud/pull/846) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🔧 Add missing var on pulumi deploy step. PR [#835](https://github.com/fastapilabs/cloud/pull/835) by [@siryur](https://github.com/siryur).
