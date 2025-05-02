@@ -21,10 +21,11 @@ def generate_app_slug_name(name: str, session: Session) -> str:
 
     slug_name = slugify(name)
     new_slug = slug_name
+
     while (
         len(new_slug) < 5
         or session.exec(select(App).where(App.slug == new_slug)).first()
-        or new_slug.endswith(tuple(settings.RESERVED_APP_NAMES))
+        or new_slug.endswith(settings.RESERVED_APP_NAMES)
     ):
         new_slug = f"{slug_name}-{secrets.token_hex(4)}"
 

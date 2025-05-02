@@ -279,6 +279,12 @@ def deploy_cloud(
         settings = settings_group.get_settings()
         env_data.update(settings.model_dump(mode="json", exclude_unset=True))
 
+    # Reserver app names are passed as a comma separated string from .env or env vars
+    # but in the python instance they are a tuple, so doing str(v) in the code below
+    # doesn't work, so we need to convert it to a comma separated string
+    if "RESERVED_APP_NAMES" in env_data:
+        env_data["RESERVED_APP_NAMES"] = ",".join(env_data["RESERVED_APP_NAMES"])
+
     env_strs = {k: str(v) for k, v in env_data.items()}
 
     deploy_to_kubernetes(

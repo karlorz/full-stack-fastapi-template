@@ -10,9 +10,10 @@ from pydantic import (
     HttpUrl,
     PlainSerializer,
     PostgresDsn,
+    field_validator,
     model_validator,
 )
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 from typing_extensions import Self
 
 
@@ -173,7 +174,13 @@ class MainSettings(SettingsEnv):
     POSTHOG_HOST: str | None = None
 
     PROJECT_NAME: str = "FastAPI Cloud"
-    RESERVED_APP_NAMES: Annotated[list[str] | str, BeforeValidator(parse_list_or_str)]
+    RESERVED_APP_NAMES: Annotated[tuple[str, ...] | str, NoDecode]
+
+    @field_validator("RESERVED_APP_NAMES", mode="before")
+    @classmethod
+    def decode_numbers(cls, v: str) -> tuple[str, ...]:
+        return tuple(v.split(","))
+
     BACKEND_SENTRY_DSN: HttpUrl | None = None
 
     SMTP_TLS: bool = True
