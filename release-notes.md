@@ -425,6 +425,7 @@
 
 ### Internal
 
+* ⬆ Bump @tanstack/react-query-devtools from 5.74.3 to 5.75.0 in /frontend. PR [#846](https://github.com/fastapilabs/cloud/pull/846) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🔧 Add missing var on pulumi deploy step. PR [#835](https://github.com/fastapilabs/cloud/pull/835) by [@siryur](https://github.com/siryur).
 * ⬆ Bump @radix-ui/react-avatar from 1.1.3 to 1.1.7 in /frontend. PR [#839](https://github.com/fastapilabs/cloud/pull/839) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump tailwindcss from 4.1.4 to 4.1.5 in /frontend. PR [#840](https://github.com/fastapilabs/cloud/pull/840) by [@dependabot[bot]](https://github.com/apps/dependabot).
