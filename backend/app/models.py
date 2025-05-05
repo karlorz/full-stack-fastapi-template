@@ -24,14 +24,6 @@ class InvitationStatus(str, Enum):
     accepted = "accepted"
 
 
-class TeamSize(str, Enum):
-    myself = "myself"
-    small = "small"
-    medium = "medium"
-    large = "large"
-    enterprise = "enterprise"
-
-
 class UserTeamLink(SQLModel, table=True):
     user_id: uuid.UUID = Field(
         foreign_key="user.id", primary_key=True, ondelete="CASCADE"
@@ -413,9 +405,10 @@ class WaitingListUserBase(SQLModel):
     name: str | None = Field(default=None, max_length=255)
     organization: str | None = Field(default=None, max_length=255)
     role: str | None = Field(default=None, max_length=255)
-    team_size: TeamSize | None = Field(default=None)
-    country: str | None = Field(default=None, max_length=255)
+    team_size: str | None = Field(default=None, max_length=255)
+    location: str | None = Field(default=None, max_length=255)
     use_case: str | None = Field(default=None, max_length=255)
+    secret_code: str | None = Field(default=None, max_length=255)
 
 
 class WaitingListUser(WaitingListUserBase, table=True):
@@ -424,6 +417,7 @@ class WaitingListUser(WaitingListUserBase, table=True):
     updated_at: datetime = Field(default_factory=get_datetime_utc)
     allowed_at: datetime | None = Field(default=None, index=True)
     invitation_sent_at: datetime | None = Field(default=None, index=True)
+    registered_from_cli: bool = Field(default=False)
 
     @computed_field(return_type=bool)
     @hybrid_property

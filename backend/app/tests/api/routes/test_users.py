@@ -10,7 +10,7 @@ from sqlmodel import Session, select
 from app import crud
 from app.core.config import MainSettings
 from app.core.security import verify_password
-from app.models import Role, TeamSize, User, UserCreate, WaitingListUserCreate
+from app.models import Role, User, UserCreate, WaitingListUser, WaitingListUserCreate
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 from app.tests.utils.utils import random_email, random_lower_string
@@ -376,7 +376,7 @@ def test_add_to_waiting_list(client: TestClient, send_email_mock: MagicMock) -> 
     data = {
         "email": email,
         "name": "John Doe",
-        "team_size": TeamSize.myself.value,
+        "team_size": "1",
         "organization": "FastAPI Labs",
         "role": "developer",
         "country": "US",
@@ -391,6 +391,37 @@ def test_add_to_waiting_list(client: TestClient, send_email_mock: MagicMock) -> 
     )
 
 
+def test_add_to_waiting_list_from_cli(
+    client: TestClient, send_email_mock: MagicMock, db: Session
+) -> None:
+    email = "test-from-cli@fastapilabs.com"
+    data = {
+        "email": email,
+        "name": "John Doe",
+        "team_size": "1",
+        "organization": "FastAPI Labs",
+        "role": "developer",
+        "country": "US",
+    }
+    r = client.post(
+        f"{settings.API_V1_STR}/users/waiting-list",
+        json=data,
+        headers={"User-Agent": "fastapi-cloud-cli/1.0.0"},
+    )
+    assert r.status_code == 200
+    response = r.json()
+    assert response["message"] == "User added to waiting list"
+
+    send_email_mock.assert_called_once_with(
+        email_to=email, subject=ANY, html_content=ANY
+    )
+
+    user_query = select(WaitingListUser).where(WaitingListUser.email == email)
+    user_db = db.exec(user_query).first()
+    assert user_db
+    assert user_db.registered_from_cli is True
+
+
 def test_update_waiting_list_user(
     client: TestClient, send_email_mock: MagicMock
 ) -> None:
@@ -398,7 +429,7 @@ def test_update_waiting_list_user(
     data = {
         "email": email,
         "name": "John Doe",
-        "team_size": TeamSize.myself.value,
+        "team_size": "1",
         "organization": "FastAPI Labs",
         "role": "developer",
         "country": "US",
@@ -423,7 +454,7 @@ def test_add_to_waiting_list_invalid_email(
     data = {
         "email": email,
         "name": "John Doe",
-        "team_size": TeamSize.myself.value,
+        "team_size": "1",
         "organization": "FastAPI Labs",
         "role": "developer",
         "country": "US",
@@ -454,7 +485,7 @@ def test_add_to_waiting_list_email_already_registered_in_system(
     data = {
         "email": user.email,
         "name": "John Doe",
-        "team_size": TeamSize.myself.value,
+        "team_size": "1",
         "organization": "FastAPI Labs",
     }
 

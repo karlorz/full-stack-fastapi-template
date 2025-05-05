@@ -237,7 +237,11 @@ def verify_email_token(session: SessionDep, payload: EmailVerificationToken) -> 
 
 
 @router.post("/waiting-list", dependencies=[Depends(rate_limit_5_per_minute)])
-def add_to_waiting_list(session: SessionDep, user_in: WaitingListUserCreate) -> Message:
+def add_to_waiting_list(
+    session: SessionDep,
+    user_in: WaitingListUserCreate,
+    user_agent: Annotated[str, Header(include_in_schema=False)],
+) -> Message:
     """
     Add user to waiting list
     """
@@ -272,7 +276,13 @@ def add_to_waiting_list(session: SessionDep, user_in: WaitingListUserCreate) -> 
         )
         return Message(message="User updated in waiting list")
     else:
-        crud.add_to_waiting_list(session=session, user_in=user_in)
+        registered_from_cli = user_agent.lower().startswith("fastapi-cloud-cli")
+
+        crud.add_to_waiting_list(
+            session=session,
+            user_in=user_in,
+            registered_from_cli=registered_from_cli,
+        )
         email_data = generate_waiting_list_email(email_to=user_in.email)
         send_email(
             email_to=user_in.email,

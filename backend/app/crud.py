@@ -99,9 +99,14 @@ def get_user_team_link(
 
 
 def add_to_waiting_list(
-    *, session: Session, user_in: WaitingListUserCreate
+    *,
+    session: Session,
+    user_in: WaitingListUserCreate,
+    registered_from_cli: bool = False,
 ) -> WaitingListUser:
-    db_obj = WaitingListUser.model_validate(user_in)
+    db_obj = WaitingListUser.model_validate(
+        user_in, update={"registered_from_cli": registered_from_cli}
+    )
     session.add(db_obj)
     session.commit()
     session.refresh(db_obj)
