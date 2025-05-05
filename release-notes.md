@@ -426,6 +426,7 @@
 
 ### Internal
 
+* ⬆ Bump react-hook-form from 7.55.0 to 7.56.2 in /frontend. PR [#851](https://github.com/fastapilabs/cloud/pull/851) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump lucide-react from 0.503.0 to 0.507.0 in /frontend. PR [#848](https://github.com/fastapilabs/cloud/pull/848) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-tooltip from 1.1.8 to 1.2.4 in /frontend. PR [#850](https://github.com/fastapilabs/cloud/pull/850) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump dotenv from 16.4.7 to 16.5.0 in /frontend. PR [#847](https://github.com/fastapilabs/cloud/pull/847) by [@dependabot[bot]](https://github.com/apps/dependabot).
