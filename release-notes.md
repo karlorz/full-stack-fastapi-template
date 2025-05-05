@@ -426,6 +426,7 @@
 
 ### Internal
 
+* ⬆ Bump @radix-ui/react-tooltip from 1.1.8 to 1.2.4 in /frontend. PR [#850](https://github.com/fastapilabs/cloud/pull/850) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump dotenv from 16.4.7 to 16.5.0 in /frontend. PR [#847](https://github.com/fastapilabs/cloud/pull/847) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump date-fns from 3.6.0 to 4.1.0 in /frontend. PR [#845](https://github.com/fastapilabs/cloud/pull/845) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-dialog from 1.1.6 to 1.1.11 in /frontend. PR [#843](https://github.com/fastapilabs/cloud/pull/843) by [@dependabot[bot]](https://github.com/apps/dependabot).
