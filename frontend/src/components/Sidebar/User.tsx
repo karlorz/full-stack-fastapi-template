@@ -26,15 +26,15 @@ interface UserInfoProps {
 
 function UserInfo({ fullName, email }: UserInfoProps) {
   return (
-    <div className="flex items-center gap-3 w-full">
+    <div className="flex items-center gap-3 w-full min-w-0">
       <Avatar className="h-8 w-8">
         <AvatarFallback className="bg-zinc-600 text-white">
           {getInitials(fullName || "User")}
         </AvatarFallback>
       </Avatar>
-      <div className="flex flex-col items-start flex-1">
-        <p className="text-sm font-medium">{fullName}</p>
-        <p className="text-xs text-muted-foreground truncate">{email}</p>
+      <div className="flex flex-col items-start min-w-0">
+        <p className="text-sm font-medium truncate w-full">{fullName}</p>
+        <p className="text-xs text-muted-foreground truncate w-full">{email}</p>
       </div>
     </div>
   )

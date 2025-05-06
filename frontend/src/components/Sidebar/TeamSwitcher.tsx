@@ -48,7 +48,7 @@ export function TeamSwitcher({
                     <Users className="size-4" />
                   )}
                 </div>
-                <div className="mx-2 text-left">
+                <div className="mx-2 text-left flex-1 min-w-0">
                   <p className="truncate font-semibold">{selectedTeam?.name}</p>
                   {selectedTeam === personalTeam && (
                     <p className="truncate text-xs text-muted-foreground">
@@ -56,8 +56,8 @@ export function TeamSwitcher({
                     </p>
                   )}
                 </div>
+                <ChevronsUpDown className="ml-auto size-4" />
               </div>
-              <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -74,7 +74,11 @@ export function TeamSwitcher({
                 <DropdownMenuItem className="gap-2 p-2">
                   <div className="flex items-center gap-2">
                     <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                      <Users className="size-4 text-sidebar-primary-foreground" />
+                      {team.is_personal_team ? (
+                        getInitials(team.name)
+                      ) : (
+                        <Users className="size-4 text-sidebar-primary-foreground" />
+                      )}
                     </div>
                     <div className="max-w-[120px] truncate">
                       <span>{team.name}</span>
