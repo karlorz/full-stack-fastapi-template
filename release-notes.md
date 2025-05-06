@@ -429,6 +429,7 @@
 
 ### Internal
 
+* 🔧 Add Marco to default users lists. PR [#860](https://github.com/fastapilabs/cloud/pull/860) by [@buurro](https://github.com/buurro).
 * 🔧 Remove sourcemap files after Sentry upload. PR [#857](https://github.com/fastapilabs/cloud/pull/857) by [@alejsdev](https://github.com/alejsdev).
 * ⬆ Bump @radix-ui/react-select from 2.2.2 to 2.2.4 in /frontend. PR [#856](https://github.com/fastapilabs/cloud/pull/856) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/router-devtools from 1.117.1 to 1.119.1 in /frontend. PR [#855](https://github.com/fastapilabs/cloud/pull/855) by [@dependabot[bot]](https://github.com/apps/dependabot).
