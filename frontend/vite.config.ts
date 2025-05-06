@@ -22,6 +22,9 @@ export default defineConfig({
       org: "fastapilabs",
       project: "cloud-frontend",
       authToken: process.env.FRONTEND_SENTRY_AUTH_TOKEN,
+      sourcemaps: {
+        filesToDeleteAfterUpload: ["./dist/**/*.map"],
+      },
     }),
   ],
 
