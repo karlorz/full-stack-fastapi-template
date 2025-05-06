@@ -396,6 +396,7 @@
 
 ### Infrastructure
 
+* ♻️ Create K8s Service Accounts with Helm Chart. PR [#746](https://github.com/fastapilabs/cloud/pull/746) by [@siryur](https://github.com/siryur).
 * ✈️ Migrate cert-manager deployment to helm chart. PR [#740](https://github.com/fastapilabs/cloud/pull/740) by [@siryur](https://github.com/siryur).
 * 🔧 Update latest-changes config to include infra section. PR [#645](https://github.com/fastapilabs/cloud/pull/645) by [@tiangolo](https://github.com/tiangolo).
 
