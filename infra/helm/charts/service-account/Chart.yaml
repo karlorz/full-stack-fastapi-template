@@ -1,0 +1,5 @@
+apiVersion: v2
+name: service-account
+description: A Helm chart for managing service accounts
+type: application
+version: 0.1.0

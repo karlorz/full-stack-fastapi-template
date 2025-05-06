@@ -408,6 +408,45 @@ for k, ns in ns_map.items():
         opts=pulumi.ResourceOptions(provider=k8s_provider),
     )
 
+sa_map: dict[str, any] = {
+    "aws-load-balancer-controller": {
+        "namespace": "kube-system",
+        "values": {
+            "global": {
+                "labels": {
+                    "app.kubernetes.io/component": "controller",
+                },
+            },
+            "serviceAccount": {
+                "annotations": {
+                    "eks.amazonaws.com/role-arn": aws_lb_controller_role.arn,
+                },
+            },
+        },
+    },
+    "default": {
+        "namespace": "default",
+        "values": {
+            "serviceAccount": {
+                "annotations": {
+                    "eks.amazonaws.com/role-arn": ecr_iam_role.arn,
+                },
+            },
+        },
+    },
+}
+for k, sa in sa_map.items():
+    sa["values"].setdefault("global", {}).setdefault("labels", {}).update(k8s_labels)
+    sa_map[k]["chart"] = helm.Chart(
+        k,
+        helm.ChartArgs(
+            chart="./helm/charts/service-account",
+            namespace=sa["namespace"],
+            values=sa["values"],
+        ),
+        opts=pulumi.ResourceOptions(provider=k8s_provider),
+    )
+
 # Ensure the Helm chart configuration includes the correct service account annotations
 external_secrets_sa_name="external-secrets"
 external_secrets_sa_namespace="external-secrets"
