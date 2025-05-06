@@ -427,6 +427,7 @@
 
 ### Internal
 
+* ⬆ Bump @radix-ui/react-select from 2.2.2 to 2.2.4 in /frontend. PR [#856](https://github.com/fastapilabs/cloud/pull/856) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/router-devtools from 1.117.1 to 1.119.1 in /frontend. PR [#855](https://github.com/fastapilabs/cloud/pull/855) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump vite from 6.3.3 to 6.3.5 in /frontend. PR [#854](https://github.com/fastapilabs/cloud/pull/854) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump react-hook-form from 7.55.0 to 7.56.2 in /frontend. PR [#851](https://github.com/fastapilabs/cloud/pull/851) by [@dependabot[bot]](https://github.com/apps/dependabot).
