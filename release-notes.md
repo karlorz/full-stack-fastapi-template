@@ -130,6 +130,7 @@
 
 ### Fixes
 
+* 🐛 Improve text truncation in dropdown buttons. PR [#859](https://github.com/fastapilabs/cloud/pull/859) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Parse and serialize `RESERVED_APP_NAMES` correctly. PR [#780](https://github.com/fastapilabs/cloud/pull/780) by [@patrick91](https://github.com/patrick91).
 * 🐛 Clear current team from local storage on API error. PR [#800](https://github.com/fastapilabs/cloud/pull/800) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Update authentication error handling to return 401 Unauthorized for invalid credentials. PR [#781](https://github.com/fastapilabs/cloud/pull/781) by [@alejsdev](https://github.com/alejsdev).
