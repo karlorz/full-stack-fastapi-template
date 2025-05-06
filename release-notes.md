@@ -427,6 +427,7 @@
 
 ### Internal
 
+* ⬆ Bump @tanstack/router-devtools from 1.117.1 to 1.119.1 in /frontend. PR [#855](https://github.com/fastapilabs/cloud/pull/855) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump vite from 6.3.3 to 6.3.5 in /frontend. PR [#854](https://github.com/fastapilabs/cloud/pull/854) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump react-hook-form from 7.55.0 to 7.56.2 in /frontend. PR [#851](https://github.com/fastapilabs/cloud/pull/851) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump lucide-react from 0.503.0 to 0.507.0 in /frontend. PR [#848](https://github.com/fastapilabs/cloud/pull/848) by [@dependabot[bot]](https://github.com/apps/dependabot).
