@@ -4,6 +4,11 @@ FROM ${BASE_IMAGE}
 
 ENV PYTHONUNBUFFERED=1
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libcairo2 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install uv
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
 COPY --from=ghcr.io/astral-sh/uv:0.4.23 /uv /bin/uv
