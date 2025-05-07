@@ -429,6 +429,7 @@
 
 ### Internal
 
+* ⬆ Bump @tanstack/router-devtools from 1.119.1 to 1.120.2 in /frontend. PR [#862](https://github.com/fastapilabs/cloud/pull/862) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-separator from 1.1.4 to 1.1.6 in /frontend. PR [#861](https://github.com/fastapilabs/cloud/pull/861) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🔧 Add Marco to default users lists. PR [#860](https://github.com/fastapilabs/cloud/pull/860) by [@buurro](https://github.com/buurro).
 * 🔧 Remove sourcemap files after Sentry upload. PR [#857](https://github.com/fastapilabs/cloud/pull/857) by [@alejsdev](https://github.com/alejsdev).
