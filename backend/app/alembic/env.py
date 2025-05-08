@@ -3,6 +3,9 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
+# Enable enum auto-creation
+import alembic_postgresql_enum
+assert alembic_postgresql_enum, "alembic_postgresql_enum should be installed and imported"
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
