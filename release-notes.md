@@ -430,6 +430,7 @@
 
 ### Internal
 
+* ⬆ Bump @sentry/vite-plugin from 3.3.1 to 3.4.0 in /frontend. PR [#865](https://github.com/fastapilabs/cloud/pull/865) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @sentry/react from 9.14.0 to 9.16.1 in /frontend. PR [#866](https://github.com/fastapilabs/cloud/pull/866) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @types/react-dom from 19.1.1 to 19.1.3 in /frontend. PR [#864](https://github.com/fastapilabs/cloud/pull/864) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-tabs from 1.1.3 to 1.1.11 in /frontend. PR [#863](https://github.com/fastapilabs/cloud/pull/863) by [@dependabot[bot]](https://github.com/apps/dependabot).
