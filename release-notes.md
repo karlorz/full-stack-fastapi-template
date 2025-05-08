@@ -431,6 +431,7 @@
 
 ### Internal
 
+* 🔨 Tweak Alembic migrations to set server default=False in `registered_from_cli`, to account for existing data. PR [#870](https://github.com/fastapilabs/cloud/pull/870) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Bump @sentry/vite-plugin from 3.3.1 to 3.4.0 in /frontend. PR [#865](https://github.com/fastapilabs/cloud/pull/865) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @sentry/react from 9.14.0 to 9.16.1 in /frontend. PR [#866](https://github.com/fastapilabs/cloud/pull/866) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @types/react-dom from 19.1.1 to 19.1.3 in /frontend. PR [#864](https://github.com/fastapilabs/cloud/pull/864) by [@dependabot[bot]](https://github.com/apps/dependabot).
