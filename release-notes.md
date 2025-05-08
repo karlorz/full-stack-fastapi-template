@@ -430,6 +430,7 @@
 
 ### Internal
 
+* ⬆ Bump @types/react-dom from 19.1.1 to 19.1.3 in /frontend. PR [#864](https://github.com/fastapilabs/cloud/pull/864) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-tabs from 1.1.3 to 1.1.11 in /frontend. PR [#863](https://github.com/fastapilabs/cloud/pull/863) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/router-devtools from 1.119.1 to 1.120.2 in /frontend. PR [#862](https://github.com/fastapilabs/cloud/pull/862) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-separator from 1.1.4 to 1.1.6 in /frontend. PR [#861](https://github.com/fastapilabs/cloud/pull/861) by [@dependabot[bot]](https://github.com/apps/dependabot).
