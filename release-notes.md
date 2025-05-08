@@ -180,6 +180,7 @@
 
 ### Refactors
 
+* 💄 Update email templates. PR [#869](https://github.com/fastapilabs/cloud/pull/869) by [@alejsdev](https://github.com/alejsdev).
 * 💄 UI tweaks. PR [#841](https://github.com/fastapilabs/cloud/pull/841) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update deployments domain in the configuration files. PR [#830](https://github.com/fastapilabs/cloud/pull/830) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update Quickstart. PR [#821](https://github.com/fastapilabs/cloud/pull/821) by [@alejsdev](https://github.com/alejsdev).
