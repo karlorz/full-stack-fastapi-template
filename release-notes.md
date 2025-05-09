@@ -431,6 +431,7 @@
 
 ### Internal
 
+* ⬆ Bump @tanstack/react-router from 1.120.2 to 1.120.3 in /frontend. PR [#874](https://github.com/fastapilabs/cloud/pull/874) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-avatar from 1.1.7 to 1.1.9 in /frontend. PR [#875](https://github.com/fastapilabs/cloud/pull/875) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ➕ Add `alembic_postgresql_enum` to autogenerate enum migrations. PR [#872](https://github.com/fastapilabs/cloud/pull/872) by [@tiangolo](https://github.com/tiangolo).
 * 🔨 Tweak Alembic migrations to set server default=False in `registered_from_cli`, to account for existing data. PR [#870](https://github.com/fastapilabs/cloud/pull/870) by [@tiangolo](https://github.com/tiangolo).
