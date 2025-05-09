@@ -39,10 +39,11 @@ def initialize_user(email: str, session: Session) -> User:
 
 def init_db(session: Session) -> None:
     for email in [
-        "patrick@fastapilabs.com",
         "alejandra@fastapilabs.com",
-        "sebastian@fastapilabs.com",
+        "bento@fastapilabs.com",
         "marco@fastapilabs.com",
+        "patrick@fastapilabs.com",
+        "sebastian@fastapilabs.com",
     ]:
         if session.exec(select(User).where(User.email == email)).first():
             continue
