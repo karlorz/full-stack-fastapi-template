@@ -33,14 +33,14 @@ TokenDep = Annotated[str, Depends(reusable_oauth2)]
 
 def get_redis() -> Generator[redis.Redis, None, None]:
     settings = CommonSettings.get_settings()
-    pool = redis.ConnectionPool.from_url(settings.REDIS_URI)  # type: ignore # https://github.com/redis/redis-py/pull/3495
+    pool = redis.ConnectionPool.from_url(settings.REDIS_URI)
 
     redis_instance = redis.Redis(connection_pool=pool)
 
     try:
         yield redis_instance
     finally:
-        redis_instance.close()  # type: ignore # https://github.com/redis/redis-py/pull/3496
+        redis_instance.close()
 
 
 RedisDep = Annotated[redis.Redis, Depends(get_redis)]

@@ -1,0 +1,36 @@
+[project]
+name = "fastapi-auth"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [{ name = "Patrick Arminio", email = "patrick.arminio@gmail.com" }]
+requires-python = ">=3.11"
+dependencies = [
+    "duck",
+ "pydantic[email]>=2.11.3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "fastapi>=0.115.12",
+    "httpx>=0.28.1",
+    "pytest>=7.4.4",
+    "pytest-asyncio>=0.23.8",
+    "python-multipart>=0.0.20",
+    "starlette>=0.46.1",
+    "inline-snapshot>=0.20.10",
+    "respx>=0.22.0",
+    "coverage>=7.8.0",
+    "time-machine>=2.16.0",
+]
+
+[tool.uv.sources]
+duck = { workspace = true }
+
+
+[tool.inline-snapshot]
+format-command = "ruff format --stdin-filename {filename}"

@@ -44,6 +44,7 @@ jobs:
       matrix:
         package:
           - duck
+          - fastapi_auth
     runs-on: depot-ubuntu-22.04
     steps:
       - name: Checkout
@@ -72,7 +73,7 @@ jobs:
       - name: Store coverage files
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-html
+          name: coverage-${{ matrix.package }}-html
           path: packages/${{ matrix.package }}/htmlcov
           include-hidden-files: true
 

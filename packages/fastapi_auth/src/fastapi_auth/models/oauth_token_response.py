@@ -1,0 +1,50 @@
+from urllib.parse import parse_qs
+
+from pydantic import BaseModel, Field, HttpUrl, RootModel
+
+
+class TokenResponse(BaseModel):
+    token_type: str = Field(description="The type of token, usually 'Bearer'")
+
+    access_token: str = Field(description="The issued access token")
+    expires_in: int | None = Field(
+        None, description="Lifetime of the access token in seconds"
+    )
+    refresh_token: str | None = Field(
+        None, description="Token used to obtain new access tokens"
+    )
+    refresh_token_expires_in: int | None = Field(
+        None, description="Lifetime of the refresh token in seconds"
+    )
+    scope: str | None = Field(
+        None,
+        description="Space-delimited list of scopes associated with the access token",
+    )
+
+
+class TokenErrorResponse(BaseModel):
+    error: str = Field(description="Error code as per OAuth 2.0 specification")
+    error_description: str | None = Field(
+        None, description="Human-readable explanation of the error"
+    )
+    error_uri: HttpUrl | None = Field(
+        None, description="URI to a web page with more information about the error"
+    )
+
+
+class OAuth2TokenEndpointResponse(RootModel):
+    root: TokenResponse | TokenErrorResponse
+
+    @staticmethod
+    def from_query_string(query_string: str) -> "OAuth2TokenEndpointResponse":
+        params = parse_qs(query_string)
+        query_dict = {}
+
+        # always take the last value
+        for param in params:
+            query_dict[param] = params[param][-1]
+
+        return OAuth2TokenEndpointResponse(**query_dict)
+
+    def is_error(self) -> bool:
+        return isinstance(self.root, TokenErrorResponse)

@@ -432,7 +432,7 @@ def create_and_store_device_code(
         ex=settings.DEVICE_AUTH_TTL_MINUTES * 60,
     )
 
-    pipeline.execute()  # type: ignore # https://github.com/redis/redis-py/pull/3494
+    pipeline.execute()
 
     return device_code
 
