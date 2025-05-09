@@ -397,9 +397,12 @@ ns_map: dict[str, any] = {
     "knative-serving": {},
     "kourier-system": {
         "labels": {
+            "app.kubernetes.io/component": "net-kourier",
+            "app.kubernetes.io/name": "knative-serving",
             "networking.knative.dev/ingress-provider": "kourier",
         },
     },
+    "monitoring": {},
     "origin-ca-issuer": {},
     "vector": {},
     # TODO: Delete the namespaces below
@@ -461,6 +464,19 @@ for k, sa in sa_map.items():
         ),
         opts=pulumi.ResourceOptions(provider=k8s_provider),
     )
+
+prometheus_chart = helm.Chart(
+    "prometheus",
+    helm.ChartArgs(
+        chart="./helm/charts/prometheus",
+        dependency_update=True,
+        namespace="monitoring",
+        # values={},
+    ),
+    opts=pulumi.ResourceOptions(
+        provider=k8s_provider,
+    ),
+)
 
 # Ensure the Helm chart configuration includes the correct service account annotations
 external_secrets_sa_name="external-secrets"
@@ -524,7 +540,10 @@ cert_manager_chart = helm.Chart(
             },
         },
     ),
-    opts=pulumi.ResourceOptions(provider=k8s_provider),
+    opts=pulumi.ResourceOptions(
+        depends_on=[external_secrets_chart],
+        provider=k8s_provider,
+    ),
 )
 
 synadia_credentials_secret = aws.ssm.Parameter("synadia-credentials",
@@ -551,7 +570,13 @@ vector_chart = helm.Chart(
             },
         },
     ),
-    opts=pulumi.ResourceOptions(provider=k8s_provider),
+    opts=pulumi.ResourceOptions(
+        depends_on=[
+            cert_manager_chart,
+            external_secrets_chart,
+        ],
+        provider=k8s_provider,
+    ),
 )
 
 # Export values to use elsewhere

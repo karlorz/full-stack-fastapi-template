@@ -1,0 +1,22 @@
+apiVersion: v2
+name: prometheus
+description: A Helm chart for the configuration of the Prometheus stack
+type: application
+version: 0.1.0
+dependencies:
+- name: prometheus-operator-crds
+  condition: prometheus-operator-crds.enabled
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 20.0.0
+- name: prometheus-node-exporter
+  condition: prometheus-node-exporter.enabled
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 4.46.0
+- name: kube-state-metrics
+  condition: kube-state-metrics.enabled
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 5.33.1
+- name: prometheus
+  condition: prometheus.server.enabled
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 27.13.0
