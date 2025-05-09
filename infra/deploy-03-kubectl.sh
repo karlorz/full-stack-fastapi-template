@@ -9,7 +9,6 @@ CLOUDFLARE_API_TOKEN_SSL=${CLOUDFLARE_API_TOKEN_SSL:?}
 REGISTRY_ID=${REGISTRY_ID:?}
 ENVIRONMENT=${ENVIRONMENT:-development}
 FASTAPICLOUD_IAM_ROLE_ARN=${FASTAPICLOUD_IAM_ROLE_ARN:?}
-NATS_LOGS_WRITE_CREDS=${NATS_LOGS_WRITE_CREDS:?}
 KNATIVE_VERSION="1.16.0"
 CLOUDFLARE_ORIGIN_CA_ISSUER_VERSION="0.10.0"
 
@@ -29,10 +28,6 @@ CLOUDFLARE_ORIGIN_CA_ISSUER_VERSION="0.10.0"
 
 # echo "Add wildcard cert for serving"
 # kubectl apply -f "k8s/cert-manager/wildcard-cert-serving-${ENVIRONMENT}.yaml"
-
-echo "Set NATS logging write creds, used by Vector"
-# Ref: https://stackoverflow.com/a/45881259/219530
-kubectl -n vector-aggregator create secret generic --from-literal=nats.creds="${NATS_LOGS_WRITE_CREDS}" nats-logging-write-secret --save-config --dry-run=client -o yaml | kubectl apply -f -
 
 echo "Create fastapicloud namespace"
 kubectl apply -f k8s/fastapicloud/namespace.yaml

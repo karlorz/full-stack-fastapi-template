@@ -1,13 +1,14 @@
-{{ $productionLetsEncryptIssuerServer := "https://acme-v02.api.letsencrypt.org/directory" -}}
-{{ $stagingLetsEncryptIssuerServer := "https://acme-staging-v02.api.letsencrypt.org/directory" -}}
-{{ $issuerServers := dict "letsencrypt-production" $productionLetsEncryptIssuerServer "letsencrypt-staging" $stagingLetsEncryptIssuerServer -}}
-{{- $issuers := dict "letsencrypt-production" (dict "provider" "letsencrypt" "server" "production") "letsencrypt-staging" (dict "provider" "letsencrypt" "server" "staging") -}}
-{{- range $k, $i := $issuers }}
+{{- $productionLetsEncryptIssuerServer := "https://acme-v02.api.letsencrypt.org/directory" }}
+{{- $stagingLetsEncryptIssuerServer := "https://acme-staging-v02.api.letsencrypt.org/directory" }}
+{{- $issuerServers := dict "letsencrypt-production" $productionLetsEncryptIssuerServer "letsencrypt-staging" $stagingLetsEncryptIssuerServer }}
+{{- $issuerMapping := dict "issuer" "Issuer" "clusterIssuer" "ClusterIssuer" }}
+{{- range $issuer, $kind := $issuerMapping }}
+{{- range $k, $i := default (dict) (index $.Values.issuers $issuer) }}
 {{- $provider := default "letsencrypt" $i.provider -}}
 {{- $server := default "production" $i.server -}}
 ---
 apiVersion: cert-manager.io/v1
-kind: {{ default "Issuer" $i.kind }}
+kind: {{ $kind }}
 metadata:
   name: {{ $k | quote }}
   labels:
@@ -28,4 +29,5 @@ spec:
           apiTokenSecretRef:
             name: {{ include "cert-manager.cloudflare.secret-name" $ }}
             key: {{ include "cert-manager.cloudflare.secret-key" $ }}
+{{- end }}
 {{- end }}

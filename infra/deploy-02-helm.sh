@@ -42,17 +42,11 @@ helm upgrade --install cert-manager jetstack/cert-manager \
   --version "${CERT_MANAGER_VERSION}" \
   --set crds.enabled=true
 
-echo "Install Vector Agent"
-helm upgrade --install vector-agent vector/vector \
-  --namespace vector-agent \
-  --create-namespace \
-  --values helm-values/vector-agent-values.yaml
-
-echo "Install Vector Aggregator"
-helm upgrade --install vector-aggregator vector/vector \
-  --namespace vector-aggregator \
-  --create-namespace \
-  --values helm-values/vector-aggregator-values.yaml
+echo "Install Vector Agent & Aggregator"
+helm dependency update helm/charts/vector
+helm upgrade --install vector helm/charts/vector \
+  --namespace vector \
+  --create-namespace
 
 # TODO: remove ingress-nginx if we end up not using it at all
 # echo "Install Ingress Nginx Controller"

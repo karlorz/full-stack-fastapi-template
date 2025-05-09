@@ -66,6 +66,7 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           CLOUDFLARE_API_TOKEN_SSL: ${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}
+          NATS_LOGGING_WRITE_CREDS: ${{ secrets.NATS_CREDS }}
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
       - name: Set up kubeconfig

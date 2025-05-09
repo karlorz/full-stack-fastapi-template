@@ -3,6 +3,26 @@ cert-manager:
   crds:
     enabled: true
 
+issuers:
+  issuer:
+    # Map of issuer names to their configuration
+    # issuerName:
+    #   provider: "letsencrypt" # one of: 'letsencrypt'
+    #   server: "production" # one of: 'production', 'staging'
+    "letsencrypt-production-issuer":
+      provider: "letsencrypt"
+      server: "production"
+    "letsencrypt-staging-issuer":
+      provider: "letsencrypt"
+      server: "staging"
+  clusterIssuer:
+    "letsencrypt-production":
+      provider: "letsencrypt"
+      server: "production"
+    "letsencrypt-staging":
+      provider: "letsencrypt"
+      server: "staging"
+
 externalSecrets:
   name: external-secrets-store
   kind: SecretStore

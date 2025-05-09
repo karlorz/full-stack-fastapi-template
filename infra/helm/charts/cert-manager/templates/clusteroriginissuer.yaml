@@ -7,5 +7,5 @@ spec:
   requestType: OriginECC
   auth:
     tokenRef:
-      name: cloudflare-api-token-ssl-secret
-      key: api-token
+      name: {{ include "cert-manager.cloudflare.secret-name" . }}
+      key: {{ include "cert-manager.cloudflare.secret-key" . }}

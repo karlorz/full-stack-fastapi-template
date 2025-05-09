@@ -21,16 +21,21 @@ import pulumi_kubernetes.helm.v4 as helm
 import os
 
 
-CLOUDFLARE_API_KEY = os.environ.get("CLOUDFLARE_API_TOKEN_SSL", "")
+def get_env_var(var_name: str) -> str:
+    """Get the environment variable or raise an error if not set."""
+    value = os.environ.get(var_name, "")
+    assert value, f"{var_name} environment variable is not set"
+    return value
 
-assert CLOUDFLARE_API_KEY, "CLOUDFLARE_API_TOKEN_SSL environment variable is not set"
+
+CLOUDFLARE_API_KEY = get_env_var("CLOUDFLARE_API_TOKEN_SSL")
+NATS_LOGGING_WRITE_CREDS = get_env_var("NATS_LOGGING_WRITE_CREDS")
 
 ### AWS Resources ###
 
 # Role generated automatically by AWS from permission set from AWS IAM Identity Center
 roles = aws.iam.get_roles(name_regex="FastAPILabsPowerUserK8s")
 k8s_role_arn = roles.arns[0]
-
 
 # Create a VPC for the EKS cluster
 eks_vpc = awsx.ec2.Vpc(
@@ -395,17 +400,27 @@ ns_map: dict[str, any] = {
             "networking.knative.dev/ingress-provider": "kourier",
         },
     },
+    "origin-ca-issuer": {},
+    "vector": {},
+    # TODO: Delete the namespaces below
     "vector-agent": {},
     "vector-aggregator": {},
 }
 for k, ns in ns_map.items():
+    labels = {**{"kubernetes.io/metadata.name": k, "name": k}, **k8s_labels}
     ns_map[k]["resource"] = k8s.core.v1.Namespace(
         k,
         metadata=k8s.meta.v1.ObjectMetaArgs(
             name=k,
-            labels={**ns.get("labels", {}), **k8s_labels},
+            labels={**ns.get("labels", {}), **labels},
         ),
-        opts=pulumi.ResourceOptions(provider=k8s_provider),
+        spec={
+            "finalizers": ["kubernetes"],
+        },
+        opts=pulumi.ResourceOptions(
+            provider=k8s_provider,
+            protect=True,
+        ),
     )
 
 sa_map: dict[str, any] = {
@@ -452,7 +467,8 @@ external_secrets_sa_name="external-secrets"
 external_secrets_sa_namespace="external-secrets"
 external_secrets_parameter_store_kind="ClusterSecretStore"
 external_secrets_parameter_store_name="external-parameter-store"
-custom_external_secrets_chart = helm.Chart(
+external_secrets_enabled=True
+external_secrets_chart = helm.Chart(
     "external-secrets",
     helm.ChartArgs(
         chart="./helm/charts/external-secrets",
@@ -469,12 +485,14 @@ custom_external_secrets_chart = helm.Chart(
             },
             "config": {
                 "kind": external_secrets_parameter_store_kind,
-                # This is being done because of the helm chart logic
-                external_secrets_parameter_store_name.replace("external-", ""): {
-                    "provider": {
-                        "aws": {
-                            "service": "ParameterStore",
-                            "region": region,
+                "stores": {
+                    # This is being done because of the helm chart logic
+                    external_secrets_parameter_store_name.replace("external-", ""): {
+                        "provider": {
+                            "aws": {
+                                "service": "ParameterStore",
+                                "region": region,
+                            },
                         },
                     },
                 },
@@ -496,15 +514,41 @@ cert_manager_chart = helm.Chart(
         dependency_update=True,
         namespace="cert-manager",
         values={
-            # TODO:
-            # "externalSecrets": {
-            #     "cloudflare": {
-            #         "enabled": True,
-            #         "key": cloudflare_credentials_secret.name,
-            #     },
-            #     "kind": external_secrets_parameter_store_kind,
-            #     "name": external_secrets_parameter_store_name,
-            # },
+            "externalSecrets": {
+                "cloudflare": {
+                    "enabled": external_secrets_enabled,
+                    "key": cloudflare_credentials_secret.name,
+                },
+                "kind": external_secrets_parameter_store_kind,
+                "name": external_secrets_parameter_store_name,
+            },
+        },
+    ),
+    opts=pulumi.ResourceOptions(provider=k8s_provider),
+)
+
+synadia_credentials_secret = aws.ssm.Parameter("synadia-credentials",
+    name="synadia-credentials",
+    type=aws.ssm.ParameterType.STRING,
+    value=NATS_LOGGING_WRITE_CREDS)
+
+vector_chart = helm.Chart(
+    "vector",
+    helm.ChartArgs(
+        chart="./helm/charts/vector",
+        dependency_update=True,
+        namespace="vector",
+        values={
+            "externalSecrets": {
+                "kind": external_secrets_parameter_store_kind,
+                "name": external_secrets_parameter_store_name,
+                "synadia": {
+                    "enabled": external_secrets_enabled,
+                    "remoteRef": {
+                        "key": synadia_credentials_secret.name,
+                    },
+                },
+            },
         },
     ),
     opts=pulumi.ResourceOptions(provider=k8s_provider),
