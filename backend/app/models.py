@@ -4,6 +4,7 @@ from enum import Enum
 from typing import Annotated, Any
 
 from pydantic import AfterValidator, EmailStr, computed_field
+from sqlalchemy import DateTime
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -161,7 +162,10 @@ class Team(TeamBase, table=True):
     owner_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
     owner: User = Relationship(back_populates="owned_teams")
     is_personal_team: bool = False
-    created_at: datetime = Field(default_factory=get_datetime_utc)
+    created_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
 
     user_links: list[UserTeamLink] = Relationship(
         back_populates="team", cascade_delete=True
@@ -249,7 +253,10 @@ class Invitation(InvitationBase, table=True):
     team_id: uuid.UUID = Field(foreign_key="team.id", ondelete="CASCADE")
     invited_by_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
     status: InvitationStatus = Field(default=InvitationStatus.pending)
-    created_at: datetime = Field(default_factory=get_datetime_utc)
+    created_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
     expires_at: datetime
 
     sender: User = Relationship(
@@ -269,8 +276,14 @@ class App(AppBase, table=True):
     team_id: uuid.UUID = Field(foreign_key="team.id")
     team: Team = Relationship(back_populates="apps")
     slug: str = Field(max_length=255, unique=True)
-    created_at: datetime = Field(default_factory=get_datetime_utc)
-    updated_at: datetime = Field(default_factory=get_datetime_utc)
+    created_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    updated_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
     deployments: list["Deployment"] = Relationship(
         back_populates="app", cascade_delete=True
     )
@@ -325,8 +338,14 @@ class Deployment(SQLModel, table=True):
     app_id: uuid.UUID = Field(foreign_key="app.id", ondelete="CASCADE")
     app: App = Relationship(back_populates="deployments")
     slug: str = Field(max_length=255)
-    created_at: datetime = Field(default_factory=get_datetime_utc)
-    updated_at: datetime = Field(default_factory=get_datetime_utc)
+    created_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    updated_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
     status: DeploymentStatus = Field(default=DeploymentStatus.waiting_upload)
 
     @computed_field
@@ -375,8 +394,14 @@ class EnvironmentVariable(SQLModel, table=True):
         primary_key=True,
     )
     value: str = Field(min_length=1)
-    created_at: datetime = Field(default_factory=get_datetime_utc)
-    updated_at: datetime = Field(default_factory=get_datetime_utc)
+    created_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    updated_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
 
 
 class EnvironmentVariablePublic(SQLModel):
@@ -413,8 +438,14 @@ class WaitingListUserBase(SQLModel):
 
 class WaitingListUser(WaitingListUserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    created_at: datetime = Field(default_factory=get_datetime_utc)
-    updated_at: datetime = Field(default_factory=get_datetime_utc)
+    created_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    updated_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
     allowed_at: datetime | None = Field(default=None, index=True)
     invitation_sent_at: datetime | None = Field(default=None, index=True)
     registered_from_cli: bool = Field(default=False)
