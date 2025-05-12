@@ -435,6 +435,7 @@
 
 ### Internal
 
+* ⬆ Bump @tailwindcss/vite from 4.1.1 to 4.1.6 in /frontend. PR [#893](https://github.com/fastapilabs/cloud/pull/893) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-table from 8.21.2 to 8.21.3 in /frontend. PR [#892](https://github.com/fastapilabs/cloud/pull/892) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/router-vite-plugin from 1.117.2 to 1.120.3 in /frontend. PR [#891](https://github.com/fastapilabs/cloud/pull/891) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🔧 Update dependabot schedule to weekly for frontend dependencies. PR [#889](https://github.com/fastapilabs/cloud/pull/889) by [@alejsdev](https://github.com/alejsdev).
