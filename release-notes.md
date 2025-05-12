@@ -435,6 +435,7 @@
 
 ### Internal
 
+* ⬆ Bump redis from 7 to 8. PR [#888](https://github.com/fastapilabs/cloud/pull/888) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ➕ Add `fastapi_auth`. PR [#693](https://github.com/fastapilabs/cloud/pull/693) by [@patrick91](https://github.com/patrick91).
 * ⬆ Bump @radix-ui/react-collapsible from 1.1.8 to 1.1.10 in /frontend. PR [#873](https://github.com/fastapilabs/cloud/pull/873) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-router from 1.120.2 to 1.120.3 in /frontend. PR [#874](https://github.com/fastapilabs/cloud/pull/874) by [@dependabot[bot]](https://github.com/apps/dependabot).
