@@ -435,6 +435,7 @@
 
 ### Internal
 
+* ⬆ Bump @radix-ui/react-dropdown-menu from 2.1.12 to 2.1.14 in /frontend. PR [#886](https://github.com/fastapilabs/cloud/pull/886) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-query-devtools from 5.75.0 to 5.75.7 in /frontend. PR [#885](https://github.com/fastapilabs/cloud/pull/885) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump redis from 7 to 8. PR [#888](https://github.com/fastapilabs/cloud/pull/888) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ➕ Add `fastapi_auth`. PR [#693](https://github.com/fastapilabs/cloud/pull/693) by [@patrick91](https://github.com/patrick91).
