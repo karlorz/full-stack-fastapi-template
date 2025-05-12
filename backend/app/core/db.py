@@ -4,7 +4,9 @@ from app.api.utils.teams import generate_team_slug_name
 from app.core.config import DBSettings
 from app.models import Role, Team, User, UserCreate, UserTeamLink
 
-engine = create_engine(str(DBSettings.get_settings().SQLALCHEMY_DATABASE_URI))
+engine = create_engine(
+    str(DBSettings.get_settings().SQLALCHEMY_DATABASE_URI), pool_pre_ping=True
+)
 
 
 # make sure all SQLModel models are imported (app.models) before initializing DB
