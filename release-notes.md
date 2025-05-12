@@ -435,6 +435,7 @@
 
 ### Internal
 
+* 🔧 Update dependabot schedule to weekly for frontend dependencies. PR [#889](https://github.com/fastapilabs/cloud/pull/889) by [@alejsdev](https://github.com/alejsdev).
 * ⬆ Bump @radix-ui/react-popover from 1.1.11 to 1.1.13 in /frontend. PR [#887](https://github.com/fastapilabs/cloud/pull/887) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-dropdown-menu from 2.1.12 to 2.1.14 in /frontend. PR [#886](https://github.com/fastapilabs/cloud/pull/886) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-query-devtools from 5.75.0 to 5.75.7 in /frontend. PR [#885](https://github.com/fastapilabs/cloud/pull/885) by [@dependabot[bot]](https://github.com/apps/dependabot).
