@@ -182,6 +182,7 @@
 
 ### Refactors
 
+* ♻️ Refactor apps and app details views. PR [#898](https://github.com/fastapilabs/cloud/pull/898) by [@alejsdev](https://github.com/alejsdev).
 * 🔧 Add Bento to default DB users list. PR [#876](https://github.com/fastapilabs/cloud/pull/876) by [@siryur](https://github.com/siryur).
 * 💄 Update email templates. PR [#869](https://github.com/fastapilabs/cloud/pull/869) by [@alejsdev](https://github.com/alejsdev).
 * 💄 UI tweaks. PR [#841](https://github.com/fastapilabs/cloud/pull/841) by [@alejsdev](https://github.com/alejsdev).
