@@ -1,59 +1,60 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { LayoutGrid, Rocket } from "lucide-react"
+
+import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
-const PendingDashboard = () => (
-  <div className="w-full p-0 space-y-6">
-    <Card>
-      <CardContent className="pt-6">
-        <div className="text-2xl truncate max-w-full" data-testid="result">
-          <Skeleton className="h-8 w-[250px]" />
-        </div>
-        <Skeleton className="mt-2 h-4 w-[200px]" />
-      </CardContent>
-    </Card>
+const PendingDashboard = () => {
+  return (
+    <div className="w-full p-0 space-y-6">
+      <div data-testid="result" className="mb-10">
+        <h1 className="text-2xl font-bold flex items-center gap-2">
+          <span>Hi, </span>
+          <Skeleton className="h-8 w-[200px] inline-block" />
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          Welcome to FastAPI Cloud! Here's what's happening with your
+          applications
+        </p>
+      </div>
 
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <Skeleton className="h-6 w-[100px]" />
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="h-[100px] w-full" />
-      </CardContent>
-    </Card>
-
-    <div className="flex flex-col md:flex-row gap-4">
-      <Card className="w-full md:w-[55%]">
-        <CardHeader>
-          <CardTitle>
-            <Skeleton className="h-6 w-[150px]" />
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-4 w-[200px]" />
-          <Skeleton className="mt-4 h-8 w-[100px]" />
-        </CardContent>
-      </Card>
-
-      <Card className="w-full md:w-[45%]">
-        <CardHeader>
-          <CardTitle>
-            <Skeleton className="h-6 w-[100px]" />
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="mt-2 flex flex-col md:flex-row">
-            <div>
-              <Skeleton className="h-4 w-[50px]" />
-              <Skeleton className="mt-1 h-8 w-[30px]" />
-              <Skeleton className="mt-1 h-3 w-[80px]" />
+      {/* Stats */}
+      <div className="grid gap-4 lg:grid-cols-2 mb-8">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <Skeleton className="h-4 w-[120px]" />
+                <Skeleton className="h-8 w-[60px] mt-1" />
+              </div>
+              <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
+                <LayoutGrid className="h-6 w-6 text-black" />
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="mt-4">
+              <Skeleton className="h-6 w-[100px]" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <Skeleton className="h-4 w-[150px]" />
+                <Skeleton className="h-5 w-[100px] mt-1" />
+              </div>
+              <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
+                <Rocket className="h-6 w-6 text-black" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <Skeleton className="h-9 w-[100px]" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 export default PendingDashboard

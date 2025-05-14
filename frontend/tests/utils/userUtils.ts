@@ -14,9 +14,7 @@ export async function logInUser(page: Page, email: string, password: string) {
 
   await page.waitForURL("/", { waitUntil: "networkidle" })
 
-  await expect(
-    page.getByText("Welcome to FastAPI Cloud, nice to see you here!"),
-  ).toBeVisible()
+  await expect(page.getByTestId("result")).toBeVisible()
 }
 
 export async function logOutUser(page: Page) {

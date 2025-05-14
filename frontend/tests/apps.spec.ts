@@ -31,9 +31,9 @@ test.describe("Apps empty states", () => {
 
     await page.goto(`/${team.slug}/apps/`)
     await expect(
-      page.getByRole("heading", { name: "You don't have any app yet" }),
+      page.getByRole("heading", { name: "No applications yet" }),
     ).toBeVisible()
-    await page.getByRole("link", { name: "Create App" }).click()
+    await page.getByRole("link", { name: "Create Your First App" }).click()
   })
 })
 

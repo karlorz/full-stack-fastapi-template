@@ -4,7 +4,9 @@ import { Skeleton } from "@/components/ui/skeleton"
 const PendingDeployment = () => (
   <div className="w-full p-0">
     <div className="flex items-center">
-      <h1 className="text-3xl font-bold pb-2">Deployment Details</h1>
+      <h1 className="text-2xl font-extrabold tracking-tight">
+        Deployment Details
+      </h1>
     </div>
 
     <div className="mb-4">

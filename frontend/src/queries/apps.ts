@@ -1,22 +1,11 @@
+import { AppsService } from "@/client"
+import { fetchAppBySlug, fetchAppsData } from "@/utils"
 import { queryOptions } from "@tanstack/react-query"
 
-import { AppsService } from "@/client"
-import {
-  fetchAppBySlug,
-  fetchLastApp,
-  fetchLastAppsInLast30Days,
-} from "@/utils"
-
-export const getRecentAppsQueryOptions = (teamId: string) =>
+export const getDashboardDataQueryOptions = (teamId: string) =>
   queryOptions({
-    queryKey: ["apps", teamId, "recent"],
-    queryFn: () => fetchLastAppsInLast30Days(teamId),
-  })
-
-export const getLastAppQueryOptions = (teamId: string) =>
-  queryOptions({
-    queryKey: ["apps", teamId, "last"],
-    queryFn: () => fetchLastApp(teamId),
+    queryKey: ["apps", teamId, "dashboard"],
+    queryFn: () => fetchAppsData(teamId),
   })
 
 export const getAppsQueryOptions = (teamId: string) =>
@@ -35,4 +24,14 @@ export const getEnvVarQueryOptions = (appId: string) =>
   queryOptions({
     queryKey: ["apps", appId, "environmentVariables"],
     queryFn: () => AppsService.readEnvironmentVariables({ appId }),
+  })
+
+export const getAppLogsQueryOptions = (appId: string) =>
+  queryOptions({
+    queryKey: ["app-logs", appId],
+    queryFn: () =>
+      AppsService.readAppLogs({
+        appId,
+      }),
+    refetchInterval: 5000,
   })

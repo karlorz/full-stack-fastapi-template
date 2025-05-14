@@ -2,7 +2,6 @@ import {
   type ApiError,
   AppsService,
   type DeploymentStatus,
-  DeploymentsService,
   type TeamWithUserPublic,
   TeamsService,
   type UserPublic,
@@ -58,27 +57,22 @@ export const getInitials = (name: string): string => {
     .toUpperCase()
 }
 
-export const fetchLastApp = async (teamId: string) => {
-  const apps = await AppsService.readApps({ teamId, limit: 1 })
-
-  if (!apps.data.length) {
-    return null
-  }
-
-  return apps.data[0]
-}
-
-export const fetchLastAppsInLast30Days = async (teamId: string) => {
-  const lastThirtyDays = new Date()
-  lastThirtyDays.setDate(lastThirtyDays.getDate() - 30)
-
+export const fetchAppsData = async (teamId: string) => {
   const apps = await AppsService.readApps({
-    teamId: teamId,
-    skip: 0,
+    teamId,
     orderBy: "created_at",
   })
 
-  return apps.data.filter((app) => new Date(app.created_at) >= lastThirtyDays)
+  const lastThirtyDays = new Date()
+  lastThirtyDays.setDate(lastThirtyDays.getDate() - 30)
+
+  return {
+    total: apps.data.length,
+    lastApp: apps.data[0],
+    recentApps: apps.data.filter(
+      (app) => new Date(app.created_at) >= lastThirtyDays,
+    ),
+  }
 }
 
 export const deploymentStatusMessage = (status: DeploymentStatus | null) => {
@@ -97,18 +91,4 @@ export const deploymentStatusMessage = (status: DeploymentStatus | null) => {
     default:
       return "No recent deployment information available."
   }
-}
-
-export const getLastDeploymentStatus = async (appId: string) => {
-  const deployments = await DeploymentsService.readDeployments({
-    appId: appId,
-    orderBy: "created_at",
-    limit: 1,
-  })
-
-  if (deployments.data.length === 0) {
-    return null
-  }
-
-  return deployments.data[0].status
 }

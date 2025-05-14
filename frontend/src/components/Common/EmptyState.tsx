@@ -1,32 +1,35 @@
-import type { LucideIcon } from "lucide-react"
-
-import { Card, CardContent, CardDescription } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 interface EmptyStateProps {
   title: string
   description?: string
   buttonText?: string
   buttonLink?: string
-  icon: LucideIcon
+  onButtonClick?: () => void
+  testId?: string
 }
 
 const EmptyState = ({
   title,
   description,
-  icon: IconComponent,
+  buttonText,
+  onButtonClick,
+  testId,
 }: EmptyStateProps) => {
   return (
-    <Card className="w-full flex items-center justify-center flex-col p-6">
-      <CardContent className="flex flex-col items-center space-y-4 pt-6">
-        <IconComponent className="h-8 w-8 text-muted-foreground" />
-        <h3 className="text-lg font-semibold text-center m-1">{title}</h3>
-        <CardDescription>
+    <div className="col-span-3 flex justify-center" data-testid={testId}>
+      <div className="flex flex-col items-center justify-center py-8 px-4">
+        <div className="w-full max-w-md text-center mb-6">
+          <h2 className="text-lg font-bold mb-2">{title}</h2>
           {description && (
-            <p className="text-center text-muted-foreground">{description}</p>
+            <p className="text-sm text-muted-foreground mb-6">{description}</p>
           )}
-        </CardDescription>
-      </CardContent>
-    </Card>
+          {buttonText && onButtonClick && (
+            <Button onClick={onButtonClick}>{buttonText}</Button>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
 

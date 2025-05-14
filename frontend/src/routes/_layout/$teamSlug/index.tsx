@@ -1,21 +1,20 @@
+import { useSuspenseQuery } from "@tanstack/react-query"
 import {
   Link as RouterLink,
   createFileRoute,
   notFound,
 } from "@tanstack/react-router"
+import { LayoutGrid, Rocket } from "lucide-react"
 
 import QuickStart from "@/components/Common/QuickStart"
 import PendingDashboard from "@/components/PendingComponents/PendingDashboard"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { useCurrentUser } from "@/hooks/useAuth"
-import {
-  getLastAppQueryOptions,
-  getRecentAppsQueryOptions,
-} from "@/queries/apps"
+import { getDashboardDataQueryOptions } from "@/queries/apps"
 import { getTeamQueryOptions } from "@/queries/teams"
-import { deploymentStatusMessage, getLastDeploymentStatus } from "@/utils"
-import { useSuspenseQuery } from "@tanstack/react-query"
+import { deploymentStatusMessage } from "@/utils"
 
 export const Route = createFileRoute("/_layout/$teamSlug/")({
   component: Dashboard,
@@ -38,69 +37,102 @@ const CurrentUser = () => {
 function Dashboard() {
   const { teamSlug } = Route.useParams()
   const { data: team } = useSuspenseQuery(getTeamQueryOptions(teamSlug))
-  const { data: apps } = useSuspenseQuery(getRecentAppsQueryOptions(team.id))
-  const { data: lastApp } = useSuspenseQuery(getLastAppQueryOptions(team.id))
-  const { data: lastDeploymentStatus } = useSuspenseQuery({
-    queryKey: ["deployments", lastApp?.id, "last"],
-    queryFn: () => (lastApp?.id ? getLastDeploymentStatus(lastApp.id) : null),
-  })
+  const { data: appsData } = useSuspenseQuery(
+    getDashboardDataQueryOptions(team.id),
+  )
+  const { total: totalApps, lastApp, recentApps: apps } = appsData
 
   return (
     <div className="w-full p-0 space-y-6">
-      <Card data-testid="result">
-        <CardContent>
-          <div className="text-2xl truncate max-w-full">
-            Hi, <CurrentUser />
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Welcome to FastAPI Cloud, nice to see you here!
-          </p>
-        </CardContent>
-      </Card>
+      <div data-testid="result" className="mb-10">
+        <h1 className="text-2xl font-bold flex items-center gap-2">
+          Hi, <CurrentUser />
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          Welcome to FastAPI Cloud! Here's what's happening with your
+          applications
+        </p>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Start</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <QuickStart />
-        </CardContent>
-      </Card>
-
-      <div className="flex flex-col md:flex-row gap-4">
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>{lastApp?.name}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              {deploymentStatusMessage(lastDeploymentStatus)}
-            </p>
-            <RouterLink to={`/$teamSlug/apps/${lastApp?.slug}`}>
-              {lastApp && (
-                <Button variant="outline" className="mt-4">
-                  View App
-                </Button>
+      {/* Stats */}
+      <div className="grid gap-4 lg:grid-cols-2 mb-8">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Applications
+                </p>
+                <h3 className="text-2xl font-bold mt-1">{totalApps || 0}</h3>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
+                <LayoutGrid className="h-6 w-6 text-black" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-center text-sm">
+              {totalApps > 0 && (
+                <Badge
+                  variant="outline"
+                  className="bg-green-50 text-green-700 border-green-200"
+                >
+                  <span className="mr-1">+{apps?.length || 0}</span>
+                  last 30 days
+                </Badge>
               )}
-            </RouterLink>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>Statistics</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="mt-2 flex flex-col md:flex-row">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Apps</p>
-                <p className="text-2xl font-bold">{apps.length}</p>
-                <p className="text-xs text-muted-foreground">Last 30 days</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {lastApp?.name || "Last Deployed App"}
+                </p>
+                <p className="font-bold mt-1">
+                  {deploymentStatusMessage(
+                    lastApp?.latest_deployment?.status ?? null,
+                  )}
+                </p>
               </div>
+              <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
+                <Rocket className="h-6 w-6 text-black" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-center text-sm">
+              <RouterLink to={`/$teamSlug/apps/${lastApp?.slug}`}>
+                {lastApp && (
+                  <Button variant="outline" className="mt-4">
+                    View App
+                  </Button>
+                )}
+              </RouterLink>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Quick Actions */}
+      {totalApps === 0 && (
+        <div>
+          <h2 className="text-2xl font-bold mb-6">Quick Actions</h2>
+          <Button variant="outline" className="h-auto py-4 justify-start">
+            <div className="flex flex-col items-start">
+              <div className="flex items-center gap-2 mb-1">
+                <Rocket className="h-5 w-5 text-black" />
+                <span className="font-medium">Quickstart</span>
+              </div>
+              <div className="flex justify-between gap-4 w-full">
+                <span className="text-sm text-muted-foreground py-2">
+                  Deploy your first app
+                </span>
+                <QuickStart />
+              </div>
+            </div>
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, notFound } from "@tanstack/react-router"
+import { formatDistanceToNow } from "date-fns"
 
 import Logs from "@/components/Deployment/Logs"
 import { Status } from "@/components/Deployment/Status"
@@ -55,12 +56,15 @@ function DeploymentDetail() {
       </div>
 
       <div className="mb-10">
-        <p className="text-sm text-muted-foreground">
-          Last updated: {new Date(deployment?.updated_at).toLocaleString()}
+        <p className="text-sm text-muted-foreground py-1">
+          Last updated:{" "}
+          {formatDistanceToNow(new Date(deployment.created_at), {
+            addSuffix: true,
+          })}
         </p>
         <div className="flex items-center gap-2">
           <p className="text-sm text-muted-foreground">Status:</p>
-          <Status deployment={deployment} />
+          <Status status={deployment.status} />
         </div>
       </div>
 

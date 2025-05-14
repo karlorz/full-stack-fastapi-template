@@ -25,6 +25,7 @@ export type AppPublic = {
   updated_at: string
   url: string
   is_fresh: boolean | null
+  latest_deployment: Deployment | null
 }
 
 export type AppsPublic = {
@@ -82,6 +83,18 @@ export type CreateUser = {
   password: string
   full_name: string
   is_verified?: boolean
+}
+
+export type Deployment = {
+  id?: string
+  image_hash?: string | null
+  app_id: string
+  slug: string
+  created_at?: string
+  updated_at?: string
+  status?: DeploymentStatus
+  readonly url: string
+  readonly dashboard_url: string
 }
 
 export type DeploymentPublic = {

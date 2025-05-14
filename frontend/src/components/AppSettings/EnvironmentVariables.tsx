@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Eye, EyeOff, History, PackageOpen, Trash } from "lucide-react"
+import { Eye, EyeOff, History, Trash } from "lucide-react"
 import { Fragment, useEffect, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
@@ -226,7 +226,7 @@ const EnvironmentVariables = ({
     initialEnvironmentVariablesCount > 0
 
   const shouldShowAddEnvironmentVariable =
-    isEditing || environmentVariables.length === 0
+    isEditing || (environmentVariables.length === 0 && hasEnvironmentVariables)
   const shouldShowFooter = isEditing || hasEnvironmentVariables
 
   const { showErrorToast } = useCustomToast()
@@ -325,12 +325,13 @@ const EnvironmentVariables = ({
               <div className="capitalize" />
             </>
           ) : (
-            <div className="col-span-3 flex justify-center">
-              <EmptyState
-                title="You don't have any environment variables yet"
-                icon={PackageOpen}
-              />
-            </div>
+            <EmptyState
+              testId="empty-state"
+              title="No environment variables yet"
+              description="Add environment variables to configure your application."
+              buttonText="Add Environment Variable"
+              onButtonClick={handleAddNew}
+            />
           )}
 
           <div className="contents" data-testid="environment-variables-list">

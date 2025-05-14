@@ -20,11 +20,7 @@ test("Sidebar contains all necessary links", async ({ page }) => {
 
 test("Sidebar links navigate to correct pages", async ({ page }) => {
   await page.goto("/")
-  await navigateAndCheck(
-    page,
-    "Dashboard",
-    "Welcome to FastAPI Cloud, nice to see you here!",
-  )
+  await navigateAndCheck(page, "Dashboard", "Welcome to FastAPI Cloud!")
   await navigateAndCheck(page, "Apps", "Apps")
   await navigateAndCheck(page, "Settings", "Team Settings")
 })

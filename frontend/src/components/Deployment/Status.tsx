@@ -1,41 +1,119 @@
-import Lottie, { type LottieOptions } from "lottie-react"
-
-import building from "@/assets/building.json"
-import deploying from "@/assets/deploying.json"
-import failed from "@/assets/failed.json"
-import success from "@/assets/success.json"
-import waiting from "@/assets/waiting.json"
 import type { DeploymentStatus } from "@/client"
+import { Badge } from "@/components/ui/badge"
 
 const STATUS_CONFIG: Record<
   DeploymentStatus,
-  { animation: LottieOptions["animationData"]; text: string; loop: boolean }
+  {
+    text: string
+    variant: {
+      bg: string
+      text: string
+      border: string
+      dot: string
+    }
+  }
 > = {
-  waiting_upload: { animation: waiting, text: "Waiting Upload", loop: true },
-  ready_for_build: { animation: waiting, text: "Ready for Build", loop: true },
-  building: { animation: building, text: "Building", loop: true },
-  extracting: { animation: building, text: "Extracting", loop: true },
-  building_image: { animation: building, text: "Building Image", loop: true },
-  deploying: { animation: deploying, text: "Deploying", loop: true },
-  success: { animation: success, text: "Success", loop: false },
-  failed: { animation: failed, text: "Failed", loop: false },
+  waiting_upload: {
+    text: "Waiting Upload",
+    variant: {
+      bg: "bg-slate-50",
+      text: "text-slate-700",
+      border: "border-slate-200",
+      dot: "bg-slate-500",
+    },
+  },
+  ready_for_build: {
+    text: "Ready for Build",
+    variant: {
+      bg: "bg-slate-50",
+      text: "text-slate-700",
+      border: "border-slate-200",
+      dot: "bg-slate-500",
+    },
+  },
+  building: {
+    text: "Building",
+    variant: {
+      bg: "bg-amber-50",
+      text: "text-amber-700",
+      border: "border-amber-200",
+      dot: "bg-amber-500",
+    },
+  },
+  extracting: {
+    text: "Extracting",
+    variant: {
+      bg: "bg-amber-50",
+      text: "text-amber-700",
+      border: "border-amber-200",
+      dot: "bg-amber-500",
+    },
+  },
+  building_image: {
+    text: "Building Image",
+    variant: {
+      bg: "bg-amber-50",
+      text: "text-amber-700",
+      border: "border-amber-200",
+      dot: "bg-amber-500",
+    },
+  },
+  deploying: {
+    text: "Deploying",
+    variant: {
+      bg: "bg-blue-50",
+      text: "text-blue-700",
+      border: "border-blue-200",
+      dot: "bg-blue-500",
+    },
+  },
+  success: {
+    text: "Success",
+    variant: {
+      bg: "bg-green-50",
+      text: "text-green-700",
+      border: "border-green-200",
+      dot: "bg-green-500",
+    },
+  },
+  failed: {
+    text: "Failed",
+    variant: {
+      bg: "bg-red-50",
+      text: "text-red-700",
+      border: "border-red-200",
+      dot: "bg-red-500",
+    },
+  },
 }
 
-export function Status({
-  deployment: { status },
-}: { deployment: { status: DeploymentStatus } }) {
+export function Status({ status }: { status: DeploymentStatus | null }) {
+  if (!status) {
+    return (
+      <Badge
+        variant="outline"
+        className="bg-slate-50 text-slate-700 border-slate-200"
+      >
+        <span className="mr-1 h-2 w-2 rounded-full inline-block bg-slate-500" />
+        Not Deployed
+      </Badge>
+    )
+  }
+
   const config = STATUS_CONFIG[status]
   if (!config) return <span className="text-sm">{status}</span>
 
+  const { variant, text } = config
+
   return (
-    <div className="flex items-center gap-1">
-      <Lottie
-        animationData={config.animation}
-        loop={config.loop}
-        autoplay
-        style={{ width: 20, height: 20 }}
+    <Badge
+      variant="outline"
+      className={`${variant.bg} ${variant.text} ${variant.border}`}
+    >
+      <span
+        className={`mr-1 h-2 w-2 rounded-full inline-block ${variant.dot}`}
       />
-      <span className="text-sm">{config.text}</span>
-    </div>
+      {text}
+    </Badge>
   )
 }

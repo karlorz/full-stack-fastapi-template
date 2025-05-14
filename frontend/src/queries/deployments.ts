@@ -1,5 +1,6 @@
-import { DeploymentsService } from "@/client"
 import { queryOptions } from "@tanstack/react-query"
+
+import { DeploymentsService } from "@/client"
 
 export const getDeploymentsQueryOptions = (appId: string) =>
   queryOptions({

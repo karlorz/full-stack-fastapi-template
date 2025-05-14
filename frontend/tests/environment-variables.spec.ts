@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test"
+import { type Page, expect, test } from "@playwright/test"
 import type { AppPublic, TeamPublic } from "../src/client"
 import {
   createApp,
@@ -8,6 +8,16 @@ import {
 } from "./utils/privateApi"
 import { randomEmail } from "./utils/random"
 import { logInUser } from "./utils/userUtils"
+
+async function navigateToConfiguration(
+  page: Page,
+  teamSlug: string,
+  appSlug: string,
+) {
+  await page.goto(`/${teamSlug}/apps/${appSlug}`)
+  await expect(page.getByTestId("tabs")).toBeVisible()
+  await page.getByRole("tab", { name: "Configuration" }).click()
+}
 
 test.use({ storageState: { cookies: [], origins: [] } })
 
@@ -37,20 +47,13 @@ test.describe("App environment variables", () => {
   test("Empty state is visible when there are no environment variables", async ({
     page,
   }) => {
-    await page.goto(`/${team.slug}/apps/${app.slug}`)
-
-    await expect(
-      page.getByText("Environment Variables", { exact: true }),
-    ).toBeVisible()
-    await expect(
-      page.getByText("You don't have any environment variables yet"),
-    ).toBeVisible()
+    await navigateToConfiguration(page, team.slug, app.slug)
+    await expect(page.getByTestId("empty-state")).toBeVisible()
   })
 
   test("User can add a new environment variable", async ({ page }) => {
-    await page.goto(`/${team.slug}/apps/${app.slug}`)
-
-    await page.getByRole("button", { name: "Add environment variable" }).click()
+    await navigateToConfiguration(page, team.slug, app.slug)
+    await page.getByRole("button", { name: "Add Environment Variable" }).click()
     await expect(page.getByRole("button", { name: "Edit" })).not.toBeVisible()
 
     const nameInput = page.getByPlaceholder("MY_COOL_ENV_VAR")
@@ -74,7 +77,7 @@ test.describe("App environment variables", () => {
       value: "123456",
     })
 
-    await page.goto(`/${team.slug}/apps/${app.slug}`)
+    await navigateToConfiguration(page, team.slug, app.slug)
 
     const nameInput = page.getByPlaceholder("MY_COOL_ENV_VAR")
     const valueInput = page.getByPlaceholder("My secret value")
@@ -101,7 +104,6 @@ test.describe("App environment variables", () => {
 
     await expect(nameInput).toHaveValue("API_SECRET")
     await expect(valueInput).toHaveValue("abcdef")
-
     await expect(page.getByRole("button", { name: "Save" })).not.toBeVisible()
     await expect(page.getByRole("button", { name: "Edit" })).toBeVisible()
   })
@@ -115,13 +117,9 @@ test.describe("App environment variables", () => {
       value: "123456",
     })
 
-    await page.goto(`/${team.slug}/apps/${app.slug}`)
-
-    await expect(page.getByRole("button", { name: "Edit" })).toBeVisible()
-
+    await navigateToConfiguration(page, team.slug, app.slug)
     await page.getByRole("button", { name: "Edit" }).click()
-
-    await page.getByRole("button", { name: "Add environment variable" }).click()
+    await page.getByRole("button", { name: "Add Environment Variable" }).click()
 
     const environmentVariables = await page
       .getByTestId("environment-variable")
@@ -136,7 +134,6 @@ test.describe("App environment variables", () => {
 
     await nameInput.fill("NEW_KEY")
     await valueInput.fill("abcdef")
-
     await page.getByRole("button", { name: "Save" }).click()
 
     await expect(nameInput).toBeDisabled()
@@ -153,10 +150,7 @@ test.describe("App environment variables", () => {
       value: "123456",
     })
 
-    await page.goto(`/${team.slug}/apps/${app.slug}`)
-
-    await expect(page.getByRole("button", { name: "Edit" })).toBeVisible()
-
+    await navigateToConfiguration(page, team.slug, app.slug)
     await page.getByRole("button", { name: "Edit" }).click()
 
     await page
@@ -167,8 +161,6 @@ test.describe("App environment variables", () => {
 
     await page.getByRole("button", { name: "Save" }).click()
 
-    await expect(
-      page.getByText("You don't have any environment variables yet"),
-    ).toBeVisible()
+    await expect(page.getByTestId("empty-state")).toBeVisible()
   })
 })

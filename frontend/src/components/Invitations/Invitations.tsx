@@ -1,5 +1,4 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { MailQuestion } from "lucide-react"
 import { Suspense } from "react"
 
 import type { TeamPublic } from "@/client"
@@ -26,7 +25,6 @@ function InvitationsContent({ team }: { team: TeamPublic }) {
         <EmptyState
           title="No invitations sent yet"
           description="Send invites to add members to your team and start collaborating."
-          icon={MailQuestion}
         />
       </div>
     )

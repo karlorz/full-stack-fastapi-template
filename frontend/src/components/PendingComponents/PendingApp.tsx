@@ -1,62 +1,141 @@
-import { CircleIcon } from "lucide-react"
+import { Code2, Globe, Terminal } from "lucide-react"
 import { Fragment } from "react"
 
-import { Card } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-const PendingApp = () => (
-  <div className="w-full p-0">
-    <div className="pb-2">
-      <Skeleton className="h-10 w-[300px]" />
-    </div>
-    <div className="pb-10">
-      <Skeleton className="h-5 w-[200px]" />
-      <div className="pt-10 space-y-4">
-        <Card className="p-6">
-          <h3 className="font-semibold mb-4">Deployments</h3>
-          <div className="flex flex-col space-y-4">
-            {[...Array(5)].map((_, index) => (
-              <Fragment key={index}>
-                <div className="flex items-center justify-between p-4">
-                  <div className="flex justify-between w-full">
-                    <div className="flex flex-col space-y-2">
-                      <Skeleton className="h-5 w-[150px]" />
-                      <Skeleton className="h-5 w-[100px]" />
-                    </div>
-                    <Skeleton className="h-5 w-[100px]" />
+const PendingApp = () => {
+  return (
+    <div>
+      <Skeleton className="h-8 w-[150px] mb-10" />
+
+      <Tabs defaultValue="general" className="space-y-6">
+        <TabsList className="grid grid-cols-3 w-full">
+          <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="configuration">Configuration</TabsTrigger>
+          <TabsTrigger value="logs">Logs</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="general">
+          <Card className="shadow-md">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <CardTitle>App Details</CardTitle>
+              </div>
+              <CardDescription>Overview of your application</CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <div className="space-y-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Globe className="h-4 w-4 text-muted-foreground" />
+                    <h3 className="text-md font-medium">General Information</h3>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="space-y-2 p-4 rounded-lg border">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-5 w-32" />
+                      </div>
+                    ))}
                   </div>
                 </div>
+
                 <Separator />
-              </Fragment>
-            ))}
-          </div>
-        </Card>
 
-        <Card className="p-6">
-          <h3 className="font-semibold mb-4">Environment Variables</h3>
-          <Skeleton className="h-[250px] w-full" />
-        </Card>
-
-        <Card className="p-6">
-          <div className="w-full p-0">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-                <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                  <CircleIcon className="h-6 w-6 text-gray-400" />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <Skeleton className="h-5 w-36" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {[...Array(3)].map((_, i) => (
+                          <div
+                            key={i}
+                            className="flex justify-between items-center"
+                          >
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-5 w-16" />
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold mb-4">Danger Zone</h3>
-                  <Skeleton className="h-4 w-[400px]" />
+
+                <Separator />
+
+                <div className="flex justify-between items-center">
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-32" />
+                    <Skeleton className="h-4 w-64" />
+                  </div>
+                  <Skeleton className="h-9 w-24" />
                 </div>
               </div>
-              <Skeleton className="h-10 w-[100px] mt-4 md:mt-0" />
-            </div>
-          </div>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="configuration">
+          <Card className="shadow-md">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <Code2 className="h-5 w-5 text-muted-foreground" />
+                <Skeleton className="h-5 w-32" />
+              </div>
+              <Skeleton className="h-4 w-64" />
+            </CardHeader>
+
+            <CardContent>
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <Fragment key={i}>
+                    <div className="flex justify-between items-center">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                    <Separator />
+                  </Fragment>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="logs">
+          <Card className="shadow-md">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <Terminal className="h-5 w-5 text-muted-foreground" />
+                <Skeleton className="h-5 w-24" />
+              </div>
+              <Skeleton className="h-4 w-48" />
+            </CardHeader>
+
+            <CardContent>
+              <div className="bg-secondary/50 rounded-lg p-4">
+                {[...Array(5)].map((_, i) => (
+                  <Skeleton key={i} className="h-4 w-full mb-2" />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
-  </div>
-)
+  )
+}
 
 export default PendingApp

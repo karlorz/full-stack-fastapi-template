@@ -17,7 +17,7 @@ const UpdateEmailInfo = () => {
 
       <div className="space-y-4" data-testid="verification-email-modal">
         <DialogDescription>
-          Your email update is pending vserification. Please check your inbox
+          Your email update is pending verification. Please check your inbox
           (and spam folder) for a verification link to complete the update
           process.
         </DialogDescription>

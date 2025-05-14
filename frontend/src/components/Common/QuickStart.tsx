@@ -1,8 +1,16 @@
 import { Check, Copy } from "lucide-react"
 import { useState } from "react"
-import { Button } from "../ui/button"
-import { Separator } from "../ui/separator"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
+
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export interface CodeWithCopyProps {
   code: string
@@ -42,7 +50,7 @@ const CodeWithCopy = ({ code }: CodeWithCopyProps) => {
 }
 
 const InstallInstructions = () => (
-  <Tabs defaultValue="uv" className="h-40 my-2">
+  <Tabs defaultValue="uv">
     <TabsList>
       <TabsTrigger value="uv">uv</TabsTrigger>
       <TabsTrigger value="pip">pip</TabsTrigger>
@@ -58,47 +66,59 @@ const InstallInstructions = () => (
 
 const QuickStart = () => {
   return (
-    <div className="flex flex-col gap-6 md:flex-row" data-testid="fastapi-cli">
-      <div className="flex-1 flex flex-col">
-        <h1 className="font-semibold mb-4">Installation</h1>
-        <div className="text-sm text-muted-foreground">
-          <p>
-            Get started by installing FastAPI Cloud CLI, your primary tool for
-            deploying FastAPI apps to the cloud.
-          </p>
-          <InstallInstructions />
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline" size="sm">
+          View Guide
+        </Button>
+      </SheetTrigger>
+      <SheetContent className="overflow-y-auto sm:max-w-lg">
+        <SheetHeader className="mb-4 px-6">
+          <SheetTitle>QuickStart Guide</SheetTitle>
+        </SheetHeader>
+        <div data-testid="fastapi-cli" className="space-y-6 px-6">
+          <div className="space-y-3">
+            <h2 className="text-base font-semibold">Installation</h2>
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p>
+                Get started by installing FastAPI Cloud CLI, your primary tool
+                for deploying FastAPI apps to the cloud.
+              </p>
+              <InstallInstructions />
+            </div>
+          </div>
+          <Separator className="-mx-6" />
+          <div className="space-y-3">
+            <h2 className="text-base font-semibold">Deploying your app</h2>
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p>
+                Before deploying, ensure you have a{" "}
+                <a
+                  className="text-primary hover:underline"
+                  href="https://fastapi.tiangolo.com/virtual-environments/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  virtual environment
+                </a>{" "}
+                activated.
+              </p>
+              <div>
+                1. Login to FastAPI Cloud:{" "}
+                <CodeWithCopy code={"fastapi login"} />
+              </div>
+              <div>
+                2. Deploy your app: <CodeWithCopy code={"fastapi deploy"} />
+              </div>
+              <p>
+                And that's it! Your app will be deployed to the cloud in
+                seconds.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <Separator className="md:h-auto" orientation="vertical" />
-
-      <div className="flex-1 flex flex-col">
-        <h1 className="font-semibold mb-4">Deploying your app</h1>
-        <div className="text-sm text-muted-foreground">
-          <p>
-            Before deploying, ensure you have a {""}
-            <a
-              className="text-primary hover:underline"
-              href="https://fastapi.tiangolo.com/virtual-environments/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              virtual environment
-            </a>{" "}
-            activated.
-          </p>
-          <p className="mt-2">
-            1. Login to FastAPI Cloud: <CodeWithCopy code={"fastapi login"} />
-          </p>
-          <p>
-            2. Deploy your app: <CodeWithCopy code={"fastapi deploy"} />
-          </p>
-          <p>
-            And that's it! Your app will be deployed to the cloud in seconds.
-          </p>
-        </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   )
 }
 

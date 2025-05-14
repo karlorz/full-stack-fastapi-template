@@ -292,14 +292,22 @@ class App(AppBase, table=True):
     def url(self) -> str:
         return f"https://{self.slug}.{CommonSettings.get_settings().DEPLOYMENTS_DOMAIN}"
 
-    @computed_field(return_type=bool | None)
+    @computed_field(return_type="Deployment | None")
     @hybrid_property
-    def is_fresh(self) -> bool | None:
+    def latest_deployment(self) -> "Deployment | None":
         deployments = sorted(self.deployments, key=lambda x: x.updated_at, reverse=True)
         if not deployments:
             return None
 
-        return self.updated_at > deployments[0].updated_at
+        return deployments[0]
+
+    @computed_field(return_type=bool | None)
+    @hybrid_property
+    def is_fresh(self) -> bool | None:
+        if not self.latest_deployment:
+            return None
+
+        return self.updated_at > self.latest_deployment.updated_at
 
 
 class AppCreate(AppBase):
@@ -314,6 +322,7 @@ class AppPublic(AppBase):
     updated_at: datetime
     url: str
     is_fresh: bool | None
+    latest_deployment: "Deployment | None"
 
 
 class AppsPublic(SQLModel):
