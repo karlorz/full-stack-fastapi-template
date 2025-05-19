@@ -2,11 +2,12 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, notFound } from "@tanstack/react-router"
 import { Code2, Globe, Link, Terminal } from "lucide-react"
 
-import DeleteApp from "@/components/AppSettings/DeleteApp"
+import DeleteConfirmation from "@/components/AppSettings/DeleteConfirmation"
 import Deployments, {
   RecentDeployments,
 } from "@/components/AppSettings/Deployments"
 import EnvironmentVariables from "@/components/AppSettings/EnvironmentVariables"
+import DangerZoneAlert from "@/components/Common/DangerZone"
 import Logs from "@/components/Deployment/Logs"
 import { Status } from "@/components/Deployment/Status"
 import PendingApp from "@/components/PendingComponents/PendingApp"
@@ -135,7 +136,9 @@ function AppDetail() {
 
                 <Separator />
 
-                <DeleteApp appId={app.id} appSlug={app.slug} />
+                <DangerZoneAlert description="Permanently delete your data and everything associated with your team">
+                  <DeleteConfirmation appId={app.id} appSlug={appSlug} />
+                </DangerZoneAlert>
               </div>
             </CardContent>
           </Card>

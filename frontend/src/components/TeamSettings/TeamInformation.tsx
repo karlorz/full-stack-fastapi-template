@@ -29,11 +29,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useCurrentUser } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { fetchTeamBySlug, getCurrentUserRole, handleError } from "@/utils"
+import DangerZoneAlert from "../Common/DangerZone"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
 import PendingTeamInformation from "../PendingComponents/PendingTeamInformation"
 import Team from "../Teams/Team"
-import DeleteTeam from "./DeleteTeam"
+import DeleteConfirmation from "./DeleteConfirmation"
 import TransferTeam from "./TransferTeam"
 
 const formSchema = z.object({
@@ -196,7 +197,9 @@ const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
             {currentUserRole === "admin" && (
               <Card className="mt-4">
                 <CardContent>
-                  <DeleteTeam team={team} />
+                  <DangerZoneAlert description="Permanently delete your data and everything associated with your team">
+                    <DeleteConfirmation team={team} />
+                  </DangerZoneAlert>
                 </CardContent>
               </Card>
             )}

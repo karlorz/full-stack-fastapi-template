@@ -24,11 +24,12 @@ import { Input } from "@/components/ui/input"
 import { useCurrentUser } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
+import DangerZoneAlert from "../Common/DangerZone"
 import UpdateEmailInfo from "../Common/UpdateEmailInfo"
 import PendingUserInformation from "../PendingComponents/PendingUserInformation"
 import { Dialog, DialogContent } from "../ui/dialog"
 import ChangePassword from "./ChangePassword"
-import DeleteAccount from "./DeleteAccount"
+import DeleteConfirmation from "./DeleteConfirmation"
 
 const nameSchema = z.object({
   full_name: z.string().nonempty("Name is required").max(50),
@@ -230,7 +231,9 @@ const UserInformationContent = () => {
 
         <Card className="mt-4">
           <CardContent>
-            <DeleteAccount />
+            <DangerZoneAlert description="Permanently delete your data and everything associated with your account">
+              <DeleteConfirmation />
+            </DangerZoneAlert>
           </CardContent>
         </Card>
       </div>

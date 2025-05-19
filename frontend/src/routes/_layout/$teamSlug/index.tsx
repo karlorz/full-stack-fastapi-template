@@ -66,14 +66,14 @@ function Dashboard() {
                 <h3 className="text-2xl font-bold mt-1">{totalApps || 0}</h3>
               </div>
               <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
-                <LayoutGrid className="h-6 w-6 text-black" />
+                <LayoutGrid className="h-6 w-6 text-foreground" />
               </div>
             </div>
             <div className="mt-4 flex items-center text-sm">
               {totalApps > 0 && (
                 <Badge
                   variant="outline"
-                  className="bg-green-50 text-green-700 border-green-200"
+                  className="bg-green-50 dark:bg-emerald-950/50 text-green-700 dark:text-emerald-400 border-green-200 dark:border-emerald-800"
                 >
                   <span className="mr-1">+{apps?.length || 0}</span>
                   last 30 days
@@ -97,7 +97,7 @@ function Dashboard() {
                 </p>
               </div>
               <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
-                <Rocket className="h-6 w-6 text-black" />
+                <Rocket className="h-6 w-6 text-foreground" />
               </div>
             </div>
             <div className="mt-4 flex items-center text-sm">
@@ -120,7 +120,7 @@ function Dashboard() {
           <Button variant="outline" className="h-auto py-4 justify-start">
             <div className="flex flex-col items-start">
               <div className="flex items-center gap-2 mb-1">
-                <Rocket className="h-5 w-5 text-black" />
+                <Rocket className="h-5 w-5 text-foreground" />
                 <span className="font-medium">Quickstart</span>
               </div>
               <div className="flex justify-between gap-4 w-full">

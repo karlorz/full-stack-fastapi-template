@@ -27,7 +27,7 @@ const PendingDashboard = () => {
                 <Skeleton className="h-8 w-[60px] mt-1" />
               </div>
               <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
-                <LayoutGrid className="h-6 w-6 text-black" />
+                <LayoutGrid className="h-6 w-6 text-foreground" />
               </div>
             </div>
             <div className="mt-4">
@@ -44,7 +44,7 @@ const PendingDashboard = () => {
                 <Skeleton className="h-5 w-[100px] mt-1" />
               </div>
               <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
-                <Rocket className="h-6 w-6 text-black" />
+                <Rocket className="h-6 w-6 text-foreground" />
               </div>
             </div>
             <div className="mt-4">

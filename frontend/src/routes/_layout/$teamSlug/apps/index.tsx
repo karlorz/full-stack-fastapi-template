@@ -75,7 +75,7 @@ function Apps() {
           <div className="max-w-xs mt-10">
             <Card>
               <CardHeader className="pb-3">
-                <Rocket className="h-8 w-8 text-black mb-2" />
+                <Rocket className="h-8 w-8 text-foreground mb-2" />
                 <CardTitle className="text-base">QuickStart</CardTitle>
                 <CardDescription>
                   Learn how to create and deploy your first app
