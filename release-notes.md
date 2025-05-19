@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Add resend verification email and update UI. PR [#883](https://github.com/fastapilabs/cloud/pull/883) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add `libcairo` to apps' Dockerfile. PR [#751](https://github.com/fastapilabs/cloud/pull/751) by [@patrick91](https://github.com/patrick91).
 * ✨ Update waiting list fields. PR [#852](https://github.com/fastapilabs/cloud/pull/852) by [@patrick91](https://github.com/patrick91).
 * ✨ Implement cookieless tracking with PostHog. PR [#831](https://github.com/fastapilabs/cloud/pull/831) by [@alejsdev](https://github.com/alejsdev).
