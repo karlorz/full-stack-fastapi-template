@@ -107,6 +107,8 @@ import type {
   UsersRegisterUserResponse,
   UsersRequestEmailUpdateData,
   UsersRequestEmailUpdateResponse,
+  UsersResendVerificationEmailData,
+  UsersResendVerificationEmailResponse,
   UsersUpdatePasswordMeData,
   UsersUpdatePasswordMeResponse,
   UsersUpdateUserMeData,
@@ -1430,6 +1432,28 @@ export class UsersService {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/v1/users/verify-email",
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Resend Verification Email
+   * Resend verification email to user.
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+  public static resendVerificationEmail(
+    data: UsersResendVerificationEmailData,
+  ): CancelablePromise<UsersResendVerificationEmailResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/users/resend-verification",
       body: data.requestBody,
       mediaType: "application/json",
       errors: {

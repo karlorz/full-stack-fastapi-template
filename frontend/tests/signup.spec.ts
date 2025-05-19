@@ -72,9 +72,7 @@ test("Sign up with valid name, email, and password", async ({
   await page.getByRole("button", { name: "Sign Up" }).click()
 
   // Check if the user is redirected to the one more step page
-  await expect(page.getByTestId("email-sent")).toContainText("One More Step", {
-    timeout: 1000,
-  })
+  await expect(page.getByTestId("email-sent")).toBeVisible()
 
   const emailData = await findLastEmail({
     request,
@@ -222,9 +220,7 @@ test("Error message is displayed if an invalid token is used", async ({
   await page.getByRole("button", { name: "Sign Up" }).click()
 
   // Check if the user is redirected to the one more step page
-  await expect(page.getByTestId("email-sent")).toContainText("One More Step", {
-    timeout: 1000,
-  })
+  await expect(page.getByTestId("email-sent")).toBeVisible()
 
   await page.goto("/verify-email?token=invalid-token")
   await expect(page.getByTestId("error")).toContainText(

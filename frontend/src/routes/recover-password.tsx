@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 import {
   Link as RouterLink,
   createFileRoute,
@@ -11,7 +12,7 @@ import { z } from "zod"
 
 import { LoginService } from "@/client"
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
-import EmailSent from "@/components/Common/EmailSent"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -38,7 +39,6 @@ import {
 import { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
-import { useMutation } from "@tanstack/react-query"
 
 const formSchema = z.object({
   email: z
@@ -103,18 +103,43 @@ function RecoverPassword() {
 
   return (
     <BackgroundPanel>
-      {mutation.isSuccess ? (
-        <EmailSent email={userEmail} />
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Password Recovery</CardTitle>
-            <CardDescription>
-              Don't worry! We'll help you recover your account, no need to
-              create a new one... yet.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {mutation.isSuccess ? "One More Step!" : "Recover Password"}
+          </CardTitle>
+          <CardDescription>
+            {mutation.isSuccess
+              ? null
+              : "Don't worry! We'll help you recover your account, no need to create a new one... yet."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {mutation.isSuccess ? (
+            <div
+              className="space-y-6 text-sm text-muted-foreground"
+              data-testid="email-sent"
+            >
+              <p>
+                We've sent you an email at{" "}
+                <span className="font-bold">{userEmail}</span>.
+              </p>
+              <p>
+                Please <span className="font-bold">check your email</span> and
+                follow the instructions to verify your account.
+              </p>
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={() => {
+                  form.reset()
+                  mutation.reset()
+                }}
+              >
+                Try another email
+              </Button>
+            </div>
+          ) : (
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -177,9 +202,9 @@ function RecoverPassword() {
                 </div>
               </form>
             </Form>
-          </CardContent>
-        </Card>
-      )}
+          )}
+        </CardContent>
+      </Card>
     </BackgroundPanel>
   )
 }

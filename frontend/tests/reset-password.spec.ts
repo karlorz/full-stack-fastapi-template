@@ -6,10 +6,10 @@ import { logInUser } from "./utils/userUtils"
 
 test.use({ storageState: { cookies: [], origins: [] } })
 
-test("Password Recovery title is visible", async ({ page }) => {
+test("Recover Password title is visible", async ({ page }) => {
   await page.goto("/recover-password")
 
-  await expect(page.getByText("Password Recovery")).toBeVisible()
+  await expect(page.getByText("Recover Password")).toBeVisible()
 })
 
 test("Input is visible, empty and editable", async ({ page }) => {

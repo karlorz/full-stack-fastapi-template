@@ -9,8 +9,9 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { UsersService } from "@/client"
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
-import EmailSent from "@/components/Common/EmailSent"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -29,6 +30,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
+import useCustomToast from "@/hooks/useCustomToast"
+import { handleError } from "@/utils"
+import { useMutation } from "@tanstack/react-query"
 
 const formSchema = z
   .object({
@@ -63,6 +67,7 @@ export const Route = createFileRoute("/signup")({
 
 function SignUp() {
   const [userEmail, setUserEmail] = useState("")
+  const { showSuccessToast, showErrorToast } = useCustomToast()
   const { signUpMutation } = useAuth()
 
   const form = useForm<FormData>({
@@ -89,17 +94,59 @@ function SignUp() {
     })
   }
 
+  const resendVerificationEmailMutation = useMutation({
+    mutationFn: (email: string) =>
+      UsersService.resendVerificationEmail({ requestBody: { email } }),
+    onSuccess: () => {
+      showSuccessToast("Verification email resent successfully")
+    },
+    onError: handleError.bind(showErrorToast),
+  })
+
   return (
     <BackgroundPanel>
-      {signUpMutation.isSuccess ? (
-        <EmailSent email={userEmail} />
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Sign Up</CardTitle>
-            <CardDescription>Create your account</CardDescription>
-          </CardHeader>
-          <CardContent>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {signUpMutation.isSuccess ? "One More Step!" : "Sign Up"}
+          </CardTitle>
+          <CardDescription>
+            {signUpMutation.isSuccess ? null : "Create your account"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {signUpMutation.isSuccess ? (
+            <div
+              className="space-y-6 text-sm text-muted-foreground"
+              data-testid="email-sent"
+            >
+              <p>
+                We've sent you an email at{" "}
+                <span className="font-bold">{userEmail}</span>.
+              </p>
+              <p>
+                Please <span className="font-bold">check your email</span> and
+                follow the instructions to verify your account.
+              </p>
+              <div className="space-y-2 text-left">
+                <div className="text-sm text-muted-foreground">
+                  Didn't receive the email?{" "}
+                  <LoadingButton
+                    variant="link"
+                    className="p-0 h-auto font-normal"
+                    onClick={() =>
+                      resendVerificationEmailMutation.mutate(userEmail)
+                    }
+                  >
+                    Resend verification email.
+                  </LoadingButton>
+                </div>
+              </div>
+              <Button className="w-full" variant="outline">
+                Sign up another account
+              </Button>
+            </div>
+          ) : (
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -214,15 +261,15 @@ function SignUp() {
                 </LoadingButton>
               </form>
             </Form>
-          </CardContent>
-          <div className="text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <RouterLink to="/login" className="text-primary hover:underline">
-              Log In
-            </RouterLink>
-          </div>
-        </Card>
-      )}
+          )}
+        </CardContent>
+        <div className="text-center text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <RouterLink to="/login" className="text-primary hover:underline">
+            Log In
+          </RouterLink>
+        </div>
+      </Card>
     </BackgroundPanel>
   )
 }

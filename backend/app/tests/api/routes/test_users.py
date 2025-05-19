@@ -269,6 +269,64 @@ def test_register_user_empty_full_name(client: TestClient) -> None:
     assert data["detail"][0]["msg"] == "String should have at least 3 characters"  # type: ignore
 
 
+def test_resend_verification_email_success(
+    client: TestClient, db: Session, send_email_mock: MagicMock
+) -> None:
+    email = f"{random_lower_string()}@fastapilabs.com"
+    password = random_lower_string()
+    full_name = random_lower_string()
+    user_in = UserCreate(email=email, password=password, full_name=full_name)
+    user = crud.create_user(session=db, user_create=user_in, is_verified=False)
+    db.add(user)
+    db.commit()
+
+    r = client.post(
+        f"{settings.API_V1_STR}/users/resend-verification",
+        json={"email": email},
+    )
+    assert r.status_code == 200
+    assert r.json()["message"] == "Verification email has been resent"
+
+    send_email_mock.assert_called_once_with(
+        email_to=email, subject=ANY, html_content=ANY
+    )
+
+
+def test_resend_verification_email_nonexistent_user(
+    client: TestClient, send_email_mock: MagicMock
+) -> None:
+    email = f"{random_lower_string()}@fastapilabs.com"
+    r = client.post(
+        f"{settings.API_V1_STR}/users/resend-verification",
+        json={"email": email},
+    )
+    assert r.status_code == 404
+    assert r.json()["detail"] == "User with this email does not exist"
+
+    send_email_mock.assert_not_called()
+
+
+def test_resend_verification_email_already_verified(
+    client: TestClient, db: Session, send_email_mock: MagicMock
+) -> None:
+    email = f"{random_lower_string()}@fastapilabs.com"
+    password = random_lower_string()
+    full_name = random_lower_string()
+    user_in = UserCreate(email=email, password=password, full_name=full_name)
+    user = crud.create_user(session=db, user_create=user_in, is_verified=True)
+    db.add(user)
+    db.commit()
+
+    r = client.post(
+        f"{settings.API_V1_STR}/users/resend-verification",
+        json={"email": email},
+    )
+    assert r.status_code == 400
+    assert r.json()["detail"] == "Email is already verified"
+
+    send_email_mock.assert_not_called()
+
+
 def test_delete_user_me_only_personal_team(client: TestClient, db: Session) -> None:
     username = random_email()
     password = random_lower_string()

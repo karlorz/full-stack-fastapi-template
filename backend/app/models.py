@@ -150,6 +150,10 @@ class EmailVerificationToken(SQLModel):
     token: str
 
 
+class ResendEmailVerification(SQLModel):
+    email: EmailStr
+
+
 class TeamBase(SQLModel):
     name: str = Field(max_length=255, min_length=3)
     description: str | None = Field(default=None, max_length=255)

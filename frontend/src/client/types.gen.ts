@@ -236,6 +236,10 @@ export type NewPassword = {
   new_password: string
 }
 
+export type ResendEmailVerification = {
+  email: string
+}
+
 export type Role = "member" | "admin"
 
 export type TeamCreate = {
@@ -703,6 +707,12 @@ export type UsersVerifyEmailTokenData = {
 }
 
 export type UsersVerifyEmailTokenResponse = unknown
+
+export type UsersResendVerificationEmailData = {
+  requestBody: ResendEmailVerification
+}
+
+export type UsersResendVerificationEmailResponse = Message
 
 export type UsersAddToWaitingListData = {
   requestBody: WaitingListUserCreate

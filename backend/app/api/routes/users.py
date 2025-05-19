@@ -20,6 +20,7 @@ from app.core.security import get_password_hash, verify_password
 from app.models import (
     EmailVerificationToken,
     Message,
+    ResendEmailVerification,
     Role,
     Team,
     UpdatePassword,
@@ -234,6 +235,37 @@ def verify_email_token(session: SessionDep, payload: EmailVerificationToken) -> 
     session.add(user_team_link)
     session.commit()
     return Message(message="Email successfully verified")
+
+
+@router.post(
+    "/resend-verification",
+    response_model=Message,
+    dependencies=[Depends(rate_limit_5_per_minute)],
+)
+def resend_verification_email(
+    *, session: SessionDep, data: ResendEmailVerification
+) -> Any:
+    """
+    Resend verification email to user.
+    """
+    user = crud.get_user_by_email(session=session, email=data.email)
+    if not user:
+        raise HTTPException(
+            status_code=404, detail="User with this email does not exist"
+        )
+
+    if user.is_verified:
+        raise HTTPException(status_code=400, detail="Email is already verified")
+
+    token = generate_verification_email_token(email=data.email)
+    email_data = generate_verification_email(email_to=data.email, token=token)
+    send_email(
+        email_to=data.email,
+        subject=email_data.subject,
+        html_content=email_data.html_content,
+    )
+
+    return Message(message="Verification email has been resent")
 
 
 @router.post("/waiting-list", dependencies=[Depends(rate_limit_5_per_minute)])
