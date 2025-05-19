@@ -437,6 +437,7 @@
 
 ### Internal
 
+* ⬆ Bump tailwindcss from 4.1.6 to 4.1.7 in /frontend. PR [#904](https://github.com/fastapilabs/cloud/pull/904) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-tooltip from 1.2.4 to 1.2.6 in /frontend. PR [#906](https://github.com/fastapilabs/cloud/pull/906) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tailwindcss/vite from 4.1.1 to 4.1.6 in /frontend. PR [#893](https://github.com/fastapilabs/cloud/pull/893) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-table from 8.21.2 to 8.21.3 in /frontend. PR [#892](https://github.com/fastapilabs/cloud/pull/892) by [@dependabot[bot]](https://github.com/apps/dependabot).
