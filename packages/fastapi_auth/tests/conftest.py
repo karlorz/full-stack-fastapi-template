@@ -120,7 +120,7 @@ def context(
         secondary_storage=secondary_storage,
         accounts_storage=accounts_storage,
         create_token=lambda id: (f"token-{id}", 0),
-        trusted_origins=["valid-auth-server.com"],
+        trusted_origins=["valid-frontend.com"],
     )
 
 

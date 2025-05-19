@@ -27,7 +27,7 @@ async def test_invalid_request_when_response_type_is_missing_or_invalid(
             url="http://localhost:8000/test/authorize",
             query_params={
                 "client_id": "test_client_id",
-                "redirect_uri": "http://valid-auth-server.com/callback",
+                "redirect_uri": "http://valid-frontend.com/callback",
                 **query_params,
             },
         )
@@ -51,7 +51,7 @@ async def test_authorize_redirects_to_provider(
             method="GET",
             url="http://localhost:8000/test/authorize",
             query_params={
-                "redirect_uri": "http://valid-auth-server.com/callback",
+                "redirect_uri": "http://valid-frontend.com/callback",
                 "state": "test_state",
                 "response_type": "code",
                 "code_challenge": "test",
@@ -85,8 +85,7 @@ async def test_authorize_redirects_to_provider(
     )
 
     assert (
-        authorization_request_data.redirect_uri
-        == "http://valid-auth-server.com/callback"
+        authorization_request_data.redirect_uri == "http://valid-frontend.com/callback"
     )
     assert authorization_request_data.state == state
     assert authorization_request_data.code_challenge == "test"

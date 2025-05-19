@@ -1,7 +1,7 @@
 import datetime
 import json
 from urllib.parse import urlencode
-from fastapi_auth.social_providers.oauth import OAuth2Provider
+
 import httpx
 import pytest
 import time_machine
@@ -9,6 +9,7 @@ from duck import AsyncHTTPRequest
 from duck.request import TestingRequestAdapter
 from fastapi_auth._context import Context, SecondaryStorage
 from fastapi_auth._issuer import AuthorizationCodeGrantData
+from fastapi_auth.social_providers.oauth import OAuth2Provider
 from inline_snapshot import snapshot
 from respx import MockRouter
 
@@ -23,7 +24,7 @@ def valid_callback_request(secondary_storage: SecondaryStorage) -> AsyncHTTPRequ
         "oauth:authorization_request:test_state",
         json.dumps(
             {
-                "redirect_uri": "http://valid-auth-server.com/callback",
+                "redirect_uri": "http://valid-frontend.com/callback",
                 "login_hint": "test_login_hint",
                 "state": "test_state",
                 "client_state": "test_client_state",
@@ -89,7 +90,7 @@ async def test_fails_if_there_was_no_code_in_request(
         "oauth:authorization_request:test_state",
         json.dumps(
             {
-                "redirect_uri": "http://valid-auth-server.com/callback",
+                "redirect_uri": "http://valid-frontend.com/callback",
                 "login_hint": "test_login_hint",
                 "state": "test_state",
                 "client_state": "test_client_state",
@@ -104,7 +105,7 @@ async def test_fails_if_there_was_no_code_in_request(
     assert response.status_code == 302
     assert response.headers is not None
     assert response.headers["Location"] == snapshot(
-        "http://valid-auth-server.com/callback?error=server_error&error_description=No+authorization+code+received+in+callback"
+        "http://valid-frontend.com/callback?error=server_error&error_description=No+authorization+code+received+in+callback"
     )
 
 
@@ -150,7 +151,7 @@ async def test_fails_if_the_token_exchange_fails(
     assert response.status_code == 302
     assert response.headers is not None
     assert response.headers["Location"] == snapshot(
-        "http://valid-auth-server.com/callback?error=server_error&error_description=Token+exchange+failed"
+        "http://valid-frontend.com/callback?error=server_error&error_description=Token+exchange+failed"
     )
 
 
@@ -169,7 +170,7 @@ async def test_fails_if_the_token_exchange_returns_an_error_response(
     assert response.status_code == 302
     assert response.headers is not None
     assert response.headers["Location"] == snapshot(
-        "http://valid-auth-server.com/callback?error=server_error&error_description=Token+exchange+failed"
+        "http://valid-frontend.com/callback?error=server_error&error_description=Token+exchange+failed"
     )
 
 
@@ -204,7 +205,7 @@ async def test_fails_if_there_is_no_email_in_the_user_info_response(
     assert response.status_code == 302
     assert response.headers is not None
     assert response.headers["Location"] == snapshot(
-        "http://valid-auth-server.com/callback?error=server_error&error_description=No+email+found+in+user+info"
+        "http://valid-frontend.com/callback?error=server_error&error_description=No+email+found+in+user+info"
     )
 
 
@@ -240,7 +241,7 @@ async def test_fails_if_the_user_info_response_is_not_valid_json(
     assert response.status_code == 302
     assert response.headers is not None
     assert response.headers["Location"] == snapshot(
-        "http://valid-auth-server.com/callback?error=server_error&error_description=Failed+to+fetch+user+info"
+        "http://valid-frontend.com/callback?error=server_error&error_description=Failed+to+fetch+user+info"
     )
 
 
@@ -276,7 +277,7 @@ async def test_fails_if_the_user_info_response_does_not_have_an_id(
     assert response.status_code == 302
     assert response.headers is not None
     assert response.headers["Location"] == snapshot(
-        "http://valid-auth-server.com/callback?error=server_error&error_description=No+provider+user+ID+found+in+user+info"
+        "http://valid-frontend.com/callback?error=server_error&error_description=No+provider+user+ID+found+in+user+info"
     )
 
 
@@ -316,7 +317,7 @@ async def test_create_user_if_it_does_not_exist(
     assert response.status_code == 302
     assert response.headers is not None
     assert response.headers["Location"] == snapshot(
-        "http://valid-auth-server.com/callback?code=a-totally-valid-code"
+        "http://valid-frontend.com/callback?code=a-totally-valid-code"
     )
 
     pollo = accounts_storage.data.get("pollo")
@@ -365,7 +366,7 @@ async def test_stores_the_code_in_the_session(
     assert response.status_code == 302
     assert response.headers is not None
     assert response.headers["Location"] == snapshot(
-        "http://valid-auth-server.com/callback?code=a-totally-valid-code"
+        "http://valid-frontend.com/callback?code=a-totally-valid-code"
     )
 
     raw_auth_data = secondary_storage.get("oauth:code:a-totally-valid-code")
@@ -381,7 +382,7 @@ async def test_stores_the_code_in_the_session(
                 2012, 10, 1, 1, 10, tzinfo=datetime.timezone.utc
             ),
             "client_id": "test_client_id",
-            "redirect_uri": "http://valid-auth-server.com/callback",
+            "redirect_uri": "http://valid-frontend.com/callback",
             "code_challenge": "test",
             "code_challenge_method": "S256",
         }
@@ -434,7 +435,7 @@ async def test_fails_if_there_is_user_with_the_same_email_but_different_provider
     assert response.status_code == 302
     assert response.headers is not None
     assert response.headers["Location"] == snapshot(
-        "http://valid-auth-server.com/callback?error=account_exists&error_description=An+account+with+this+email+already+exists."
+        "http://valid-frontend.com/callback?error=account_exists&error_description=An+account+with+this+email+already+exists."
     )
 
 
@@ -482,7 +483,7 @@ async def test_works_when_there_is_user_with_the_same_email_and_provider(
     assert response.status_code == 302
     assert response.headers is not None
     assert response.headers["Location"] == snapshot(
-        "http://valid-auth-server.com/callback?code=a-totally-valid-code"
+        "http://valid-frontend.com/callback?code=a-totally-valid-code"
     )
 
     assert accounts_storage.data.get("pollo")
