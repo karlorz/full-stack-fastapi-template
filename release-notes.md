@@ -439,6 +439,7 @@
 
 ### Internal
 
+* 🔧 Enable session recording only after authentication. PR [#880](https://github.com/fastapilabs/cloud/pull/880) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Update `trusted_origin` in tests. PR [#901](https://github.com/fastapilabs/cloud/pull/901) by [@patrick91](https://github.com/patrick91).
 * ⬆ Bump @types/react from 19.1.2 to 19.1.4 in /frontend. PR [#905](https://github.com/fastapilabs/cloud/pull/905) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump tailwindcss from 4.1.6 to 4.1.7 in /frontend. PR [#904](https://github.com/fastapilabs/cloud/pull/904) by [@dependabot[bot]](https://github.com/apps/dependabot).
