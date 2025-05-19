@@ -8,10 +8,12 @@ import {
 import { useSuspenseQuery } from "@tanstack/react-query"
 
 import { getTeamsQueryOptions } from "@/queries/teams"
+import posthog from "posthog-js"
+import { useEffect } from "react"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
 import { AppSidebar } from "../components/Sidebar/AppSidebar"
 import Appearance from "../components/UserSettings/Appearance"
-import { isLoggedIn } from "../hooks/useAuth"
+import { isLoggedIn, useCurrentUser } from "../hooks/useAuth"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,
@@ -30,6 +32,22 @@ export const Route = createFileRoute("/_layout")({
 
 function Layout() {
   const { data: teams } = useSuspenseQuery(getTeamsQueryOptions())
+  const currentUser = useCurrentUser()
+
+  useEffect(() => {
+    if (currentUser) {
+      try {
+        posthog.identify(currentUser.id, {
+          email: currentUser.email,
+          name: currentUser.full_name,
+        })
+      } catch (error) {
+        // do nothing
+      }
+    }
+
+    posthog.startSessionRecording()
+  }, [currentUser])
 
   return (
     <>

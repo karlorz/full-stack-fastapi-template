@@ -61,15 +61,6 @@ const useAuth = () => {
     queryClient.setQueryData(["currentUser"], response.user)
     localStorage.setItem("access_token", response.access_token)
 
-    try {
-      posthog.identify(response.user.id, {
-        email: response.user.email,
-        name: response.user.full_name,
-      })
-    } catch (error) {
-      // do nothing
-    }
-
     return data.redirect
   }
 
@@ -97,6 +88,7 @@ const useAuth = () => {
 
     try {
       posthog.reset(true)
+      posthog.stopSessionRecording()
     } catch (error) {
       // do nothing
     }
