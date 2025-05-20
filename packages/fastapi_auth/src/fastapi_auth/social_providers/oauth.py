@@ -266,7 +266,7 @@ class OAuth2Provider:
             provider_user_id=provider_user_id,
         )
 
-        user = context.accounts_storage.find_user(email=email)
+        user = context.accounts_storage.find_user_by_email(email=email)
 
         if user:
             if not social_account:

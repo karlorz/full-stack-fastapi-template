@@ -11,13 +11,15 @@ from app.models import Role, SocialAccount, Team, User, UserTeamLink
 
 
 class AccountsStorage:
-    def find_user(
-        self,
-        *,
-        email: str,
-    ) -> User | None:
+    def find_user_by_email(self, email: str) -> User | None:
         with Session(engine) as session:
             statement = select(User).where(User.email == email)
+
+            return session.exec(statement).first()
+
+    def find_user_by_id(self, id: Any) -> User | None:
+        with Session(engine) as session:
+            statement = select(User).where(User.id == id)
 
             return session.exec(statement).first()
 

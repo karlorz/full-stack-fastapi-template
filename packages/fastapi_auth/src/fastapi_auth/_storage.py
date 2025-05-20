@@ -6,6 +6,7 @@ from typing_extensions import Protocol
 
 class SocialAccount(Protocol):
     id: Any
+    user_id: Any
     provider_user_id: str
     provider: str
 
@@ -27,11 +28,9 @@ class SecondaryStorage(Protocol):
 
 
 class AccountsStorage(Protocol):
-    def find_user(
-        self,
-        *,
-        email: str,
-    ) -> User | None: ...
+    def find_user_by_email(self, email: str) -> User | None: ...
+
+    def find_user_by_id(self, id: Any) -> User | None: ...
 
     def find_social_account(
         self,

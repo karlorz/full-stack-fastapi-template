@@ -14,6 +14,7 @@ pytestmark = pytest.mark.asyncio
 @dataclass
 class SocialAccount:
     id: str
+    user_id: str
     provider_user_id: str
     provider: str
     access_token: str | None = None
@@ -53,6 +54,7 @@ class MemoryAccountsStorage:
                 social_accounts=[
                     SocialAccount(
                         id=str(uuid.uuid4()),
+                        user_id="test",
                         provider="test",
                         provider_user_id="test",
                     )
@@ -60,11 +62,11 @@ class MemoryAccountsStorage:
             )
         }
 
-    def find_user(
-        self,
-        email: str,
-    ) -> User | None:
+    def find_user_by_email(self, email: str) -> User | None:
         return next((user for user in self.data.values() if user.email == email), None)
+
+    def find_user_by_id(self, id: Any) -> User | None:
+        return self.data.get(id)
 
     def create_user(self, *, user_info: Any) -> User:
         if user_info["email"] in self.data:
@@ -109,6 +111,7 @@ class MemoryAccountsStorage:
 
         social_account = SocialAccount(
             id=str(uuid.uuid4()),
+            user_id=user_id,
             provider=provider,
             provider_user_id=provider_user_id,
             access_token=access_token,
