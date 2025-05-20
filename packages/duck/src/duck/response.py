@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, Mapping, Self
+from typing import TYPE_CHECKING, Any, Literal, Mapping, Self
 from urllib.parse import urlencode
 
 if TYPE_CHECKING:
@@ -47,7 +47,7 @@ class Response:
             cookies=cookies,
         )
 
-    def json(self) -> str | None:
+    def json(self) -> dict[str, Any] | None:
         if self.body is None:
             return None
 

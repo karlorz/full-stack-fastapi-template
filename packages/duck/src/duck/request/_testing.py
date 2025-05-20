@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import Mapping, Optional
 
 from ._base import AsyncHTTPRequestAdapter, FormData, HTTPMethod, QueryParams
@@ -18,6 +19,7 @@ class TestingRequestAdapter(AsyncHTTPRequestAdapter):
         url: str = "http://testserver/",
         cookies: Mapping[str, str] | None = None,
         form_data: FormData | None = None,
+        json: dict | None = None,
     ) -> None:
         self._method = method
         self._query_params = query_params or {}
@@ -26,6 +28,7 @@ class TestingRequestAdapter(AsyncHTTPRequestAdapter):
         self._url = url
         self._cookies = cookies or {}
         self._form_data = form_data or FormData(files={}, form={})
+        self._json = json
 
     @property
     def method(self) -> HTTPMethod:
@@ -44,6 +47,9 @@ class TestingRequestAdapter(AsyncHTTPRequestAdapter):
         return self._content_type
 
     async def get_body(self) -> bytes:
+        if self._json is not None:
+            return json.dumps(self._json).encode("utf-8")
+
         return b""
 
     async def get_form_data(self) -> FormData:
