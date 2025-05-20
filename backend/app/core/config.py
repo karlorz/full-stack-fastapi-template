@@ -151,6 +151,12 @@ class MainSettings(SettingsEnv):
 
     FRONTEND_HOST: str = "http://localhost:5173"
     API_DOMAIN: str = "api.fastapicloud.site"
+    TRUSTED_ORIGINS: list[str] = [
+        "localhost:5173",
+        "dashboard.fastapicloud.site",
+        "dashboard.fastapicloud.work",
+        "dashboard.fastapicloud.com",
+    ]
 
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str,
@@ -233,6 +239,9 @@ class MainSettings(SettingsEnv):
     EMAILABLE_KEY: str
 
     BUILD_LOGS_STREAM_TIMEOUT_SECONDS: int = 30
+
+    BACKEND_GITHUB_CLIENT_ID: str
+    BACKEND_GITHUB_CLIENT_SECRET: str
 
 
 class BuilderSettings(SettingsEnv):

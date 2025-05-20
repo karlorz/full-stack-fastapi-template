@@ -285,6 +285,33 @@ export type Token = {
   token_type?: string
 }
 
+export type TokenResponse = {
+  /**
+   * The type of token, usually 'Bearer'
+   */
+  token_type: string
+  /**
+   * The issued access token
+   */
+  access_token: string
+  /**
+   * Lifetime of the access token in seconds
+   */
+  expires_in?: number | null
+  /**
+   * Token used to obtain new access tokens
+   */
+  refresh_token?: string | null
+  /**
+   * Lifetime of the refresh token in seconds
+   */
+  refresh_token_expires_in?: number | null
+  /**
+   * Space-delimited list of scopes associated with the access token
+   */
+  scope?: string | null
+}
+
 export type TransferTeamOwnership = {
   user_id: string
 }
@@ -422,6 +449,12 @@ export type AppsReadAppLogsData = {
 }
 
 export type AppsReadAppLogsResponse = LogsResponse
+
+export type GithubAuthorizeResponse = unknown
+
+export type GithubCallbackResponse = unknown
+
+export type TokenResponse2 = TokenResponse
 
 export type DeploymentsReadDeploymentsData = {
   appId: string

@@ -79,7 +79,7 @@ class UpdatePassword(SQLModel):
 # Database model, database table inferred from class name
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    hashed_password: str
+    hashed_password: str | None = Field(default=None)
     username: str = Field(unique=True, index=True, max_length=255)
     is_verified: bool = False
 
@@ -92,6 +92,10 @@ class User(UserBase, table=True):
         back_populates="sender",
         sa_relationship_kwargs={"foreign_keys": "[Invitation.invited_by_id]"},
         cascade_delete=True,
+    )
+
+    social_accounts: list["SocialAccount"] = Relationship(
+        back_populates="user", cascade_delete=True
     )
 
     @computed_field(return_type="Team | None")
@@ -484,3 +488,20 @@ class WaitingListUserPublic(WaitingListUserBase):
 
 class SendDeploy(SQLModel):
     deployment_id: uuid.UUID
+
+
+class SocialAccount(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
+    provider: str = Field(max_length=255)
+    provider_user_id: str = Field(max_length=255)
+    created_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    updated_at: datetime = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+
+    user: User = Relationship()

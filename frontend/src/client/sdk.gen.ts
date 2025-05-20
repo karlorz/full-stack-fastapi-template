@@ -40,6 +40,8 @@ import type {
   DeploymentsUploadCompleteResponse,
   DeploymentsUploadDeploymentArtifactData,
   DeploymentsUploadDeploymentArtifactResponse,
+  GithubAuthorizeResponse,
+  GithubCallbackResponse,
   InvitationsAcceptInvitationData,
   InvitationsAcceptInvitationResponse,
   InvitationsCreateInvitationData,
@@ -99,6 +101,7 @@ import type {
   TeamsUpdateTeamResponse,
   TeamsValidateTeamNameData,
   TeamsValidateTeamNameResponse,
+  TokenResponse2,
   UsersAddToWaitingListData,
   UsersAddToWaitingListResponse,
   UsersDeleteUserMeResponse,
@@ -370,6 +373,44 @@ export class AppsService {
       errors: {
         422: "Validation Error",
       },
+    })
+  }
+}
+
+export class AuthService {
+  /**
+   * Wrapper
+   * @returns unknown Successful Response
+   * @throws ApiError
+   */
+  public static githubAuthorize(): CancelablePromise<GithubAuthorizeResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/github/authorize",
+    })
+  }
+
+  /**
+   * Wrapper
+   * @returns unknown Successful Response
+   * @throws ApiError
+   */
+  public static githubCallback(): CancelablePromise<GithubCallbackResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/github/callback",
+    })
+  }
+
+  /**
+   * Wrapper
+   * @returns TokenResponse Successful Response
+   * @throws ApiError
+   */
+  public static token(): CancelablePromise<TokenResponse2> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/token",
     })
   }
 }

@@ -138,6 +138,8 @@ jobs:
         NATS_CREDS: "${{ secrets.NATS_CREDS }}"
         ENABLE_LOCALSTACK: "False"
         ALLOW_SIGNUP_TOKEN: "${{ secrets.ALLOW_SIGNUP_TOKEN }}"
+        BACKEND_GITHUB_CLIENT_ID: "${{ secrets.BACKEND_GITHUB_CLIENT_ID }}"
+        BACKEND_GITHUB_CLIENT_SECRET: "${{ secrets.BACKEND_GITHUB_CLIENT_SECRET }}"
     - name: Update Knative Service
       run: uv run typer --func deploy_cloud app.builder run api-fastapicloud $IMAGE_URL --min-scale 1
       working-directory: backend
@@ -189,6 +191,8 @@ jobs:
         NATS_CREDS: "${{ secrets.NATS_CREDS }}"
         ENABLE_LOCALSTACK: "False"
         ALLOW_SIGNUP_TOKEN: "${{ secrets.ALLOW_SIGNUP_TOKEN }}"
+        BACKEND_GITHUB_CLIENT_ID: "${{ secrets.BACKEND_GITHUB_CLIENT_ID }}"
+        BACKEND_GITHUB_CLIENT_SECRET: "${{ secrets.BACKEND_GITHUB_CLIENT_SECRET }}"
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-backend:  # This job does nothing and is only used for the branch protection
     if: always()

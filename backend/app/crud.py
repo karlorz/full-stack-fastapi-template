@@ -7,8 +7,10 @@ from app.api.utils.users import verify_and_generate_slug_username
 from app.core.security import get_password_hash, verify_password
 from app.models import (
     Role,
+    SocialAccount,
     Team,
     User,
+    UserBase,
     UserCreate,
     UserTeamLink,
     UserUpdate,
@@ -31,6 +33,21 @@ def create_user(
             "username": username_slug,
             "is_verified": is_verified,
         },
+    )
+    session.add(db_obj)
+    session.commit()
+    session.refresh(db_obj)
+    return db_obj
+
+
+def create_user_without_password(
+    *, session: Session, email: str, full_name: str, is_verified: bool
+) -> User:
+    username_slug = verify_and_generate_slug_username(email.split("@")[0], session)
+
+    db_obj = User.model_validate(
+        UserBase(email=email, full_name=full_name),
+        update={"is_verified": is_verified, "username": username_slug},
     )
     session.add(db_obj)
     session.commit()
@@ -66,6 +83,8 @@ def get_user_by_email(*, session: Session, email: str) -> User | None:
 def authenticate(*, session: Session, email: str, password: str) -> User | None:
     db_user = get_user_by_email(session=session, email=email)
     if not db_user:
+        return None
+    if not db_user.hashed_password:
         return None
     if not verify_password(password, db_user.hashed_password):
         return None
@@ -110,4 +129,17 @@ def add_to_waiting_list(
     session.add(db_obj)
     session.commit()
     session.refresh(db_obj)
+    return db_obj
+
+
+def create_social_account(
+    *, session: Session, user_id: uuid.UUID, provider: str, provider_user_id: str
+) -> SocialAccount:
+    db_obj = SocialAccount(
+        user_id=user_id, provider=provider, provider_user_id=provider_user_id
+    )
+    session.add(db_obj)
+    session.commit()
+    session.refresh(db_obj)
+
     return db_obj

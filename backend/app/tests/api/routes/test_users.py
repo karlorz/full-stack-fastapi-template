@@ -76,6 +76,7 @@ def test_update_password_me(
     assert updated_user["message"] == "Password updated successfully"
 
     db.refresh(user)
+    assert user.hashed_password is not None
     assert verify_password(new_password, user.hashed_password)
 
     # Revert to the old password to keep consistency in test
@@ -91,6 +92,7 @@ def test_update_password_me(
 
     db.refresh(user)
 
+    assert user.hashed_password is not None
     assert r.status_code == 200
     assert verify_password("secretsecret", user.hashed_password)
 
@@ -216,6 +218,7 @@ def test_register_user(
     assert user_db
     assert user_db.email == username
     assert user_db.full_name == full_name
+    assert user_db.hashed_password is not None
     assert verify_password(password, user_db.hashed_password)
 
     send_email_mock.assert_called_once_with(
