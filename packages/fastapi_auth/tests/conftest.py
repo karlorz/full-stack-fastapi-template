@@ -1,3 +1,4 @@
+import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Any, Iterable
@@ -12,8 +13,14 @@ pytestmark = pytest.mark.asyncio
 
 @dataclass
 class SocialAccount:
+    id: str
     provider_user_id: str
     provider: str
+    access_token: str | None = None
+    refresh_token: str | None = None
+    access_token_expires_at: datetime | None = None
+    refresh_token_expires_at: datetime | None = None
+    scope: str | None = None
 
 
 @dataclass
@@ -45,6 +52,7 @@ class MemoryAccountsStorage:
                 email="test@example.com",
                 social_accounts=[
                     SocialAccount(
+                        id=str(uuid.uuid4()),
                         provider="test",
                         provider_user_id="test",
                     )
@@ -83,7 +91,16 @@ class MemoryAccountsStorage:
         return None
 
     def create_social_account(
-        self, *, user_id: str, provider: str, provider_user_id: str
+        self,
+        *,
+        user_id: str,
+        provider: str,
+        provider_user_id: str,
+        access_token: str | None,
+        refresh_token: str | None,
+        access_token_expires_at: datetime | None,
+        refresh_token_expires_at: datetime | None,
+        scope: str | None,
     ) -> SocialAccount:
         if user_id not in self.data:
             raise ValueError("User does not exist")
@@ -91,13 +108,50 @@ class MemoryAccountsStorage:
         user = self.data[user_id]
 
         social_account = SocialAccount(
+            id=str(uuid.uuid4()),
             provider=provider,
             provider_user_id=provider_user_id,
+            access_token=access_token,
+            refresh_token=refresh_token,
+            access_token_expires_at=access_token_expires_at,
+            refresh_token_expires_at=refresh_token_expires_at,
+            scope=scope,
         )
 
         user.social_accounts.append(social_account)
 
         self.data[user_id] = user
+
+        return social_account
+
+    def update_social_account(
+        self,
+        social_account_id: str,
+        *,
+        access_token: str | None,
+        refresh_token: str | None,
+        access_token_expires_at: datetime | None,
+        refresh_token_expires_at: datetime | None,
+        scope: str | None,
+    ) -> SocialAccount:
+        social_account = next(
+            (
+                social_account
+                for user in self.data.values()
+                for social_account in user.social_accounts
+                if social_account.id == social_account_id
+            ),
+            None,
+        )
+
+        if social_account is None:
+            raise ValueError("Social account does not exist")
+
+        social_account.access_token = access_token
+        social_account.refresh_token = refresh_token
+        social_account.access_token_expires_at = access_token_expires_at
+        social_account.refresh_token_expires_at = refresh_token_expires_at
+        social_account.scope = scope
 
         return social_account
 

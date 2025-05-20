@@ -504,4 +504,16 @@ class SocialAccount(SQLModel, table=True):
         sa_type=DateTime(timezone=True),  # type: ignore
     )
 
+    scope: str | None = Field(default=None)
+    access_token: str | None = Field(default=None)
+    refresh_token: str | None = Field(default=None)
+    access_token_expires_at: datetime | None = Field(
+        default=None,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    refresh_token_expires_at: datetime | None = Field(
+        default=None,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+
     user: User = Relationship()

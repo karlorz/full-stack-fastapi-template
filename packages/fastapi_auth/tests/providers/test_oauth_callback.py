@@ -281,6 +281,9 @@ async def test_fails_if_the_user_info_response_does_not_have_an_id(
     )
 
 
+@time_machine.travel(
+    datetime.datetime(2012, 10, 1, 1, 0, tzinfo=datetime.timezone.utc), tick=False
+)
 async def test_create_user_if_it_does_not_exist(
     oauth_provider: OAuth2Provider,
     context: Context,
@@ -325,6 +328,13 @@ async def test_create_user_if_it_does_not_exist(
     assert pollo is not None
     assert pollo.social_accounts[0].provider == "test"
     assert pollo.social_accounts[0].provider_user_id == "pollo"
+    assert pollo.social_accounts[0].access_token == access_token
+    assert pollo.social_accounts[0].refresh_token is None
+    assert pollo.social_accounts[0].access_token_expires_at == datetime.datetime(
+        2012, 10, 1, 2, 0, tzinfo=datetime.timezone.utc
+    )
+    assert pollo.social_accounts[0].refresh_token_expires_at is None
+    assert pollo.social_accounts[0].scope == "openid email profile"
 
 
 @time_machine.travel(
@@ -406,6 +416,11 @@ async def test_fails_if_there_is_user_with_the_same_email_but_different_provider
         user_id="pollo",
         provider="other_provider",
         provider_user_id="other_provider_user_id",
+        access_token=None,
+        refresh_token=None,
+        access_token_expires_at=None,
+        refresh_token_expires_at=None,
+        scope=None,
     )
 
     data = {
@@ -454,6 +469,11 @@ async def test_works_when_there_is_user_with_the_same_email_and_provider(
         user_id="pollo",
         provider="test",
         provider_user_id="pollo",
+        access_token=None,
+        refresh_token=None,
+        access_token_expires_at=None,
+        refresh_token_expires_at=None,
+        scope=None,
     )
 
     data = {
@@ -487,3 +507,67 @@ async def test_works_when_there_is_user_with_the_same_email_and_provider(
     )
 
     assert accounts_storage.data.get("pollo")
+
+
+@time_machine.travel(
+    datetime.datetime(2012, 10, 1, 1, 0, tzinfo=datetime.timezone.utc), tick=False
+)
+async def test_updates_the_social_account_if_it_already_exists(
+    oauth_provider: OAuth2Provider,
+    context: Context,
+    respx_mock: MockRouter,
+    valid_callback_request: AsyncHTTPRequest,
+    accounts_storage: MemoryAccountsStorage,
+):
+    accounts_storage.create_user(
+        user_info={"email": "pollo@example.com", "id": "pollo"},
+    )
+
+    accounts_storage.create_social_account(
+        user_id="pollo",
+        provider="test",
+        provider_user_id="pollo",
+        access_token="old_access_token",
+        refresh_token="old_refresh_token",
+        access_token_expires_at=None,
+        refresh_token_expires_at=None,
+        scope="old_scope",
+    )
+
+    data = {
+        "access_token": "test_access_token",
+        "token_type": "Bearer",
+        "expires_in": 3600,
+        "scope": "openid email profile",
+    }
+
+    respx_mock.post(oauth_provider.token_endpoint).mock(
+        return_value=httpx.Response(
+            status_code=200,
+            headers={"Content-Type": "application/www-form-urlencoded"},
+            content=urlencode(data),
+        )
+    )
+
+    respx_mock.get(oauth_provider.user_info_endpoint).mock(
+        return_value=httpx.Response(
+            status_code=200,
+            json={"email": "pollo@example.com", "id": "pollo"},
+        )
+    )
+
+    response = await oauth_provider.callback(valid_callback_request, context)
+
+    assert response.status_code == 302
+    assert response.headers is not None
+    assert response.headers["Location"] == snapshot(
+        "http://valid-frontend.com/callback?code=a-totally-valid-code"
+    )
+
+    account = accounts_storage.data.get("pollo")
+
+    assert account is not None
+    assert account.social_accounts[0].provider == "test"
+    assert account.social_accounts[0].provider_user_id == "pollo"
+    assert account.social_accounts[0].access_token == "test_access_token"
+    assert account.social_accounts[0].refresh_token is None

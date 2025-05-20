@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from urllib.parse import parse_qs
 
 from pydantic import BaseModel, Field, HttpUrl, RootModel
@@ -20,6 +21,22 @@ class TokenResponse(BaseModel):
         None,
         description="Space-delimited list of scopes associated with the access token",
     )
+
+    @property
+    def access_token_expires_at(self) -> datetime | None:
+        if self.expires_in:
+            return datetime.now(tz=timezone.utc) + timedelta(seconds=self.expires_in)
+
+        return None
+
+    @property
+    def refresh_token_expires_at(self) -> datetime | None:
+        if self.refresh_token_expires_in:
+            return datetime.now(tz=timezone.utc) + timedelta(
+                seconds=self.refresh_token_expires_in
+            )
+
+        return None
 
 
 class TokenErrorResponse(BaseModel):

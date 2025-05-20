@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any
 from uuid import UUID
 
@@ -62,6 +63,11 @@ class AccountsStorage:
         user_id: UUID,
         provider: str,
         provider_user_id: str,
+        access_token: str | None,
+        refresh_token: str | None,
+        access_token_expires_at: datetime | None,
+        refresh_token_expires_at: datetime | None,
+        scope: str | None,
     ) -> SocialAccount:
         with Session(engine, expire_on_commit=False) as session:
             return crud.create_social_account(
@@ -69,4 +75,30 @@ class AccountsStorage:
                 user_id=user_id,
                 provider=provider,
                 provider_user_id=provider_user_id,
+                access_token=access_token,
+                refresh_token=refresh_token,
+                access_token_expires_at=access_token_expires_at,
+                refresh_token_expires_at=refresh_token_expires_at,
+                scope=scope,
+            )
+
+    def update_social_account(
+        self,
+        social_account_id: UUID,
+        *,
+        access_token: str | None,
+        refresh_token: str | None,
+        access_token_expires_at: datetime | None,
+        refresh_token_expires_at: datetime | None,
+        scope: str | None,
+    ) -> SocialAccount:
+        with Session(engine, expire_on_commit=False) as session:
+            return crud.update_social_account(
+                session=session,
+                social_account_id=social_account_id,
+                access_token=access_token,
+                refresh_token=refresh_token,
+                access_token_expires_at=access_token_expires_at,
+                refresh_token_expires_at=refresh_token_expires_at,
+                scope=scope,
             )

@@ -1,9 +1,11 @@
+from datetime import datetime
 from typing import Any, Iterable
 
 from typing_extensions import Protocol
 
 
 class SocialAccount(Protocol):
+    id: Any
     provider_user_id: str
     provider: str
 
@@ -46,4 +48,20 @@ class AccountsStorage(Protocol):
         user_id: Any,
         provider: str,
         provider_user_id: str,
+        access_token: str | None,
+        refresh_token: str | None,
+        access_token_expires_at: datetime | None,
+        refresh_token_expires_at: datetime | None,
+        scope: str | None,
+    ) -> SocialAccount: ...
+
+    def update_social_account(
+        self,
+        social_account_id: Any,
+        *,
+        access_token: str | None,
+        refresh_token: str | None,
+        access_token_expires_at: datetime | None,
+        refresh_token_expires_at: datetime | None,
+        scope: str | None,
     ) -> SocialAccount: ...

@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from typing import Any
 
 from sqlmodel import Session, select
@@ -133,11 +134,57 @@ def add_to_waiting_list(
 
 
 def create_social_account(
-    *, session: Session, user_id: uuid.UUID, provider: str, provider_user_id: str
+    *,
+    session: Session,
+    user_id: uuid.UUID,
+    provider: str,
+    provider_user_id: str,
+    access_token: str | None,
+    refresh_token: str | None,
+    access_token_expires_at: datetime | None,
+    refresh_token_expires_at: datetime | None,
+    scope: str | None,
 ) -> SocialAccount:
     db_obj = SocialAccount(
-        user_id=user_id, provider=provider, provider_user_id=provider_user_id
+        user_id=user_id,
+        provider=provider,
+        provider_user_id=provider_user_id,
+        access_token=access_token,
+        refresh_token=refresh_token,
+        access_token_expires_at=access_token_expires_at,
+        refresh_token_expires_at=refresh_token_expires_at,
+        scope=scope,
     )
+    session.add(db_obj)
+    session.commit()
+    session.refresh(db_obj)
+
+    return db_obj
+
+
+def update_social_account(
+    *,
+    social_account_id: uuid.UUID,
+    session: Session,
+    access_token: str | None,
+    refresh_token: str | None,
+    access_token_expires_at: datetime | None,
+    refresh_token_expires_at: datetime | None,
+    scope: str | None,
+) -> SocialAccount:
+    db_obj = session.exec(
+        select(SocialAccount).where(SocialAccount.id == social_account_id)
+    ).first()
+
+    if not db_obj:
+        raise ValueError("Social account not found")
+
+    db_obj.access_token = access_token
+    db_obj.refresh_token = refresh_token
+    db_obj.access_token_expires_at = access_token_expires_at
+    db_obj.refresh_token_expires_at = refresh_token_expires_at
+    db_obj.scope = scope
+
     session.add(db_obj)
     session.commit()
     session.refresh(db_obj)

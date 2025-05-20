@@ -229,8 +229,6 @@ class OAuth2Provider:
 
         assert isinstance(token_response.root, TokenResponse)
 
-        # TODO: allow to save tokens (settings or plugin)
-
         try:
             user_info = self.fetch_user_info(token_response.root.access_token)
         except Exception as e:
@@ -270,20 +268,34 @@ class OAuth2Provider:
 
         user = context.accounts_storage.find_user(email=email)
 
-        if not social_account and user:
-            return Response.error_redirect(
-                redirect_uri,
-                error="account_exists",
-                error_description="An account with this email already exists.",
-            )
+        if user:
+            if not social_account:
+                return Response.error_redirect(
+                    redirect_uri,
+                    error="account_exists",
+                    error_description="An account with this email already exists.",
+                )
 
-        if not user:
+            context.accounts_storage.update_social_account(
+                social_account.id,
+                access_token=token_response.root.access_token,
+                refresh_token=token_response.root.refresh_token,
+                access_token_expires_at=token_response.root.access_token_expires_at,
+                refresh_token_expires_at=token_response.root.refresh_token_expires_at,
+                scope=token_response.root.scope,
+            )
+        else:
             user = context.accounts_storage.create_user(user_info=user_info)
 
             context.accounts_storage.create_social_account(
                 user_id=user.id,
                 provider=self.id,
                 provider_user_id=provider_user_id,
+                access_token=token_response.root.access_token,
+                refresh_token=token_response.root.refresh_token,
+                access_token_expires_at=token_response.root.access_token_expires_at,
+                refresh_token_expires_at=token_response.root.refresh_token_expires_at,
+                scope=token_response.root.scope,
             )
 
         code = self._generate_code()
