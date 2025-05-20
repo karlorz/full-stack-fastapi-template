@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Store token information when logging via OAuth. PR [#842](https://github.com/fastapilabs/cloud/pull/842) by [@patrick91](https://github.com/patrick91).
 * ✨ Implement auth using `fastapi_auth`. PR [#686](https://github.com/fastapilabs/cloud/pull/686) by [@patrick91](https://github.com/patrick91).
 * ✨ Add resend verification email and update UI. PR [#883](https://github.com/fastapilabs/cloud/pull/883) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add `libcairo` to apps' Dockerfile. PR [#751](https://github.com/fastapilabs/cloud/pull/751) by [@patrick91](https://github.com/patrick91).
