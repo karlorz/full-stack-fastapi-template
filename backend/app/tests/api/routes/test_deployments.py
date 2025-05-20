@@ -360,6 +360,56 @@ def test_get_build_logs(client: TestClient, db: Session, redis: Redis) -> None:
     redis.delete(redis_key)
 
 
+def test_get_build_logs_failed(client: TestClient, db: Session, redis: Redis) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    app = create_random_app(db, team=team)
+    deployment = create_deployment_for_app(db, app=app)
+
+    # Add test build logs to Redis
+    redis_key = f"build_logs:{deployment.id}"
+    redis.xadd(
+        redis_key,
+        {"type": "message", "message": "Building image..."},
+        id="1234567890",
+    )
+    redis.xadd(
+        redis_key,
+        {"type": "failed"},
+        id="1234567891",
+    )
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/deployments/{deployment.id}/build-logs",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    # Convert bytes to string and split by newlines to get individual log entries
+    logs = [json.loads(log) for log in response.content.decode().strip().split("\n")]
+    assert len(logs) == 2
+
+    assert logs[0]["message"] == "Building image..."
+    assert logs[1]["type"] == "failed"
+
+    # Clean up Redis after test
+    redis.delete(redis_key)
+
+
 def test_get_build_logs_deployment_not_found(client: TestClient, db: Session) -> None:
     user = create_user(
         session=db,

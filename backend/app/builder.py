@@ -20,7 +20,7 @@ from botocore.exceptions import ClientError, NoCredentialsError
 from fastapi import Depends, FastAPI, HTTPException
 from kubernetes import client as k8s
 from kubernetes.client.rest import ApiException as K8sApiException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from sqlalchemy.orm import joinedload
 from sqlmodel import select
 
@@ -85,9 +85,11 @@ class BuildLogComplete(BaseModel):
     type: Literal["complete"] = "complete"
 
 
-class BuildLog(BaseModel):
-    id: str
-    log: BuildLogMessage | BuildLogComplete = Field(discriminator="type")
+class BuildLogFailed(BaseModel):
+    type: Literal["failed"] = "failed"
+
+
+type BuildLog = BuildLogMessage | BuildLogComplete | BuildLogFailed
 
 
 # FastAPI app
@@ -572,6 +574,18 @@ def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
     return {env_var.name: env_var.value for env_var in env_vars}
 
 
+def _send_build_log(
+    deployment_id: uuid.UUID,
+    log: BuildLog,
+    redis_client: redis.Redis,
+) -> None:
+    redis_client.xadd(
+        f"build_logs:{deployment_id}",
+        fields=log.model_dump(mode="json"),  # type: ignore
+        maxlen=1_000,
+    )
+
+
 def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None:
     redis_client = redis.Redis.from_url(CommonSettings.get_settings().REDIS_URI)
 
@@ -631,11 +645,8 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
                 docker_context_path=build_context,
             ):
                 progress_log = BuildLogMessage(message=line)
-                redis_client.xadd(
-                    f"build_logs:{deployment_with_team.id}",
-                    fields=progress_log.model_dump(mode="json"),  # type: ignore
-                    maxlen=1_000,
-                )
+
+                _send_build_log(deployment_with_team.id, progress_log, redis_client)
 
             # Update status to deploying
             deployment_with_team.status = DeploymentStatus.deploying
@@ -657,18 +668,14 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
         # Update status to success
         deployment_with_team.status = DeploymentStatus.success
         session.commit()
+
+        _send_build_log(deployment_with_team.id, BuildLogComplete(), redis_client)
     except Exception as e:
         deployment_with_team.status = DeploymentStatus.failed
         session.commit()
-        raise e
-    finally:
-        complete_log = BuildLogComplete()
 
-        redis_client.xadd(
-            f"build_logs:{deployment_with_team.id}",
-            fields=complete_log.model_dump(mode="json"),  # type: ignore
-            maxlen=1_000,
-        )
+        _send_build_log(deployment_with_team.id, BuildLogFailed(), redis_client)
+        raise e
 
 
 @app.post("/apps/depot/build", dependencies=[Depends(validate_api_key)])

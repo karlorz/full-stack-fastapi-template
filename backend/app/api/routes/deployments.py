@@ -1,13 +1,13 @@
 import time
 import uuid
 from collections.abc import AsyncGenerator
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 import httpx
 import logfire
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
 from fastapi.responses import StreamingResponse
-from pydantic import ValidationError
+from pydantic import Field, TypeAdapter, ValidationError
 from sqlalchemy import func
 from sqlmodel import and_, col, select
 
@@ -20,7 +20,7 @@ from app.api.deps import (
 )
 from app.api.utils.aws_s3 import generate_presigned_url_post
 from app.aws_utils import get_sqs_client
-from app.builder import BuildLog, BuildLogComplete
+from app.builder import BuildLog, BuildLogComplete, BuildLogFailed
 from app.core.config import CommonSettings, MainSettings
 from app.crud import get_user_team_link
 from app.models import (
@@ -367,6 +367,10 @@ def get_build_logs(
 
         last_valid_message_time = time.monotonic()
 
+        build_log_adapter: TypeAdapter[BuildLog] = TypeAdapter(
+            Annotated[BuildLog, Field(discriminator="type")]
+        )
+
         while True:
             if await request.is_disconnected():
                 break
@@ -383,9 +387,7 @@ def get_build_logs(
             for _, messages in stream_data:
                 for message_id, message_data in messages:
                     try:
-                        log = BuildLog.model_validate(
-                            {"id": message_id, "log": message_data}
-                        )
+                        log = build_log_adapter.validate_python(message_data)
                     except ValidationError:
                         logfire.error(
                             "Invalid build log message",
@@ -395,11 +397,11 @@ def get_build_logs(
 
                     last_valid_message_time = time.monotonic()
 
-                    yield log.log.model_dump_json()
+                    yield log.model_dump_json()
                     yield "\n"
 
-                    match log.log:
-                        case BuildLogComplete():
+                    match log:
+                        case BuildLogComplete() | BuildLogFailed():
                             return
 
                     last_id = message_id
