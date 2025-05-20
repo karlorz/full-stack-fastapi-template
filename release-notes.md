@@ -441,6 +441,7 @@
 
 ### Internal
 
+* ♻️ Split find user to find_user_by_id and find_user_by_email. PR [#900](https://github.com/fastapilabs/cloud/pull/900) by [@patrick91](https://github.com/patrick91).
 * 🔧 Enable session recording only after authentication. PR [#880](https://github.com/fastapilabs/cloud/pull/880) by [@alejsdev](https://github.com/alejsdev).
 * ✅ Update `trusted_origin` in tests. PR [#901](https://github.com/fastapilabs/cloud/pull/901) by [@patrick91](https://github.com/patrick91).
 * ⬆ Bump @types/react from 19.1.2 to 19.1.4 in /frontend. PR [#905](https://github.com/fastapilabs/cloud/pull/905) by [@dependabot[bot]](https://github.com/apps/dependabot).
