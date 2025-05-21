@@ -67,6 +67,39 @@ function Layout() {
               <Outlet />
             </div>
           </main>
+
+          <footer className="w-full py-4 border-t mt-8 text-center text-xs text-muted-foreground flex flex-col items-center gap-2">
+            <div>
+              &copy; {new Date().getFullYear()} FastAPI Labs
+              {" | "}
+              <a
+                href="https://fastapicloud.com/legal/terms"
+                target="_blank"
+                className="text-primary hover:underline"
+                rel="noreferrer"
+              >
+                Terms of Use
+              </a>
+              {" | "}
+              <a
+                href="https://fastapicloud.com/legal/privacy-policy"
+                target="_blank"
+                className="text-primary hover:underline"
+                rel="noreferrer"
+              >
+                Privacy Policy
+              </a>
+              {" | "}
+              <a
+                href="https://fastapicloud.instatus.com/"
+                target="_blank"
+                className="text-primary hover:underline"
+                rel="noreferrer"
+              >
+                Status
+              </a>
+            </div>
+          </footer>
         </SidebarInset>
       </SidebarProvider>
 

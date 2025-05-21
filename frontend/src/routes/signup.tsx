@@ -244,13 +244,23 @@ function SignUp() {
                 />
                 <div className="text-sm text-muted-foreground">
                   By signing up, you agree to our{" "}
-                  <RouterLink to="/" className="text-primary hover:underline">
-                    Terms of Service
-                  </RouterLink>{" "}
+                  <a
+                    href="https://fastapicloud.com/legal/terms"
+                    target="_blank"
+                    className="text-primary hover:underline"
+                    rel="noreferrer"
+                  >
+                    Terms of Use{" "}
+                  </a>
                   and{" "}
-                  <RouterLink to="/" className="text-primary hover:underline">
+                  <a
+                    href="https://fastapicloud.com/legal/privacy-policy"
+                    target="_blank"
+                    className="text-primary hover:underline"
+                    rel="noreferrer"
+                  >
                     Privacy Policy
-                  </RouterLink>
+                  </a>
                 </div>
                 <LoadingButton
                   type="submit"
