@@ -17,6 +17,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { getInitials } from "@/utils"
+import { useFeatureFlagEnabled } from "posthog-js/react"
 
 export function TeamSwitcher({
   teams,
@@ -26,6 +27,7 @@ export function TeamSwitcher({
   currentTeamSlug: string
 }) {
   const { isMobile } = useSidebar()
+  const teamCreation = useFeatureFlagEnabled("team-creation-enabled")
   const personalTeam = teams?.data.find((t) => t.is_personal_team)
   const selectedTeam = teams?.data.find((t) => t.slug === currentTeamSlug)
   const otherTeams = teams?.data.filter((t) => t.slug !== selectedTeam?.slug)
@@ -93,16 +95,17 @@ export function TeamSwitcher({
               </RouterLink>
             ))}
             <DropdownMenuSeparator />
-            <RouterLink to="/teams/new">
-              <DropdownMenuItem className="gap-2 p-2">
+            <RouterLink to="/teams/new" disabled={!teamCreation}>
+              <DropdownMenuItem className="gap-2 p-2" disabled={!teamCreation}>
                 <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                   <Plus className="size-4" />
                 </div>
                 <div className="font-medium text-muted-foreground">
-                  Add team
+                  {!teamCreation ? "Add team (coming soon)" : "Add team"}
                 </div>
               </DropdownMenuItem>
             </RouterLink>
+
             {otherTeams?.length > 3 && (
               <RouterLink to="/teams/all">
                 <DropdownMenuItem className="gap-2 p-2">

@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime, timedelta
 from typing import Any
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
@@ -274,11 +275,15 @@ def test_read_team_not_found(logged_in_client: TestClient) -> None:
 def test_create_team(logged_in_client: TestClient, db: Session) -> None:
     team_in = {"name": "test", "description": "test description"}
 
-    response = logged_in_client.post(
-        f"{settings.API_V1_STR}/teams/",
-        json=team_in,
-    )
+    with patch(
+        "app.api.routes.teams.is_team_creation_allowed", return_value=True
+    ) as mock_is_team_creation_allowed:
+        response = logged_in_client.post(
+            f"{settings.API_V1_STR}/teams/",
+            json=team_in,
+        )
 
+    assert mock_is_team_creation_allowed.called
     assert response.status_code == 200
     data = response.json()
     assert data["id"]
@@ -309,11 +314,15 @@ def test_create_team_name_exists_new_created(
     db.commit()
 
     team_in = {"name": "test-copy", "description": "test description"}
-    response = logged_in_client.post(
-        f"{settings.API_V1_STR}/teams/",
-        json=team_in,
-    )
+    with patch(
+        "app.api.routes.teams.is_team_creation_allowed", return_value=True
+    ) as mock_is_team_creation_allowed:
+        response = logged_in_client.post(
+            f"{settings.API_V1_STR}/teams/",
+            json=team_in,
+        )
 
+    assert mock_is_team_creation_allowed.called
     assert response.status_code == 200
     data = response.json()
     assert data["id"]

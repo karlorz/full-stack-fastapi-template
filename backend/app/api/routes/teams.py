@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import selectinload
 from sqlmodel import col, func, select
 
-from app.api.deps import CurrentUser, SessionDep, get_current_user
+from app.api.deps import CurrentUser, PosthogDep, SessionDep, get_current_user
 from app.api.utils.teams import generate_team_slug_name
 from app.crud import get_user_team_link
 from app.models import (
@@ -94,13 +94,36 @@ def read_team(
     return team
 
 
+def is_team_creation_allowed(posthog: PosthogDep, user_id: str) -> bool | None:
+    return posthog.feature_enabled("team-creation-enabled", user_id)  # type: ignore
+
+
 @router.post("/", response_model=TeamPublic)
 def create_team(
-    session: SessionDep, current_user: CurrentUser, team_in: TeamCreate
+    session: SessionDep,
+    current_user: CurrentUser,
+    team_in: TeamCreate,
+    posthog: PosthogDep,
 ) -> Any:
     """
     Create a new team with the provided details.
     """
+    user_id_str = str(current_user.id)
+
+    # Block creation if 'team-creation-enabled' flag is not enabled
+    if not is_team_creation_allowed(posthog, user_id_str):
+        posthog.capture(  # type: ignore
+            user_id_str,
+            "team_creation_blocked",
+            {
+                "reason": "team-creation-enabled flag not active",
+            },
+        )
+        raise HTTPException(
+            status_code=403,
+            detail="Team creation is currently disabled for this user.",
+        )
+
     team_slug = generate_team_slug_name(team_in.name, session)
 
     team = Team.model_validate(

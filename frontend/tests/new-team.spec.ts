@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test"
-import { randomTeamName } from "./utils/random"
 
 test("New team is visible", async ({ page }) => {
   await page.goto("/teams/new")
@@ -12,24 +11,33 @@ test("New team is visible", async ({ page }) => {
   // await expect(page.getByRole("button", { name: "Add card" })).toBeVisible()
 })
 
-test("User can create a new team with a valid name successfully", async ({
-  page,
-}) => {
-  const teamName = randomTeamName()
-  await page.goto("/teams/new")
+// Team creation is disabled for beta users
 
-  await page.getByTestId("team-name-input").fill(teamName)
-  await page.getByRole("button", { name: "Create Team" }).click()
-  await expect(
-    page.getByText(`Your team ${teamName} has been created successfully`),
-  ).toBeVisible()
-})
-
-test("Validation messages are displayed for missing team name", async ({
+test("User cannot create a new team when team creation is disabled", async ({
   page,
 }) => {
   await page.goto("/teams/new")
-
-  await page.getByRole("button", { name: "Create Team" }).click()
-  await expect(page.getByText("Name is required")).toBeVisible()
+  await expect(page.getByRole("button", { name: "Create Team" })).toBeDisabled()
 })
+
+// test("User can create a new team with a valid name successfully", async ({
+//   page,
+// }) => {
+//   const teamName = randomTeamName()
+//   await page.goto("/teams/new")
+
+//   await page.getByTestId("team-name-input").fill(teamName)
+//   await page.getByRole("button", { name: "Create Team" }).click()
+//   await expect(
+//     page.getByText(`Your team ${teamName} has been created successfully`),
+//   ).toBeVisible()
+// })
+
+// test("Validation messages are displayed for missing team name", async ({
+//   page,
+// }) => {
+//   await page.goto("/teams/new")
+
+//   await page.getByRole("button", { name: "Create Team" }).click()
+//   await expect(page.getByText("Name is required")).toBeVisible()
+// })

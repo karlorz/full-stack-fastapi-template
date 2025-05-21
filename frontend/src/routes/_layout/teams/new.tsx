@@ -27,6 +27,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { extractErrorMessage } from "@/utils"
+import { useFeatureFlagEnabled } from "posthog-js/react"
 
 export const Route = createFileRoute("/_layout/teams/new")({
   component: NewTeam,
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/_layout/teams/new")({
 
 function NewTeam() {
   const navigate = useNavigate()
+  const teamCreation = useFeatureFlagEnabled("team-creation-enabled")
   const queryClient = useQueryClient()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -116,6 +118,7 @@ function NewTeam() {
                           <LoadingButton
                             type="submit"
                             loading={mutation.isPending}
+                            disabled={!teamCreation}
                           >
                             Create Team
                           </LoadingButton>
