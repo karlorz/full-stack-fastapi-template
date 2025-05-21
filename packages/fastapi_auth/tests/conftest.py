@@ -4,9 +4,11 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Iterable
 
 import pytest
+from duck.request import AsyncHTTPRequest
 from fastapi_auth._context import Context
 from fastapi_auth._issuer import AuthorizationCodeGrantData, Issuer
 from fastapi_auth._storage import AccountsStorage, SecondaryStorage
+from fastapi_auth.social_providers.oauth import OAuth2LinkCodeData
 
 pytestmark = pytest.mark.asyncio
 
@@ -170,13 +172,33 @@ def accounts_storage() -> AccountsStorage:
 
 
 @pytest.fixture
+def logged_in_user(accounts_storage: MemoryAccountsStorage) -> User:
+    return accounts_storage.create_user(
+        user_info={
+            "id": "test",
+            "email": "test@example.com",
+            "social_accounts": [],
+        }
+    )
+
+
+@pytest.fixture
 def context(
-    secondary_storage: SecondaryStorage, accounts_storage: AccountsStorage
+    secondary_storage: SecondaryStorage,
+    accounts_storage: AccountsStorage,
+    logged_in_user: User,
 ) -> Context:
+    def _get_user_from_request(request: AsyncHTTPRequest) -> User | None:
+        if request.headers.get("Authorization") == "Bearer test":
+            return logged_in_user
+
+        return None
+
     return Context(
         secondary_storage=secondary_storage,
         accounts_storage=accounts_storage,
         create_token=lambda id: (f"token-{id}", 0),
+        get_user_from_request=_get_user_from_request,
         trusted_origins=["valid-frontend.com"],
     )
 
@@ -218,4 +240,23 @@ def valid_code(secondary_storage: SecondaryStorage) -> str:
             code_challenge_method="S256",
         ).model_dump_json(),
     )
+    return code
+
+
+@pytest.fixture
+def valid_link_code(secondary_storage: SecondaryStorage) -> str:
+    code = "test"
+
+    secondary_storage.set(
+        f"oauth:link_request:{code}",
+        OAuth2LinkCodeData(
+            expires_at=datetime.now(tz=timezone.utc) + timedelta(seconds=10),
+            client_id="test",
+            redirect_uri="test",
+            code_challenge="n4bQgYhMfWWaL-qgxVrQFaO_TxsrC4Is0V1sFbDwCgg",
+            code_challenge_method="S256",
+            provider_code="1234567890",
+        ).model_dump_json(),
+    )
+
     return code

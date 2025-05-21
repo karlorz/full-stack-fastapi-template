@@ -11,6 +11,7 @@ class Response(DuckResponse):
         error: str,
         error_description: str | None = None,
         error_uri: str | None = None,
+        status_code: int = 400,
     ) -> Self:
         body = {"error": error}
 
@@ -21,7 +22,7 @@ class Response(DuckResponse):
             body["error_uri"] = error_uri
 
         return cls(
-            status_code=400,
+            status_code=status_code,
             body=json.dumps(body),
             headers={"Content-Type": "application/json"},
         )

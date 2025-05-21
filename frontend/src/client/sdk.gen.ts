@@ -42,6 +42,7 @@ import type {
   DeploymentsUploadDeploymentArtifactResponse,
   GithubAuthorizeResponse,
   GithubCallbackResponse,
+  GithubFinalizeLinkResponse,
   InvitationsAcceptInvitationData,
   InvitationsAcceptInvitationResponse,
   InvitationsCreateInvitationData,
@@ -399,6 +400,18 @@ export class AuthService {
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/github/callback",
+    })
+  }
+
+  /**
+   * Wrapper
+   * @returns unknown Successful Response
+   * @throws ApiError
+   */
+  public static githubFinalizeLink(): CancelablePromise<GithubFinalizeLinkResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/github/finalize-link",
     })
   }
 

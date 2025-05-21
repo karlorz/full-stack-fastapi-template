@@ -454,6 +454,8 @@ export type GithubAuthorizeResponse = unknown
 
 export type GithubCallbackResponse = unknown
 
+export type GithubFinalizeLinkResponse = unknown
+
 export type TokenResponse2 = TokenResponse
 
 export type DeploymentsReadDeploymentsData = {

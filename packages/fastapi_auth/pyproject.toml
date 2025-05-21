@@ -5,10 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 authors = [{ name = "Patrick Arminio", email = "patrick.arminio@gmail.com" }]
 requires-python = ">=3.11"
-dependencies = [
-    "duck",
- "pydantic[email]>=2.11.3",
-]
+dependencies = ["duck", "pydantic[email]>=2.11.3"]
 
 [build-system]
 requires = ["hatchling"]

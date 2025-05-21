@@ -1,13 +1,17 @@
+import json
 import logging
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import ClassVar, Literal
+from typing import Any, ClassVar, Literal, TypedDict
+from urllib.parse import urlencode
 
 import httpx
 from duck import AsyncHTTPRequest
 from pydantic import BaseModel, HttpUrl, TypeAdapter, ValidationError
 
+from fastapi_auth._storage import User
+from fastapi_auth.utils._pkce import validate_pkce
 from fastapi_auth.utils._response import Response
 
 from .._context import Context
@@ -22,6 +26,17 @@ from ..models.oauth_token_response import (
 logger = logging.getLogger(__name__)
 
 
+class UserInfo(TypedDict):
+    email: str
+    id: str
+
+
+class OAuth2Exception(Exception):
+    def __init__(self, error: str, error_description: str):
+        self.error = error
+        self.error_description = error_description
+
+
 class OAuth2AuthorizationRequestData(BaseModel):
     redirect_uri: str
     login_hint: str | None
@@ -29,6 +44,16 @@ class OAuth2AuthorizationRequestData(BaseModel):
     state: str
     code_challenge: str
     code_challenge_method: Literal["S256"]
+    link: bool = False
+
+
+class OAuth2LinkCodeData(BaseModel):
+    expires_at: datetime
+    client_id: str
+    redirect_uri: str
+    code_challenge: str
+    code_challenge_method: Literal["S256"]
+    provider_code: str
 
 
 def relative_url(url: str, path: str) -> str:
@@ -97,7 +122,7 @@ class OAuth2Provider:
                 error_description="No response type provided",
             )
 
-        if response_type != "code":
+        if response_type not in ["code", "link_code"]:
             logger.error("Unsupported response type")
 
             return Response.error_redirect(
@@ -139,12 +164,14 @@ class OAuth2Provider:
                 "state": state,
                 "code_challenge": code_challenge,
                 "code_challenge_method": code_challenge_method,
+                "link": response_type == "link_code",
             }
         )
 
         context.secondary_storage.set(
             f"oauth:authorization_request:{state}",
             data.model_dump_json(),
+            # TODO: ttl
         )
 
         proxy_redirect_uri = relative_url(str(request.url), "callback")
@@ -190,8 +217,8 @@ class OAuth2Provider:
             provider_data = OAuth2AuthorizationRequestData.model_validate_json(
                 raw_provider_data
             )
-        except ValidationError:
-            logger.error("Invalid provider data")
+        except ValidationError as e:
+            logger.error("Invalid provider data", exc_info=e)
 
             return Response.error(
                 "server_error",
@@ -209,93 +236,60 @@ class OAuth2Provider:
                 error_description="No authorization code received in callback",
             )
 
+        if provider_data.link:
+            return self._link_flow(request, context, provider_data, code)
+
         redirect_uri = provider_data.redirect_uri
 
-        proxy_redirect_uri = relative_url(str(request.url), "callback")
-
-        token_response = self._exchange_code(code, proxy_redirect_uri)
-
-        if token_response is None or token_response.is_error():
-            if token_response:
-                assert isinstance(token_response.root, TokenErrorResponse)
-
-                logger.error(f"Token exchange failed: {token_response.root.error}")
-
-            return Response.error_redirect(
-                redirect_uri,
-                error="server_error",
-                error_description="Token exchange failed",
-            )
-
-        assert isinstance(token_response.root, TokenResponse)
-
         try:
-            user_info = self.fetch_user_info(token_response.root.access_token)
-        except Exception as e:
-            logger.error(f"Failed to fetch user info: {str(e)}")
+            user_info, token_response = self._fetch_user_info(request, code)
+        except OAuth2Exception as e:
             return Response.error_redirect(
                 redirect_uri,
-                error="server_error",
-                error_description="Failed to fetch user info",
+                error=e.error,
+                error_description=e.error_description,
             )
 
-        email = user_info.get("email")
-
-        if not email:
-            logger.error("No email found in user info")
-
-            return Response.error_redirect(
-                redirect_uri,
-                error="server_error",
-                error_description="No email found in user info",
-            )
-
-        provider_user_id = user_info.get("id")
-
-        if not provider_user_id:
-            logger.error("No provider user ID found in user info")
-
-            return Response.error_redirect(
-                redirect_uri,
-                error="server_error",
-                error_description="No provider user ID found in user info",
-            )
+        email = user_info["email"]
+        provider_user_id = user_info["id"]
 
         social_account = context.accounts_storage.find_social_account(
             provider=self.id,
             provider_user_id=provider_user_id,
         )
 
-        user = context.accounts_storage.find_user_by_email(email=email)
+        if social_account:
+            context.accounts_storage.update_social_account(
+                social_account.id,
+                access_token=token_response.access_token,
+                refresh_token=token_response.refresh_token,
+                access_token_expires_at=token_response.access_token_expires_at,
+                refresh_token_expires_at=token_response.refresh_token_expires_at,
+                scope=token_response.scope,
+            )
 
-        if user:
-            if not social_account:
+            user = context.accounts_storage.find_user_by_id(social_account.user_id)
+        else:
+            user = context.accounts_storage.find_user_by_email(email)
+
+            if user:
                 return Response.error_redirect(
                     redirect_uri,
                     error="account_exists",
                     error_description="An account with this email already exists.",
                 )
 
-            context.accounts_storage.update_social_account(
-                social_account.id,
-                access_token=token_response.root.access_token,
-                refresh_token=token_response.root.refresh_token,
-                access_token_expires_at=token_response.root.access_token_expires_at,
-                refresh_token_expires_at=token_response.root.refresh_token_expires_at,
-                scope=token_response.root.scope,
-            )
-        else:
             user = context.accounts_storage.create_user(user_info=user_info)
 
             context.accounts_storage.create_social_account(
                 user_id=user.id,
                 provider=self.id,
                 provider_user_id=provider_user_id,
-                access_token=token_response.root.access_token,
-                refresh_token=token_response.root.refresh_token,
-                access_token_expires_at=token_response.root.access_token_expires_at,
-                refresh_token_expires_at=token_response.root.refresh_token_expires_at,
-                scope=token_response.root.scope,
+                access_token=token_response.access_token,
+                refresh_token=token_response.refresh_token,
+                access_token_expires_at=token_response.access_token_expires_at,
+                refresh_token_expires_at=token_response.refresh_token_expires_at,
+                scope=token_response.scope,
             )
 
         code = self._generate_code()
@@ -319,6 +313,34 @@ class OAuth2Provider:
             query_params={"code": code},
         )
 
+    def _link_flow(
+        self,
+        request: AsyncHTTPRequest,
+        context: Context,
+        provider_data: OAuth2AuthorizationRequestData,
+        provider_code: str,
+    ) -> Response:
+        data = OAuth2LinkCodeData(
+            expires_at=datetime.now(tz=timezone.utc) + timedelta(minutes=10),
+            client_id=self.client_id,
+            redirect_uri=provider_data.redirect_uri,
+            code_challenge=provider_data.code_challenge,
+            code_challenge_method=provider_data.code_challenge_method,
+            provider_code=provider_code,
+        )
+
+        code = self._generate_code()
+
+        context.secondary_storage.set(
+            f"oauth:link_request:{code}",
+            data.model_dump_json(),
+        )
+
+        return Response.redirect(
+            provider_data.redirect_uri,
+            query_params={"link_code": code},
+        )
+
     def _exchange_code(
         self, code: str, redirect_uri: str
     ) -> OAuth2TokenEndpointResponse | None:
@@ -338,12 +360,185 @@ class OAuth2Provider:
 
             return None
 
+    def _fetch_user_info(
+        self, request: AsyncHTTPRequest, code: str
+    ) -> tuple[UserInfo, TokenResponse]:
+        proxy_redirect_uri = relative_url(str(request.url), "callback")
+
+        token_response = self._exchange_code(code, proxy_redirect_uri)
+
+        if token_response is None or token_response.is_error():
+            if token_response:
+                assert isinstance(token_response.root, TokenErrorResponse)
+
+                logger.error(f"Token exchange failed: {token_response.root.error}")
+
+            raise OAuth2Exception(
+                error="server_error",
+                error_description="Token exchange failed",
+            )
+
+        assert isinstance(token_response.root, TokenResponse)
+
+        try:
+            user_info = self.fetch_user_info(token_response.root.access_token)
+        except Exception as e:
+            logger.error(f"Failed to fetch user info: {str(e)}")
+            raise OAuth2Exception(
+                error="server_error",
+                error_description="Failed to fetch user info",
+            )
+
+        email = user_info.get("email")
+
+        if not email:
+            logger.error("No email found in user info")
+
+            raise OAuth2Exception(
+                error="server_error",
+                error_description="No email found in user info",
+            )
+
+        provider_user_id = user_info.get("id")
+
+        if not provider_user_id:
+            logger.error("No provider user ID found in user info")
+
+            raise OAuth2Exception(
+                error="server_error",
+                error_description="No provider user ID found in user info",
+            )
+
+        return (
+            user_info,  # type: ignore
+            token_response.root,
+        )
+
     def fetch_user_info(self, token: str) -> dict:
         response = httpx.get(
             self.user_info_endpoint,
             headers={"Authorization": f"Bearer {token}"},
         )
         return response.json()
+
+    async def finalize_link(
+        self, request: AsyncHTTPRequest, context: Context
+    ) -> Response:
+        user = context.get_user_from_request(request)
+
+        if not user:
+            return Response.error(
+                "unauthorized",
+                error_description="Not logged in",
+                status_code=401,
+            )
+
+        request_data = json.loads(await request.get_body())
+        code = request_data.get("link_code")
+
+        if not code:
+            logger.error("No link code found in request")
+
+            return Response.error(
+                "server_error",
+                error_description="No link code found in request",
+            )
+
+        data = context.secondary_storage.get(f"oauth:link_request:{code}")
+
+        if not data:
+            logger.error("No link data found in secondary storage")
+
+            return Response.error(
+                "server_error",
+                error_description="No link data found in secondary storage",
+            )
+
+        try:
+            link_data = OAuth2LinkCodeData.model_validate_json(data)
+        except ValidationError as e:
+            logger.error("Invalid link data", exc_info=e)
+
+            return Response.error(
+                "server_error",
+                error_description="Invalid link data",
+            )
+
+        if link_data.expires_at < datetime.now(tz=timezone.utc):
+            logger.error("Link code has expired")
+
+            return Response.error(
+                "server_error",
+                error_description="Link code has expired",
+            )
+
+        if link_data.code_challenge_method != "S256":
+            return Response.error(
+                "server_error",
+                error_description="Unsupported code challenge method",
+            )
+
+        code_verifier = request_data.get("code_verifier")
+
+        if not code_verifier:
+            return Response.error(
+                "server_error",
+                error_description="No code_verifier provided",
+            )
+
+        if not validate_pkce(
+            link_data.code_challenge,
+            link_data.code_challenge_method,
+            code_verifier,
+        ):
+            return Response.error(
+                "server_error",
+                error_description="Invalid code challenge",
+            )
+
+        try:
+            user_info, token_response = self._fetch_user_info(
+                request, link_data.provider_code
+            )
+        except OAuth2Exception as e:
+            return Response.error(
+                e.error,
+                error_description=e.error_description,
+            )
+
+        social_account = context.accounts_storage.find_social_account(
+            provider=self.id,
+            provider_user_id=user_info["id"],
+        )
+
+        if social_account:
+            if social_account.user_id != user.id:
+                return Response.error(
+                    "server_error",
+                    error_description="Social account already exists",
+                )
+
+            context.accounts_storage.update_social_account(
+                social_account.id,
+                access_token=token_response.access_token,
+                refresh_token=token_response.refresh_token,
+                access_token_expires_at=token_response.access_token_expires_at,
+                refresh_token_expires_at=token_response.refresh_token_expires_at,
+                scope=token_response.scope,
+            )
+        else:
+            context.accounts_storage.create_social_account(
+                user_id=user.id,
+                provider=self.id,
+                provider_user_id=user_info["id"],
+                access_token=token_response.access_token,
+                refresh_token=token_response.refresh_token,
+                access_token_expires_at=token_response.access_token_expires_at,
+                refresh_token_expires_at=token_response.refresh_token_expires_at,
+                scope=token_response.scope,
+            )
+
+        return Response(status_code=200, body='{"message": "Link finalized"}')
 
     @property
     def routes(self) -> list[Route]:
@@ -360,5 +555,11 @@ class OAuth2Provider:
                 methods=["GET"],
                 function=self.callback,
                 operation_id=f"{self.id}_callback",
+            ),
+            Route(
+                path=f"/{self.id}/finalize-link",
+                methods=["POST"],
+                function=self.finalize_link,
+                operation_id=f"{self.id}_finalize_link",
             ),
         ]

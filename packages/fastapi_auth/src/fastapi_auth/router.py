@@ -7,7 +7,7 @@ from fastapi import APIRouter
 from fastapi import Request as FastAPIRequest
 from fastapi import Response as FastAPIResponse
 
-from ._context import AccountsStorage, Context, SecondaryStorage
+from ._context import AccountsStorage, Context, SecondaryStorage, User
 from ._issuer import Issuer
 from .social_providers.oauth import OAuth2Provider
 
@@ -20,6 +20,7 @@ class AuthRouter(APIRouter):
         providers: list[OAuth2Provider],
         secondary_storage: SecondaryStorage,
         accounts_storage: AccountsStorage,
+        get_user_from_request: Callable[[AsyncHTTPRequest], User | None],
         create_token: Callable[[str], tuple[str, int]],
         trusted_origins: list[str],
     ):
@@ -31,6 +32,7 @@ class AuthRouter(APIRouter):
         self._accounts_storage = accounts_storage
         self._create_token = create_token
         self._trusted_origins = trusted_origins
+        self._get_user_from_request = get_user_from_request
 
         provider_routes = list(chain.from_iterable(p.routes for p in providers))
 
@@ -56,6 +58,7 @@ class AuthRouter(APIRouter):
                 accounts_storage=self._accounts_storage,
                 create_token=self._create_token,
                 trusted_origins=self._trusted_origins,
+                get_user_from_request=self._get_user_from_request,
             )
 
             route_response = await route(route_request, context)

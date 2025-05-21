@@ -197,7 +197,7 @@ async def test_fails_if_there_is_no_email_in_the_user_info_response(
         )
     )
     respx_mock.get(oauth_provider.user_info_endpoint).mock(
-        return_value=httpx.Response(status_code=200, content="{}")
+        return_value=httpx.Response(status_code=200, json={"id": "test_id"})
     )
 
     response = await oauth_provider.callback(valid_callback_request, context)
@@ -385,18 +385,16 @@ async def test_stores_the_code_in_the_session(
 
     auth_data = AuthorizationCodeGrantData.model_validate_json(raw_auth_data)
 
-    assert auth_data.model_dump() == snapshot(
-        {
-            "user_id": "pollo",
-            "expires_at": datetime.datetime(
-                2012, 10, 1, 1, 10, tzinfo=datetime.timezone.utc
-            ),
-            "client_id": "test_client_id",
-            "redirect_uri": "http://valid-frontend.com/callback",
-            "code_challenge": "test",
-            "code_challenge_method": "S256",
-        }
-    )
+    assert auth_data.model_dump() == {
+        "user_id": "pollo",
+        "expires_at": datetime.datetime(
+            2012, 10, 1, 1, 10, tzinfo=datetime.timezone.utc
+        ),
+        "client_id": "test_client_id",
+        "redirect_uri": "http://valid-frontend.com/callback",
+        "code_challenge": "test",
+        "code_challenge_method": "S256",
+    }
 
 
 async def test_fails_if_there_is_user_with_the_same_email_but_different_provider(
