@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Add feature flag for team creation and update UI accordingly. PR [#868](https://github.com/fastapilabs/cloud/pull/868) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Differentiate between build success and failure. PR [#881](https://github.com/fastapilabs/cloud/pull/881) by [@buurro](https://github.com/buurro).
 * ✨ Store token information when logging via OAuth. PR [#842](https://github.com/fastapilabs/cloud/pull/842) by [@patrick91](https://github.com/patrick91).
 * ✨ Implement auth using `fastapi_auth`. PR [#686](https://github.com/fastapilabs/cloud/pull/686) by [@patrick91](https://github.com/patrick91).
