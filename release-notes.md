@@ -411,6 +411,7 @@
 
 ### Infrastructure
 
+* ✨ Migrate fastapicloud deployment with dedicated helm chart. PR [#912](https://github.com/fastapilabs/cloud/pull/912) by [@siryur](https://github.com/siryur).
 * 🚀 Deploy (prometheus) metrics collector. PR [#882](https://github.com/fastapilabs/cloud/pull/882) by [@siryur](https://github.com/siryur).
 * ✈️ Migrate vector deployment to helm chart. PR [#834](https://github.com/fastapilabs/cloud/pull/834) by [@siryur](https://github.com/siryur).
 * ♻️ Create K8s Service Accounts with Helm Chart. PR [#746](https://github.com/fastapilabs/cloud/pull/746) by [@siryur](https://github.com/siryur).
