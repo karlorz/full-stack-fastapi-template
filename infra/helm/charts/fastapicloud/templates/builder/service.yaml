@@ -1,0 +1,1 @@
+{{- include "fastapicloud.resource.knative-service" (list "builder" .) }}

@@ -1,0 +1,1 @@
+{{- include "fastapicloud.resource.domainmapping" (list "api" .) }}

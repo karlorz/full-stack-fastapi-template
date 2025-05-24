@@ -1,0 +1,6 @@
+apiVersion: v2
+name: fastapicloud
+description: The fastapicloud application ecosystem
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
