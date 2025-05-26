@@ -446,6 +446,7 @@
 
 ### Internal
 
+* ⬆ bump @tanstack/router-vite-plugin from 1.120.3 to 1.120.10 in /frontend. PR [#918](https://github.com/fastapilabs/cloud/pull/918) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ✨ Improve json support in duck. PR [#902](https://github.com/fastapilabs/cloud/pull/902) by [@patrick91](https://github.com/patrick91).
 * ♻️ Split find user to find_user_by_id and find_user_by_email. PR [#900](https://github.com/fastapilabs/cloud/pull/900) by [@patrick91](https://github.com/patrick91).
 * 🔧 Enable session recording only after authentication. PR [#880](https://github.com/fastapilabs/cloud/pull/880) by [@alejsdev](https://github.com/alejsdev).
