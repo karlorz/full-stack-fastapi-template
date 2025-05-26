@@ -94,7 +94,7 @@ const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="w-1/2 space-y-4"
+                  className="w-full lg:w-1/2 space-y-4"
                 >
                   <FormField
                     control={form.control}

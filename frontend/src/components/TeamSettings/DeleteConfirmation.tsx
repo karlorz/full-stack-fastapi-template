@@ -26,11 +26,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
-import { LoadingButton } from "../ui/loading-button"
 
-const createFormSchema = (teamSlug: string) =>
+const formSchema = (teamSlug: string) =>
   z.object({
     confirmation: z
       .string()
@@ -40,7 +40,7 @@ const createFormSchema = (teamSlug: string) =>
       }),
   })
 
-type FormData = z.infer<ReturnType<typeof createFormSchema>>
+type FormData = z.infer<ReturnType<typeof formSchema>>
 
 const DeleteConfirmation = ({ team }: { team: TeamPublic }) => {
   const { showSuccessToast, showErrorToast } = useCustomToast()
@@ -48,7 +48,7 @@ const DeleteConfirmation = ({ team }: { team: TeamPublic }) => {
   const navigate = useNavigate()
 
   const form = useForm<FormData>({
-    resolver: zodResolver(createFormSchema(team.slug)),
+    resolver: zodResolver(formSchema(team.slug)),
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {

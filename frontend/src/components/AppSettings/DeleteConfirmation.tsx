@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { AlertTriangle } from "lucide-react"
@@ -27,7 +28,6 @@ import {
 import { Input } from "@/components/ui/input"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { LoadingButton } from "../ui/loading-button"
 
 interface DeleteProps {
@@ -35,7 +35,7 @@ interface DeleteProps {
   appSlug: string
 }
 
-const createFormSchema = (appSlug: string) =>
+const formSchema = (appSlug: string) =>
   z.object({
     confirmation: z
       .string()
@@ -45,7 +45,7 @@ const createFormSchema = (appSlug: string) =>
       }),
   })
 
-type FormData = z.infer<ReturnType<typeof createFormSchema>>
+type FormData = z.infer<ReturnType<typeof formSchema>>
 
 const DeleteConfirmation = ({ appId, appSlug }: DeleteProps) => {
   const { showSuccessToast, showErrorToast } = useCustomToast()
@@ -53,9 +53,8 @@ const DeleteConfirmation = ({ appId, appSlug }: DeleteProps) => {
   const navigate = useNavigate()
 
   const form = useForm<FormData>({
-    resolver: zodResolver(createFormSchema(appSlug)),
+    resolver: zodResolver(formSchema(appSlug)),
     mode: "onBlur",
-    criteriaMode: "all",
     defaultValues: {
       confirmation: "",
     },
