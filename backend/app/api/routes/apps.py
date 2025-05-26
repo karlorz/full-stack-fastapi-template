@@ -30,7 +30,6 @@ def read_apps(
     skip: int = 0,
     limit: int = 100,
     slug: str | None = None,
-    order_by: Literal["created_at"] | None = None,
     order: Literal["asc", "desc"] = "desc",
 ) -> Any:
     """
@@ -60,12 +59,11 @@ def read_apps(
         statement = statement.where(App.slug == slug)
         count_statement = count_statement.where(App.slug == slug)
 
-    order_key = col(App.created_at) if order_by == "created_at" else None
+    order_key = col(App.created_at)
 
-    if order_key:
-        statement = statement.order_by(
-            order_key.asc() if order == "asc" else order_key.desc()
-        )
+    statement = statement.order_by(
+        order_key.asc() if order == "asc" else order_key.desc()
+    )
 
     apps = session.exec(statement).all()
     count = session.exec(count_statement).one()

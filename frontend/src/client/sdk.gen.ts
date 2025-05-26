@@ -261,7 +261,6 @@ export class AppsService {
    * @param data.skip
    * @param data.limit
    * @param data.slug
-   * @param data.orderBy
    * @param data.order
    * @returns AppsPublic Successful Response
    * @throws ApiError
@@ -277,7 +276,6 @@ export class AppsService {
         skip: data.skip,
         limit: data.limit,
         slug: data.slug,
-        order_by: data.orderBy,
         order: data.order,
       },
       errors: {
@@ -436,7 +434,6 @@ export class DeploymentsService {
    * @param data.appId
    * @param data.skip
    * @param data.limit
-   * @param data.orderBy
    * @param data.order
    * @returns DeploymentsPublic Successful Response
    * @throws ApiError
@@ -453,7 +450,6 @@ export class DeploymentsService {
       query: {
         skip: data.skip,
         limit: data.limit,
-        order_by: data.orderBy,
         order: data.order,
       },
       errors: {
@@ -1111,7 +1107,6 @@ export class TeamsService {
    * @param data The data for the request.
    * @param data.skip
    * @param data.limit
-   * @param data.orderBy
    * @param data.order
    * @param data.owner
    * @param data.slug
@@ -1127,7 +1122,6 @@ export class TeamsService {
       query: {
         skip: data.skip,
         limit: data.limit,
-        order_by: data.orderBy,
         order: data.order,
         owner: data.owner,
         slug: data.slug,

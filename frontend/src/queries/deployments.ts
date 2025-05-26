@@ -8,7 +8,6 @@ export const getDeploymentsQueryOptions = (appId: string) =>
     queryFn: () =>
       DeploymentsService.readDeployments({
         appId,
-        orderBy: "created_at",
         limit: 5,
       }),
     refetchInterval: 10000,

@@ -32,7 +32,6 @@ def read_teams(
     current_user: CurrentUser,
     skip: int = 0,
     limit: int = 100,
-    order_by: Literal["created_at"] | None = None,
     order: Literal["asc", "desc"] = "desc",
     owner: bool = False,
     slug: str | None = None,
@@ -58,12 +57,11 @@ def read_teams(
         count_statement = count_statement.where(Team.slug == slug)
         statement = statement.where(Team.slug == slug)
 
-    order_key = col(Team.created_at) if order_by == "created_at" else None
+    order_key = col(Team.created_at)
 
-    if order_key:
-        statement = statement.order_by(
-            order_key.asc() if order == "asc" else order_key.desc()
-        )
+    statement = statement.order_by(
+        order_key.asc() if order == "asc" else order_key.desc()
+    )
 
     count = session.exec(count_statement).one()
     teams = session.exec(statement).all()

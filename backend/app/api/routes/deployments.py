@@ -50,7 +50,6 @@ def read_deployments(
     app_id: uuid.UUID,
     skip: int = 0,
     limit: int = 100,
-    order_by: Literal["created_at"] | None = None,
     order: Literal["asc", "desc"] = "desc",
 ) -> Any:
     """
@@ -75,12 +74,11 @@ def read_deployments(
         select(func.count()).where(Deployment.app_id == app_id).select_from(Deployment)
     )
 
-    order_key = col(Deployment.created_at) if order_by == "created_at" else None
+    order_key = col(Deployment.created_at)
 
-    if order_key:
-        statement = statement.order_by(
-            order_key.asc() if order == "asc" else order_key.desc()
-        )
+    statement = statement.order_by(
+        order_key.asc() if order == "asc" else order_key.desc()
+    )
 
     deployments = session.exec(statement).all()
     count = session.exec(count_statement).one()

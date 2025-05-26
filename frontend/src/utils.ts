@@ -60,7 +60,6 @@ export const getInitials = (name: string): string => {
 export const fetchAppsData = async (teamId: string) => {
   const apps = await AppsService.readApps({
     teamId,
-    orderBy: "created_at",
   })
 
   const lastThirtyDays = new Date()

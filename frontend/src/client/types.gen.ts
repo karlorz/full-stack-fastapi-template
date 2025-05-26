@@ -418,7 +418,6 @@ export type AppsUpdateEnvironmentVariableResponse = EnvironmentVariablePublic
 export type AppsReadAppsData = {
   limit?: number
   order?: "asc" | "desc"
-  orderBy?: "created_at" | null
   skip?: number
   slug?: string | null
   teamId: string
@@ -462,7 +461,6 @@ export type DeploymentsReadDeploymentsData = {
   appId: string
   limit?: number
   order?: "asc" | "desc"
-  orderBy?: "created_at" | null
   skip?: number
 }
 
@@ -642,7 +640,6 @@ export type PrivateCreateEnvironmentVariableResponse = EnvironmentVariable
 export type TeamsReadTeamsData = {
   limit?: number
   order?: "asc" | "desc"
-  orderBy?: "created_at" | null
   owner?: boolean
   skip?: number
   slug?: string | null

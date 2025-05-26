@@ -50,12 +50,12 @@ def test_read_deployments(client: TestClient, db: Session) -> None:
     assert response.status_code == 200
     data = response.json()
     assert data["count"] == 3
-    assert data["data"][0]["id"] == str(deployment.id)
-    assert data["data"][0]["slug"] == deployment.slug
+    assert data["data"][0]["id"] == str(deployment2.id)
+    assert data["data"][0]["slug"] == deployment2.slug
     assert data["data"][1]["id"] == str(deployment1.id)
     assert data["data"][1]["slug"] == deployment1.slug
-    assert data["data"][2]["id"] == str(deployment2.id)
-    assert data["data"][2]["slug"] == deployment2.slug
+    assert data["data"][2]["id"] == str(deployment.id)
+    assert data["data"][2]["slug"] == deployment.slug
 
 
 def test_create_deployment_admin(client: TestClient, db: Session) -> None:
