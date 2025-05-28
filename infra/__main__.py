@@ -381,7 +381,7 @@ aws.iam.RolePolicyAttachment(
     policy_arn=external_secrets_policy.arn,
 )
 
-k8s_provider = k8s.Provider("k8s-provider", 
+k8s_provider = k8s.Provider("k8s-provider",
     kubeconfig=eks_cluster.kubeconfig.apply(lambda k: json.dumps(k))
 )
 
@@ -391,6 +391,7 @@ k8s_labels = {
 }
 
 ns_map: dict[str, any] = {
+    "argo-cd": {},
     "cert-manager": {},
     "external-secrets": {},
     "fastapicloud": {},
@@ -464,6 +465,19 @@ for k, sa in sa_map.items():
         ),
         opts=pulumi.ResourceOptions(provider=k8s_provider),
     )
+
+argocd_chart = helm.Chart(
+    "argo-cd",
+    helm.ChartArgs(
+        chart="./helm/charts/argo-cd",
+        dependency_update=True,
+        namespace="argo-cd",
+        values={},
+    ),
+    opts=pulumi.ResourceOptions(
+        provider=k8s_provider
+    ),
+)
 
 prometheus_chart = helm.Chart(
     "prometheus",
