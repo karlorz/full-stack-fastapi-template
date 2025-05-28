@@ -189,6 +189,7 @@
 
 ### Refactors
 
+* ♻️ Improve settings UI. PR [#920](https://github.com/fastapilabs/cloud/pull/920) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add confirmation input to `transfer team`. PR [#908](https://github.com/fastapilabs/cloud/pull/908) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Sort apps, deployments, and teams from most recent to oldest. PR [#910](https://github.com/fastapilabs/cloud/pull/910) by [@alejsdev](https://github.com/alejsdev).
 * 🎨 Tweaks for dark mode support. PR [#903](https://github.com/fastapilabs/cloud/pull/903) by [@alejsdev](https://github.com/alejsdev).
