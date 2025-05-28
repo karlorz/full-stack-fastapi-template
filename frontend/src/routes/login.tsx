@@ -162,7 +162,7 @@ function Login() {
             </Form>
           </CardContent>
           <div className="text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
+            Don't have an account?{" "}
             <RouterLink to="/signup" className="text-primary hover:underline">
               Sign up
             </RouterLink>

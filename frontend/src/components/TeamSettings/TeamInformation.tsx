@@ -29,6 +29,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useCurrentUser } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { fetchTeamBySlug, getCurrentUserRole, handleError } from "@/utils"
+import { Building2, CircleArrowRight, Users } from "lucide-react"
 import DangerZoneAlert from "../Common/DangerZone"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
@@ -84,10 +85,16 @@ const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
 
   return (
     <Suspense fallback={<PendingTeamInformation />}>
-      <div className="pt-10">
+      <div className="pt-10 space-y-10">
         <Card data-testid="team-name">
           <CardHeader>
-            <CardTitle>Team Name</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5" />
+              Team Name
+            </CardTitle>
+            <CardDescription>
+              Update your team’s name as it appears across your workspace.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {currentUserRole === "admin" ? (
@@ -147,13 +154,19 @@ const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
         {!team.is_personal_team && (
           <>
             <Card className="mt-4" data-testid="team-members">
-              <CardHeader>
-                <div className="flex justify-between">
-                  <CardTitle>Team Members</CardTitle>
-                  {currentUserRole === "admin" && (
+              <CardHeader className="relative">
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Team Members
+                </CardTitle>
+                <CardDescription>
+                  Manage active members and pending invitations.
+                </CardDescription>
+                {currentUserRole === "admin" && (
+                  <div className="sm:absolute sm:top-4 sm:right-4 mt-4 sm:mt-0">
                     <NewInvitation teamId={team.id} />
-                  )}
-                </div>
+                  </div>
+                )}
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="active">
@@ -180,15 +193,18 @@ const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
             {isCurrentUserOwner && (
               <Card className="mt-4 gap-0">
                 <CardHeader>
-                  <CardTitle>Transfer Ownership</CardTitle>
-                </CardHeader>
-                <CardContent>
+                  <CardTitle className="flex items-center gap-2">
+                    <CircleArrowRight className="h-5 w-5" />
+                    Transfer Team Ownership
+                  </CardTitle>
                   <CardDescription>
                     You are the{" "}
                     <span className="font-bold">current team owner.</span> You
                     can transfer ownership to a team admin by selecting their
                     name from the list below.
                   </CardDescription>
+                </CardHeader>
+                <CardContent>
                   <TransferTeam adminUsers={adminUsers} team={teamSlug} />
                 </CardContent>
               </Card>

@@ -11,6 +11,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -63,27 +64,30 @@ const ChangePassword = () => {
   }
 
   return (
-    <div className="w-full pt-4">
+    <div className="w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-4 w-full md:w-[28rem]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FormField
               control={form.control}
               name="current_password"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Current Password</FormLabel>
                   <FormControl>
-                    <div className="relative">
+                    <div className="relative ">
                       <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         type="password"
-                        placeholder="Current Password"
+                        placeholder="••••••••"
                         className="pl-10"
                         {...field}
                       />
                     </div>
                   </FormControl>
-                  <FormMessage />
+                  <div className="min-h-[20px] mt-1">
+                    <FormMessage />
+                  </div>
                 </FormItem>
               )}
             />
@@ -93,18 +97,21 @@ const ChangePassword = () => {
               name="new_password"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>New Password</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         type="password"
-                        placeholder="New Password"
+                        placeholder="••••••••"
                         className="pl-10"
                         {...field}
                       />
                     </div>
                   </FormControl>
-                  <FormMessage />
+                  <div className="min-h-[20px] mt-1">
+                    <FormMessage />
+                  </div>
                 </FormItem>
               )}
             />
@@ -114,26 +121,30 @@ const ChangePassword = () => {
               name="confirm_password"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         type="password"
-                        placeholder="Confirm Password"
+                        placeholder="••••••••"
                         className="pl-10"
                         {...field}
                       />
                     </div>
                   </FormControl>
-                  <FormMessage />
+                  <div className="min-h-[20px] mt-1">
+                    <FormMessage />
+                  </div>
                 </FormItem>
               )}
             />
           </div>
-
-          <Button type="submit" className="mt-4" disabled={mutation.isPending}>
-            Save
-          </Button>
+          <div className="flex justify-end mt-4">
+            <Button type="submit" disabled={mutation.isPending}>
+              Save Changes
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

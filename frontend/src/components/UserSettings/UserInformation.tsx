@@ -1,7 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Key, Mail, User } from "lucide-react"
 import { Suspense, useState } from "react"
 import { useForm } from "react-hook-form"
+import { FaGithub } from "react-icons/fa"
+import { FcGoogle } from "react-icons/fc"
 import * as z from "zod"
 
 import { UsersService } from "@/client"
@@ -27,7 +30,9 @@ import { handleError } from "@/utils"
 import DangerZoneAlert from "../Common/DangerZone"
 import UpdateEmailInfo from "../Common/UpdateEmailInfo"
 import PendingUserInformation from "../PendingComponents/PendingUserInformation"
+import { Badge } from "../ui/badge"
 import { Dialog, DialogContent } from "../ui/dialog"
+import { Label } from "../ui/label"
 import ChangePassword from "./ChangePassword"
 import DeleteConfirmation from "./DeleteConfirmation"
 
@@ -100,26 +105,32 @@ const UserInformationContent = () => {
 
   return (
     <>
-      <div className="pt-10">
-        <div className="flex flex-col md:flex-row gap-4">
-          <Card className="flex-1">
-            <CardHeader>
-              <CardTitle>Full Name</CardTitle>
-            </CardHeader>
-            <CardContent>
+      <div className="pt-10 space-y-10">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              Profile Information
+            </CardTitle>
+            <CardDescription>Update your personal information.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row gap-6">
               <Form {...nameForm}>
                 <form
                   onSubmit={nameForm.handleSubmit(onSubmitName)}
-                  className="space-y-4"
+                  className="flex-1"
                 >
                   <FormField
                     control={nameForm.control}
                     name="full_name"
                     render={({ field }) => (
                       <FormItem>
+                        <Label htmlFor="full-name-input">Full Name</Label>
                         <FormControl>
                           <div className="flex gap-2">
                             <Input
+                              id="full-name-input"
                               data-testid="full-name-input"
                               {...field}
                               disabled={!isEditingName}
@@ -156,27 +167,21 @@ const UserInformationContent = () => {
                   />
                 </form>
               </Form>
-            </CardContent>
-          </Card>
-
-          <Card className="flex-1">
-            <CardHeader>
-              <CardTitle>Email</CardTitle>
-            </CardHeader>
-            <CardContent>
               <Form {...emailForm}>
                 <form
                   onSubmit={emailForm.handleSubmit(onSubmitEmail)}
-                  className="space-y-4"
+                  className="flex-1"
                 >
                   <FormField
                     control={emailForm.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
+                        <Label htmlFor="email-input">Email</Label>
                         <FormControl>
                           <div className="flex gap-2">
                             <Input
+                              id="email-input"
                               data-testid="email-input"
                               {...field}
                               disabled={!isEditingEmail}
@@ -213,23 +218,71 @@ const UserInformationContent = () => {
                   />
                 </form>
               </Form>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <Card className="mt-4 gap-0">
+        <Card>
           <CardHeader>
-            <CardTitle>Password</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Key className="h-5 w-5" />
+              Security
+            </CardTitle>
+            <CardDescription>
+              Manage your password and security settings.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <CardDescription>
-              Change your password here. Make sure to use a strong password.
-            </CardDescription>
             <ChangePassword />
           </CardContent>
         </Card>
 
-        <Card className="mt-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5" />
+              Connected Accounts
+            </CardTitle>
+            <CardDescription>
+              Manage your social login connections and integrations.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="flex items-center gap-3">
+                <FaGithub className="h-5 w-5 text-gray-700" />
+                <div>
+                  <h4 className="font-medium">GitHub</h4>
+                  <p className="text-sm text-muted-foreground">Not connected</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-gray-100 text-gray-800">Coming Soon</Badge>
+                <Button variant="outline" size="sm" disabled>
+                  Connect
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="flex items-center gap-3">
+                <FcGoogle className="h-5 w-5" />
+                <div>
+                  <h4 className="font-medium">Google</h4>
+                  <p className="text-sm text-muted-foreground">Not connected</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-gray-100 text-gray-800">Coming Soon</Badge>
+                <Button variant="outline" size="sm" disabled>
+                  Connect
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
           <CardContent>
             <DangerZoneAlert description="Permanently delete your data and everything associated with your account">
               <DeleteConfirmation />

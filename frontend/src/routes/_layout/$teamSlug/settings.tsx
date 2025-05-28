@@ -11,7 +11,7 @@ function TeamSettings() {
   return (
     <div className="w-full p-0">
       <h1 className="text-2xl font-extrabold tracking-tight">Team Settings</h1>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground">
         View and manage settings related to your team.
       </p>
       <TeamInformation teamSlug={teamSlug} />

@@ -79,9 +79,7 @@ function NewApp() {
   return (
     <div className="w-full p-0">
       <h1 className="text-2xl font-extrabold tracking-tight">New App</h1>
-      <p className="text-sm text-muted-foreground">
-        Create a new app in your team.
-      </p>
+      <p className="text-muted-foreground">Create a new app in your team.</p>
 
       <div className="pt-10">
         <Card>

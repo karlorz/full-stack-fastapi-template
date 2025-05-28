@@ -138,10 +138,10 @@ test.describe("Change password successfully", () => {
     await page.goto("/settings")
     await page.getByTestId("user-menu").click()
     await page.getByRole("menuitem", { name: "User Settings" }).click()
-    await page.getByPlaceholder("Current password").fill(password)
-    await page.getByPlaceholder("New Password").fill(NewPassword)
-    await page.getByPlaceholder("Confirm Password").fill(NewPassword)
-    await page.getByRole("button", { name: "Save" }).click()
+    await page.locator('input[name="current_password"]').fill(password)
+    await page.locator('input[name="new_password"]').fill(NewPassword)
+    await page.locator('input[name="confirm_password"]').fill(NewPassword)
+    await page.getByRole("button", { name: "Save Changes" }).click()
     await expect(page.getByText("Password updated successfully")).toBeVisible()
 
     await logOutUser(page)
@@ -155,9 +155,9 @@ test.describe("Change password with invalid data", () => {
   test("Update password with weak passwords", async ({ page }) => {
     const weakPassword = "weak"
     await page.goto("/settings")
-    await page.getByPlaceholder("Current password").fill("changethis")
-    await page.getByPlaceholder("New Password").fill(weakPassword)
-    await page.getByPlaceholder("Confirm Password").fill(weakPassword)
+    await page.locator('input[name="current_password"]').fill("changethis")
+    await page.locator('input[name="new_password"]').fill(weakPassword)
+    await page.locator('input[name="confirm_password"]').fill(weakPassword)
     await expect(
       page.getByText("Password must be at least 8 characters"),
     ).toBeVisible()
@@ -170,20 +170,20 @@ test.describe("Change password with invalid data", () => {
     const newPassword = "newPassword"
     const confirmPassword = "confirmPassword"
     await page.goto("/settings")
-    await page.getByPlaceholder("Current password").fill(currentPassword)
-    await page.getByPlaceholder("New Password").fill(newPassword)
-    await page.getByPlaceholder("Confirm Password").fill(confirmPassword)
-    await page.getByRole("button", { name: "Save" }).click()
+    await page.locator('input[name="current_password"]').fill(currentPassword)
+    await page.locator('input[name="new_password"]').fill(newPassword)
+    await page.locator('input[name="confirm_password"]').fill(confirmPassword)
+    await page.getByRole("button", { name: "Save Changes" }).click()
     await expect(page.getByText("Passwords do not match")).toBeVisible()
   })
 
   test("Current password and new password are the same", async ({ page }) => {
     const currentPassword = "changethis"
     await page.goto("/settings")
-    await page.getByPlaceholder("Current password").fill(currentPassword)
-    await page.getByPlaceholder("New Password").fill(currentPassword)
-    await page.getByPlaceholder("Confirm Password").fill(currentPassword)
-    await page.getByRole("button", { name: "Save" }).click()
+    await page.locator('input[name="current_password"]').fill(currentPassword)
+    await page.locator('input[name="new_password"]').fill(currentPassword)
+    await page.locator('input[name="confirm_password"]').fill(currentPassword)
+    await page.getByRole("button", { name: "Save Changes" }).click()
     await expect(
       page.getByText("New password cannot be the same as the current one"),
     ).toBeVisible()

@@ -54,8 +54,8 @@ function Apps() {
     return (
       <div className="container p-0">
         <div className="mb-10">
-          <h1 className="text-2xl font-bold tracking-tight">Apps</h1>
-          <p className="text-muted-foreground mt-1 mb-10">
+          <h1 className="text-2xl font-extrabold tracking-tight">Apps</h1>
+          <p className="text-muted-foreground">
             View and manage all your applications.
           </p>
         </div>
@@ -99,8 +99,8 @@ function Apps() {
     <div>
       <div className="flex justify-between mb-10">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Apps</h1>
-          <p className="text-muted-foreground mt-1 mb-10">
+          <h1 className="text-2xl font-extrabold tracking-tight">Apps</h1>
+          <p className="text-muted-foreground">
             View and manage all your applications.
           </p>
         </div>
