@@ -450,6 +450,7 @@
 
 ### Internal
 
+* ⬆ Bump sonner from 2.0.3 to 2.0.4 in /frontend. PR [#923](https://github.com/fastapilabs/cloud/pull/923) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ bump @radix-ui/react-separator from 1.1.6 to 1.1.7 in /frontend. PR [#917](https://github.com/fastapilabs/cloud/pull/917) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ bump @radix-ui/react-tooltip from 1.2.6 to 1.2.7 in /frontend. PR [#916](https://github.com/fastapilabs/cloud/pull/916) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ bump @tanstack/router-vite-plugin from 1.120.3 to 1.120.10 in /frontend. PR [#918](https://github.com/fastapilabs/cloud/pull/918) by [@dependabot[bot]](https://github.com/apps/dependabot).
