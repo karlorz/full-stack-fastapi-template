@@ -401,6 +401,7 @@
 
 ### Upgrades
 
+* ⬆ Bump @radix-ui/react-dialog from 1.1.11 to 1.1.14 in /frontend. PR [#986](https://github.com/fastapilabs/cloud/pull/986) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆️ Upgrade @tanstack/react-query-devtools to latest version and add ReactQueryDevTools to the root route. PR [#728](https://github.com/fastapilabs/cloud/pull/728) by [@alejsdev](https://github.com/alejsdev).
 * ⬆️ Update `package-lock.json`. PR [#685](https://github.com/fastapilabs/cloud/pull/685) by [@alejsdev](https://github.com/alejsdev).
 * ⬆️ Upgrade tanstack/react-router. PR [#680](https://github.com/fastapilabs/cloud/pull/680) by [@alejsdev](https://github.com/alejsdev).
