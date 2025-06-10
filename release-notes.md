@@ -401,6 +401,7 @@
 
 ### Upgrades
 
+* ⬆ Bump @tanstack/router-vite-plugin from 1.120.10 to 1.120.20 in /frontend. PR [#989](https://github.com/fastapilabs/cloud/pull/989) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-query from 5.75.7 to 5.80.6 in /frontend. PR [#987](https://github.com/fastapilabs/cloud/pull/987) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-dialog from 1.1.11 to 1.1.14 in /frontend. PR [#986](https://github.com/fastapilabs/cloud/pull/986) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆️ Upgrade @tanstack/react-query-devtools to latest version and add ReactQueryDevTools to the root route. PR [#728](https://github.com/fastapilabs/cloud/pull/728) by [@alejsdev](https://github.com/alejsdev).
