@@ -95,21 +95,23 @@ async def process_message(
 
 
 async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
-    with logfire.span("Receive messages"):
-        # Run in asyncify to not block the event loop
-        messages = await sqs_retry(
-            asyncify(sqs.receive_message),
-            QueueUrl=queue_url,
-            MaxNumberOfMessages=10,
-            WaitTimeSeconds=20,
-        )
+    # Run in asyncify to not block the event loop
+    messages = await sqs_retry(
+        asyncify(sqs.receive_message),
+        QueueUrl=queue_url,
+        MaxNumberOfMessages=10,
+        WaitTimeSeconds=20,
+    )
 
-        # Create an async task group so all messages are processed concurrently
-        try:
-            async with asyncer.create_task_group() as tg:
-                for message in messages.get("Messages", []):
-                    deployment_id = message.get("Body")
-                    receipt_handle = message.get("ReceiptHandle")
+    # Create an async task group so all messages are processed concurrently
+    try:
+        async with asyncer.create_task_group() as tg:
+            for message in messages.get("Messages", []):
+                deployment_id = message.get("Body")
+                receipt_handle = message.get("ReceiptHandle")
+                with logfire.span(
+                    "Handle message {receipt_handle}", receipt_handle=receipt_handle
+                ):
                     if not deployment_id:
                         logfire.error("No deployment_id in message")
                         sentry_sdk.capture_message("No deployment_id in message")
@@ -131,9 +133,9 @@ async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
                         receipt_handle=receipt_handle,
                         client=client,
                     )
-        except Exception as e:
-            logfire.error("Error processing messages: {e}", e=e)
-            sentry_sdk.capture_exception(e)
+    except Exception as e:
+        logfire.error("Error processing messages: {e}", e=e)
+        sentry_sdk.capture_exception(e)
 
 
 async def main() -> None:
