@@ -4,7 +4,9 @@ ENV PYTHONUNBUFFERED=1
 
 # Install Depot CLI
 ENV DEPOT_INSTALL_DIR=/usr/local/bin
-RUN curl -L https://depot.dev/install-cli.sh | sh
+ENV DEPOT_VERSION=2.87.0
+RUN curl -L https://depot.dev/install-cli.sh | sh -s $DEPOT_VERSION
+
 
 # Install uv
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
