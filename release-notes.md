@@ -455,6 +455,7 @@
 
 ### Internal
 
+* 📌 Pin depot to 2.87.0. PR [#992](https://github.com/fastapilabs/cloud/pull/992) by [@patrick91](https://github.com/patrick91).
 * ⬆ Bump node from 20 to 24 in /frontend. PR [#890](https://github.com/fastapilabs/cloud/pull/890) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-dropdown-menu from 2.1.14 to 2.1.15 in /frontend. PR [#925](https://github.com/fastapilabs/cloud/pull/925) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @sentry/vite-plugin from 3.4.0 to 3.5.0 in /frontend. PR [#924](https://github.com/fastapilabs/cloud/pull/924) by [@dependabot[bot]](https://github.com/apps/dependabot).
