@@ -3,14 +3,13 @@ import logging
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Any, ClassVar, Literal, TypedDict
-from urllib.parse import urlencode
+from typing import ClassVar, Literal, TypedDict
 
 import httpx
 from duck import AsyncHTTPRequest
 from pydantic import BaseModel, HttpUrl, TypeAdapter, ValidationError
 
-from fastapi_auth._storage import User
+from fastapi_auth.exceptions import FastAPIAuthException
 from fastapi_auth.utils._pkce import validate_pkce
 from fastapi_auth.utils._response import Response
 
@@ -279,7 +278,14 @@ class OAuth2Provider:
                     error_description="An account with this email already exists.",
                 )
 
-            user = context.accounts_storage.create_user(user_info=user_info)
+            try:
+                user = context.accounts_storage.create_user(user_info=user_info)
+            except FastAPIAuthException as e:
+                return Response.error_redirect(
+                    redirect_uri,
+                    error=e.error,
+                    error_description=e.error_description,
+                )
 
             context.accounts_storage.create_social_account(
                 user_id=user.id,

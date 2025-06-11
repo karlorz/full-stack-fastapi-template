@@ -2,12 +2,14 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID
 
+from fastapi_auth.exceptions import FastAPIAuthException
 from sqlmodel import Session, select
 
 from app import crud
 from app.api.utils.teams import generate_team_slug_name
 from app.core.db import engine
 from app.models import Role, SocialAccount, Team, User, UserTeamLink
+from app.utils import is_signup_allowed
 
 
 class AccountsStorage:
@@ -38,11 +40,19 @@ class AccountsStorage:
             return session.exec(statement).first()
 
     def create_user(self, *, user_info: Any) -> User:
+        email = user_info["email"]
+
         with Session(engine, expire_on_commit=False) as session:
+            if not is_signup_allowed(email, session):
+                raise FastAPIAuthException(
+                    "email_not_invited",
+                    "This email has not yet been invited to join FastAPI Cloud",
+                )
+
             # create user
             user = crud.create_user_without_password(
                 session=session,
-                email=user_info["email"],
+                email=email,
                 full_name=user_info["name"],
                 is_verified=True,
             )

@@ -569,3 +569,43 @@ async def test_updates_the_social_account_if_it_already_exists(
     assert account.social_accounts[0].provider_user_id == "pollo"
     assert account.social_accounts[0].access_token == "test_access_token"
     assert account.social_accounts[0].refresh_token is None
+
+
+async def test_fails_if_the_user_is_not_allowed_to_signup(
+    oauth_provider: OAuth2Provider,
+    context: Context,
+    respx_mock: MockRouter,
+    valid_callback_request: AsyncHTTPRequest,
+    secondary_storage: SecondaryStorage,
+):
+    access_token = "test_access_token"
+
+    data = {
+        "access_token": access_token,
+        "token_type": "Bearer",
+        "expires_in": 3600,
+        "scope": "openid email profile",
+    }
+
+    respx_mock.post(oauth_provider.token_endpoint).mock(
+        return_value=httpx.Response(
+            status_code=200,
+            headers={"Content-Type": "application/www-form-urlencoded"},
+            content=urlencode(data),
+        )
+    )
+
+    respx_mock.get(oauth_provider.user_info_endpoint).mock(
+        return_value=httpx.Response(
+            status_code=200,
+            json={"email": "not-allowed@example.com", "id": "not-allowed"},
+        )
+    )
+
+    response = await oauth_provider.callback(valid_callback_request, context)
+
+    assert response.status_code == 302
+    assert response.headers is not None
+    assert response.headers["Location"] == snapshot(
+        "http://valid-frontend.com/callback?error=email_not_invited&error_description=This+email+has+not+yet+been+invited+to+join+FastAPI+Cloud"
+    )

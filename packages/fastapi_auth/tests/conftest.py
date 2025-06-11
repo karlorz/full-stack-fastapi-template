@@ -8,6 +8,7 @@ from duck.request import AsyncHTTPRequest
 from fastapi_auth._context import Context
 from fastapi_auth._issuer import AuthorizationCodeGrantData, Issuer
 from fastapi_auth._storage import AccountsStorage, SecondaryStorage
+from fastapi_auth.exceptions import FastAPIAuthException
 from fastapi_auth.social_providers.oauth import OAuth2LinkCodeData
 
 pytestmark = pytest.mark.asyncio
@@ -73,6 +74,12 @@ class MemoryAccountsStorage:
     def create_user(self, *, user_info: Any) -> User:
         if user_info["email"] in self.data:
             raise ValueError("User already exists")
+
+        if user_info["email"] == "not-allowed@example.com":
+            raise FastAPIAuthException(
+                "email_not_invited",
+                "This email has not yet been invited to join FastAPI Cloud",
+            )
 
         user = User(id=user_info["id"], email=user_info["email"], social_accounts=[])
 
