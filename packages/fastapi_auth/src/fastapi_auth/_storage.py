@@ -39,7 +39,7 @@ class AccountsStorage(Protocol):
         provider_user_id: str,
     ) -> SocialAccount | None: ...
 
-    def create_user(self, *, user_info: Any) -> User: ...
+    def create_user(self, *, user_info: dict[str, Any]) -> User: ...
 
     def create_social_account(
         self,
@@ -52,6 +52,7 @@ class AccountsStorage(Protocol):
         access_token_expires_at: datetime | None,
         refresh_token_expires_at: datetime | None,
         scope: str | None,
+        user_info: dict[str, Any],
     ) -> SocialAccount: ...
 
     def update_social_account(
@@ -63,4 +64,5 @@ class AccountsStorage(Protocol):
         access_token_expires_at: datetime | None,
         refresh_token_expires_at: datetime | None,
         scope: str | None,
+        user_info: dict[str, Any],
     ) -> SocialAccount: ...

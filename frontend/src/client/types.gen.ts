@@ -178,6 +178,11 @@ export type EnvironmentVariableUpdate = {
   value: string
 }
 
+export type GitHubAccount = {
+  provider_user_id: string
+  provider_username: string
+}
+
 export type HealthCheckResponse = {
   redis: boolean
 }
@@ -332,6 +337,7 @@ export type UserMePublic = {
   full_name: string
   id: string
   personal_team_slug: string
+  github_account: GitHubAccount | null
 }
 
 export type UserPublic = {

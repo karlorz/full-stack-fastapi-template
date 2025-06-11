@@ -103,11 +103,24 @@ class User(UserBase, table=True):
     def personal_team(self) -> "Team | None":
         return next((team for team in self.owned_teams if team.is_personal_team), None)
 
+    @computed_field(return_type="GitHubAccount | None")
+    @hybrid_property
+    def github_account(self) -> "GitHubAccount | None":
+        return next(
+            (
+                account  # type: ignore
+                for account in self.social_accounts
+                if account.provider == "github"
+            ),
+            None,
+        )
+
 
 # Used for the current user
 class UserMePublic(UserBase):
     id: uuid.UUID
     personal_team_slug: str
+    github_account: "GitHubAccount | None"
 
 
 class UserPublic(UserBase):
@@ -495,6 +508,7 @@ class SocialAccount(SQLModel, table=True):
     user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
     provider: str = Field(max_length=255)
     provider_user_id: str = Field(max_length=255)
+    provider_username: str | None = Field(default=None, max_length=255)
     created_at: datetime = Field(
         default_factory=get_datetime_utc,
         sa_type=DateTime(timezone=True),  # type: ignore
@@ -517,3 +531,8 @@ class SocialAccount(SQLModel, table=True):
     )
 
     user: User = Relationship()
+
+
+class GitHubAccount(SQLModel):
+    provider_user_id: str
+    provider_username: str

@@ -265,6 +265,7 @@ class OAuth2Provider:
                 access_token_expires_at=token_response.access_token_expires_at,
                 refresh_token_expires_at=token_response.refresh_token_expires_at,
                 scope=token_response.scope,
+                user_info=user_info,
             )
 
             user = context.accounts_storage.find_user_by_id(social_account.user_id)
@@ -296,6 +297,7 @@ class OAuth2Provider:
                 access_token_expires_at=token_response.access_token_expires_at,
                 refresh_token_expires_at=token_response.refresh_token_expires_at,
                 scope=token_response.scope,
+                user_info=user_info,
             )
 
         code = self._generate_code()
@@ -531,6 +533,7 @@ class OAuth2Provider:
                 access_token_expires_at=token_response.access_token_expires_at,
                 refresh_token_expires_at=token_response.refresh_token_expires_at,
                 scope=token_response.scope,
+                user_info=user_info,
             )
         else:
             context.accounts_storage.create_social_account(
@@ -542,6 +545,7 @@ class OAuth2Provider:
                 access_token_expires_at=token_response.access_token_expires_at,
                 refresh_token_expires_at=token_response.refresh_token_expires_at,
                 scope=token_response.scope,
+                user_info=user_info,
             )
 
         return Response(status_code=200, body='{"message": "Link finalized"}')

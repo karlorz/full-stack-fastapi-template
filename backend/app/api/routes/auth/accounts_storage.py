@@ -39,7 +39,7 @@ class AccountsStorage:
 
             return session.exec(statement).first()
 
-    def create_user(self, *, user_info: Any) -> User:
+    def create_user(self, *, user_info: dict[str, Any]) -> User:
         email = user_info["email"]
 
         with Session(engine, expire_on_commit=False) as session:
@@ -80,6 +80,7 @@ class AccountsStorage:
         access_token_expires_at: datetime | None,
         refresh_token_expires_at: datetime | None,
         scope: str | None,
+        user_info: dict[str, Any],
     ) -> SocialAccount:
         with Session(engine, expire_on_commit=False) as session:
             return crud.create_social_account(
@@ -92,6 +93,7 @@ class AccountsStorage:
                 access_token_expires_at=access_token_expires_at,
                 refresh_token_expires_at=refresh_token_expires_at,
                 scope=scope,
+                user_info=user_info,
             )
 
     def update_social_account(
@@ -103,6 +105,7 @@ class AccountsStorage:
         access_token_expires_at: datetime | None,
         refresh_token_expires_at: datetime | None,
         scope: str | None,
+        user_info: dict[str, Any],
     ) -> SocialAccount:
         with Session(engine, expire_on_commit=False) as session:
             return crud.update_social_account(
@@ -113,4 +116,5 @@ class AccountsStorage:
                 access_token_expires_at=access_token_expires_at,
                 refresh_token_expires_at=refresh_token_expires_at,
                 scope=scope,
+                user_info=user_info,
             )

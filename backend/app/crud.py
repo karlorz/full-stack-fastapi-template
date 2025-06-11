@@ -144,6 +144,7 @@ def create_social_account(
     access_token_expires_at: datetime | None,
     refresh_token_expires_at: datetime | None,
     scope: str | None,
+    user_info: dict[str, Any],
 ) -> SocialAccount:
     db_obj = SocialAccount(
         user_id=user_id,
@@ -154,6 +155,7 @@ def create_social_account(
         access_token_expires_at=access_token_expires_at,
         refresh_token_expires_at=refresh_token_expires_at,
         scope=scope,
+        provider_username=user_info.get("login"),
     )
     session.add(db_obj)
     session.commit()
@@ -171,6 +173,7 @@ def update_social_account(
     access_token_expires_at: datetime | None,
     refresh_token_expires_at: datetime | None,
     scope: str | None,
+    user_info: dict[str, Any],
 ) -> SocialAccount:
     db_obj = session.exec(
         select(SocialAccount).where(SocialAccount.id == social_account_id)
@@ -184,6 +187,7 @@ def update_social_account(
     db_obj.access_token_expires_at = access_token_expires_at
     db_obj.refresh_token_expires_at = refresh_token_expires_at
     db_obj.scope = scope
+    db_obj.provider_username = user_info.get("login")
 
     session.add(db_obj)
     session.commit()

@@ -419,6 +419,7 @@ async def test_fails_if_there_is_user_with_the_same_email_but_different_provider
         access_token_expires_at=None,
         refresh_token_expires_at=None,
         scope=None,
+        user_info={"email": "pollo@example.com", "id": "pollo"},
     )
 
     data = {
@@ -472,6 +473,7 @@ async def test_works_when_there_is_user_with_the_same_email_and_provider(
         access_token_expires_at=None,
         refresh_token_expires_at=None,
         scope=None,
+        user_info={"email": "pollo@example.com", "id": "pollo"},
     )
 
     data = {
@@ -530,6 +532,7 @@ async def test_updates_the_social_account_if_it_already_exists(
         access_token_expires_at=None,
         refresh_token_expires_at=None,
         scope="old_scope",
+        user_info={"email": "pollo@example.com", "id": "pollo"},
     )
 
     data = {

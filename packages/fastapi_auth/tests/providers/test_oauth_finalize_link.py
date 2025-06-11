@@ -261,6 +261,7 @@ async def test_fails_if_account_already_exists_on_another_user(
         refresh_token=None,
         refresh_token_expires_at=None,
         scope=None,
+        user_info={"email": "pollo@example.com", "id": "pollo"},
     )
 
     access_token = "test_access_token"

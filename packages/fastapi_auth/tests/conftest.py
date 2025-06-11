@@ -71,7 +71,7 @@ class MemoryAccountsStorage:
     def find_user_by_id(self, id: Any) -> User | None:
         return self.data.get(id)
 
-    def create_user(self, *, user_info: Any) -> User:
+    def create_user(self, *, user_info: dict[str, Any]) -> User:
         if user_info["email"] in self.data:
             raise ValueError("User already exists")
 
@@ -112,6 +112,7 @@ class MemoryAccountsStorage:
         access_token_expires_at: datetime | None,
         refresh_token_expires_at: datetime | None,
         scope: str | None,
+        user_info: dict[str, Any],
     ) -> SocialAccount:
         if user_id not in self.data:
             raise ValueError("User does not exist")
@@ -145,6 +146,7 @@ class MemoryAccountsStorage:
         access_token_expires_at: datetime | None,
         refresh_token_expires_at: datetime | None,
         scope: str | None,
+        user_info: dict[str, Any],
     ) -> SocialAccount:
         social_account = next(
             (
