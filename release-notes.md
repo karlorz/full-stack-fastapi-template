@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Store GitHub username and expose it in our API. PR [#990](https://github.com/fastapilabs/cloud/pull/990) by [@patrick91](https://github.com/patrick91).
 * ✨ Prevent login via GitHub if not invited. PR [#914](https://github.com/fastapilabs/cloud/pull/914) by [@patrick91](https://github.com/patrick91).
 * ✨ Add support for linking social accounts. PR [#836](https://github.com/fastapilabs/cloud/pull/836) by [@patrick91](https://github.com/patrick91).
 * ✨ Add footer with legal docs and status. PR [#909](https://github.com/fastapilabs/cloud/pull/909) by [@alejsdev](https://github.com/alejsdev).
