@@ -312,7 +312,8 @@ def deploy_to_kubernetes(
     service_name: str,
     full_image_tag: str,
     namespace: str,
-    min_scale: int = 0,
+    # TODO: set to 0 once we debug and improve cold starts
+    min_scale: int = 1,
     env: dict[str, str] | None = None,
     service_account: str | None = None,
     labels: dict[str, str] | None = None,
