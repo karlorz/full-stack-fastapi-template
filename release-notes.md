@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Prevent login via GitHub if not invited. PR [#914](https://github.com/fastapilabs/cloud/pull/914) by [@patrick91](https://github.com/patrick91).
 * ✨ Add support for linking social accounts. PR [#836](https://github.com/fastapilabs/cloud/pull/836) by [@patrick91](https://github.com/patrick91).
 * ✨ Add footer with legal docs and status. PR [#909](https://github.com/fastapilabs/cloud/pull/909) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add feature flag for team creation and update UI accordingly. PR [#868](https://github.com/fastapilabs/cloud/pull/868) by [@alejsdev](https://github.com/alejsdev).
