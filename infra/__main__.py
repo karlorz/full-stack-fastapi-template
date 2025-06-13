@@ -37,6 +37,10 @@ NATS_LOGGING_WRITE_CREDS = get_env_var("NATS_LOGGING_WRITE_CREDS")
 roles = aws.iam.get_roles(name_regex="FastAPILabsPowerUserK8s")
 k8s_role_arn = roles.arns[0]
 
+# AdministratorAccess Role provided by AWS SSO
+administrator_access_roles = aws.iam.get_roles(name_regex="AWSReservedSSO_AdministratorAccess")
+administrator_access_arn = administrator_access_roles.arns[0]
+
 # Create a VPC for the EKS cluster
 eks_vpc = awsx.ec2.Vpc(
     "eks-vpc",
@@ -80,6 +84,17 @@ eks_cluster = eks.Cluster(
     authentication_mode=eks.AuthenticationMode.API_AND_CONFIG_MAP,
     # Add access entries for IAM
     access_entries={
+        "administrator_access_entry": eks.AccessEntryArgs(
+            principal_arn=administrator_access_arn,
+            access_policies={
+                "administrator_access_policy": eks.AccessPolicyAssociationArgs(
+                    access_scope=aws.eks.AccessPolicyAssociationAccessScopeArgs(
+                        type="cluster",
+                    ),
+                    policy_arn="arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy",
+                )
+            },
+        ),
         "fastapilabs_access_entry": eks.AccessEntryArgs(
             principal_arn=k8s_role_arn,
             access_policies={
@@ -466,6 +481,27 @@ for k, sa in sa_map.items():
         opts=pulumi.ResourceOptions(provider=k8s_provider),
     )
 
+# Create the Redis secret that ArgoCD expects
+argocd_redis_secret = k8s.core.v1.Secret(
+    "argocd-redis",
+    metadata=k8s.meta.v1.ObjectMetaArgs(
+        name="argocd-redis",
+        namespace="argo-cd",
+        labels={
+            "app.kubernetes.io/name": "argocd-redis",
+            "app.kubernetes.io/component": "redis",
+            "app.kubernetes.io/part-of": "argocd",
+        }
+    ),
+    string_data={
+        "auth": "argocd-redis-password",
+    },
+    opts=pulumi.ResourceOptions(
+        provider=k8s_provider,
+        depends_on=[ns_map["argo-cd"]["resource"]]
+    ),
+)
+
 argocd_chart = helm.Chart(
     "argo-cd",
     helm.ChartArgs(
@@ -475,7 +511,8 @@ argocd_chart = helm.Chart(
         values={},
     ),
     opts=pulumi.ResourceOptions(
-        provider=k8s_provider
+        provider=k8s_provider,
+        depends_on=[ns_map["argo-cd"]["resource"], argocd_redis_secret]
     ),
 )
 

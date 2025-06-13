@@ -2,8 +2,8 @@
 argo-cd:
   fullnameOverride: argocd
 
-  global:
-    addPrometheusAnnotations: true
+  #global:
+  #  addPrometheusAnnotations: true
 
   # server:
   #   certificate:
