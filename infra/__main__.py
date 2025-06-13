@@ -18,18 +18,39 @@ from pulumi_deployment_workflow.config import (
 )
 import pulumi_kubernetes as k8s
 import pulumi_kubernetes.helm.v4 as helm
-import os
 
 
-def get_env_var(var_name: str) -> str:
-    """Get the environment variable or raise an error if not set."""
-    value = os.environ.get(var_name, "")
-    assert value, f"{var_name} environment variable is not set"
-    return value
+cfg = pulumi.Config()
 
-
-CLOUDFLARE_API_KEY = get_env_var("CLOUDFLARE_API_TOKEN_SSL")
-NATS_LOGGING_WRITE_CREDS = get_env_var("NATS_LOGGING_WRITE_CREDS")
+ALLOW_SIGNUP_TOKEN = cfg.require_secret("fastapicloud_allow_signup_token")
+API_DOMAIN = cfg.require("fastapicloud_api_domain")
+AWS_STS_REGIONAL_ENDPOINTS = "regional"
+# BACKEND_GITHUB_CLIENT_ID = cfg.require("fastapicloud_backend_github_client_id")
+# BACKEND_GITHUB_CLIENT_SECRET = cfg.require_secret("fastapicloud_backend_github_client_secret")
+BACKEND_SECRET_KEY = cfg.require_secret("fastapicloud_secret_key")
+BACKEND_SENTRY_DSN = cfg.require("fastapicloud_backend_sentry_dsn")
+BUILDER_API_KEY = cfg.require("fastapicloud_builder_api_key")
+# BUILDER_SENTRY_DSN = cfg.require("fastapicloud_builder_sentry_dsn")
+CLOUDFLARE_ACCOUNT_ID = cfg.require("fastapicloud_cloudflare_account_id")
+CLOUDFLARE_API_KEY = cfg.require_secret("fastapicloud_cloudflare_api_token_ssl")
+CLOUDFLARE_ZONE_ID = cfg.require("fastapicloud_cloudflare_zone_id")
+EMAILABLE_KEY = cfg.require_secret("fastapicloud_emailable_key")
+LOGFIRE_TOKEN = cfg.require_secret("fastapicloud_logfire_token")
+MESSENGER_SENTRY_DSN = cfg.require("fastapicloud_messenger_sentry_dsn")
+NATS_LOGGING_WRITE_CREDS = cfg.require_secret("fastapicloud_nats_logging_write_creds")
+POSTGRES_DB = cfg.require("fastapicloud_postgres_db")
+POSTGRES_PASSWORD = cfg.require_secret("fastapicloud_postgres_password")
+POSTGRES_PORT = cfg.require("fastapicloud_postgres_port")
+POSTGRES_SERVER = cfg.require("fastapicloud_postgres_server")
+POSTGRES_SSL_ENABLED = cfg.require("fastapicloud_postgres_ssl_enabled")
+POSTGRES_USER = cfg.require("fastapicloud_postgres_user")
+POSTHOG_API_KEY = cfg.require("fastapicloud_posthog_api_key")
+SMTP_HOST = cfg.require("fastapicloud_smtp_host")
+SMTP_PASSWORD = cfg.require_secret("fastapicloud_smtp_password")
+SMTP_PORT = cfg.require("fastapicloud_smtp_port")
+SMTP_SSL = cfg.require("fastapicloud_smtp_ssl")
+SMTP_TLS = cfg.require("fastapicloud_smtp_tls")
+SMTP_USER = cfg.require_secret("fastapicloud_smtp_user")
 
 ### AWS Resources ###
 
@@ -571,7 +592,7 @@ external_secrets_chart = helm.Chart(
 
 cloudflare_credentials_secret = aws.ssm.Parameter("cloudflare-credentials",
     name="cloudflare-credentials",
-    type=aws.ssm.ParameterType.STRING,
+    type=aws.ssm.ParameterType.SECURE_STRING,
     value=CLOUDFLARE_API_KEY)
 
 cert_manager_chart = helm.Chart(
@@ -599,7 +620,7 @@ cert_manager_chart = helm.Chart(
 
 synadia_credentials_secret = aws.ssm.Parameter("synadia-credentials",
     name="synadia-credentials",
-    type=aws.ssm.ParameterType.STRING,
+    type=aws.ssm.ParameterType.SECURE_STRING,
     value=NATS_LOGGING_WRITE_CREDS)
 
 vector_chart = helm.Chart(
@@ -629,6 +650,46 @@ vector_chart = helm.Chart(
         provider=k8s_provider,
     ),
 )
+
+fastapicloud_secrets: dict[str, any] = {
+    "ALLOW_SIGNUP_TOKEN": ALLOW_SIGNUP_TOKEN,
+    "API_DOMAIN": API_DOMAIN,
+    "AWS_REGION": region,
+    "AWS_ROLE_ARN": fastapicloud_iam_role,
+    "AWS_STS_REGIONAL_ENDPOINTS": AWS_STS_REGIONAL_ENDPOINTS,
+    # TODO:
+    # "BACKEND_GITHUB_CLIENT_ID": BACKEND_GITHUB_CLIENT_ID,
+    # "BACKEND_GITHUB_CLIENT_SECRET": BACKEND_GITHUB_CLIENT_SECRET,
+    "BACKEND_SECRET_KEY": BACKEND_SECRET_KEY,
+    "BACKEND_SENTRY_DSN": BACKEND_SENTRY_DSN,
+    "BUILDER_API_KEY": BUILDER_API_KEY,
+    "CLOUDFLARE_ACCOUNT_ID": CLOUDFLARE_ACCOUNT_ID,
+    # "CLOUDFLARE_API_KEY": CLOUDFLARE_API_KEY, # ssm.Parameter already set above
+    "CLOUDFLARE_ZONE_ID": CLOUDFLARE_ZONE_ID,
+    "DEPLOYMENTS_BUCKET_NAME": s3.deployments_bucket.bucket,
+    "EMAILABLE_KEY": EMAILABLE_KEY,
+    "LOGFIRE_TOKEN": LOGFIRE_TOKEN,
+    # "NATS_LOGGING_WRITE_CREDS": NATS_LOGGING_WRITE_CREDS, # ssm.Parameter already set above
+    "POSTGRES_DB": POSTGRES_DB,
+    "POSTGRES_PASSWORD": POSTGRES_PASSWORD,
+    "POSTGRES_PORT": POSTGRES_PORT,
+    "POSTGRES_SERVER": POSTGRES_SERVER,
+    "POSTGRES_SSL_ENABLED": POSTGRES_SSL_ENABLED,
+    "POSTGRES_USER": POSTGRES_USER,
+    "POSTHOG_API_KEY": POSTHOG_API_KEY,
+    "REDIS_SERVER": redis_backend.cache_nodes[0].address,
+    "SMTP_HOST": SMTP_HOST,
+    "SMTP_PASSWORD": SMTP_PASSWORD,
+    "SMTP_PORT": SMTP_PORT,
+    "SMTP_SSL": SMTP_SSL,
+    "SMTP_TLS": SMTP_TLS,
+}
+for k, secret in fastapicloud_secrets.items():
+    k = f"FASTAPICLOUD_{k}"
+    aws.ssm.Parameter(k.lower(),
+        name=k,
+        type=aws.ssm.ParameterType.SECURE_STRING,
+        value=str(secret))
 
 # Export values to use elsewhere
 pulumi.export("kubeconfig_data", eks_cluster.kubeconfig)

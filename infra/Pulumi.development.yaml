@@ -6,3 +6,46 @@ config:
   k8s-cluster:max_cluster_size: "6"
   k8s-cluster:min_cluster_size: "3"
   k8s-cluster:vpc_network_cidr: 10.0.0.0/16
+  k8s-cluster:fastapicloud_allow_signup_token:
+    secure: AAABAEK9K0ORHxmcd5jwU/S4MV/1RruZKQPWokCwS1DTWQoPdjLHwiQakQaQp0DkD2GYfSVrwWnrEloEt84by52Vxi57b8Xt7lTUZA==
+  k8s-cluster:fastapicloud_api_domain: "api.fastapicloud.site"
+  k8s-cluster:fastapicloud_backend_sentry_dsn:
+    secure: AAABAObva7tXFIe2y8zoCgFvdKW5FRebOcvG4K81H0/RhJTvT03UxVWVkzo5NThxdWtFBlRgeC4DfgtWPE9/AKocitLVOHY78XPjB7fcrJHee/Rn5CZb9vt40nviyDNUZ9eoOLOoBmInnLgLSpIygRGLvFkPXUlOgIKZdZK6vQ==
+  k8s-cluster:fastapicloud_builder_api_key:
+    secure: AAABAP5ZS3AHskl01c9HJlBklNg1oubVdsEZPvTtQ63S6TKXuI6CNtom1bAMYIvsd0LQDtih7XX72Uch1MPzf60corh9tSlAmHuqsQ==
+  k8s-cluster:fastapicloud_builder_sentry_dsn:
+    secure: AAABACh6xGtrHEjraOv7tTCBac5tHH2RUxmsmtsf+av1tXkaJ63nmvpbTLYL37nLfhj32+3KE1d5K03fa50CHLusXbhjlRy5BkOjaHqhDy5wGEzte7Yyl54/fGkYAyUvFR2rV7w4L8EiQTbqmmotOf9SrPCpCyJHKHRcIALiVQ==
+  k8s-cluster:fastapicloud_cloudflare_account_id: 41ebb51429ef1839d2933c1a93b1163f
+  k8s-cluster:fastapicloud_cloudflare_api_token_ssl:
+    secure: AAABALPAJnmfhVe4Ia9mbikxG9Olp814Nw2EZMHPBLGWW3Azm126h19IEJEjBXZDLaJFVdtwzoKPfR82CShlAQyAKu6BVu8r
+  k8s-cluster:fastapicloud_cloudflare_zone_id: 2e8024f1e1e2efa6adb31b23091b51ed
+  k8s-cluster:fastapicloud_emailable_key:
+    secure: AAABACSmIxoHVV3hGoh8i1v6p8argASdmGUERJgxteRbQajZqH0xWtbiHlKAh4VEJSoyWDzFKWYj
+  k8s-cluster:fastapicloud_logfire_token:
+    secure: AAABAEDlMV8IO+GtqI9t9557VukqfnJ38wl/RVINJQF/FkAzrxsehmW/BMIPdoNhbdQOP2ce1yi71PTu7SVrSTZkRj4zu41hr3h4gQ==
+  k8s-cluster:fastapicloud_messenger_sentry_dsn:
+    secure: AAABALWEjRQW0PjoGD8o7swiTV1xEi8z870ofFdPVtOJxPvUzoEc6SrAA7vlpoldxykxDrDoNGnJIQnNLhFX/7MLEh9cJHVYstINGwft/j0v5LMraw/0vQkDf0Ej1WaQibXf343bmOB+Rx7Q4nwToQgdaboFvweZxfbXTsQd6g==
+  k8s-cluster:fastapicloud_nats_logging_write_creds:
+    secure: AAABAGuvn5jSRUsoI09GGshPR0JjJbk3G97zErRgVGgrUh43dLRJmmdJi6EoRP5Or4L9kcgJP/RCIpRofKACI5SjrE/d+rR0+URBSKmEVPSGy7CefLOnODZAI+FLTwVU20fFi6Cdzy2gh9dkv4SqY+2aWZ91XxobM2lOUkd1eBCUwhRgKXls+PoeiDRuFwIUY7fhxitjK1uDQEU0HdEJpiklk+0FCrxMPQWE0Fh5ioQbxn6BqzF+t2z7puKuujTMAl3KDZRc79tqssZcscYiWGANPBrQXZLmgKSv5hBFmMENP5il6gsh+Y9jGoT2v2FqEsWADUz/wz3CganXnI2ETvtQJ1mpVWKMR6Pp9jPh26UVWlbHh8zXSKFQqcDfQErJZ9NCCOiEXW5umGUlew2QgfNAE2ZOeoBiA1JQieZT2anqDTqXWtiMCV2N3bD+79euGoGS2xQZuNTEM+hcOUsAhqiva9gRMxVfNgwqLXaCmzERiljk3aYdlHU0SER+If/JMPyBzJEkDecI1B6NeVLhv/w0qzouobOE2FH0R6G66HftlAePVL3U3pCkiikVRlMt+Jw1AITIe9APeX7HBQhac7e28BmEsdU+bjLeZ5vjvIj+keW6scnGTkRUuggAsR20sRvmNT2SjtX7rOK2h00A5FqaTC91YvyqiWJPpy0qFVMFWTCO6oEDUL+Yua7DFJC9sZ0ZpUTkF6G7t6M83vdvp0mm38PQ2ZI1RACRUpYynNb5+dfxcdbRvqniVeZXxIXa1AwzxDs5l0dvwaNOmu4j/bBnTvNcH9h/ZZel9vQmKrXaju7r+7qZaygfYsddTgy2+S9OyOHFW0xkLF0Gqe2s+X6kEGZ96TEOSvghPYjPF+ZOA8kJGLBE1eFa6E6H+04nJt7ne0VtfwrC0AsjB8qJX3cgEi6C3XZyt/swY8zakpjETm+dmNeIE5Lfk0GKTRiYU+2GIZ5bviqgZhQnqubJt/+NqHflfSWVhpSc8CKhBON1CLaXb1P7v1vu+aBU6ehKGpa2swJhwz58wg9dMUTBJ7I8Frx4tFho0tyLGzuhXerhlB+YaZmOjQn0X69VY8E3Ky/EnU889sig/kh7MyMORS2vERaxPBoqIwniiMTTNGvAA/XieZlGEeTxURnprVEjspvubWTksB43E7qIYZKzfweDKosYu1hadHgsdvdE9EKvZo3UF/9M2SovUSG5ZVXKUnh92gZX0ImyvTF90CSygU0I3CnQ5420URSh+EhxczBKVIAXhc9M9OnoVrApyf9Iv0Ce2rYd/QfrzXNjpRUFL1uISKLwi9ldQTmvb8TqCU+JRVZ5XBwhzmfUSGyfQd53Iz7Pdv/hK3sczruNoJt7CpcyTSPzMSixa+tLv1+to6WNRd2vBNhURiMeVtyCFAxCQw94e8jGSwOYOdxAu8AOHmjS0XL4gn6X/iUmt/D4kELhc96lIyx4YC0UInh7S8v1h0BXN7V7UU6P1Vz1YCxDHWXf0A==
+  k8s-cluster:fastapicloud_postgres_db: "neondb"
+  k8s-cluster:fastapicloud_postgres_password:
+    secure: AAABAFaE1+qK0AoZLlUh4H7oatYpGxYgt+TaBBmV+VQKpawigK+SHoTt2js=
+  k8s-cluster:fastapicloud_postgres_port:
+    secure: AAABACfoFG2Awvb8+7WEx8D0S7VplVq8rwfY17kynpfhSMhL
+  k8s-cluster:fastapicloud_postgres_server:
+    secure: AAABAA32VHvtbCGz/igK6tTRy23jOjqlzC7nKrAKbQ/l9Erjw/OjdGJcNDLFK3jOX+ajJg88pJfql4//EtltZYhVdVxHoxRL+hGxlbhuOrPNvoKWk9HI
+  k8s-cluster:fastapicloud_postgres_ssl_enabled: "True"
+  k8s-cluster:fastapicloud_postgres_user:
+    secure: AAABAJeU4QGvnOr1Ka8zLanJQlfUlc4jpmVQHZh1JMliUj3KwLTcmFiMnWE=
+  k8s-cluster:fastapicloud_posthog_api_key:
+    secure: AAABAELfV0qyN61MIhKf6qtsyaIOgIoKIvKZxWATafyrZyoUyLbHoj7X+QOjgEuha29fcK8RgYVEWuKMU8t9yLkGvdQrp5AciqiHjLsp1g==
+  k8s-cluster:fastapicloud_secret_key:
+    secure: AAABAF4YIt0oVhcq5XOj98HkMeBJ7gEtwh9MYnwFaf6XReYWNRvLT6jfG1JZFJ6qNP0GQeB97In4m4vEs1IuY3CZ+S9nFDeAb4tRUw==
+  k8s-cluster:fastapicloud_smtp_host: "smtp.mailgun.org"
+  k8s-cluster:fastapicloud_smtp_password:
+    secure: AAABAKOdjuhChqzYGPo2fYgYuygjnzFtACbv+j41A4lgf9cX44zFnfAbM6ubkpwNqfljY9mNObmwGwfa7dGtVTaq5GnkO9e+IygE1gB/YokHfw==
+  k8s-cluster:fastapicloud_smtp_port: "587"
+  k8s-cluster:fastapicloud_smtp_user:
+    secure: AAABACNkiPI7dVAowESdaNkjmN1dQUc4pD+i1vc/4XnQXto8GzDiw2BUUdwdgemlC0bRYyI3OyEZSV7YSvz0
+  k8s-cluster:fastapicloud_smtp_tls: "True"
+  k8s-cluster:fastapicloud_smtp_ssl: "False"
