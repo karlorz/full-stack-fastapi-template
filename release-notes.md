@@ -459,6 +459,7 @@
 
 ### Internal
 
+* ⬆ Bump @tanstack/react-query-devtools from 5.75.7 to 5.80.7 in /frontend. PR [#1012](https://github.com/fastapilabs/cloud/pull/1012) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @types/node from 22.15.3 to 24.0.1 in /frontend. PR [#1011](https://github.com/fastapilabs/cloud/pull/1011) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump axios from 1.9.0 to 1.10.0 in /frontend. PR [#1013](https://github.com/fastapilabs/cloud/pull/1013) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 📌 Pin depot to 2.87.0. PR [#992](https://github.com/fastapilabs/cloud/pull/992) by [@patrick91](https://github.com/patrick91).
