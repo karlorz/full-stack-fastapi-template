@@ -48,16 +48,11 @@ const NoMatchingAccount = ({
           data-testid="no-matching-account"
         >
           You are not the invited user for this invitation.
-          <div className="flex-col py-2">
-            <div>
-              Logged in as:{" "}
-              <span className="font-bold">{currentUser?.email}</span>
-            </div>
-            <div>
-              Invited user:{" "}
-              <span className="font-bold">{invitation?.email}</span>
-            </div>
-          </div>
+          <br />
+          Logged in as: <span className="font-bold">{currentUser?.email}</span>
+          <br />
+          Invited user: <span className="font-bold">{invitation?.email}</span>
+          <br />
           Please switch to the correct account to accept the invitation.
         </DialogDescription>
         <DialogFooter className="gap-3">

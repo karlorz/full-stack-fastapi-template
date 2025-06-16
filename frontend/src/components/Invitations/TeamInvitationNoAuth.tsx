@@ -41,18 +41,13 @@ const TeamInvitationNoAuth = ({
             className="space-y-4"
             data-testid="noauth-invitation"
           >
-            <div>
-              <p>
-                Hi <span className="font-bold">{invitation?.email}</span>,
-              </p>
-              <p className="mt-4">
-                You have been invited by{" "}
-                <span className="font-bold">{invitation?.sender.email}</span> to
-                join <span className="font-bold">{invitation?.team.name}</span>.
-                Please log in, and if you're not registered yet, sign up to
-                accept the invitation.
-              </p>
-            </div>
+            Hi <span className="font-bold">{invitation?.email}</span>, You have
+            been invited by{" "}
+            <span className="font-bold">{invitation?.sender.email}</span> to
+            join <span className="font-bold">{invitation?.team.name}</span>.
+            <br />
+            Please log in, and if you're not registered yet, sign up to accept
+            the invitation.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

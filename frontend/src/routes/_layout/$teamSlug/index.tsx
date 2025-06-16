@@ -10,7 +10,13 @@ import QuickStart from "@/components/Common/QuickStart"
 import PendingDashboard from "@/components/PendingComponents/PendingDashboard"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { useCurrentUser } from "@/hooks/useAuth"
 import { getDashboardDataQueryOptions } from "@/queries/apps"
 import { getTeamQueryOptions } from "@/queries/teams"
@@ -115,23 +121,22 @@ function Dashboard() {
 
       {/* Quick Actions */}
       {totalApps === 0 && (
-        <div>
-          <h2 className="text-2xl font-bold mb-6">Quick Actions</h2>
-          <Button variant="outline" className="h-auto py-4 justify-start">
+        <Card className="w-xs">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Rocket className="h-5 w-5" />
+              Quickstart
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="flex flex-col items-start">
-              <div className="flex items-center gap-2 mb-1">
-                <Rocket className="h-5 w-5 text-foreground" />
-                <span className="font-medium">Quickstart</span>
-              </div>
-              <div className="flex justify-between gap-4 w-full">
-                <span className="text-sm text-muted-foreground py-2">
-                  Deploy your first app
-                </span>
+              <CardDescription className="flex justify-between items-center w-full">
+                Deploy your first app.
                 <QuickStart />
-              </div>
+              </CardDescription>
             </div>
-          </Button>
-        </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   )
