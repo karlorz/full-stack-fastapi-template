@@ -459,6 +459,7 @@
 
 ### Internal
 
+* ⬆ Bump @types/node from 22.15.3 to 24.0.1 in /frontend. PR [#1011](https://github.com/fastapilabs/cloud/pull/1011) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump axios from 1.9.0 to 1.10.0 in /frontend. PR [#1013](https://github.com/fastapilabs/cloud/pull/1013) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 📌 Pin depot to 2.87.0. PR [#992](https://github.com/fastapilabs/cloud/pull/992) by [@patrick91](https://github.com/patrick91).
 * ⬆ Bump node from 20 to 24 in /frontend. PR [#890](https://github.com/fastapilabs/cloud/pull/890) by [@dependabot[bot]](https://github.com/apps/dependabot).
