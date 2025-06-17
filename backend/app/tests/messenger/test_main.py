@@ -6,6 +6,7 @@ import pytest
 
 from app.core.config import CommonSettings
 from app.messenger import _process_messages
+from app.models import MessengerMessageBody
 
 common_settings = CommonSettings.get_settings()
 
@@ -52,7 +53,9 @@ async def test_process_messages_with_messages(
         QueueUrl=queue_url, MaxNumberOfMessages=10, WaitTimeSeconds=20
     )
     mock_process_message.assert_called_once_with(
-        deployment_id="123", receipt_handle="456", client=ANY
+        message=MessengerMessageBody(deployment_id="123"),
+        receipt_handle="456",
+        client=ANY,
     )
 
 

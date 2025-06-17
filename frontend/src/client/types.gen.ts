@@ -497,11 +497,11 @@ export type DeploymentsUploadDeploymentArtifactData = {
 
 export type DeploymentsUploadDeploymentArtifactResponse = DeploymentUploadOut
 
-export type DeploymentsRedeployDeploymentData = {
+export type DeploymentsRedeployData = {
   deploymentId: string
 }
 
-export type DeploymentsRedeployDeploymentResponse = unknown
+export type DeploymentsRedeployResponse = unknown
 
 export type DeploymentsUploadCompleteData = {
   deploymentId: string

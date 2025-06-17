@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import AfterValidator, EmailStr, computed_field
 from sqlalchemy import DateTime
@@ -499,7 +499,7 @@ class WaitingListUserPublic(WaitingListUserBase):
     updated_at: datetime
 
 
-class SendDeploy(SQLModel):
+class DeployMessage(SQLModel):
     deployment_id: uuid.UUID
 
 
@@ -536,3 +536,8 @@ class SocialAccount(SQLModel, table=True):
 class GitHubAccount(SQLModel):
     provider_user_id: str
     provider_username: str
+
+
+class MessengerMessageBody(SQLModel):
+    type: Literal["build", "redeploy"] = "build"
+    deployment_id: str

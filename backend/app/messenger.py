@@ -1,14 +1,17 @@
 import asyncer
 import botocore
+import botocore.exceptions
 import httpx
 import logfire
 import sentry_sdk
 import stamina
 from asyncer import asyncify
+from pydantic import ValidationError
 from stamina import AsyncRetryingCaller
 
 from app.aws_utils import get_sqs_client
 from app.core.config import CommonSettings, MessengerSettings
+from app.models import MessengerMessageBody
 
 common_settings = CommonSettings.get_settings()
 messenger_settings = MessengerSettings.get_settings()
@@ -68,18 +71,27 @@ sqs_retry = AsyncRetryingCaller().on(retry_only_on_sqs_errors)
 
 @stamina.retry(on=retry_only_on_real_errors)
 async def process_message(
-    *, deployment_id: str, receipt_handle: str, client: httpx.AsyncClient
+    *, message: MessengerMessageBody, receipt_handle: str, client: httpx.AsyncClient
 ) -> None:
     with logfire.span(
-        "Process message, deployment_id: {deployment_id}", deployment_id=deployment_id
+        "Process message, deployment_id: {deployment_id}",
+        deployment_id=message.deployment_id,
     ):
         timeout = httpx.Timeout(connect=5, read=600, write=5, pool=5)
-        response = await client.post(
-            f"{common_settings.BUILDER_API_URL}/apps/depot/build",
-            headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
-            json={"deployment_id": str(deployment_id)},
-            timeout=timeout,
-        )
+        if message.type == "build":
+            response = await client.post(
+                f"{common_settings.BUILDER_API_URL}/apps/depot/build",
+                headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
+                json={"deployment_id": str(message.deployment_id)},
+                timeout=timeout,
+            )
+        elif message.type == "redeploy":
+            response = await client.post(
+                f"{common_settings.BUILDER_API_URL}/deploy",
+                headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
+                json={"deployment_id": str(message.deployment_id)},
+                timeout=timeout,
+            )
         logfire.info(
             "Response status code: {status_code}", status_code=response.status_code
         )
@@ -107,14 +119,14 @@ async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
     try:
         async with asyncer.create_task_group() as tg:
             for message in messages.get("Messages", []):
-                deployment_id = message.get("Body")
+                raw_body = message.get("Body")
                 receipt_handle = message.get("ReceiptHandle")
                 with logfire.span(
                     "Handle message {receipt_handle}", receipt_handle=receipt_handle
                 ):
-                    if not deployment_id:
-                        logfire.error("No deployment_id in message")
-                        sentry_sdk.capture_message("No deployment_id in message")
+                    if not raw_body:
+                        logfire.error("No body in message")
+                        sentry_sdk.capture_message("No body in message")
                         if receipt_handle:
                             logfire.info("Delete message")
                             sqs.delete_message(
@@ -122,14 +134,28 @@ async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
                             )
                         continue
                     assert receipt_handle
+                    try:
+                        # New messages
+                        message_body = MessengerMessageBody.model_validate_json(
+                            raw_body
+                        )
+                    except ValidationError as e:
+                        # Old messages
+                        # TODO: remove this once it's deployed in all environments
+                        logfire.error(
+                            "Validation error for message: {raw_body}, error: {e}",
+                            raw_body=raw_body,
+                            e=e,
+                        )
+                        message_body = MessengerMessageBody(deployment_id=raw_body)
                     # Schedule processing this message concurrently. By the end of the
                     # async with block for the task group it would have finished
                     logfire.info(
                         "Schedule process deployment_id: {deployment_id}",
-                        deployment_id=deployment_id,
+                        deployment_id=message_body.deployment_id,
                     )
                     tg.soonify(process_message)(
-                        deployment_id=deployment_id,
+                        message=message_body,
                         receipt_handle=receipt_handle,
                         client=client,
                     )

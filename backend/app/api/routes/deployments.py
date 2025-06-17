@@ -3,7 +3,6 @@ import uuid
 from collections.abc import AsyncGenerator
 from typing import Annotated, Any, Literal
 
-import httpx
 import logfire
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
 from fastapi.responses import StreamingResponse
@@ -31,6 +30,7 @@ from app.models import (
     DeploymentStatus,
     DeploymentUploadOut,
     Message,
+    MessengerMessageBody,
 )
 from app.nats import (
     JetStreamDep,
@@ -38,6 +38,7 @@ from app.nats import (
     get_jetstream_deployment_logs_subject,
     get_logs,
 )
+from app.utils import get_datetime_utc
 
 sqs = get_sqs_client()
 router = APIRouter()
@@ -251,7 +252,7 @@ def upload_deployment_artifact(
 
 
 @router.post("/deployments/{deployment_id}/redeploy")
-def redeploy_deployment(
+def redeploy(
     session: SessionDep,
     current_user: CurrentUser,
     deployment_id: uuid.UUID,
@@ -259,7 +260,6 @@ def redeploy_deployment(
     """
     Send to builder to redeploy the deployment.
     """
-    common_settings = CommonSettings.get_settings()
     deployment = session.exec(
         select(Deployment).where(Deployment.id == deployment_id)
     ).first()
@@ -278,19 +278,16 @@ def redeploy_deployment(
             status_code=404, detail="Team not found for the current user"
         )
 
-    response = httpx.post(
-        f"{common_settings.BUILDER_API_URL}/send/deploy",
-        headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
-        json={"deployment_id": str(deployment_id)},
-    )
+    deployment.status = DeploymentStatus.deploying
+    deployment.updated_at = get_datetime_utc()
+    session.commit()
 
-    if response.status_code != 200:
-        try:
-            data = response.json()
-            detail = data.get("detail", "Unknown error")
-        except Exception:
-            detail = "Unknown error"
-        raise HTTPException(status_code=500, detail=detail)
+    message = MessengerMessageBody(type="redeploy", deployment_id=str(deployment.id))
+
+    queue_url = sqs.get_queue_url(
+        QueueName=CommonSettings.get_settings().BUILDER_QUEUE_NAME
+    )["QueueUrl"]
+    sqs.send_message(QueueUrl=queue_url, MessageBody=message.model_dump_json())
 
     return Message(message="OK")
 
@@ -325,10 +322,11 @@ def upload_complete(
     deployment.status = DeploymentStatus.ready_for_build
     session.commit()
 
+    message = MessengerMessageBody(type="build", deployment_id=str(deployment.id))
     queue_url = sqs.get_queue_url(
         QueueName=CommonSettings.get_settings().BUILDER_QUEUE_NAME
     )["QueueUrl"]
-    sqs.send_message(QueueUrl=queue_url, MessageBody=str(deployment_id))
+    sqs.send_message(QueueUrl=queue_url, MessageBody=message.model_dump_json())
 
     return Message(message="OK")
 

@@ -34,8 +34,8 @@ import type {
   DeploymentsReadDeploymentResponse,
   DeploymentsReadDeploymentsData,
   DeploymentsReadDeploymentsResponse,
-  DeploymentsRedeployDeploymentData,
-  DeploymentsRedeployDeploymentResponse,
+  DeploymentsRedeployData,
+  DeploymentsRedeployResponse,
   DeploymentsUploadCompleteData,
   DeploymentsUploadCompleteResponse,
   DeploymentsUploadDeploymentArtifactData,
@@ -553,16 +553,16 @@ export class DeploymentsService {
   }
 
   /**
-   * Redeploy Deployment
+   * Redeploy
    * Send to builder to redeploy the deployment.
    * @param data The data for the request.
    * @param data.deploymentId
    * @returns unknown Successful Response
    * @throws ApiError
    */
-  public static redeployDeployment(
-    data: DeploymentsRedeployDeploymentData,
-  ): CancelablePromise<DeploymentsRedeployDeploymentResponse> {
+  public static redeploy(
+    data: DeploymentsRedeployData,
+  ): CancelablePromise<DeploymentsRedeployResponse> {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/v1/deployments/{deployment_id}/redeploy",

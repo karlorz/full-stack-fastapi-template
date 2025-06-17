@@ -7,6 +7,7 @@ from botocore.exceptions import ClientError
 
 from app.core.config import CommonSettings
 from app.messenger import process_message
+from app.models import MessengerMessageBody
 
 common_settings = CommonSettings.get_settings()
 
@@ -24,7 +25,7 @@ async def test_process_message_success(
     )
 
     await process_message(
-        deployment_id=deployment_id,
+        message=MessengerMessageBody(deployment_id=deployment_id, type="build"),
         receipt_handle=receipt_handle,
         client=httpx.AsyncClient(),
     )
@@ -45,7 +46,9 @@ async def test_does_not_delete_message_on_http_error(
 
     with pytest.raises(httpx.HTTPStatusError):
         await process_message(
-            deployment_id="123", receipt_handle="456", client=httpx.AsyncClient()
+            message=MessengerMessageBody(deployment_id="123", type="build"),
+            receipt_handle="456",
+            client=httpx.AsyncClient(),
         )
 
     mock_sqs.delete_message.assert_not_called()
@@ -61,7 +64,9 @@ async def test_process_message_retries_on_http_error(
     ).mock(side_effect=[httpx.Response(500), httpx.Response(200)])
 
     await process_message(
-        deployment_id="123", receipt_handle="456", client=httpx.AsyncClient()
+        message=MessengerMessageBody(deployment_id="123", type="build"),
+        receipt_handle="456",
+        client=httpx.AsyncClient(),
     )
 
     mock_sqs.delete_message.assert_called_once_with(
@@ -89,7 +94,9 @@ async def test_process_message_retries_on_sqs_error(
     ]
 
     await process_message(
-        deployment_id="123", receipt_handle="456", client=httpx.AsyncClient()
+        message=MessengerMessageBody(deployment_id="123", type="build"),
+        receipt_handle="456",
+        client=httpx.AsyncClient(),
     )
 
     mock_sqs.delete_message.assert_called_with(

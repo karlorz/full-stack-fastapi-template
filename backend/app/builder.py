@@ -7,6 +7,7 @@ import tempfile
 import uuid
 from collections.abc import Generator, Iterator
 from contextlib import contextmanager
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Literal
@@ -47,10 +48,11 @@ from app.models import (
     App,
     Deployment,
     DeploymentStatus,
+    DeployMessage,
     EnvironmentVariable,
     Message,
-    SendDeploy,
 )
+from app.utils import get_datetime_utc
 
 builder_settings = BuilderSettings.get_settings()
 common_settings = CommonSettings.get_settings()
@@ -318,7 +320,9 @@ def deploy_to_kubernetes(
     service_account: str | None = None,
     labels: dict[str, str] | None = None,
     public: bool = True,
+    last_updated: datetime | None = None,
 ) -> None:
+    use_last_updated = last_updated or get_datetime_utc()
     use_env = env or {}
     use_labels = labels or {}
     knative_service: dict[str, Any] = {
@@ -333,6 +337,10 @@ def deploy_to_kubernetes(
                 "metadata": {
                     "annotations": {
                         "autoscaling.knative.dev/minScale": str(min_scale),
+                        # As this annotation will be different, it will trigger a
+                        # new Knative Revision, deploying again, getting the latest
+                        # external configs (ConfigMap, Secret, etc.)
+                        "last-updated": use_last_updated.isoformat(),
                     },
                     "labels": use_labels,
                 },
@@ -664,6 +672,7 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
                     "fastapicloud_app": deployment_with_team.app.slug,
                     "fastapicloud_deployment": str(deployment_with_team.id),
                 },
+                last_updated=deployment_with_team.updated_at,
             )
 
         # Update status to success
@@ -680,7 +689,7 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
 
 
 @app.post("/apps/depot/build", dependencies=[Depends(validate_api_key)])
-def app_depot_build(message: SendDeploy, session: SessionDep) -> Message:
+def app_depot_build(message: DeployMessage, session: SessionDep) -> Message:
     smt = select(Deployment).where(Deployment.id == message.deployment_id)
     deployment = session.exec(smt).first()
     if not deployment:
@@ -697,9 +706,9 @@ def app_depot_build(message: SendDeploy, session: SessionDep) -> Message:
     return Message(message="OK")
 
 
-@app.post("/send/deploy", dependencies=[Depends(validate_api_key)])
-def send_deploy(
-    message: SendDeploy,
+@app.post("/deploy", dependencies=[Depends(validate_api_key)])
+def deploy(
+    message: DeployMessage,
     session: SessionDep,
 ) -> Message:
     deployment = session.exec(
@@ -723,7 +732,11 @@ def send_deploy(
             "fastapicloud_app": deployment.app.slug,
             "fastapicloud_deployment": str(deployment.id),
         },
+        last_updated=deployment.updated_at,
     )
+    deployment.status = DeploymentStatus.success
+    session.add(deployment)
+    session.commit()
 
     return Message(message="OK")
 
