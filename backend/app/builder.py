@@ -1,12 +1,10 @@
-import json
 import os
 import shutil
 import subprocess
 import tarfile
 import tempfile
 import uuid
-from collections.abc import Generator, Iterator
-from contextlib import contextmanager
+from collections.abc import Generator
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -107,6 +105,22 @@ logfire.instrument_fastapi(app)
 logfire.instrument_httpx()
 logfire.instrument_sqlalchemy(engine=engine)
 logfire.instrument_redis()
+
+
+def get_ecr_token() -> str:
+    """
+    Get the ECR token for the current AWS account.
+    """
+    try:
+        response = ecr.get_authorization_token()
+    except NoCredentialsError:
+        print("Credentials not available")
+        raise
+
+    token = response["authorizationData"][0].get("authorizationToken")
+    assert token, "No authorization token available"
+
+    return token
 
 
 def create_namespace_by_team(namespace: str) -> None:
@@ -381,32 +395,6 @@ def deploy_to_kubernetes(
     )
 
 
-@contextmanager
-def docker_login() -> Iterator[None]:
-    if builder_settings.ECR_REGISTRY_URL:
-        try:
-            # Get ECR authorization token
-            response = ecr.get_authorization_token()
-        except NoCredentialsError:
-            print("Credentials not available")
-            raise
-        token = response["authorizationData"][0].get("authorizationToken")
-        assert token, "No authorization token available"
-        docker_config_path = Path.home().joinpath(".docker/config.json")
-        docker_config_path.parent.mkdir(parents=True, exist_ok=True)
-        docker_config_path.write_text(
-            json.dumps({"auths": {builder_settings.ECR_REGISTRY_URL: {"auth": token}}})
-        )
-        try:
-            yield
-        finally:
-            # After finishing with this build, remove the Docker config file
-            # login should be done again for the next build
-            docker_config_path.unlink()
-    else:
-        yield
-
-
 def repository_exists(repository_name: str) -> bool:
     try:
         response = ecr.describe_repositories(repositoryNames=[repository_name])
@@ -469,34 +457,12 @@ def download_and_extract_tar(
                     )
 
 
-def depot_build_exec(
-    *,
-    context_dir: Path,
-    image_full_name: str,
-    project_id: str,
-    build_id: str,
-    build_token: str,
+def _subprocess_stream(
+    command: list[str], env: dict[str, str] | None = None
 ) -> Generator[str, None, None]:
-    push_load_flag = (
-        "--load" if CommonSettings.get_settings().ENVIRONMENT == "local" else "--push"
-    )
-
     process = subprocess.Popen(
-        [
-            "depot",
-            "build",
-            push_load_flag,
-            "-t",
-            image_full_name,
-            str(context_dir),
-        ],
-        env={
-            **os.environ,
-            "DEPOT_BUILD_ID": build_id,
-            "DEPOT_TOKEN": build_token,
-            "DEPOT_PROJECT_ID": project_id,
-            "DEPOT_NO_SUMMARY_LINK": "true",
-        },
+        command,
+        env=env,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
@@ -504,7 +470,6 @@ def depot_build_exec(
         universal_newlines=True,
     )
 
-    # depot build sends build logs to stderr
     if process.stderr:
         yield from process.stderr
 
@@ -513,6 +478,46 @@ def depot_build_exec(
 
     if status is not None and status != 0:
         raise subprocess.CalledProcessError(status, process.args)
+
+
+def depot_build_exec(
+    *,
+    context_dir: Path,
+    image_full_name: str,
+    project_id: str,
+    build_id: str,
+    build_token: str,
+) -> Generator[str, None, None]:
+    additional_flags = (
+        ["--load"]
+        if CommonSettings.get_settings().ENVIRONMENT == "local"
+        else ["--push"]
+    )
+
+    env = {
+        **os.environ,
+        "DEPOT_BUILD_ID": build_id,
+        "DEPOT_TOKEN": build_token,
+        "DEPOT_PROJECT_ID": project_id,
+        "DEPOT_NO_SUMMARY_LINK": "true",
+    }
+
+    if CommonSettings.get_settings().ENVIRONMENT != "local":
+        ecr_token = get_ecr_token()
+
+        env["DEPOT_PUSH_REGISTRY_AUTH"] = ecr_token
+
+    yield from _subprocess_stream(
+        [
+            "depot",
+            "build",
+            *additional_flags,
+            "-t",
+            image_full_name,
+            str(context_dir),
+        ],
+        env=env,
+    )
 
 
 def retry_on_grpc_error(exc: Exception) -> bool:
@@ -549,32 +554,27 @@ def build_and_push_docker_image(
 ) -> Generator[str, None, None]:
     depot_settings = DepotSettings.get_settings()
 
-    # Docker login
-    with docker_login():
-        build_request = _create_build(depot_client.build(), depot_settings)
+    build_request = _create_build(depot_client.build(), depot_settings)
 
-        print(f"Build request created: {build_request.build_id}")
+    print(f"Build request created: {build_request.build_id}")
 
-        yield from depot_build_exec(
-            context_dir=Path(docker_context_path),
-            image_full_name=full_image_tag,
-            # TODO: one project per app
-            project_id=depot_settings.DEPOT_PROJECT_ID,
-            build_id=build_request.build_id,
-            build_token=build_request.build_token,
+    yield from depot_build_exec(
+        context_dir=Path(docker_context_path),
+        image_full_name=full_image_tag,
+        # TODO: one project per app
+        project_id=depot_settings.DEPOT_PROJECT_ID,
+        build_id=build_request.build_id,
+        build_token=build_request.build_token,
+    )
+
+    if common_settings.ENVIRONMENT == "local":
+        # Save to local registry so Knative can use it
+        local_result = subprocess.run(
+            ["docker", "push", full_image_tag],
+            check=True,
+            capture_output=True,
         )
-        if common_settings.ENVIRONMENT == "local":
-            # Save to local registry so Knative can use it
-            local_result = subprocess.run(
-                [
-                    "docker",
-                    "push",
-                    full_image_tag,
-                ],
-                check=True,
-                capture_output=True,
-            )
-            print(local_result.stdout)
+        print(local_result.stdout)
 
 
 def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:

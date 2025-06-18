@@ -4,7 +4,7 @@ ENV PYTHONUNBUFFERED=1
 
 # Install Depot CLI
 ENV DEPOT_INSTALL_DIR=/usr/local/bin
-ENV DEPOT_VERSION=2.87.0
+ENV DEPOT_VERSION=2.88.0
 RUN curl -L https://depot.dev/install-cli.sh | sh -s $DEPOT_VERSION
 
 
