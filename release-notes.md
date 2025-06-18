@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Use DEPOT_PUSH_REGISTRY_AUTH to pass auth credentials to depot. PR [#993](https://github.com/fastapilabs/cloud/pull/993) by [@patrick91](https://github.com/patrick91).
 * ✨ Add support for triggering a redeploy from the API. PR [#1016](https://github.com/fastapilabs/cloud/pull/1016) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Create logfire spans for each message. PR [#1004](https://github.com/fastapilabs/cloud/pull/1004) by [@patrick91](https://github.com/patrick91).
 * ✨ Store GitHub username and expose it in our API. PR [#990](https://github.com/fastapilabs/cloud/pull/990) by [@patrick91](https://github.com/patrick91).
