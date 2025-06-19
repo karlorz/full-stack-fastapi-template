@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 import pulumi
 import pulumi_aws as aws
@@ -18,9 +17,12 @@ from pulumi_deployment_workflow.config import (
 )
 import pulumi_kubernetes as k8s
 import pulumi_kubernetes.helm.v4 as helm
+from components.argocd import ArgoCDComponent, ArgoCDConfig
+import json
 
-
+# Get configuration
 cfg = pulumi.Config()
+INFRA_DOMAIN = cfg.require("infra_domain")
 
 ALLOW_SIGNUP_TOKEN = cfg.require_secret("fastapicloud_allow_signup_token")
 API_DOMAIN = cfg.require("fastapicloud_api_domain")
@@ -52,6 +54,11 @@ SMTP_SSL = cfg.require("fastapicloud_smtp_ssl")
 SMTP_TLS = cfg.require("fastapicloud_smtp_tls")
 SMTP_USER = cfg.require_secret("fastapicloud_smtp_user")
 
+# ArgoCD OAuth configuration
+argocd_config = pulumi.Config("argocd")
+ARGOCD_GOOGLE_CLIENT_ID = argocd_config.require_secret("google_client_id")
+ARGOCD_GOOGLE_CLIENT_SECRET = argocd_config.require_secret("google_client_secret")
+
 ### AWS Resources ###
 
 # Role generated automatically by AWS from permission set from AWS IAM Identity Center
@@ -59,7 +66,9 @@ roles = aws.iam.get_roles(name_regex="FastAPILabsPowerUserK8s")
 k8s_role_arn = roles.arns[0]
 
 # AdministratorAccess Role provided by AWS SSO
-administrator_access_roles = aws.iam.get_roles(name_regex="AWSReservedSSO_AdministratorAccess")
+administrator_access_roles = aws.iam.get_roles(
+    name_regex="AWSReservedSSO_AdministratorAccess"
+)
 administrator_access_arn = administrator_access_roles.arns[0]
 
 # Create a VPC for the EKS cluster
@@ -127,7 +136,7 @@ eks_cluster = eks.Cluster(
                     # policy_arn="arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy",
                 )
             },
-        )
+        ),
     },
     # OIDC provider for IAM
     create_oidc_provider=True,
@@ -426,8 +435,12 @@ k8s_labels = {
     "app.kubernetes.io/environment": stack_name,
 }
 
+default_tags = {
+    "ManagedBy": "pulumi",
+    "Environment": stack_name,
+}
+
 ns_map: dict[str, any] = {
-    "argo-cd": {},
     "cert-manager": {},
     "external-secrets": {},
     "fastapicloud": {},
@@ -502,60 +515,26 @@ for k, sa in sa_map.items():
         opts=pulumi.ResourceOptions(provider=k8s_provider),
     )
 
-# Create the Redis secret that ArgoCD expects
-argocd_redis_secret = k8s.core.v1.Secret(
-    "argocd-redis",
-    metadata=k8s.meta.v1.ObjectMetaArgs(
-        name="argocd-redis",
-        namespace="argo-cd",
-        labels={
-            "app.kubernetes.io/name": "argocd-redis",
-            "app.kubernetes.io/component": "redis",
-            "app.kubernetes.io/part-of": "argocd",
-        }
-    ),
-    string_data={
-        "auth": "argocd-redis-password",
-    },
-    opts=pulumi.ResourceOptions(
-        provider=k8s_provider,
-        depends_on=[ns_map["argo-cd"]["resource"]]
-    ),
-)
-
-argocd_chart = helm.Chart(
-    "argo-cd",
-    helm.ChartArgs(
-        chart="./helm/charts/argo-cd",
-        dependency_update=True,
-        namespace="argo-cd",
-        values={},
-    ),
-    opts=pulumi.ResourceOptions(
-        provider=k8s_provider,
-        depends_on=[ns_map["argo-cd"]["resource"], argocd_redis_secret]
-    ),
-)
-
-prometheus_chart = helm.Chart(
-    "prometheus",
-    helm.ChartArgs(
-        chart="./helm/charts/prometheus",
-        dependency_update=True,
-        namespace="monitoring",
-        # values={},
-    ),
-    opts=pulumi.ResourceOptions(
-        provider=k8s_provider,
-    ),
-)
+# prometheus_chart = helm.Chart(
+#     "prometheus",
+#     helm.ChartArgs(
+#         chart="./helm/charts/prometheus",
+#         dependency_update=True,
+#         namespace="monitoring",
+#         # values={},
+#     ),
+#     opts=pulumi.ResourceOptions(
+#         provider=k8s_provider,
+#     ),
+# )
 
 # Ensure the Helm chart configuration includes the correct service account annotations
-external_secrets_sa_name="external-secrets"
-external_secrets_sa_namespace="external-secrets"
-external_secrets_parameter_store_kind="ClusterSecretStore"
-external_secrets_parameter_store_name="external-parameter-store"
-external_secrets_enabled=True
+external_secrets_sa_name = "external-secrets"
+external_secrets_sa_namespace = "external-secrets"
+external_secrets_parameter_store_kind = "ClusterSecretStore"
+external_secrets_parameter_store_name = "external-parameter-store"
+external_secrets_enabled = True
+
 external_secrets_chart = helm.Chart(
     "external-secrets",
     helm.ChartArgs(
@@ -590,10 +569,12 @@ external_secrets_chart = helm.Chart(
     opts=pulumi.ResourceOptions(provider=k8s_provider),
 )
 
-cloudflare_credentials_secret = aws.ssm.Parameter("cloudflare-credentials",
+cloudflare_credentials_secret = aws.ssm.Parameter(
+    "cloudflare-credentials",
     name="cloudflare-credentials",
     type=aws.ssm.ParameterType.SECURE_STRING,
-    value=CLOUDFLARE_API_KEY)
+    value=CLOUDFLARE_API_KEY,
+)
 
 cert_manager_chart = helm.Chart(
     "cert-manager",
@@ -618,10 +599,51 @@ cert_manager_chart = helm.Chart(
     ),
 )
 
-synadia_credentials_secret = aws.ssm.Parameter("synadia-credentials",
+
+synadia_credentials_secret = aws.ssm.Parameter(
+    "synadia-credentials",
     name="synadia-credentials",
     type=aws.ssm.ParameterType.SECURE_STRING,
-    value=NATS_LOGGING_WRITE_CREDS)
+    value=NATS_LOGGING_WRITE_CREDS,
+)
+
+# Admin emails allowed to access infrastructure services
+allowed_emails = [
+    "sebastian@fastapilabs.com",
+    "bento@fastapilabs.com",
+    "martin@fastapilabs.com",
+    "patrick@fastapilabs.com",
+]
+
+# Create wildcard ACM certificate for infrastructure domain
+argocd_certificate = aws.acm.Certificate(
+    "argocd-certificate",
+    domain_name=f"*.{INFRA_DOMAIN}",
+    validation_method="DNS",
+    tags={
+        "Name": f"wildcard-{INFRA_DOMAIN}-{stack_name}",
+        "Environment": stack_name,
+    },
+)
+
+# Deploy ArgoCD component
+argocd_component = ArgoCDComponent(
+    "argocd",
+    config=ArgoCDConfig(
+        domain=f"argocd.{INFRA_DOMAIN}",
+        namespace="argo-cd",
+        enable_oauth=True,
+        google_client_id=ARGOCD_GOOGLE_CLIENT_ID,
+        google_client_secret=ARGOCD_GOOGLE_CLIENT_SECRET,
+        acm_certificate_arn=argocd_certificate.arn,
+        admin_emails=allowed_emails,
+    ),
+    k8s_provider=k8s_provider,
+    tags=default_tags,
+    opts=pulumi.ResourceOptions(
+        depends_on=[cert_manager_chart],
+    ),
+)
 
 vector_chart = helm.Chart(
     "vector",
@@ -686,13 +708,12 @@ fastapicloud_secrets: dict[str, any] = {
 }
 for k, secret in fastapicloud_secrets.items():
     k = f"FASTAPICLOUD_{k}"
-    aws.ssm.Parameter(k.lower(),
-        name=k,
-        type=aws.ssm.ParameterType.SECURE_STRING,
-        value=str(secret))
+    aws.ssm.Parameter(
+        k.lower(), name=k, type=aws.ssm.ParameterType.SECURE_STRING, value=secret
+    )
 
 # Export values to use elsewhere
-pulumi.export("kubeconfig_data", eks_cluster.kubeconfig)
+# pulumi.export("kubeconfig_data", eks_cluster.kubeconfig)
 pulumi.export("cluster_name", cluster_name)
 pulumi.export("vpc_id", eks_vpc.vpc_id)
 pulumi.export("k8s_role_arn", k8s_role_arn)
@@ -711,3 +732,5 @@ pulumi.export("fastapicloud_iam_role_arn", fastapicloud_iam_role.arn)
 pulumi.export("ecr_iam_role_arn", ecr_iam_role.arn)
 pulumi.export("builder_queue_name", sqs.builder_queue.name)
 pulumi.export("external_secrets_iam_role_arn", external_secrets_iam_role.arn)
+pulumi.export("argocd_url", f"https://argocd.{INFRA_DOMAIN}")
+pulumi.export("infra_domain", INFRA_DOMAIN)

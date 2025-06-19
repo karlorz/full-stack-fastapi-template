@@ -49,3 +49,8 @@ config:
     secure: AAABACNkiPI7dVAowESdaNkjmN1dQUc4pD+i1vc/4XnQXto8GzDiw2BUUdwdgemlC0bRYyI3OyEZSV7YSvz0
   k8s-cluster:fastapicloud_smtp_tls: "True"
   k8s-cluster:fastapicloud_smtp_ssl: "False"
+  k8s-cluster:infra_domain: dev.madinfra.wtf
+  argocd:google_client_id:
+    secure: AAABAARH273nS5OHLRF8DTXtORhjQxvS/gl3CG/MV7Mgqdy21HDcvdrYQRanmCFKEiWZNXwx4NX9MHVgW47ztnHFChRtP5rxQwHh6TtJOV732WOwFJvy9K6Z9r948O7xwZgs/vK+ow==
+  argocd:google_client_secret:
+    secure: AAABALPdZ+u0jXDYyRiD4BjxBNh3R5yWpU+VrLXFWYLrcpC0qWAdVxyGXLfxdqJYiWTkVUJqg5OTIkUbXiOmwV2Oqg==

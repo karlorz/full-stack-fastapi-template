@@ -33,7 +33,7 @@ prometheus:
   serviceAccounts:
     server:
       create: true
-  
+
   ## Monitors ConfigMap changes and POSTs to a URL
   ## Ref: https://github.com/jimmidyson/configmap-reload
   ##
@@ -81,7 +81,7 @@ prometheus:
     # extraVolumeMounts:
     #   - name: mongo-atlas-example-secret-mount
     #     mountPath: /etc/secrets/mongoatlas/example
-    #     # subPath: 
+    #     # subPath:
     #     readOnly: true
     extraVolumeMounts: []
 
@@ -206,14 +206,14 @@ prometheus:
 
   ## Prometheus server ConfigMap entries
   ##
-  serverFiles:    
+  serverFiles:
     ## Records configuration
     ## Ref: https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/
     prometheus.yml:
       rule_files:
         - /etc/config/recording_rules.yml
         - /etc/config/alerting_rules.yml
-    
+
       scrape_configs:
         - job_name: prometheus
           static_configs:
@@ -224,7 +224,7 @@ prometheus:
         - job_name: 'kubernetes-apiservers'
           kubernetes_sd_configs:
             - role: endpoints
-          scheme: https 
+          scheme: https
           tls_config:
             ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
           bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
@@ -572,7 +572,7 @@ kube-state-metrics:
   metricAllowlist: []
   metricDenylist: []
 
-  # selectorOverride: 
+  # selectorOverride:
   #   - argocd.argoproj.io/instance: argocd.argoproj
 
   metricLabelsAllowlist:
@@ -685,7 +685,7 @@ prometheus-node-exporter:
     requests:
       cpu: 100m
       memory: 30Mi
-  
+
   # Expose the service to the host network
   hostNetwork: true
 
@@ -696,7 +696,7 @@ prometheus-node-exporter:
   hostRootFsMount:
     enabled: true
     mountPropagation: HostToContainer
-  
+
   rbac:
     ## If true, create & use Pod Security Policy resources
     pspEnabled: false
