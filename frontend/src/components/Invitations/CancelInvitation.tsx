@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Trash } from "lucide-react"
 
-import { type InvitationsData, InvitationsService } from "@/client/services"
+import { InvitationsService } from "@/client/sdk.gen"
+import type { InvitationsDeleteInvitationData } from "@/client/types.gen"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -18,7 +19,7 @@ const CancelInvitation = ({ id }: { id: string }) => {
   const { showSuccessToast, showErrorToast } = useCustomToast()
 
   const mutation = useMutation({
-    mutationFn: (data: InvitationsData["DeleteInvitation"]) =>
+    mutationFn: (data: InvitationsDeleteInvitationData) =>
       InvitationsService.deleteInvitation(data),
     onSuccess: () => {
       showSuccessToast("The invitation was cancelled")

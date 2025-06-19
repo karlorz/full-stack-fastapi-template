@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { Suspense } from "react"
 
 import type { TeamPublic } from "@/client"
-import { InvitationsService } from "@/client/services"
+import { InvitationsService } from "@/client/sdk.gen"
 import { DataTable } from "../Common/DataTable"
 import EmptyState from "../Common/EmptyState"
 import { PendingTable } from "../PendingComponents/PendingTable"
