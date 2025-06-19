@@ -360,6 +360,14 @@ repository_messenger = aws.ecr.Repository(
     },
 )
 
+repository_posthog_proxy = aws.ecr.Repository(
+    "repository-posthog-proxy",
+    name="fastapicloud-posthog-proxy",
+    image_scanning_configuration={
+        "scan_on_push": True,
+    },
+)
+
 # Create an IAM Role for the Service Account
 external_secrets_iam_role = aws.iam.Role(
     "external-secrets-role",
