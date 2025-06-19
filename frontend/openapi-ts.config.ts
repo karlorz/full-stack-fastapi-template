@@ -1,16 +1,17 @@
 import { defineConfig } from "@hey-api/openapi-ts"
 
 export default defineConfig({
-  client: "legacy/axios",
   input: "./openapi.json",
   output: "./src/client",
 
   plugins: [
+    "legacy/axios",
     {
       name: "@hey-api/sdk",
       // NOTE: this doesn't allow tree-shaking
       asClass: true,
       operationId: true,
+      classNameBuilder: "{{name}}Service",
       methodNameBuilder: (operation) => {
         // @ts-ignore
         let name: string = operation.name
