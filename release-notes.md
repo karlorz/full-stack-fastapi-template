@@ -427,6 +427,7 @@
 
 ### Infrastructure
 
+* ♻️ Refactor ArgoCD as pulumi component. PR [#1005](https://github.com/fastapilabs/cloud/pull/1005) by [@malvex](https://github.com/malvex).
 * ⚙️ Set fastapicloud secrets with AWS SSM Parameter Store. PR [#915](https://github.com/fastapilabs/cloud/pull/915) by [@siryur](https://github.com/siryur).
 * ✨ Add ArgoCD Helm Chart. PR [#913](https://github.com/fastapilabs/cloud/pull/913) by [@malvex](https://github.com/malvex).
 * ✨ Migrate fastapicloud deployment with dedicated helm chart. PR [#912](https://github.com/fastapilabs/cloud/pull/912) by [@siryur](https://github.com/siryur).
