@@ -43,7 +43,7 @@ async def test_returns_error_response_if_grant_type_is_missing(
     )
 
 
-async def test_we_only_support_authorization_code_grant_type(
+async def test_returns_error_for_unsupported_grant_type(
     issuer: Issuer, context: Context
 ):
     response = await issuer.token(
@@ -56,8 +56,8 @@ async def test_we_only_support_authorization_code_grant_type(
     assert response.status_code == 400
     assert response.json() == snapshot(
         {
-            "error": "invalid_request",
-            "error_description": "We only support authorization_code grant type at this time",
+            "error": "unsupported_grant_type",
+            "error_description": "Grant type 'client_credentials' is not supported",
         }
     )
 
@@ -211,5 +211,126 @@ async def test_returns_token_if_code_is_valid(
             "refresh_token": None,
             "refresh_token_expires_in": None,
             "scope": "",
+        }
+    )
+
+
+async def test_password_grant_missing_username(issuer: Issuer, context: Context):
+    response = await issuer.token(
+        AsyncHTTPRequest.from_form_data(
+            data={
+                "grant_type": "password",
+                "client_id": "test",
+                "password": "password123",
+            }
+        ),
+        context,
+    )
+    assert response.status_code == 400
+    assert response.json() == snapshot(
+        {"error": "invalid_request", "error_description": "Username is required"}
+    )
+
+
+async def test_password_grant_missing_password(issuer: Issuer, context: Context):
+    response = await issuer.token(
+        AsyncHTTPRequest.from_form_data(
+            data={
+                "grant_type": "password",
+                "client_id": "test",
+                "username": "test@example.com",
+            }
+        ),
+        context,
+    )
+    assert response.status_code == 400
+    assert response.json() == snapshot(
+        {"error": "invalid_request", "error_description": "Password is required"}
+    )
+
+
+async def test_password_grant_invalid_credentials(issuer: Issuer, context: Context):
+    response = await issuer.token(
+        AsyncHTTPRequest.from_form_data(
+            data={
+                "grant_type": "password",
+                "client_id": "test",
+                "username": "test@example.com",
+                "password": "wrong_password",
+            }
+        ),
+        context,
+    )
+    assert response.status_code == 400
+    assert response.json() == snapshot(
+        {"error": "invalid_grant", "error_description": "Invalid username or password"}
+    )
+
+
+async def test_password_grant_invalid_username(issuer: Issuer, context: Context):
+    response = await issuer.token(
+        AsyncHTTPRequest.from_form_data(
+            data={
+                "grant_type": "password",
+                "client_id": "test",
+                "username": "nonexistent@example.com",
+                "password": "password123",
+            }
+        ),
+        context,
+    )
+    assert response.status_code == 400
+    assert response.json() == snapshot(
+        {"error": "invalid_grant", "error_description": "Invalid username or password"}
+    )
+
+
+async def test_password_grant_success(issuer: Issuer, context: Context):
+    response = await issuer.token(
+        AsyncHTTPRequest.from_form_data(
+            data={
+                "grant_type": "password",
+                "client_id": "test",
+                "username": "test@example.com",
+                "password": "password123",
+            }
+        ),
+        context,
+    )
+    assert response.status_code == 200
+    assert response.json() == snapshot(
+        {
+            "access_token": "token-test",
+            "token_type": "Bearer",
+            "expires_in": 0,
+            "refresh_token": None,
+            "refresh_token_expires_in": None,
+            "scope": "",
+        }
+    )
+
+
+async def test_password_grant_with_scope(issuer: Issuer, context: Context):
+    response = await issuer.token(
+        AsyncHTTPRequest.from_form_data(
+            data={
+                "grant_type": "password",
+                "client_id": "test",
+                "username": "test@example.com",
+                "password": "password123",
+                "scope": "read write",
+            }
+        ),
+        context,
+    )
+    assert response.status_code == 200
+    assert response.json() == snapshot(
+        {
+            "access_token": "token-test",
+            "token_type": "Bearer",
+            "expires_in": 0,
+            "refresh_token": None,
+            "refresh_token_expires_in": None,
+            "scope": "read write",
         }
     )

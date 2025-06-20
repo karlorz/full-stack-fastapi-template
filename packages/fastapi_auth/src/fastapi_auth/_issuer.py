@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from typing import Any, Literal, Required, TypedDict
 
 from duck import AsyncHTTPRequest, Response
+from passlib.context import CryptContext
 from pydantic import AwareDatetime, BaseModel, ValidationError
 
 from fastapi_auth.models.oauth_token_response import TokenResponse
@@ -10,6 +11,9 @@ from fastapi_auth.utils._pkce import validate_pkce
 
 from ._context import Context
 from ._route import Route
+from ._storage import User
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 TokenErrorType = Literal[
     "invalid_request",
@@ -86,10 +90,12 @@ class Issuer:
 
         if grant_type == "authorization_code":
             return self._authorization_code_grant(form_data, context)
+        elif grant_type == "password":
+            return self._password_grant(form_data, context)
 
         return self._error_response(
-            "invalid_request",
-            "We only support authorization_code grant type at this time",
+            "unsupported_grant_type",
+            f"Grant type '{grant_type}' is not supported",
         )
 
     def _authorization_code_grant(self, form_data: Any, context: Context) -> Response:
@@ -173,6 +179,53 @@ class Issuer:
             refresh_token_expires_in=None,
             # TODO: figure out scopes
             scope="",
+        )
+
+        headers = {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store",
+            "Pragma": "no-cache",
+        }
+
+        return Response(
+            status_code=200,
+            body=token_data.model_dump_json(),
+            headers=headers,
+            cookies=[],
+        )
+
+    def validate_password(self, user: User, password: str) -> bool:
+        if user.hashed_password is None:
+            return False
+
+        return pwd_context.verify(password, user.hashed_password)
+
+    def _password_grant(self, form_data: Any, context: Context) -> Response:
+        username = form_data.get("username")
+        password = form_data.get("password")
+        scope = form_data.get("scope")
+
+        if not username:
+            return self._error_response("invalid_request", "Username is required")
+
+        if not password:
+            return self._error_response("invalid_request", "Password is required")
+
+        user = context.accounts_storage.find_user_by_email(username)
+
+        if not user or not self.validate_password(user, password):
+            return self._error_response("invalid_grant", "Invalid username or password")
+
+        # Create access token
+        token, expires_in = context.create_token(str(user.id))
+
+        token_data = TokenResponse(
+            access_token=token,
+            token_type="Bearer",
+            expires_in=expires_in,
+            refresh_token=None,
+            refresh_token_expires_in=None,
+            scope=scope or "",
         )
 
         headers = {

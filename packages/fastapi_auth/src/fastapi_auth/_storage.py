@@ -14,6 +14,7 @@ class SocialAccount(Protocol):
 class User(Protocol):
     id: Any
     email: str
+    hashed_password: str | None
 
     @property
     def social_accounts(self) -> Iterable[SocialAccount]: ...

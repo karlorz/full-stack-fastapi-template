@@ -1,7 +1,7 @@
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Any, Iterable
+from typing import Any
 
 import pytest
 from duck.request import AsyncHTTPRequest
@@ -10,8 +10,11 @@ from fastapi_auth._issuer import AuthorizationCodeGrantData, Issuer
 from fastapi_auth._storage import AccountsStorage, SecondaryStorage
 from fastapi_auth.exceptions import FastAPIAuthException
 from fastapi_auth.social_providers.oauth import OAuth2LinkCodeData
+from passlib.context import CryptContext
 
 pytestmark = pytest.mark.asyncio
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 @dataclass
@@ -31,7 +34,8 @@ class SocialAccount:
 class User:
     id: str
     email: str
-    social_accounts: Iterable[SocialAccount]
+    hashed_password: str
+    social_accounts: list[SocialAccount]
 
 
 class MemoryStorage(SecondaryStorage):
@@ -54,14 +58,8 @@ class MemoryAccountsStorage:
             "test": User(
                 id="test",
                 email="test@example.com",
-                social_accounts=[
-                    SocialAccount(
-                        id=str(uuid.uuid4()),
-                        user_id="test",
-                        provider="test",
-                        provider_user_id="test",
-                    )
-                ],
+                hashed_password=pwd_context.hash("password123"),
+                social_accounts=[],
             )
         }
 
@@ -72,7 +70,7 @@ class MemoryAccountsStorage:
         return self.data.get(id)
 
     def create_user(self, *, user_info: dict[str, Any]) -> User:
-        if user_info["email"] in self.data:
+        if self.find_user_by_email(user_info["email"]) is not None:
             raise ValueError("User already exists")
 
         if user_info["email"] == "not-allowed@example.com":
@@ -81,7 +79,12 @@ class MemoryAccountsStorage:
                 "This email has not yet been invited to join FastAPI Cloud",
             )
 
-        user = User(id=user_info["id"], email=user_info["email"], social_accounts=[])
+        user = User(
+            id=user_info["id"],
+            email=user_info["email"],
+            hashed_password=pwd_context.hash(user_info.get("password", "")),
+            social_accounts=[],
+        )
 
         self.data[user_info["id"]] = user
 
@@ -182,13 +185,7 @@ def accounts_storage() -> AccountsStorage:
 
 @pytest.fixture
 def logged_in_user(accounts_storage: MemoryAccountsStorage) -> User:
-    return accounts_storage.create_user(
-        user_info={
-            "id": "test",
-            "email": "test@example.com",
-            "social_accounts": [],
-        }
-    )
+    return accounts_storage.find_user_by_email("test@example.com")
 
 
 @pytest.fixture
