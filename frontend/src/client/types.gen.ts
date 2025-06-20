@@ -33,6 +33,37 @@ export type AppsPublic = {
   count: number
 }
 
+export type AuthorizationCodeGrantRequest = {
+  /**
+   * The OAuth 2.0 grant type
+   */
+  grant_type: "authorization_code"
+  /**
+   * The client identifier
+   */
+  client_id: string
+  /**
+   * The client secret (for confidential clients)
+   */
+  client_secret?: string | null
+  /**
+   * The authorization code received from the authorization server
+   */
+  code: string
+  /**
+   * The redirect URI used in the authorization request
+   */
+  redirect_uri: string
+  /**
+   * The PKCE code verifier
+   */
+  code_verifier: string
+  /**
+   * Space-delimited list of scopes
+   */
+  scope?: string | null
+}
+
 export type AuthorizeDeviceIn = {
   user_code: string
 }
@@ -54,6 +85,10 @@ export type Body_login_login_token = {
   client_id: string
   device_code: string
   grant_type: "urn:ietf:params:oauth:grant-type:device_code"
+}
+
+export type Body_token = {
+  request: AuthorizationCodeGrantRequest | PasswordGrantRequest
 }
 
 export type CreateApp = {
@@ -241,6 +276,33 @@ export type NewPassword = {
   new_password: string
 }
 
+export type PasswordGrantRequest = {
+  /**
+   * The OAuth 2.0 grant type
+   */
+  grant_type: "password"
+  /**
+   * The client identifier
+   */
+  client_id: string
+  /**
+   * The client secret (for confidential clients)
+   */
+  client_secret?: string | null
+  /**
+   * The resource owner username
+   */
+  username: string
+  /**
+   * The resource owner password
+   */
+  password: string
+  /**
+   * Space-delimited list of scopes
+   */
+  scope?: string | null
+}
+
 export type ResendEmailVerification = {
   email: string
 }
@@ -289,6 +351,26 @@ export type Token = {
   access_token: string
   token_type?: string
 }
+
+export type TokenErrorResponse = {
+  error:
+    | "invalid_request"
+    | "invalid_client"
+    | "invalid_grant"
+    | "unauthorized_client"
+    | "unsupported_grant_type"
+    | "invalid_scope"
+  error_description?: string | null
+  error_uri?: string | null
+}
+
+export type error =
+  | "invalid_request"
+  | "invalid_client"
+  | "invalid_grant"
+  | "unauthorized_client"
+  | "unsupported_grant_type"
+  | "invalid_scope"
 
 export type TokenResponse = {
   /**
@@ -460,6 +542,10 @@ export type GithubAuthorizeResponse = unknown
 export type GithubCallbackResponse = unknown
 
 export type GithubFinalizeLinkResponse = unknown
+
+export type TokenData = {
+  formData: Body_token
+}
 
 export type TokenResponse2 = TokenResponse
 

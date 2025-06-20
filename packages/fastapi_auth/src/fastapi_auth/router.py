@@ -1,11 +1,9 @@
 import logging
-from collections.abc import Awaitable, Callable
+from collections.abc import Callable
 from itertools import chain
 
-from duck import AsyncHTTPRequest, Response
+from duck import AsyncHTTPRequest
 from fastapi import APIRouter
-from fastapi import Request as FastAPIRequest
-from fastapi import Response as FastAPIResponse
 
 from ._context import AccountsStorage, Context, SecondaryStorage, User
 from ._issuer import Issuer
@@ -38,31 +36,23 @@ class AuthRouter(APIRouter):
 
         routes = provider_routes + self.issuer.routes
 
+        # TODO: maybe this should be a dependency (or at least instantiated in the endpoint code)
+        context = Context(
+            secondary_storage=self._secondary_storage,
+            accounts_storage=self._accounts_storage,
+            create_token=self._create_token,
+            trusted_origins=self._trusted_origins,
+            get_user_from_request=self._get_user_from_request,
+        )
+
         for route in routes:
             self.add_api_route(
                 route.path,
-                self._wrap_route(route.function),
+                route.to_fastapi_endpoint(context),
                 methods=route.methods,
                 response_model=route.response_model,
                 operation_id=route.operation_id,
+                openapi_extra=route.openapi_extra,
+                responses=route.responses,
+                summary=route.summary,
             )
-
-    def _wrap_route(
-        self, route: Callable[[AsyncHTTPRequest, Context], Awaitable[Response]]
-    ) -> Callable:
-        async def wrapper(request: FastAPIRequest) -> FastAPIResponse:
-            route_request = AsyncHTTPRequest.from_fastapi(request)
-
-            context = Context(
-                secondary_storage=self._secondary_storage,
-                accounts_storage=self._accounts_storage,
-                create_token=self._create_token,
-                trusted_origins=self._trusted_origins,
-                get_user_from_request=self._get_user_from_request,
-            )
-
-            route_response = await route(route_request, context)
-
-            return route_response.to_fastapi()
-
-        return wrapper

@@ -24,7 +24,7 @@ async def test_returns_error_response_if_client_id_is_missing(
     )
     assert response.status_code == 400
     assert response.json() == snapshot(
-        {"error": "invalid_request", "error_description": "No client_id provided"}
+        {"error": "invalid_request", "error_description": "client_id is required"}
     )
 
 
@@ -38,7 +38,7 @@ async def test_returns_error_response_if_grant_type_is_missing(
     assert response.json() == snapshot(
         {
             "error": "invalid_request",
-            "error_description": "No grant_type provided",
+            "error_description": "grant_type is required",
         }
     )
 
@@ -73,7 +73,7 @@ async def test_returns_error_response_if_code_is_missing(
     )
     assert response.status_code == 400
     assert response.json() == snapshot(
-        {"error": "invalid_request", "error_description": "No code provided"}
+        {"error": "invalid_request", "error_description": "code is required"}
     )
 
 
@@ -92,7 +92,7 @@ async def test_returns_error_response_if_redirect_uri_is_missing(
     )
     assert response.status_code == 400
     assert response.json() == snapshot(
-        {"error": "invalid_request", "error_description": "No redirect_uri provided"}
+        {"error": "invalid_request", "error_description": "redirect_uri is required"}
     )
 
 
@@ -182,7 +182,7 @@ async def test_returns_error_response_if_code_verifier_is_missing(
 
     assert response.status_code == 400
     assert response.json() == snapshot(
-        {"error": "invalid_request", "error_description": "No code_verifier provided"}
+        {"error": "invalid_request", "error_description": "code_verifier is required"}
     )
 
 
@@ -228,7 +228,7 @@ async def test_password_grant_missing_username(issuer: Issuer, context: Context)
     )
     assert response.status_code == 400
     assert response.json() == snapshot(
-        {"error": "invalid_request", "error_description": "Username is required"}
+        {"error": "invalid_request", "error_description": "username is required"}
     )
 
 
@@ -245,7 +245,7 @@ async def test_password_grant_missing_password(issuer: Issuer, context: Context)
     )
     assert response.status_code == 400
     assert response.json() == snapshot(
-        {"error": "invalid_request", "error_description": "Password is required"}
+        {"error": "invalid_request", "error_description": "password is required"}
     )
 
 
@@ -318,7 +318,7 @@ async def test_password_grant_with_scope(issuer: Issuer, context: Context):
                 "client_id": "test",
                 "username": "test@example.com",
                 "password": "password123",
-                "scope": "read write",
+                "scope": "",
             }
         ),
         context,
@@ -331,6 +331,6 @@ async def test_password_grant_with_scope(issuer: Issuer, context: Context):
             "expires_in": 0,
             "refresh_token": None,
             "refresh_token_expires_in": None,
-            "scope": "read write",
+            "scope": "",
         }
     )

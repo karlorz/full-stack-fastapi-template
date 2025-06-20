@@ -1,19 +1,58 @@
 import json
 from datetime import datetime, timezone
-from typing import Any, Literal, Required, TypedDict
+from typing import Annotated, Literal, Required, TypedDict
 
 from duck import AsyncHTTPRequest, Response
 from passlib.context import CryptContext
-from pydantic import AwareDatetime, BaseModel, ValidationError
+from pydantic import AwareDatetime, BaseModel, Discriminator, Field, ValidationError
+from pydantic.type_adapter import TypeAdapter
 
 from fastapi_auth.models.oauth_token_response import TokenResponse
 from fastapi_auth.utils._pkce import validate_pkce
 
 from ._context import Context
-from ._route import Route
+from ._route import Form, Route
 from ._storage import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+class AuthorizationCodeGrantRequest(BaseModel):
+    grant_type: Literal["authorization_code"] = Field(
+        description="The OAuth 2.0 grant type"
+    )
+    client_id: str = Field(description="The client identifier")
+    client_secret: str | None = Field(
+        None, description="The client secret (for confidential clients)"
+    )
+    code: str = Field(
+        description="The authorization code received from the authorization server"
+    )
+    redirect_uri: str = Field(
+        description="The redirect URI used in the authorization request"
+    )
+    code_verifier: str = Field(description="The PKCE code verifier")
+    scope: str | None = Field(None, description="Space-delimited list of scopes")
+
+
+class PasswordGrantRequest(BaseModel):
+    grant_type: Literal["password"] = Field(description="The OAuth 2.0 grant type")
+    client_id: str = Field(description="The client identifier")
+    client_secret: str | None = Field(
+        None, description="The client secret (for confidential clients)"
+    )
+    username: str = Field(description="The resource owner username")
+    password: str = Field(description="The resource owner password")
+    scope: str | None = Field(None, description="Space-delimited list of scopes")
+
+
+TokenRequest = Annotated[
+    AuthorizationCodeGrantRequest | PasswordGrantRequest,
+    Discriminator("grant_type"),
+    Form(),
+]
+TokenRequestAdapter: TypeAdapter[TokenRequest] = TypeAdapter(TokenRequest)
+
 
 TokenErrorType = Literal[
     "invalid_request",
@@ -26,9 +65,15 @@ TokenErrorType = Literal[
 
 
 class TokenErrorResponse(TypedDict, total=False):
-    error: Required[TokenErrorType]
-    error_description: str | None
-    error_uri: str | None
+    error: Required[TokenErrorType] = Field(
+        description="Error code as per OAuth 2.0 specification"
+    )
+    error_description: str | None = Field(
+        None, description="Human-readable explanation of the error"
+    )
+    error_uri: str | None = Field(
+        None, description="URI to a web page with more information about the error"
+    )
 
 
 class AuthorizationCodeGrantData(BaseModel):
@@ -67,59 +112,51 @@ class Issuer:
             headers={"Content-Type": "application/json"},
         )
 
+    def _format_validation_error(self, e: ValidationError) -> Response:
+        errors = e.errors()
+
+        error_type: TokenErrorType = "invalid_request"
+
+        if not errors:
+            return self._error_response(error_type, "Validation error")
+
+        first_error = errors[0]
+        field = first_error["loc"][-1] if first_error["loc"] else None
+
+        match {"field": field, "type": first_error["type"]}:
+            case {"type": "union_tag_not_found"}:
+                message = "grant_type is required"
+            case {"type": "union_tag_invalid"}:
+                value = first_error["input"]["grant_type"]
+                message = f"Grant type '{value}' is not supported"
+                error_type = "unsupported_grant_type"
+            case {"type": "missing", "field": field}:
+                message = f"{field} is required"
+            case _:
+                message = f"Validation error: {first_error['type']}"
+
+        return self._error_response(error_type, message)
+
     async def token(self, request: AsyncHTTPRequest, context: Context) -> Response:
         form_data = await request.get_form_data()
 
-        grant_type = form_data.get("grant_type")
-        client_id = form_data.get("client_id")
-
-        if not client_id:
-            return self._error_response(
-                "invalid_request",
-                "No client_id provided",
-            )
+        try:
+            token_request = TokenRequestAdapter.validate_python(form_data.form)
+        except ValidationError as e:
+            return self._format_validation_error(e)
 
         # TODO: validate client_id
         # TODO: support confidential clients (client_secret)
 
-        if not grant_type:
-            return self._error_response(
-                "invalid_request",
-                "No grant_type provided",
-            )
+        if token_request.grant_type == "authorization_code":
+            return self._authorization_code_grant(token_request, context)
+        elif token_request.grant_type == "password":
+            return self._password_grant(token_request, context)
 
-        if grant_type == "authorization_code":
-            return self._authorization_code_grant(form_data, context)
-        elif grant_type == "password":
-            return self._password_grant(form_data, context)
-
-        return self._error_response(
-            "unsupported_grant_type",
-            f"Grant type '{grant_type}' is not supported",
-        )
-
-    def _authorization_code_grant(self, form_data: Any, context: Context) -> Response:
-        code = form_data.get("code")
-        redirect_uri = form_data.get("redirect_uri")
-        code_verifier = form_data.get("code_verifier")
-
-        if not code:
-            return self._error_response(
-                "invalid_request",
-                "No code provided",
-            )
-
-        if not redirect_uri:
-            return self._error_response(
-                "invalid_request",
-                "No redirect_uri provided",
-            )
-
-        if not code_verifier:
-            return self._error_response(
-                "invalid_request",
-                "No code_verifier provided",
-            )
+    def _authorization_code_grant(
+        self, request: AuthorizationCodeGrantRequest, context: Context
+    ) -> Response:
+        code = request.code
 
         raw_authorization_data = context.secondary_storage.get(f"oauth:code:{code}")
 
@@ -147,7 +184,7 @@ class Issuer:
                 "Authorization code has expired",
             )
 
-        if authorization_data.redirect_uri != redirect_uri:
+        if authorization_data.redirect_uri != request.redirect_uri:
             return self._error_response(
                 "invalid_grant",
                 "Redirect URI does not match",
@@ -162,7 +199,7 @@ class Issuer:
         if not validate_pkce(
             authorization_data.code_challenge,
             authorization_data.code_challenge_method,
-            code_verifier,
+            request.code_verifier,
         ):
             return self._error_response(
                 "invalid_grant",
@@ -200,23 +237,14 @@ class Issuer:
 
         return pwd_context.verify(password, user.hashed_password)
 
-    def _password_grant(self, form_data: Any, context: Context) -> Response:
-        username = form_data.get("username")
-        password = form_data.get("password")
-        scope = form_data.get("scope")
+    def _password_grant(
+        self, request: PasswordGrantRequest, context: Context
+    ) -> Response:
+        user = context.accounts_storage.find_user_by_email(request.username)
 
-        if not username:
-            return self._error_response("invalid_request", "Username is required")
-
-        if not password:
-            return self._error_response("invalid_request", "Password is required")
-
-        user = context.accounts_storage.find_user_by_email(username)
-
-        if not user or not self.validate_password(user, password):
+        if not user or not self.validate_password(user, request.password):
             return self._error_response("invalid_grant", "Invalid username or password")
 
-        # Create access token
         token, expires_in = context.create_token(str(user.id))
 
         token_data = TokenResponse(
@@ -225,7 +253,8 @@ class Issuer:
             expires_in=expires_in,
             refresh_token=None,
             refresh_token_expires_in=None,
-            scope=scope or "",
+            # TODO: figure out scopes
+            scope="",
         )
 
         headers = {
@@ -250,5 +279,17 @@ class Issuer:
                 function=self.token,
                 response_model=TokenResponse,
                 operation_id="token",
+                request_type=TokenRequest,
+                summary="OAuth 2.0 token endpoint",
+                responses={
+                    "200": {
+                        "description": "Successful token response",
+                        "model": TokenResponse,
+                    },
+                    "400": {
+                        "description": "Bad request - invalid parameters or grant",
+                        "model": TokenErrorResponse,
+                    },
+                },
             ),
         ]

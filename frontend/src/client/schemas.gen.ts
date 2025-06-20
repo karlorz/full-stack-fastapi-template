@@ -147,6 +147,71 @@ export const AppsPublicSchema = {
   title: "AppsPublic",
 } as const
 
+export const AuthorizationCodeGrantRequestSchema = {
+  properties: {
+    grant_type: {
+      type: "string",
+      const: "authorization_code",
+      title: "Grant Type",
+      description: "The OAuth 2.0 grant type",
+    },
+    client_id: {
+      type: "string",
+      title: "Client Id",
+      description: "The client identifier",
+    },
+    client_secret: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      title: "Client Secret",
+      description: "The client secret (for confidential clients)",
+    },
+    code: {
+      type: "string",
+      title: "Code",
+      description:
+        "The authorization code received from the authorization server",
+    },
+    redirect_uri: {
+      type: "string",
+      title: "Redirect Uri",
+      description: "The redirect URI used in the authorization request",
+    },
+    code_verifier: {
+      type: "string",
+      title: "Code Verifier",
+      description: "The PKCE code verifier",
+    },
+    scope: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      title: "Scope",
+      description: "Space-delimited list of scopes",
+    },
+  },
+  type: "object",
+  required: [
+    "grant_type",
+    "client_id",
+    "code",
+    "redirect_uri",
+    "code_verifier",
+  ],
+  title: "AuthorizationCodeGrantRequest",
+} as const
+
 export const AuthorizeDeviceInSchema = {
   properties: {
     user_code: {
@@ -245,6 +310,33 @@ export const Body_login_login_tokenSchema = {
   type: "object",
   required: ["client_id", "device_code", "grant_type"],
   title: "Body_login-login_token",
+} as const
+
+export const Body_tokenSchema = {
+  properties: {
+    request: {
+      oneOf: [
+        {
+          $ref: "#/components/schemas/AuthorizationCodeGrantRequest",
+        },
+        {
+          $ref: "#/components/schemas/PasswordGrantRequest",
+        },
+      ],
+      title: "Request",
+      discriminator: {
+        propertyName: "grant_type",
+        mapping: {
+          authorization_code:
+            "#/components/schemas/AuthorizationCodeGrantRequest",
+          password: "#/components/schemas/PasswordGrantRequest",
+        },
+      },
+    },
+  },
+  type: "object",
+  required: ["request"],
+  title: "Body_token",
 } as const
 
 export const CreateAppSchema = {
@@ -956,6 +1048,59 @@ export const NewPasswordSchema = {
   title: "NewPassword",
 } as const
 
+export const PasswordGrantRequestSchema = {
+  properties: {
+    grant_type: {
+      type: "string",
+      const: "password",
+      title: "Grant Type",
+      description: "The OAuth 2.0 grant type",
+    },
+    client_id: {
+      type: "string",
+      title: "Client Id",
+      description: "The client identifier",
+    },
+    client_secret: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      title: "Client Secret",
+      description: "The client secret (for confidential clients)",
+    },
+    username: {
+      type: "string",
+      title: "Username",
+      description: "The resource owner username",
+    },
+    password: {
+      type: "string",
+      title: "Password",
+      description: "The resource owner password",
+    },
+    scope: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      title: "Scope",
+      description: "Space-delimited list of scopes",
+    },
+  },
+  type: "object",
+  required: ["grant_type", "client_id", "username", "password"],
+  title: "PasswordGrantRequest",
+} as const
+
 export const ResendEmailVerificationSchema = {
   properties: {
     email: {
@@ -1182,6 +1327,48 @@ export const TokenSchema = {
   type: "object",
   required: ["access_token"],
   title: "Token",
+} as const
+
+export const TokenErrorResponseSchema = {
+  properties: {
+    error: {
+      type: "string",
+      enum: [
+        "invalid_request",
+        "invalid_client",
+        "invalid_grant",
+        "unauthorized_client",
+        "unsupported_grant_type",
+        "invalid_scope",
+      ],
+      title: "Error",
+    },
+    error_description: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      title: "Error Description",
+    },
+    error_uri: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      title: "Error Uri",
+    },
+  },
+  type: "object",
+  required: ["error"],
+  title: "TokenErrorResponse",
 } as const
 
 export const TokenResponseSchema = {

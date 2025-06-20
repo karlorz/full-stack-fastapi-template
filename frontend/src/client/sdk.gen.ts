@@ -102,6 +102,7 @@ import type {
   TeamsUpdateTeamResponse,
   TeamsValidateTeamNameData,
   TeamsValidateTeamNameResponse,
+  TokenData,
   TokenResponse2,
   UsersAddToWaitingListData,
   UsersAddToWaitingListResponse,
@@ -414,14 +415,22 @@ export class AuthService {
   }
 
   /**
-   * Wrapper
-   * @returns TokenResponse Successful Response
+   * OAuth 2.0 token endpoint
+   * @param data The data for the request.
+   * @param data.formData
+   * @returns TokenResponse Successful token response
    * @throws ApiError
    */
-  public static token(): CancelablePromise<TokenResponse2> {
+  public static token(data: TokenData): CancelablePromise<TokenResponse2> {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/v1/token",
+      formData: data.formData,
+      mediaType: "application/x-www-form-urlencoded",
+      errors: {
+        400: "Bad request - invalid parameters or grant",
+        422: "Validation Error",
+      },
     })
   }
 }
