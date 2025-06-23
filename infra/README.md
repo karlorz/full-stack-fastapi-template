@@ -18,7 +18,7 @@ Pulumi with all the AWS stuff will run on **staging** when merging to `master` a
 
 Install the AWS CLI: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 
-Configure the AWS CLI with SSO (single sign-on). Use the tutorial tabs for for "IAM Identity Center": https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html#cli-configure-sso-configure
+Configure the AWS CLI with SSO (single sign-on). Use the tutorial tabs for "IAM Identity Center": https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html#cli-configure-sso-configure
 
 It will guide you to run:
 
@@ -75,7 +75,7 @@ aws eks --region us-east-1 update-kubeconfig --name $CLUSTER_NAME --profile $ENV
 
 ##### [Optional] Install [kctx](https://github.com/ahmetb/kubectx) and [kube-ps1](https://github.com/jonmosco/kube-ps1)
 
-After running the steps above for each AWS environment, each with have a `kubectl` "context".
+After running the steps above for each AWS environment, each will have a `kubectl` "context".
 
 You can to list all the contexts with:
 
@@ -89,7 +89,7 @@ Then, to use one context, you can:
 kubectl config use-context context_name
 ```
 
-By default the context will have the long name of the cluster, you can rename it to something shorter, for example to `development`, `staging`, `production`:
+By default, the context will have the long name of the cluster, you can rename it to something shorter, for example to `development`, `staging`, `production`:
 
 ```bash
 kubectl config rename-context long_name development
@@ -367,7 +367,7 @@ Afterwards, as it's just updating the DNS record for the Load Balancer, it is do
 
 In `fastapicloud.space`:
 
-* Configure SSL/TLS encryption encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
+* Configure SSL/TLS encryption mode: Full (strict): SSL/TLS -> Overview -> Configure.
 * Enable redirect HTTPS, SSL/TLS -> Edge Certificates -> Always Use HTTPS.
 * Add a `CNAME` record pointing `cluster-fastapicloud.fastapicloud.space` to the **AWS Load Balancer DNS**.
 * Add a `CNAME` record pointing `*.fastapicloud.space` to the **AWS Load Balancer DNS**.
