@@ -442,6 +442,7 @@
 
 ### Docs
 
+* 📝 Fix typos in `infra/README.md`. PR [#1031](https://github.com/fastapilabs/cloud/pull/1031) by [@alejsdev](https://github.com/alejsdev).
 * 📝 Tweak READMEs for new uv workspaces setup. PR [#729](https://github.com/fastapilabs/cloud/pull/729) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update README for infra deployment, include deploying all cloud backend parts, clarify instructions. PR [#688](https://github.com/fastapilabs/cloud/pull/688) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update `frontend/README.md`. PR [#660](https://github.com/fastapilabs/cloud/pull/660) by [@alejsdev](https://github.com/alejsdev).
