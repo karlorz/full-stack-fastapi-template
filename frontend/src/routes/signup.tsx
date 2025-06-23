@@ -1,14 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 import {
-  Link as RouterLink,
   createFileRoute,
+  Link as RouterLink,
   redirect,
 } from "@tanstack/react-router"
 import { Lock, Mail, User } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
 import { UsersService } from "@/client"
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
 import { Button } from "@/components/ui/button"
@@ -32,7 +32,6 @@ import { LoadingButton } from "@/components/ui/loading-button"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
-import { useMutation } from "@tanstack/react-query"
 
 const formSchema = z
   .object({
@@ -85,6 +84,7 @@ function SignUp() {
   const onSubmit = (values: FormData) => {
     if (signUpMutation.isPending) return
 
+    // biome-ignore lint/correctness/noUnusedVariables: we are removing the confirm_password from the values
     const { confirm_password, ...data } = values
 
     signUpMutation.mutate(data, {

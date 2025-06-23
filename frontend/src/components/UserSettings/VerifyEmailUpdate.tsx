@@ -23,7 +23,7 @@ const VerifyEmailUpdate = () => {
     mutationFn: verifyEmail,
   })
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: this is ok
   useEffect(() => {
     // using a timeout here to prevent the mutation from firing multiple
     // times on StrictMode in dev

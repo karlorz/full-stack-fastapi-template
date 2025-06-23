@@ -1,4 +1,4 @@
-import { type APIRequestContext, type Page, expect } from "@playwright/test"
+import { type APIRequestContext, expect, type Page } from "@playwright/test"
 import { findLastEmail } from "./mailcatcher"
 
 export async function logInUser(page: Page, email: string, password: string) {

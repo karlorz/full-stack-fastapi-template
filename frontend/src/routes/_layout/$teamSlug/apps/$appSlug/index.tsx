@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_layout/$teamSlug/apps/$appSlug/")({
       await context.queryClient.ensureQueryData(
         getAppQueryOptions(team.id, appSlug),
       )
-    } catch (error) {
+    } catch (_error) {
       throw notFound({ routeId: "/" })
     }
   },

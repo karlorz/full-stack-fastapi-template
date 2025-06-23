@@ -1,3 +1,4 @@
+import { Link as RouterLink } from "@tanstack/react-router"
 import {
   type ColumnDef,
   flexRender,
@@ -5,7 +6,12 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react"
 import {
   Table,
   TableBody,
@@ -14,13 +20,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Link as RouterLink } from "@tanstack/react-router"
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react"
 import { Button } from "../ui/button"
 import {
   Select,

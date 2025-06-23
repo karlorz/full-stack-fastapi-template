@@ -1,15 +1,13 @@
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
-
+import { useSuspenseQuery } from "@tanstack/react-query"
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
+import posthog from "posthog-js"
+import { useEffect } from "react"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { useSuspenseQuery } from "@tanstack/react-query"
-
 import { getTeamsQueryOptions } from "@/queries/teams"
-import posthog from "posthog-js"
-import { useEffect } from "react"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
 import { AppSidebar } from "../components/Sidebar/AppSidebar"
 import Appearance from "../components/UserSettings/Appearance"
@@ -41,7 +39,7 @@ function Layout() {
           email: currentUser.email,
           name: currentUser.full_name,
         })
-      } catch (error) {
+      } catch (_error) {
         // do nothing
       }
     }

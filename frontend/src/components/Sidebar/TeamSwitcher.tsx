@@ -1,6 +1,6 @@
 import { Link as RouterLink } from "@tanstack/react-router"
 import { ChevronsUpDown, List, Plus, Users } from "lucide-react"
-
+import { useFeatureFlagEnabled } from "posthog-js/react"
 import type { TeamsPublic } from "@/client"
 import {
   DropdownMenu,
@@ -17,7 +17,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { getInitials } from "@/utils"
-import { useFeatureFlagEnabled } from "posthog-js/react"
 
 export function TeamSwitcher({
   teams,

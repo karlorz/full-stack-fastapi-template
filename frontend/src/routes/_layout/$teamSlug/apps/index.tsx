@@ -1,8 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import {
-  Link as RouterLink,
   createFileRoute,
   notFound,
+  Link as RouterLink,
 } from "@tanstack/react-router"
 import { formatDistanceToNow } from "date-fns"
 import { Link, Rocket } from "lucide-react"
@@ -37,7 +37,7 @@ export const Route = createFileRoute("/_layout/$teamSlug/apps/")({
         getAppsQueryOptions(team.id),
       )
       return { showEmptyState: apps.data.length === 0 }
-    } catch (error) {
+    } catch (_error) {
       throw notFound({ routeId: "/" })
     }
   },

@@ -1,8 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import {
-  Link as RouterLink,
   createFileRoute,
   notFound,
+  Link as RouterLink,
 } from "@tanstack/react-router"
 import { LayoutGrid, Rocket } from "lucide-react"
 

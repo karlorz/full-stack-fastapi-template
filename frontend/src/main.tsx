@@ -5,16 +5,15 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query"
-import { RouterProvider, createRouter } from "@tanstack/react-router"
+import { createRouter, RouterProvider } from "@tanstack/react-router"
 import type { PostHogConfig } from "posthog-js"
 import { PostHogProvider } from "posthog-js/react"
-import React, { StrictMode } from "react"
+import { StrictMode } from "react"
 import ReactDOM from "react-dom/client"
-import { routeTree } from "./routeTree.gen"
-
 import { Toaster } from "sonner"
 import { ApiError, OpenAPI } from "./client"
 import { ThemeProvider } from "./components/theme-provider"
+import { routeTree } from "./routeTree.gen"
 import "./index.css"
 
 const posthogOptions: Partial<PostHogConfig> = {

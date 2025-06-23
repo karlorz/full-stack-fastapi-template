@@ -1,5 +1,5 @@
-import logo from "@/assets/logo.svg"
 import type { ReactNode } from "react"
+import logo from "@/assets/logo.svg"
 
 interface BackgroundPanelProps {
   children: ReactNode

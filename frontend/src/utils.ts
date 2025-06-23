@@ -2,8 +2,8 @@ import {
   type ApiError,
   AppsService,
   type DeploymentStatus,
-  type TeamWithUserPublic,
   TeamsService,
+  type TeamWithUserPublic,
   type UserPublic,
 } from "./client"
 

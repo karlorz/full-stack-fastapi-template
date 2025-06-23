@@ -1,3 +1,5 @@
+import { MoreVertical } from "lucide-react"
+import { useState } from "react"
 import type { Role, TeamPublic, UserPublic } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
@@ -5,11 +7,9 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreVertical } from "lucide-react"
-import { useState } from "react"
 import ChangeRole from "./ChangeRole"
-import RemoveUser from "./RemoveUser"
 import type { TeamMember } from "./columns"
+import RemoveUser from "./RemoveUser"
 
 interface ActionsMenuProps {
   userRole: Role

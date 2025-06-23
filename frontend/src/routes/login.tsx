@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
-  Link as RouterLink,
   createFileRoute,
+  Link as RouterLink,
   redirect,
 } from "@tanstack/react-router"
 import { Lock, Mail } from "lucide-react"

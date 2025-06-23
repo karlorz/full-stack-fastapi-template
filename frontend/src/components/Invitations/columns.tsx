@@ -1,5 +1,5 @@
-import type { InvitationPublic } from "@/client"
 import type { ColumnDef } from "@tanstack/react-table"
+import type { InvitationPublic } from "@/client"
 import { Badge } from "../ui/badge"
 import CancelInvitation from "./CancelInvitation"
 

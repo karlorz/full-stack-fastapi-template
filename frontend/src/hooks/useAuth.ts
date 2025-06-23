@@ -89,7 +89,7 @@ const useAuth = () => {
     try {
       posthog.reset(true)
       posthog.stopSessionRecording()
-    } catch (error) {
+    } catch (_error) {
       // do nothing
     }
 

@@ -49,7 +49,9 @@ export const RecentDeployments = ({
 
 const Deployments = ({
   deployments,
-}: { deployments: Array<DeploymentPublic> }) => {
+}: {
+  deployments: Array<DeploymentPublic>
+}) => {
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">

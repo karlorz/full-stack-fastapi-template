@@ -1,6 +1,3 @@
-import { TeamsService } from "@/client"
-import useCustomToast from "@/hooks/useCustomToast"
-import { fetchTeamBySlug, handleError } from "@/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   useMutation,
@@ -10,7 +7,7 @@ import {
 import { AlertTriangle } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
+import { TeamsService } from "@/client"
 import { Alert, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
@@ -39,6 +36,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import useCustomToast from "@/hooks/useCustomToast"
+import { fetchTeamBySlug, handleError } from "@/utils"
 
 interface AdminUser {
   user: {

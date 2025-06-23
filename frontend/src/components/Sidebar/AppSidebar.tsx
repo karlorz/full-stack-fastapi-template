@@ -1,6 +1,6 @@
 import {
-  type ToOptions,
   linkOptions,
+  type ToOptions,
   useRouterState,
 } from "@tanstack/react-router"
 import { Home, LayoutGrid, type LucideIcon, Settings } from "lucide-react"

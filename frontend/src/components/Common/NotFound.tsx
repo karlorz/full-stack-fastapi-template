@@ -1,6 +1,6 @@
+import { Link, useRouterState } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { useTextScramble } from "@/hooks/useTextScramble"
-import { Link, useRouterState } from "@tanstack/react-router"
 
 const NotFound = () => {
   const { location } = useRouterState()

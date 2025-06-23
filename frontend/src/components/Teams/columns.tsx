@@ -1,8 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table"
-
+import { Link } from "lucide-react"
 import type { TeamPublic } from "@/client"
 import { Badge } from "@/components/ui/badge"
-import { Link } from "lucide-react"
 import ActionsMenu from "./ActionsMenu"
 
 export type TeamMember = {

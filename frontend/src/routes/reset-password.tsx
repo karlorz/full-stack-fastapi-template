@@ -1,11 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { Lock } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
 import { LoginService } from "@/client"
-import { isLoggedIn } from "@/hooks/useAuth"
 
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
 import {
@@ -25,9 +24,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
+import { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
-import { useMutation } from "@tanstack/react-query"
 
 const formSchema = z
   .object({

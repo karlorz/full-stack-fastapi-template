@@ -59,6 +59,7 @@ const ChangePassword = () => {
   })
 
   const onSubmit = (data: FormData) => {
+    // biome-ignore lint/correctness/noUnusedVariables: we are removing the confirm_password from the values
     const { confirm_password, ...updateData } = data
     mutation.mutate(updateData)
   }

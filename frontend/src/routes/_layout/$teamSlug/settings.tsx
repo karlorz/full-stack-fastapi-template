@@ -1,5 +1,5 @@
-import TeamInformation from "@/components/TeamSettings/TeamInformation"
 import { createFileRoute } from "@tanstack/react-router"
+import TeamInformation from "@/components/TeamSettings/TeamInformation"
 
 export const Route = createFileRoute("/_layout/$teamSlug/settings")({
   component: TeamSettings,

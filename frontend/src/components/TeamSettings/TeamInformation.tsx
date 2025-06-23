@@ -4,11 +4,11 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query"
+import { Building2, CircleArrowRight, Users } from "lucide-react"
 import { Suspense, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-
-import { type TeamUpdate, TeamsService } from "@/client"
+import { TeamsService, type TeamUpdate } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -29,7 +29,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useCurrentUser } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { fetchTeamBySlug, getCurrentUserRole, handleError } from "@/utils"
-import { Building2, CircleArrowRight, Users } from "lucide-react"
 import DangerZoneAlert from "../Common/DangerZone"
 import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"

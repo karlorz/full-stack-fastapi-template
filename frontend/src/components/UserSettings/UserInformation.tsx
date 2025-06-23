@@ -130,7 +130,6 @@ const UserInformationContent = () => {
                         <FormControl>
                           <div className="flex gap-2">
                             <Input
-                              id="full-name-input"
                               data-testid="full-name-input"
                               {...field}
                               disabled={!isEditingName}
@@ -181,7 +180,6 @@ const UserInformationContent = () => {
                         <FormControl>
                           <div className="flex gap-2">
                             <Input
-                              id="email-input"
                               data-testid="email-input"
                               {...field}
                               disabled={!isEditingEmail}

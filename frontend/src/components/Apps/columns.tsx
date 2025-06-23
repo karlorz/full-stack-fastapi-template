@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/badge"
 import type { ColumnDef } from "@tanstack/react-table"
 import { Calendar, Link } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 import type { AppPublic } from "../../client/models"
 

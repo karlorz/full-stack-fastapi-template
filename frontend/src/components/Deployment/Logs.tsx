@@ -1,7 +1,7 @@
-import type { Log } from "@/client"
-import { cn } from "@/lib/utils"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import React, { useEffect } from "react"
+import type { Log } from "@/client"
+import { cn } from "@/lib/utils"
 
 interface LogLineProps {
   time: string

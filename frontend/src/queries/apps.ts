@@ -1,6 +1,6 @@
+import { queryOptions } from "@tanstack/react-query"
 import { AppsService } from "@/client"
 import { fetchAppBySlug, fetchAppsData } from "@/utils"
-import { queryOptions } from "@tanstack/react-query"
 
 export const getDashboardDataQueryOptions = (teamId: string) =>
   queryOptions({

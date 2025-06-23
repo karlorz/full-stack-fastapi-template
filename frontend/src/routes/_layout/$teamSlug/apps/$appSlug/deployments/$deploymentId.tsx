@@ -30,7 +30,7 @@ export const Route = createFileRoute(
       await context.queryClient.ensureQueryData(
         getDeploymentQueryOptions(app.id, deploymentId),
       )
-    } catch (error) {
+    } catch (_error) {
       throw notFound({ routeId: "/" })
     }
   },

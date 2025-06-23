@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import Lottie from "lottie-react"
+import { useFeatureFlagEnabled } from "posthog-js/react"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
-
 import confetti from "@/assets/confetti.json"
 import warning from "@/assets/failed.json"
 import { type ApiError, type TeamCreate, TeamsService } from "@/client"
@@ -27,7 +27,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { extractErrorMessage } from "@/utils"
-import { useFeatureFlagEnabled } from "posthog-js/react"
 
 export const Route = createFileRoute("/_layout/teams/new")({
   component: NewTeam,

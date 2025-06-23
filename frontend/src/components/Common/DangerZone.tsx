@@ -1,6 +1,6 @@
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { TriangleAlert } from "lucide-react"
 import type { ReactNode } from "react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 interface DangerZoneAlertProps {
   description: string

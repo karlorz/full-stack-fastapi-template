@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
+import { Loader2 } from "lucide-react"
 import { useEffect } from "react"
-
 import { InvitationsService, type UserPublic, UsersService } from "@/client"
 import { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
-import { Loader2 } from "lucide-react"
 import AcceptInvitation from "./AcceptInvitation"
 import NoMatchingAccount from "./NoMatchingAccount"
 import TeamInvitationNoAuth from "./TeamInvitationNoAuth"
