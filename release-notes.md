@@ -468,6 +468,7 @@
 
 ### Internal
 
+* ⬆ Bump @hey-api/openapi-ts from 0.73.0 to 0.76.0 in /frontend. PR [#1025](https://github.com/fastapilabs/cloud/pull/1025) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump typescript from 5.8.2 to 5.8.3 in /frontend. PR [#1026](https://github.com/fastapilabs/cloud/pull/1026) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump playwright from v1.52.0-noble to v1.53.0-noble in /frontend. PR [#1015](https://github.com/fastapilabs/cloud/pull/1015) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-query-devtools from 5.75.7 to 5.80.7 in /frontend. PR [#1012](https://github.com/fastapilabs/cloud/pull/1012) by [@dependabot[bot]](https://github.com/apps/dependabot).
