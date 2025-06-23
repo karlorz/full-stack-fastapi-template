@@ -1,0 +1,96 @@
+name: Deploy PostHog Proxy
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to deploy to, development, staging, production
+        required: true
+        type: environment
+        default: staging
+
+env:
+  ECR_REPOSITORY: fastapicloud-posthog-proxy
+
+jobs:
+  changes:
+    runs-on: depot-ubuntu-22.04
+    # Required permissions
+    permissions:
+      pull-requests: read
+      contents: read
+    # Set job outputs to values from filter step
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+    steps:
+    - uses: actions/checkout@v4
+    # For pull requests it's not necessary to checkout the code but for the main branch it is
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          changed:
+            - infra/posthog-proxy/**
+            - .github/workflows/deploy-posthog-proxy.yml
+
+  deploy-posthog-proxy:
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.changed == 'true' }}
+    name: Deploy PostHog Proxy
+    strategy:
+      matrix:
+        # Two environments by default: staging and development, but can be overridden by the user in a workflow dispatch
+        # TODO: once production is stable, disallow deploying to production from workflow_dispatch
+        environment: ${{ github.event_name == 'workflow_dispatch' && fromJson(format('["{0}"]', github.event.inputs.environment)) || fromJson('["staging", "development", "production"]') }}
+    runs-on: depot-ubuntu-22.04
+    # Permissions for Depot Docker build
+    permissions:
+      contents: read
+      id-token: write
+    environment: ${{ matrix.environment }}
+    env:
+      IMAGE_TAG: ${{ matrix.environment }}-${{ github.sha }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ vars.AWS_REGION }}
+    - uses: azure/k8s-set-context@v4
+      with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG_DATA }}
+    - name: Login to Amazon ECR
+      with:
+        mask-password: True
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+    - uses: depot/setup-action@v1
+    - name: Build and push Docker images to Amazon ECR
+      uses: depot/build-push-action@v1
+      id: docker-build
+      with:
+        project: ${{ vars.DEPOT_PROJECT_ID }}
+        push: true
+        tags: |
+          ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+        context: infra/posthog-proxy
+        file: infra/posthog-proxy/Dockerfile
+  # https://github.com/marketplace/actions/alls-green#why
+  alls-green-deploy-posthog-proxy:  # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+      - deploy-posthog-proxy
+    runs-on: depot-ubuntu-22.04
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+          allowed-skips: deploy-posthog-proxy

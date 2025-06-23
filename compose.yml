@@ -44,6 +44,13 @@ services:
       - "1080:1080"
       - "1025:1025"
 
+  posthog-proxy:
+    build:
+      context: infra/posthog-proxy
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+
   prestart:
     build:
       context: .
