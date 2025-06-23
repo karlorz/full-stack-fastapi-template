@@ -470,6 +470,7 @@
 
 ### Internal
 
+* ⬆️ Upgrade biome. PR [#1032](https://github.com/fastapilabs/cloud/pull/1032) by [@patrick91](https://github.com/patrick91).
 * ⬆ Bump @types/react from 19.1.4 to 19.1.8 in /frontend. PR [#1028](https://github.com/fastapilabs/cloud/pull/1028) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-tabs from 1.1.11 to 1.1.12 in /frontend. PR [#1027](https://github.com/fastapilabs/cloud/pull/1027) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @vitejs/plugin-react-swc from 3.9.0 to 3.10.2 in /frontend. PR [#1024](https://github.com/fastapilabs/cloud/pull/1024) by [@dependabot[bot]](https://github.com/apps/dependabot).
