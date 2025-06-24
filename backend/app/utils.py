@@ -41,17 +41,26 @@ def get_datetime_utc() -> datetime:
 
 def slugify(value: str) -> str:
     """
-    Convert to ASCII. Convert spaces or repeated
-    dashes to single dashes. Remove characters that aren't alphanumerics,
-    underscores, or hyphens. Convert to lowercase. Also strip leading and
-    trailing whitespace, dashes, and underscores.
+    RFC 1035 compliant slug:
+    - Lowercase
+    - Letters, digits, hyphens only
+    - No leading or trailing hyphens
+    - Starts with a letter, if not, prepend 'a'
     """
-    value = str(value)
     value = (
         unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
     )
-    value = re.sub(r"[^\w\s-]", "", value.lower())
-    return re.sub(r"[-\s]+", "-", value).strip("-_")
+    value = value.lower()
+    value = re.sub(r"[^\w\s-]", "", value)
+    value = re.sub(r"[\s_]+", "-", value)
+    value = re.sub(r"-{2,}", "-", value)
+    value = value.strip("-")
+
+    match = re.match(r"([a-z])", value)
+    if not match:
+        value = f"a{value}"
+
+    return value
 
 
 def render_email_template(*, template_name: str, context: dict[str, Any]) -> str:

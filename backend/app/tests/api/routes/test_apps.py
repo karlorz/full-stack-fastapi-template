@@ -1,3 +1,4 @@
+import re
 import uuid
 from datetime import timedelta
 
@@ -272,6 +273,136 @@ def test_create_app_with_empty_name(client: TestClient, db: Session) -> None:
 
     assert data["detail"][0]["loc"] == ["body", "name"]
     assert data["detail"][0]["msg"] == "String should have at least 1 character"
+
+
+def test_app_name_starting_with_number(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    app_in = {"name": "123app", "team_id": str(team.id)}
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/",
+        headers=user_auth_headers,
+        json=app_in,
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+
+    assert not data["slug"][0].isdigit()
+    assert data["slug"].startswith("a")
+    assert re.match(r"^[a-z][a-z0-9-]*[a-z0-9]$", data["slug"])
+
+
+def test_app_name_with_leading_trailing_hyphens(
+    client: TestClient, db: Session
+) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    app_in = {"name": "-test-app-", "team_id": str(team.id)}
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/",
+        headers=user_auth_headers,
+        json=app_in,
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+
+    assert data["slug"].startswith("test-app")
+    assert not data["slug"].startswith("-")
+    assert not data["slug"].endswith("-")
+    assert re.match(r"^[a-z][a-z0-9-]*[a-z0-9]$", data["slug"])
+
+
+def test_app_name_very_long(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    long_name = "this-is-an-extremely-long-application-name-that-exceeds-sixty-three-characters-limit-by-a-lot"
+    app_in = {"name": long_name, "team_id": str(team.id)}
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/",
+        headers=user_auth_headers,
+        json=app_in,
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+
+    assert len(data["slug"]) <= 63
+    assert re.match(r"^[a-z][a-z0-9-]*[a-z0-9]$", data["slug"])
+
+
+def test_app_with_multiple_hyphens(client: TestClient, db: Session) -> None:
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    app_in = {"name": "test--app", "team_id": str(team.id)}
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/",
+        headers=user_auth_headers,
+        json=app_in,
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+
+    assert data["slug"].startswith("test-app")
+    assert re.match(r"^[a-z][a-z0-9-]*[a-z0-9]$", data["slug"])
 
 
 def test_create_project_user_not_in_team(client: TestClient, db: Session) -> None:

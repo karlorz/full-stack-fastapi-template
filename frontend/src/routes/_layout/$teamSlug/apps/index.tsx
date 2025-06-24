@@ -20,7 +20,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Tooltip } from "@/components/ui/tooltip"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { getAppsQueryOptions } from "@/queries/apps"
 import { getTeamQueryOptions } from "@/queries/teams"
 
@@ -112,18 +117,27 @@ function Apps() {
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
         {appsData.data.map((app) => (
           <RouterLink to={app.slug} key={app.id} className="block">
-            <Card className="h-full transition-all hover:shadow-md">
+            <Card className="h-full hover:shadow-md">
               <CardHeader className="pb-2">
                 <div className="flex justify-between">
-                  <CardTitle className="truncate max-w-3xs">
-                    {app.name}
-                  </CardTitle>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <CardTitle className="truncate max-w-[200px] cursor-default">
+                          {app.name}
+                        </CardTitle>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-sm">{app.name}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   <Status status={app.latest_deployment?.status ?? null} />
                 </div>
                 {app.latest_deployment ? (
                   <Badge
                     variant="outline"
-                    className="flex my-2 truncate text-xs"
+                    className="flex my-2 truncate max-w-[250px] text-xs"
                   >
                     <a
                       href={app.url}
@@ -150,13 +164,22 @@ function Apps() {
                     <div className="text-xs text-muted-foreground">
                       Last Updated
                     </div>
-                    <Tooltip>
-                      <div className="text-xs font-medium">
-                        {formatDistanceToNow(new Date(app.updated_at), {
-                          addSuffix: true,
-                        })}
-                      </div>
-                    </Tooltip>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <p className="text-xs font-medium">
+                            {formatDistanceToNow(new Date(app.updated_at), {
+                              addSuffix: true,
+                            })}
+                          </p>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs">
+                            {new Date(app.updated_at).toLocaleString()}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
                 <div className="mt-4 pt-4 border-t">

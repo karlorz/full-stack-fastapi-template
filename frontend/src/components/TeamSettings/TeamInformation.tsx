@@ -38,7 +38,7 @@ import DeleteConfirmation from "./DeleteConfirmation"
 import TransferTeam from "./TransferTeam"
 
 const formSchema = z.object({
-  name: z.string().nonempty("Name is required").max(50),
+  name: z.string().nonempty("Name is required").min(3).max(50),
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -77,8 +77,8 @@ const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
     onSettled: () => queryClient.invalidateQueries(),
   })
 
-  const onSubmit = (values: FormData) => {
-    mutation.mutate({ name: values.name })
+  const onSubmit = (data: FormData) => {
+    mutation.mutate(data)
     setIsEditing(false)
   }
 

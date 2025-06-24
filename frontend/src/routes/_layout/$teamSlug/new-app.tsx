@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   useMutation,
   useQueryClient,
@@ -6,8 +7,8 @@ import {
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import Lottie from "lottie-react"
 import { useState } from "react"
-import { type SubmitHandler, useForm } from "react-hook-form"
-
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 import confetti from "@/assets/confetti.json"
 import warning from "@/assets/failed.json"
 import { type ApiError, type AppCreate, AppsService } from "@/client"
@@ -33,6 +34,12 @@ import { LoadingButton } from "@/components/ui/loading-button"
 import { getTeamQueryOptions } from "@/queries/teams"
 import { extractErrorMessage } from "@/utils"
 
+const formSchema = z.object({
+  name: z.string().nonempty("Name is required").min(3).max(50),
+})
+
+type FormData = z.infer<typeof formSchema>
+
 export const Route = createFileRoute("/_layout/$teamSlug/new-app")({
   component: NewApp,
   loader: ({ context, params: { teamSlug } }) =>
@@ -45,9 +52,8 @@ function NewApp() {
   const queryClient = useQueryClient()
   const [isOpen, setIsOpen] = useState(false)
 
-  const form = useForm<AppCreate>({
-    mode: "onSubmit",
-    criteriaMode: "all",
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
     },
@@ -68,7 +74,7 @@ function NewApp() {
     onSettled: () => queryClient.invalidateQueries(),
   })
 
-  const onSubmit: SubmitHandler<AppCreate> = (data) => {
+  const onSubmit = (data: FormData) => {
     mutation.mutate({ ...data, team_id: team.id })
   }
 
@@ -95,13 +101,6 @@ function NewApp() {
                 <FormField
                   control={form.control}
                   name="name"
-                  rules={{
-                    required: "Name is required",
-                    minLength: {
-                      value: 3,
-                      message: "Name must be at least 3 characters",
-                    },
-                  }}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>

@@ -1,9 +1,11 @@
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import Lottie from "lottie-react"
 import { useFeatureFlagEnabled } from "posthog-js/react"
 import { useState } from "react"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 import confetti from "@/assets/confetti.json"
 import warning from "@/assets/failed.json"
 import { type ApiError, type TeamCreate, TeamsService } from "@/client"
@@ -28,6 +30,12 @@ import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { extractErrorMessage } from "@/utils"
 
+const formSchema = z.object({
+  name: z.string().nonempty("Name is required").min(3).max(50),
+})
+
+type FormData = z.infer<typeof formSchema>
+
 export const Route = createFileRoute("/_layout/teams/new")({
   component: NewTeam,
 })
@@ -38,9 +46,8 @@ function NewTeam() {
   const queryClient = useQueryClient()
   const [isOpen, setIsOpen] = useState(false)
 
-  const form = useForm<TeamCreate>({
-    mode: "onSubmit",
-    criteriaMode: "all",
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
     },
@@ -59,7 +66,7 @@ function NewTeam() {
     onSettled: () => queryClient.invalidateQueries(),
   })
 
-  const onSubmit: SubmitHandler<TeamCreate> = (data) => {
+  const onSubmit = (data: FormData) => {
     mutation.mutate(data)
   }
 
@@ -79,7 +86,7 @@ function NewTeam() {
   return (
     <div className="container mx-auto p-0">
       <h1 className="text-2xl font-extrabold tracking-tight">New Team</h1>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground">
         Create a new team to manage your projects and collaborate with your team
         members.
       </p>
@@ -98,13 +105,6 @@ function NewTeam() {
                 <FormField
                   control={form.control}
                   name="name"
-                  rules={{
-                    required: "Name is required",
-                    minLength: {
-                      value: 3,
-                      message: "Name must be at least 3 characters",
-                    },
-                  }}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
