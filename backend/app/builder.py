@@ -276,22 +276,35 @@ def create_custom_domain(*, namespace: str, domain: str, service_name: str) -> N
 class ServiceName(str, Enum):
     api = "api-fastapicloud"
     builder = "builder-fastapicloud"
+    posthog = "posthog-fastapicloud"
 
 
 def deploy_cloud(
-    service_name: ServiceName, image_url: str, min_scale: int = 0, public: bool = False
+    service_name: ServiceName,
+    image_url: str,
+    min_scale: int = 0,
+    public: bool = False,
+    container_port: int | None = None,
+    domain: str | None = None,
 ) -> None:
     namespace = "fastapicloud"
 
-    settings_groups: list[type[SettingsEnv]] = [
-        CommonSettings,
-        DBSettings,
-        CloudflareSettings,
-    ]
+    settings_groups: list[type[SettingsEnv]] = []
+
     if service_name == ServiceName.api:
-        settings_groups.extend([MainSettings])
+        settings_groups.extend(
+            [CommonSettings, DBSettings, CloudflareSettings, MainSettings]
+        )
     elif service_name == ServiceName.builder:
-        settings_groups.extend([BuilderSettings, DepotSettings])
+        settings_groups.extend(
+            [
+                CommonSettings,
+                DBSettings,
+                CloudflareSettings,
+                BuilderSettings,
+                DepotSettings,
+            ]
+        )
     env_data = {}
     for settings_group in settings_groups:
         settings = settings_group.get_settings()
@@ -313,12 +326,21 @@ def deploy_cloud(
         env=env_strs,
         service_account="fastapicloud",
         public=public,
+        container_port=container_port,
     )
     if service_name == ServiceName.api:
         # Setting a custom domain exposes the service publicly via the custom domain
         create_custom_domain(
             namespace=namespace,
             domain=MainSettings.get_settings().API_DOMAIN,
+            service_name=service_name.value,
+        )
+
+    if domain:
+        # Create a custom domain for the service
+        create_custom_domain(
+            namespace=namespace,
+            domain=domain,
             service_name=service_name.value,
         )
 
@@ -335,6 +357,7 @@ def deploy_to_kubernetes(
     labels: dict[str, str] | None = None,
     public: bool = True,
     last_updated: datetime | None = None,
+    container_port: int | None = None,
 ) -> None:
     use_last_updated = last_updated or get_datetime_utc()
     use_env = env or {}
@@ -372,6 +395,11 @@ def deploy_to_kubernetes(
             }
         },
     }
+
+    if container_port:
+        knative_service["spec"]["template"]["spec"]["containers"][0]["ports"] = [
+            {"containerPort": container_port}
+        ]
 
     if service_account:
         knative_service["spec"]["template"]["spec"]["serviceAccountName"] = (
