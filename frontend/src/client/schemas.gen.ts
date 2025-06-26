@@ -314,33 +314,6 @@ export const Body_login_login_tokenSchema = {
   title: "Body_login-login_token",
 } as const
 
-export const Body_tokenSchema = {
-  properties: {
-    request: {
-      oneOf: [
-        {
-          $ref: "#/components/schemas/AuthorizationCodeGrantRequest",
-        },
-        {
-          $ref: "#/components/schemas/PasswordGrantRequest",
-        },
-      ],
-      title: "Request",
-      discriminator: {
-        propertyName: "grant_type",
-        mapping: {
-          authorization_code:
-            "#/components/schemas/AuthorizationCodeGrantRequest",
-          password: "#/components/schemas/PasswordGrantRequest",
-        },
-      },
-    },
-  },
-  type: "object",
-  required: ["request"],
-  title: "Body_token",
-} as const
-
 export const CreateAppSchema = {
   properties: {
     name: {

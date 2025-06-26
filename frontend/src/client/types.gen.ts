@@ -87,10 +87,6 @@ export type Body_login_login_token = {
   grant_type: "urn:ietf:params:oauth:grant-type:device_code"
 }
 
-export type Body_token = {
-  request: AuthorizationCodeGrantRequest | PasswordGrantRequest
-}
-
 export type CreateApp = {
   name: string
   team_id: string
@@ -544,7 +540,7 @@ export type GithubCallbackResponse = unknown
 export type GithubFinalizeLinkResponse = unknown
 
 export type TokenData = {
-  formData: Body_token
+  formData: AuthorizationCodeGrantRequest | PasswordGrantRequest
 }
 
 export type TokenResponse2 = TokenResponse
