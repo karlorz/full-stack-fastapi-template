@@ -1,12 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Eye, EyeOff, History, Trash } from "lucide-react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { ChevronDown, Eye, EyeOff, History, Trash } from "lucide-react"
 import { Fragment, useEffect, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { AppsService } from "@/client"
+import { AppsService, DeploymentsService } from "@/client"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Form,
   FormControl,
@@ -15,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Tooltip,
   TooltipContent,
@@ -219,6 +226,7 @@ const EnvironmentVariables = ({
   })
 
   const [isEditing, setIsEditing] = useState(false)
+  const [saveOption, setSaveOption] = useState<"save" | "redeploy">("save")
 
   const initialEnvironmentVariablesCount = environmentVariables.length
   const hasEnvironmentVariables =
@@ -230,6 +238,13 @@ const EnvironmentVariables = ({
   const shouldShowFooter = isEditing || hasEnvironmentVariables
 
   const { showErrorToast } = useCustomToast()
+
+  const { data: app } = useQuery({
+    queryKey: ["apps", appId],
+    queryFn: () => AppsService.readApp({ appId }),
+  })
+
+  const hasDeployment = app?.latest_deployment?.id
 
   useEffect(() => {
     form.reset({ environmentVariables })
@@ -260,18 +275,35 @@ const EnvironmentVariables = ({
   }
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: { [name: string]: string | null }) => {
-      return AppsService.updateEnvironmentVariables({
+    mutationFn: async ({
+      data,
+      shouldRedeploy,
+    }: {
+      data: { [name: string]: string | null }
+      shouldRedeploy: boolean
+    }) => {
+      const updatedEnvVars = await AppsService.updateEnvironmentVariables({
         appId,
         requestBody: data,
       })
-    },
-    onSuccess: (response) => {
-      setIsEditing(false)
 
+      // redeploy if requested and there's a deployment
+      if (shouldRedeploy && hasDeployment) {
+        const app = await AppsService.readApp({ appId })
+        if (app.latest_deployment?.id) {
+          await DeploymentsService.redeploy({
+            deploymentId: app.latest_deployment.id,
+          })
+        }
+      }
+
+      return updatedEnvVars
+    },
+    onSuccess: (updatedEnvVars) => {
+      setIsEditing(false)
       queryClient.setQueryData(
         ["apps", appId, "environmentVariables"],
-        response,
+        updatedEnvVars,
       )
     },
     onError: handleError.bind(showErrorToast),
@@ -311,7 +343,10 @@ const EnvironmentVariables = ({
       }
     })
 
-    mutate(dataToSend)
+    mutate({
+      data: dataToSend,
+      shouldRedeploy: saveOption === "redeploy" && !!hasDeployment,
+    })
   }
 
   return (
@@ -385,13 +420,53 @@ const EnvironmentVariables = ({
                   >
                     Cancel
                   </Button>
-                  <Button
-                    type="submit"
-                    disabled={isPending}
-                    className={isPending ? "opacity-50 cursor-not-allowed" : ""}
-                  >
-                    Save
-                  </Button>
+                  {!hasDeployment ? (
+                    <Button type="submit" disabled={isPending}>
+                      Save
+                    </Button>
+                  ) : (
+                    <div className="flex">
+                      <LoadingButton
+                        type="submit"
+                        disabled={isPending}
+                        loading={isPending}
+                        className="rounded-r-none"
+                      >
+                        {saveOption === "redeploy"
+                          ? "Save and Redeploy"
+                          : "Save Only"}
+                      </LoadingButton>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            type="button"
+                            className="rounded-l-none border-l-1"
+                          >
+                            <ChevronDown
+                              className="w-4 h-4"
+                              data-testid="arrow-down"
+                            />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              setSaveOption("save")
+                            }}
+                          >
+                            Save Only
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              setSaveOption("redeploy")
+                            }}
+                          >
+                            Save and Redeploy
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  )}
                 </>
               ) : (
                 <Button
