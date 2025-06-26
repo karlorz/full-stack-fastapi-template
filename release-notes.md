@@ -146,6 +146,7 @@
 
 ### Fixes
 
+* ⬆️ Upgrade sentry-sdk to latest. PR [#1036](https://github.com/fastapilabs/cloud/pull/1036) by [@patrick91](https://github.com/patrick91).
 * 🐛 Fix app slugs non-RFC 1035 compliant. PR [#1023](https://github.com/fastapilabs/cloud/pull/1023) by [@alejsdev](https://github.com/alejsdev).
 * 🚨 Fix `openapi-ts` configuration to correctly generate schemas. PR [#1019](https://github.com/fastapilabs/cloud/pull/1019) by [@patrick91](https://github.com/patrick91).
 * 🚨 Fix linter warnings. PR [#921](https://github.com/fastapilabs/cloud/pull/921) by [@alejsdev](https://github.com/alejsdev).
