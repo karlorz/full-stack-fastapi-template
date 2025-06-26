@@ -416,6 +416,7 @@
 
 ### Upgrades
 
+* ⬆️ Upgrade FastAPI to latest. PR [#1041](https://github.com/fastapilabs/cloud/pull/1041) by [@patrick91](https://github.com/patrick91).
 * ⬆️  Upgrade `openapi-ts`. PR [#1021](https://github.com/fastapilabs/cloud/pull/1021) by [@patrick91](https://github.com/patrick91).
 * ⬆ Bump @tanstack/router-vite-plugin from 1.120.10 to 1.120.20 in /frontend. PR [#989](https://github.com/fastapilabs/cloud/pull/989) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/react-query from 5.75.7 to 5.80.6 in /frontend. PR [#987](https://github.com/fastapilabs/cloud/pull/987) by [@dependabot[bot]](https://github.com/apps/dependabot).
