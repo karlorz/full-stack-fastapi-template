@@ -269,7 +269,7 @@ def test_register_user_empty_full_name(client: TestClient) -> None:
 
     data = r.json()
 
-    assert data["detail"][0]["msg"] == "String should have at least 3 characters"  # type: ignore
+    assert data["detail"][0]["msg"] == "String should have at least 3 characters"
 
 
 def test_resend_verification_email_success(

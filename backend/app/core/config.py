@@ -2,7 +2,7 @@ import secrets
 import warnings
 from collections import UserString
 from functools import lru_cache
-from typing import Annotated, Any, Literal, TypeVar
+from typing import Annotated, Any, Literal, Self, TypeVar
 
 from pydantic import (
     AnyUrl,
@@ -14,7 +14,6 @@ from pydantic import (
     model_validator,
 )
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
-from typing_extensions import Self
 
 
 def parse_list_or_str(v: Any) -> list[str] | str:
@@ -48,7 +47,9 @@ TSettingsEnv = TypeVar("TSettingsEnv", bound="SettingsEnv")
 # lru_cache is hard to type
 # Ref: https://github.com/python/mypy/issues/5107
 @lru_cache
-def _get_single_settings_instance(cls: type[TSettingsEnv]) -> TSettingsEnv:
+def _get_single_settings_instance[TSettingsEnv: "SettingsEnv"](
+    cls: type[TSettingsEnv],
+) -> TSettingsEnv:
     return cls()
 
 

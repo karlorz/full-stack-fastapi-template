@@ -1,4 +1,3 @@
-import asyncio
 import secrets
 from collections.abc import AsyncGenerator
 from datetime import datetime
@@ -94,7 +93,7 @@ def get_logs(*, jetstream: JetStreamContext, subject: str) -> LogsResponse:
     # timeout before getting the first message.
     try:
         messages = syncify(subscription.fetch)(batch=1000, timeout=0.5)
-    except (FetchTimeoutError, asyncio.TimeoutError):
+    except (TimeoutError, FetchTimeoutError):
         messages = []
 
     logs: list[Log] = []
