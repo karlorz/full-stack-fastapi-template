@@ -1,3 +1,4 @@
+import uuid
 from collections.abc import Generator
 from unittest.mock import ANY, MagicMock, patch
 
@@ -6,7 +7,7 @@ import pytest
 
 from app.core.config import CommonSettings
 from app.messenger import _process_messages
-from app.models import MessengerMessageBody
+from app.models import BuildMessage
 
 common_settings = CommonSettings.get_settings()
 
@@ -40,9 +41,13 @@ async def test_process_messages_with_messages(
     mock_sqs: MagicMock,
     mock_process_message: MagicMock,
 ) -> None:
+    deployment_id = uuid.uuid4()
+
+    message = BuildMessage(deployment_id=deployment_id, type="build")
+
     queue_url = "test_queue_url"
     mock_sqs.receive_message.return_value = {
-        "Messages": [{"Body": "123", "ReceiptHandle": "456"}]
+        "Messages": [{"Body": message.model_dump_json(), "ReceiptHandle": "456"}]
     }
 
     async with httpx.AsyncClient() as client:
@@ -53,7 +58,7 @@ async def test_process_messages_with_messages(
         QueueUrl=queue_url, MaxNumberOfMessages=10, WaitTimeSeconds=20
     )
     mock_process_message.assert_called_once_with(
-        message=MessengerMessageBody(deployment_id="123"),
+        message=message,
         receipt_handle="456",
         client=ANY,
     )

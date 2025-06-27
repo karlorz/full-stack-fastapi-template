@@ -24,13 +24,14 @@ from app.core.config import CommonSettings, MainSettings
 from app.crud import get_user_team_link
 from app.models import (
     App,
+    BuildMessage,
     Deployment,
     DeploymentPublic,
     DeploymentsPublic,
     DeploymentStatus,
     DeploymentUploadOut,
     Message,
-    MessengerMessageBody,
+    RedeployMessage,
 )
 from app.nats import (
     JetStreamDep,
@@ -282,7 +283,7 @@ def redeploy(
     deployment.updated_at = get_datetime_utc()
     session.commit()
 
-    message = MessengerMessageBody(type="redeploy", deployment_id=str(deployment.id))
+    message = RedeployMessage(deployment_id=str(deployment.id))
 
     queue_url = sqs.get_queue_url(
         QueueName=CommonSettings.get_settings().BUILDER_QUEUE_NAME
@@ -322,7 +323,7 @@ def upload_complete(
     deployment.status = DeploymentStatus.ready_for_build
     session.commit()
 
-    message = MessengerMessageBody(type="build", deployment_id=str(deployment.id))
+    message = BuildMessage(deployment_id=str(deployment.id))
     queue_url = sqs.get_queue_url(
         QueueName=CommonSettings.get_settings().BUILDER_QUEUE_NAME
     )["QueueUrl"]

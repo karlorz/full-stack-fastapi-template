@@ -1,3 +1,4 @@
+import uuid
 from unittest.mock import MagicMock
 
 import httpx
@@ -7,7 +8,7 @@ from botocore.exceptions import ClientError
 
 from app.core.config import CommonSettings
 from app.messenger import process_message
-from app.models import MessengerMessageBody
+from app.models import BuildMessage
 
 common_settings = CommonSettings.get_settings()
 
@@ -17,15 +18,15 @@ common_settings = CommonSettings.get_settings()
 async def test_process_message_success(
     respx_mock: respx.Router, mock_sqs: MagicMock
 ) -> None:
-    deployment_id = "123"
+    deployment_id = uuid.uuid4()
     receipt_handle = "456"
 
-    respx_mock.post("/apps/depot/build", json={"deployment_id": deployment_id}).mock(
-        return_value=httpx.Response(200)
-    )
+    respx_mock.post(
+        "/apps/depot/build", json={"deployment_id": str(deployment_id)}
+    ).mock(return_value=httpx.Response(200))
 
     await process_message(
-        message=MessengerMessageBody(deployment_id=deployment_id, type="build"),
+        message=BuildMessage(deployment_id=deployment_id),
         receipt_handle=receipt_handle,
         client=httpx.AsyncClient(),
     )
@@ -40,14 +41,17 @@ async def test_process_message_success(
 async def test_does_not_delete_message_on_http_error(
     respx_mock: respx.Router, mock_sqs: MagicMock
 ) -> None:
-    respx_mock.post("/apps/depot/build", json={"deployment_id": "123"}).mock(
-        return_value=httpx.Response(400)
-    )
+    deployment_id = uuid.uuid4()
+    receipt_handle = "456"
+
+    respx_mock.post(
+        "/apps/depot/build", json={"deployment_id": str(deployment_id)}
+    ).mock(return_value=httpx.Response(400))
 
     with pytest.raises(httpx.HTTPStatusError):
         await process_message(
-            message=MessengerMessageBody(deployment_id="123", type="build"),
-            receipt_handle="456",
+            message=BuildMessage(deployment_id=deployment_id),
+            receipt_handle=receipt_handle,
             client=httpx.AsyncClient(),
         )
 
@@ -59,18 +63,21 @@ async def test_does_not_delete_message_on_http_error(
 async def test_process_message_retries_on_http_error(
     respx_mock: respx.Router, mock_sqs: MagicMock
 ) -> None:
+    deployment_id = uuid.uuid4()
+    receipt_handle = "456"
+
     request_mock = respx_mock.post(
-        "/apps/depot/build", json={"deployment_id": "123"}
+        "/apps/depot/build", json={"deployment_id": str(deployment_id)}
     ).mock(side_effect=[httpx.Response(500), httpx.Response(200)])
 
     await process_message(
-        message=MessengerMessageBody(deployment_id="123", type="build"),
-        receipt_handle="456",
+        message=BuildMessage(deployment_id=deployment_id),
+        receipt_handle=receipt_handle,
         client=httpx.AsyncClient(),
     )
 
     mock_sqs.delete_message.assert_called_once_with(
-        QueueUrl=common_settings.BUILDER_QUEUE_NAME, ReceiptHandle="456"
+        QueueUrl=common_settings.BUILDER_QUEUE_NAME, ReceiptHandle=receipt_handle
     )
 
     assert request_mock.call_count == 2
@@ -81,8 +88,11 @@ async def test_process_message_retries_on_http_error(
 async def test_process_message_retries_on_sqs_error(
     respx_mock: respx.Router, mock_sqs: MagicMock
 ) -> None:
+    deployment_id = uuid.uuid4()
+    receipt_handle = "456"
+
     request_mock = respx_mock.post(
-        "/apps/depot/build", json={"deployment_id": "123"}
+        "/apps/depot/build", json={"deployment_id": str(deployment_id)}
     ).mock(return_value=httpx.Response(200))
 
     mock_sqs.delete_message.side_effect = [
@@ -94,13 +104,13 @@ async def test_process_message_retries_on_sqs_error(
     ]
 
     await process_message(
-        message=MessengerMessageBody(deployment_id="123", type="build"),
-        receipt_handle="456",
+        message=BuildMessage(deployment_id=deployment_id),
+        receipt_handle=receipt_handle,
         client=httpx.AsyncClient(),
     )
 
     mock_sqs.delete_message.assert_called_with(
-        QueueUrl=common_settings.BUILDER_QUEUE_NAME, ReceiptHandle="456"
+        QueueUrl=common_settings.BUILDER_QUEUE_NAME, ReceiptHandle=receipt_handle
     )
 
     assert mock_sqs.delete_message.call_count == 2

@@ -6,7 +6,7 @@ import logfire
 import sentry_sdk
 import stamina
 from asyncer import asyncify
-from pydantic import ValidationError
+from pydantic import TypeAdapter
 from stamina import AsyncRetryingCaller
 
 from app.aws_utils import get_sqs_client
@@ -115,12 +115,17 @@ async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
         WaitTimeSeconds=20,
     )
 
+    MessengerMessageAdapter: TypeAdapter[MessengerMessageBody] = TypeAdapter(
+        MessengerMessageBody
+    )
+
     # Create an async task group so all messages are processed concurrently
     try:
         async with asyncer.create_task_group() as tg:
             for message in messages.get("Messages", []):
                 raw_body = message.get("Body")
-                receipt_handle = message.get("ReceiptHandle")
+                receipt_handle = message["ReceiptHandle"]
+
                 with logfire.span(
                     "Handle message {receipt_handle}", receipt_handle=receipt_handle
                 ):
@@ -133,27 +138,11 @@ async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
                                 QueueUrl=queue_url, ReceiptHandle=receipt_handle
                             )
                         continue
-                    assert receipt_handle
-                    try:
-                        # New messages
-                        message_body = MessengerMessageBody.model_validate_json(
-                            raw_body
-                        )
-                    except ValidationError as e:
-                        # Old messages
-                        # TODO: remove this once it's deployed in all environments
-                        logfire.error(
-                            "Validation error for message: {raw_body}, error: {e}",
-                            raw_body=raw_body,
-                            e=e,
-                        )
-                        message_body = MessengerMessageBody(deployment_id=raw_body)
+
+                    message_body = MessengerMessageAdapter.validate_json(raw_body)
+
                     # Schedule processing this message concurrently. By the end of the
                     # async with block for the task group it would have finished
-                    logfire.info(
-                        "Schedule process deployment_id: {deployment_id}",
-                        deployment_id=message_body.deployment_id,
-                    )
                     tg.soonify(process_message)(
                         message=message_body,
                         receipt_handle=receipt_handle,

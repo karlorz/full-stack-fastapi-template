@@ -538,6 +538,17 @@ class GitHubAccount(SQLModel):
     provider_username: str
 
 
-class MessengerMessageBody(SQLModel):
-    type: Literal["build", "redeploy"] = "build"
-    deployment_id: str
+class BuildMessage(SQLModel):
+    type: Literal["build"] = "build"
+    deployment_id: uuid.UUID
+
+
+class RedeployMessage(SQLModel):
+    type: Literal["redeploy"] = "redeploy"
+    deployment_id: uuid.UUID
+
+
+MessengerMessageBody = Annotated[
+    BuildMessage | RedeployMessage,
+    Field(discriminator="type"),
+]
