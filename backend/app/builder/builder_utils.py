@@ -12,6 +12,7 @@ from sqlmodel import Session
 
 from app.core.config import BuilderSettings, CommonSettings
 from app.core.db import engine
+from app.models import App
 
 builder_settings = BuilderSettings.get_settings()
 common_settings = CommonSettings.get_settings()
@@ -65,3 +66,8 @@ def validate_api_key(api_key: Annotated[str, Depends(api_key_header)]) -> str:
     if api_key != common_settings.BUILDER_API_KEY:
         raise HTTPException(status_code=401, detail="Invalid API key")
     return api_key
+
+
+def get_app_namespace(app: App) -> str:
+    """Get the Kubernetes namespace for an app based on its team."""
+    return f"team-{app.team_id}"

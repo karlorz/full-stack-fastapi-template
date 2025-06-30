@@ -27,6 +27,7 @@ from app import depot_client
 from app.aws_utils import get_ecr_client, get_s3_client
 from app.builder.builder_utils import (
     SessionDep,
+    get_app_namespace,
     get_kubernetes_client_core_v1,
     get_kubernetes_client_custom_objects,
     validate_api_key,
@@ -109,7 +110,7 @@ def get_ecr_token() -> str:
     return token
 
 
-def create_namespace_by_team(namespace: str) -> None:
+def create_namespace(namespace: str) -> None:
     api_instance = get_kubernetes_client_core_v1()
 
     try:
@@ -397,7 +398,7 @@ def deploy_to_kubernetes(
         ] = "cluster-local"
 
     ## TODO: Add resource limits and quotas by namespace
-    create_namespace_by_team(namespace)
+    create_namespace(namespace)
 
     create_or_patch_custom_namespaced_object(
         group="serving.knative.dev",
@@ -682,7 +683,7 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
             deploy_to_kubernetes(
                 service_name=app_name,
                 full_image_tag=full_image_tag,
-                namespace=f"team-{deployment_with_team.app.team.id}",
+                namespace=get_app_namespace(deployment_with_team.app),
                 env=env_vars,
                 labels={
                     "fastapicloud_team": team.slug,
@@ -744,7 +745,7 @@ def deploy(
     deploy_to_kubernetes(
         service_name=deployment.slug,
         full_image_tag=full_image_tag,
-        namespace=f"team-{deployment.app.team.id}",
+        namespace=get_app_namespace(deployment.app),
         env=env_vars,
         labels={
             "fastapicloud_team": deployment.app.team.slug,
