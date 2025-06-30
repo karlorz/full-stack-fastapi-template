@@ -19,7 +19,7 @@ from app.api.deps import (
 )
 from app.api.utils.aws_s3 import generate_presigned_url_post
 from app.aws_utils import get_sqs_client
-from app.builder import BuildLog, BuildLogComplete, BuildLogFailed
+from app.builder.models import BuildLog, BuildLogComplete, BuildLogFailed
 from app.core.config import CommonSettings, MainSettings
 from app.crud import get_user_team_link
 from app.models import (

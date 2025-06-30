@@ -8,7 +8,7 @@ from collections.abc import Generator
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any
 
 import logfire
 import redis
@@ -25,7 +25,7 @@ from sqlmodel import select
 
 from app import depot_client
 from app.aws_utils import get_ecr_client, get_s3_client
-from app.builder_utils import (
+from app.builder.builder_utils import (
     SessionDep,
     get_kubernetes_client_core_v1,
     get_kubernetes_client_custom_objects,
@@ -52,6 +52,8 @@ from app.models import (
 )
 from app.utils import get_datetime_utc
 
+from .models import BuildLog, BuildLogComplete, BuildLogFailed, BuildLogMessage
+
 builder_settings = BuilderSettings.get_settings()
 common_settings = CommonSettings.get_settings()
 
@@ -62,7 +64,7 @@ s3 = get_s3_client()
 # AWS ECR client
 ecr = get_ecr_client()
 
-code_path = Path(__file__).parent.parent.resolve()
+root_path = Path(__file__).parents[2].resolve()
 
 # Sentry
 if (
@@ -74,22 +76,6 @@ if (
         enable_tracing=True,
         environment=CommonSettings.get_settings().ENVIRONMENT,
     )
-
-
-class BuildLogMessage(BaseModel):
-    message: str
-    type: Literal["message"] = "message"
-
-
-class BuildLogComplete(BaseModel):
-    type: Literal["complete"] = "complete"
-
-
-class BuildLogFailed(BaseModel):
-    type: Literal["failed"] = "failed"
-
-
-type BuildLog = BuildLogMessage | BuildLogComplete | BuildLogFailed
 
 
 # FastAPI app
@@ -430,8 +416,8 @@ def repository_exists(repository_name: str) -> bool:
     except ClientError as e:
         if e.response.get("Error", {}).get("Code") == "RepositoryNotFoundException":
             return False
-        else:
-            raise
+
+        raise
 
 
 def create_ecr_repository(repository_name: str) -> dict[str, Any]:
@@ -645,11 +631,14 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
         image_tag = get_image_name(
             app_id=deployment_with_team.app.id, deployment_id=deployment_with_team.id
         )
+
+        # TODO: this should maybe live in the model
         object_key = f"{deployment_with_team.app.id}/{deployment_with_team.id}.tar"
         env_vars = get_env_vars(deployment_with_team.app_id, session)
         app_name = deployment_with_team.slug
 
         context_name_prefix = f"build-context-{deployment_with_team.id}-"
+
         with tempfile.TemporaryDirectory(prefix=context_name_prefix) as build_context:
             print(f"Build context: {build_context}")
 
@@ -669,7 +658,7 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
                 create_ecr_repository(image_tag)
 
             shutil.copytree(
-                code_path / "builder-context", build_context, dirs_exist_ok=True
+                root_path / "builder-context", build_context, dirs_exist_ok=True
             )
 
             deployment_with_team.status = DeploymentStatus.building_image
@@ -693,7 +682,7 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
             deploy_to_kubernetes(
                 service_name=app_name,
                 full_image_tag=full_image_tag,
-                namespace=f"team-{team.id}",
+                namespace=f"team-{deployment_with_team.app.team.id}",
                 env=env_vars,
                 labels={
                     "fastapicloud_team": team.slug,
@@ -730,7 +719,9 @@ def app_depot_build(message: DeployMessage, session: SessionDep) -> Message:
     if deployment.status != DeploymentStatus.ready_for_build:
         return Message(message="Already being processed")
 
+    # TODO: we could pass the deployment directly instead of the id
     _app_process_build(deployment_id=message.deployment_id, session=session)
+
     return Message(message="OK")
 
 

@@ -70,4 +70,4 @@ RUN --mount=type=cache,target=/user/.cache/uv \
 
 WORKDIR /app/backend/
 
-CMD ["sh", "-c", "fastapi run app/builder.py --port ${PORT:-8001}"]
+CMD ["sh", "-c", "fastapi run app/builder/main.py --port ${PORT:-8001}"]

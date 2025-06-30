@@ -99,8 +99,7 @@ show_missing = true
 sort = "-Cover"
 omit = [
     "app/depot_py/*",
-    "app/builder_utils.py",
-    "app/builder.py",
+    "app/builder/*",
     "app/cloudflare_utils.py",
 ]
 

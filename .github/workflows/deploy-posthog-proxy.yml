@@ -91,7 +91,7 @@ jobs:
       with:
         version: "0.4.15"
     - name: Update Knative Service
-      run: uv run typer --func deploy_cloud app.builder run posthog-fastapicloud $IMAGE_URL --min-scale 1 --container-port 8080 --domain $DOMAIN
+      run: uv run typer --func deploy_cloud app.builder.main run posthog-fastapicloud $IMAGE_URL --min-scale 1 --container-port 8080 --domain $DOMAIN
       working-directory: backend
       env:
         IMAGE_URL: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}

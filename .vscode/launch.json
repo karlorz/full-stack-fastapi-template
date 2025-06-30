@@ -23,7 +23,7 @@
             "module": "fastapi",
             "args": [
                 "run",
-                "app/builder.py",
+                "app/builder/main.py",
                 "--port",
                 "8001"
             ],

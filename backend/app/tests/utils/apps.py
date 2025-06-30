@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlmodel import Session
 
-from app.models import App, Deployment, EnvironmentVariable, Team
+from app.models import App, Deployment, DeploymentStatus, EnvironmentVariable, Team
 from app.tests.utils.utils import random_lower_string
 
 
@@ -29,10 +29,12 @@ def create_random_app(
 def create_deployment_for_app(
     db: Session,
     app: App,
+    status: DeploymentStatus = DeploymentStatus.waiting_upload,
 ) -> Deployment:
     deployment = Deployment(
         app_id=app.id,
         slug=app.slug,
+        status=status,
     )
     db.add(deployment)
     db.commit()
