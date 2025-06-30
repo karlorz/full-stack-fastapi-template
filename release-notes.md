@@ -479,6 +479,7 @@
 
 ### Internal
 
+* ⬆ Bump lucide-react from 0.507.0 to 0.525.0 in /frontend. PR [#1046](https://github.com/fastapilabs/cloud/pull/1046) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆️ Upgrade biome. PR [#1032](https://github.com/fastapilabs/cloud/pull/1032) by [@patrick91](https://github.com/patrick91).
 * ⬆ Bump @types/react from 19.1.4 to 19.1.8 in /frontend. PR [#1028](https://github.com/fastapilabs/cloud/pull/1028) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-tabs from 1.1.11 to 1.1.12 in /frontend. PR [#1027](https://github.com/fastapilabs/cloud/pull/1027) by [@dependabot[bot]](https://github.com/apps/dependabot).
