@@ -479,6 +479,7 @@
 
 ### Internal
 
+* ⬆ Bump tw-animate-css from 1.2.8 to 1.3.4 in /frontend. PR [#1048](https://github.com/fastapilabs/cloud/pull/1048) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-avatar from 1.1.9 to 1.1.10 in /frontend. PR [#1047](https://github.com/fastapilabs/cloud/pull/1047) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump lucide-react from 0.507.0 to 0.525.0 in /frontend. PR [#1046](https://github.com/fastapilabs/cloud/pull/1046) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆️ Upgrade biome. PR [#1032](https://github.com/fastapilabs/cloud/pull/1032) by [@patrick91](https://github.com/patrick91).
