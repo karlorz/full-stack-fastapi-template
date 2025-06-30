@@ -202,6 +202,7 @@
 
 ### Refactors
 
+* ♻️ Refactor builder into its own folder. PR [#1045](https://github.com/fastapilabs/cloud/pull/1045) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor `MessengerMessageBody` to be a union. PR [#1042](https://github.com/fastapilabs/cloud/pull/1042) by [@patrick91](https://github.com/patrick91).
 * ♻️ Fix EKS access for AdministratorAccess Role. PR [#926](https://github.com/fastapilabs/cloud/pull/926) by [@malvex](https://github.com/malvex).
 * ♻️ Set min replica to 1 while we optimize cold starts. PR [#1003](https://github.com/fastapilabs/cloud/pull/1003) by [@tiangolo](https://github.com/tiangolo).
