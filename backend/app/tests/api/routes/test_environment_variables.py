@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 
 from app.core.config import MainSettings
 from app.crud import add_user_to_team
-from app.models import EnvironmentVariable, Role
+from app.models import AppStatus, EnvironmentVariable, Role
 from app.tests.utils.apps import create_environment_variable, create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
@@ -698,3 +698,197 @@ def test_batch_update_for_app_different_team(client: TestClient, db: Session) ->
     data = response.json()
 
     assert data["detail"] == "Team not found for the current user"
+
+
+def test_read_environment_variables_filters_by_app_status(
+    client: TestClient, db: Session
+) -> None:
+    """Test that read environment variables endpoint filters by app status."""
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    pending_deletion_app = create_random_app(db, team=team)
+    pending_deletion_app.status = AppStatus.pending_deletion
+    db.add(pending_deletion_app)
+    db.commit()
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/environment-variables",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
+
+
+def test_create_environment_variable_filters_by_app_status(
+    client: TestClient, db: Session
+) -> None:
+    """Test that create environment variable endpoint filters by app status."""
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    pending_deletion_app = create_random_app(db, team=team)
+    pending_deletion_app.status = AppStatus.pending_deletion
+    db.add(pending_deletion_app)
+    db.commit()
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    data = {
+        "name": "TEST_VAR",
+        "value": "test_value",
+    }
+
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/environment-variables",
+        headers=user_auth_headers,
+        json=data,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
+
+
+def test_update_environment_variable_filters_by_app_status(
+    client: TestClient, db: Session
+) -> None:
+    """Test that update environment variable endpoint filters by app status."""
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    pending_deletion_app = create_random_app(db, team=team)
+    env = create_environment_variable(
+        db, app=pending_deletion_app, name="TEST_VAR", value="old_value"
+    )
+    pending_deletion_app.status = AppStatus.pending_deletion
+    db.add(pending_deletion_app)
+    db.commit()
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    data = {"value": "new_value"}
+
+    response = client.put(
+        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/environment-variables/{env.name}",
+        headers=user_auth_headers,
+        json=data,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
+
+
+def test_delete_environment_variable_filters_by_app_status(
+    client: TestClient, db: Session
+) -> None:
+    """Test that delete environment variable endpoint filters by app status."""
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    pending_deletion_app = create_random_app(db, team=team)
+    env = create_environment_variable(
+        db, app=pending_deletion_app, name="TEST_VAR", value="test_value"
+    )
+    pending_deletion_app.status = AppStatus.pending_deletion
+    db.add(pending_deletion_app)
+    db.commit()
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.delete(
+        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/environment-variables/{env.name}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
+
+
+def test_batch_update_environment_variables_filters_by_app_status(
+    client: TestClient, db: Session
+) -> None:
+    """Test that batch update environment variables endpoint filters by app status."""
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    pending_deletion_app = create_random_app(db, team=team)
+    pending_deletion_app.status = AppStatus.pending_deletion
+    db.add(pending_deletion_app)
+    db.commit()
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.patch(
+        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/environment-variables",
+        headers=user_auth_headers,
+        json={
+            "NEW_VAR": "new_value",
+            "ANOTHER_VAR": "another_value",
+        },
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"

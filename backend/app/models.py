@@ -25,6 +25,11 @@ class InvitationStatus(str, Enum):
     accepted = "accepted"
 
 
+class AppStatus(str, Enum):
+    active = "active"
+    pending_deletion = "pending_deletion"
+
+
 class UserTeamLink(SQLModel, table=True):
     user_id: uuid.UUID = Field(
         foreign_key="user.id", primary_key=True, ondelete="CASCADE"
@@ -297,6 +302,7 @@ class App(AppBase, table=True):
     team_id: uuid.UUID = Field(foreign_key="team.id")
     team: Team = Relationship(back_populates="apps")
     slug: str = Field(max_length=255, unique=True)
+    status: AppStatus = Field(default=AppStatus.active)
     created_at: datetime = Field(
         default_factory=get_datetime_utc,
         sa_type=DateTime(timezone=True),  # type: ignore

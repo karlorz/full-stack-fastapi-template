@@ -9,7 +9,7 @@ from sqlmodel import Session, select
 from app.api.routes.deployments import sqs
 from app.core.config import CommonSettings, MainSettings
 from app.crud import add_user_to_team
-from app.models import Deployment, Role
+from app.models import AppStatus, Deployment, Role
 from app.tests.utils.apps import create_deployment_for_app, create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
@@ -498,3 +498,107 @@ def test_get_build_logs_timeout(client: TestClient, db: Session) -> None:
     assert response.status_code == 200
 
     assert response.content == b'{"type": "timeout"}\n'
+
+
+def test_read_deployments_filters_by_app_status(
+    client: TestClient, db: Session
+) -> None:
+    """Test that read deployments endpoint filters by app status."""
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    pending_app = create_random_app(db, team=team)
+    pending_app.status = AppStatus.pending_deletion
+    db.add(pending_app)
+    db.commit()
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{pending_app.id}/deployments/",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
+
+
+def test_read_deployment_filters_by_app_status(client: TestClient, db: Session) -> None:
+    """Test that read deployment endpoint filters by app status."""
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    pending_deletion_app = create_random_app(db, team=team)
+    deployment = create_deployment_for_app(db, app=pending_deletion_app)
+    pending_deletion_app.status = AppStatus.pending_deletion
+    db.add(pending_deletion_app)
+    db.commit()
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/deployments/{deployment.id}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"
+
+
+def test_create_deployment_filters_by_app_status(
+    client: TestClient, db: Session
+) -> None:
+    """Test that create deployment endpoint filters by app status."""
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    pending_app = create_random_app(db, team=team)
+    pending_app.status = AppStatus.pending_deletion
+    db.add(pending_app)
+    db.commit()
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.post(
+        f"{settings.API_V1_STR}/apps/{pending_app.id}/deployments/",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"

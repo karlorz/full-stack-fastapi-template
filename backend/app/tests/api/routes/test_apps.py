@@ -7,7 +7,7 @@ from sqlmodel import Session, select
 
 from app.core.config import MainSettings
 from app.crud import add_user_to_team
-from app.models import App, Role
+from app.models import App, AppStatus, Role
 from app.tests.utils.apps import create_deployment_for_app, create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
@@ -591,9 +591,8 @@ def test_delete_app(client: TestClient, db: Session) -> None:
     data = response.json()
     assert data["message"] == "App deleted"
 
-    app_query = select(App).where(App.id == app.id)
-    app_db = db.exec(app_query).first()
-    assert not app_db
+    db.refresh(app)
+    assert app.status == AppStatus.pending_deletion
 
 
 def test_delete_app_user_not_in_team(client: TestClient, db: Session) -> None:
@@ -651,3 +650,75 @@ def test_delete_app_user_not_admin(client: TestClient, db: Session) -> None:
     assert response.status_code == 403
     data = response.json()
     assert data["detail"] == "You do not have permission to delete this app"
+
+
+def test_read_apps_only_shows_active_apps(client: TestClient, db: Session) -> None:
+    """Test that list apps endpoint only returns active apps."""
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    active_app = create_random_app(db, team=team)
+
+    pending_app = create_random_app(db, team=team)
+    pending_app.status = AppStatus.pending_deletion
+    db.add(pending_app)
+
+    db.commit()
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/?team_id={team.id}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["count"] == 1
+    assert len(data["data"]) == 1
+    assert data["data"][0]["id"] == str(active_app.id)
+
+
+def test_read_app_filters_by_status(client: TestClient, db: Session) -> None:
+    """Test that read app endpoint only returns active apps."""
+    user = create_user(
+        session=db,
+        email=random_email(),
+        password="password12345",
+        full_name="Test User",
+        is_verified=True,
+    )
+    team = create_random_team(db, owner_id=user.id)
+    add_user_to_team(session=db, user=user, team=team, role=Role.admin)
+
+    pending_app = create_random_app(db, team=team)
+    pending_app.status = AppStatus.pending_deletion
+    db.add(pending_app)
+    db.commit()
+
+    user_auth_headers = user_authentication_headers(
+        client=client,
+        email=user.email,
+        password="password12345",
+    )
+
+    response = client.get(
+        f"{settings.API_V1_STR}/apps/{pending_app.id}",
+        headers=user_auth_headers,
+    )
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "App not found"

@@ -8,7 +8,7 @@ from sqlmodel import col, func, select
 from app.api.deps import CurrentUser, PosthogDep, PosthogProperties, SessionDep
 from app.api.utils.teams import generate_app_slug_name
 from app.crud import get_user_team_link
-from app.models import App, AppCreate, AppPublic, AppsPublic, Message
+from app.models import App, AppCreate, AppPublic, AppsPublic, AppStatus, Message
 from app.nats import (
     JetStreamDep,
     LogsResponse,
@@ -46,11 +46,13 @@ def read_apps(
     count_statement = (
         select(func.count())
         .where(App.team_id == user_team_link.team_id)
+        .where(App.status == AppStatus.active)
         .select_from(App)
     )
     statement = (
         select(App)
         .where(App.team_id == user_team_link.team_id)
+        .where(App.status == AppStatus.active)
         .offset(skip)
         .limit(limit)
     )
@@ -116,7 +118,9 @@ def read_app(session: SessionDep, current_user: CurrentUser, app_id: uuid.UUID) 
     """
     Retrieve the details of the provided app.
     """
-    app = session.exec(select(App).where(App.id == app_id)).first()
+    app = session.exec(
+        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+    ).first()
 
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -142,7 +146,9 @@ def read_app_logs(
     """
     Fetch last logs for an app.
     """
-    app = session.exec(select(App).where(App.id == app_id)).first()
+    app = session.exec(
+        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+    ).first()
 
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -177,7 +183,9 @@ def delete_app(
     """
     Delete the provided app.
     """
-    app = session.exec(select(App).where(App.id == app_id)).first()
+    app = session.exec(
+        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+    ).first()
 
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -195,7 +203,8 @@ def delete_app(
             status_code=403, detail="You do not have permission to delete this app"
         )
 
-    session.delete(app)
+    app.status = AppStatus.pending_deletion
+    session.add(app)
     session.commit()
 
     background_tasks.add_task(

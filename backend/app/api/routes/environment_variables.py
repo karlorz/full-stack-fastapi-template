@@ -13,6 +13,7 @@ from app.api.deps import (
 from app.crud import get_user_team_link
 from app.models import (
     App,
+    AppStatus,
     EnvironmentVariable,
     EnvironmentVariableCreate,
     EnvironmentVariablePublic,
@@ -35,7 +36,9 @@ def read_environment_variables(
     Retrieve a list of environment variables for the provided app.
     """
 
-    app = session.exec(select(App).where(App.id == app_id)).first()
+    app = session.exec(
+        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+    ).first()
 
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -79,7 +82,9 @@ def create_environment_variable(
     Create a new environment variable for the provided app.
     """
 
-    app = session.exec(select(App).where(App.id == app_id)).first()
+    app = session.exec(
+        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+    ).first()
 
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -145,7 +150,9 @@ def update_environment_variables(
     Update the provided environment variables.
     """
 
-    app = session.exec(select(App).where(App.id == app_id)).first()
+    app = session.exec(
+        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+    ).first()
 
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -223,7 +230,9 @@ def delete_environment_variable(
     Delete the provided environment variable.
     """
 
-    app = session.exec(select(App).where(App.id == app_id)).first()
+    app = session.exec(
+        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+    ).first()
 
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -277,7 +286,9 @@ def update_environment_variable(
     Update the provided environment variable.
     """
 
-    app = session.exec(select(App).where(App.id == app_id)).first()
+    app = session.exec(
+        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+    ).first()
 
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
