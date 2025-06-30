@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Add status on apps. PR [#1039](https://github.com/fastapilabs/cloud/pull/1039) by [@patrick91](https://github.com/patrick91).
 * ✨ Allow redeployment when updating environment variables. PR [#1035](https://github.com/fastapilabs/cloud/pull/1035) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Implement reverse proxy for PostHog. PR [#994](https://github.com/fastapilabs/cloud/pull/994) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Add OpenAPI spec to `/token`. PR [#1018](https://github.com/fastapilabs/cloud/pull/1018) by [@patrick91](https://github.com/patrick91).
