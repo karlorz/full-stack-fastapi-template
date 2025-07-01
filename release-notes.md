@@ -203,6 +203,7 @@
 
 ### Refactors
 
+* ♻️ Refactor how we handle images in ECR. PR [#1044](https://github.com/fastapilabs/cloud/pull/1044) by [@patrick91](https://github.com/patrick91).
 * ♻️ Add function to get an app namespace. PR [#1043](https://github.com/fastapilabs/cloud/pull/1043) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor builder into its own folder. PR [#1045](https://github.com/fastapilabs/cloud/pull/1045) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor `MessengerMessageBody` to be a union. PR [#1042](https://github.com/fastapilabs/cloud/pull/1042) by [@patrick91](https://github.com/patrick91).
