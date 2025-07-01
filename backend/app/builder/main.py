@@ -421,25 +421,23 @@ def repository_exists(repository_name: str) -> bool:
         raise
 
 
-def create_ecr_repository(repository_name: str) -> dict[str, Any]:
-    try:
-        if not repository_exists(repository_name):
-            response = ecr.create_repository(repositoryName=repository_name)
-            return response["repository"]  # type: ignore
-        else:
-            print(f"Repository '{repository_name}' already exists.")
-            # Optionally, you can retrieve and return the existing repository info here
-            return ecr.describe_repositories(repositoryNames=[repository_name])[  # type: ignore
-                "repositories"
-            ][0]
-    except ClientError as e:
-        print(f"Error creating repository: {e}")
-        raise
+def create_ecr_repository(app_id: uuid.UUID) -> None:
+    """
+    Creates an ECR repository for the app if it doesn't exist.
+
+    The repository name is the app id.
+    """
+    repository_name = str(app_id)
+
+    if not repository_exists(repository_name):
+        ecr.create_repository(repositoryName=repository_name)
 
 
 def get_image_name(*, app_id: uuid.UUID, deployment_id: uuid.UUID) -> str:
-    image_tag = f"{app_id}_{deployment_id}"
-    return image_tag
+    """
+    The image name is the app id and the deployment id.
+    """
+    return f"{app_id}:{deployment_id}"
 
 
 def get_full_image_name(image_tag: str) -> str:
@@ -656,7 +654,7 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
 
             # Create ECR repository if it doesn't exist
             if builder_settings.ECR_REGISTRY_URL:
-                create_ecr_repository(image_tag)
+                create_ecr_repository(deployment_with_team.app_id)
 
             shutil.copytree(
                 root_path / "builder-context", build_context, dirs_exist_ok=True
