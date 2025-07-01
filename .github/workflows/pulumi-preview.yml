@@ -14,22 +14,29 @@ jobs:
       contents: read
     # Set job outputs to values from filter step
     outputs:
-      changed: ${{ steps.filter.outputs.changed }}
+      k8s: ${{ steps.filter.outputs.k8s }}
+      cloudflare: ${{ steps.filter.outputs.cloudflare }}
+      workflow: ${{ steps.filter.outputs.workflow }}
     steps:
     - uses: actions/checkout@v4
     # For pull requests it's not necessary to checkout the code but for the main branch it is
     - uses: dorny/paths-filter@v3
       id: filter
       with:
+        predicate-quantifier: 'every'
         filters: |
-          changed:
-            - infra/**
-            - .github/workflows/pulumi-preview.yml
+          k8s:
+            - 'infra/**'
+            - '!infra/cloudflare/**'
+          cloudflare:
+            - 'infra/cloudflare/**'
+          workflow:
+            - '.github/workflows/pulumi-preview.yml'
 
   pulumi-preview:
     needs:
       - changes
-    if: ${{ needs.changes.outputs.changed == 'true' && (github.event_name != 'pull_request' || github.secret_source == 'Actions') }}
+    if: ${{ (needs.changes.outputs.k8s == 'true' || needs.changes.outputs.workflow == 'true') && (github.event_name != 'pull_request' || github.secret_source == 'Actions') }}
     environment: staging
     name: Pulumi Preview
     runs-on: depot-ubuntu-22.04
@@ -57,15 +64,38 @@ jobs:
           CLOUDFLARE_API_TOKEN_SSL: ${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}
           NATS_LOGGING_WRITE_CREDS: ${{ secrets.NATS_CREDS }}
 
+  cloudflare-preview:
+    needs:
+      - changes
+    if: ${{ (needs.changes.outputs.cloudflare == 'true' || needs.changes.outputs.workflow == 'true') && (github.event_name != 'pull_request' || github.secret_source == 'Actions') }}
+    environment: staging
+    name: Cloudflare Preview
+    runs-on: depot-ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+        working-directory: infra/cloudflare
+      - uses: pulumi/actions@v6
+        with:
+          command: preview
+          stack-name: fastapilabs/cloudflare-stack/production
+          work-dir: infra/cloudflare
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-pulumi-preview:  # This job does nothing and is only used for the branch protection
     if: always()
     needs:
       - pulumi-preview
+      - cloudflare-preview
     runs-on: depot-ubuntu-22.04
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
         with:
           jobs: ${{ toJSON(needs) }}
-          allowed-skips: pulumi-preview
+          allowed-skips: pulumi-preview, cloudflare-preview

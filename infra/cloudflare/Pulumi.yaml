@@ -1,0 +1,6 @@
+name: cloudflare-stack
+runtime:
+  name: python
+  options:
+    virtualenv: .venv
+description: CloudFlare DNS and domain management stack

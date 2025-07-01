@@ -1,0 +1,5 @@
+config:
+  cloudflare-stack:main_stack_reference: fastapilabs/k8s-cluster/production
+  cloudflare:apiToken:
+    secure: AAABAMBi9srxVs5ML4UKBko9X229e5cQZMZTXW8QJMEsUASs5HQcDA3q+p3qbYZN9Q0w5w0KYQgFJj3LtkIkTrtUIoXMVqex
+  cloudflare-stack:madinfra_zone_id: 42fb993acc570d08a5101342c58527dc
