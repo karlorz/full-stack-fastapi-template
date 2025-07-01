@@ -439,6 +439,7 @@
 
 ### Infrastructure
 
+* Deploy `knative` as an argo-cd application. PR [#1022](https://github.com/fastapilabs/cloud/pull/1022) by [@siryur](https://github.com/siryur).
 * 👷 Deploy PostHog to cluster using Knative. PR [#1033](https://github.com/fastapilabs/cloud/pull/1033) by [@tiangolo](https://github.com/tiangolo).
 * ✨ Add ECR repository for PostHog proxy. PR [#1017](https://github.com/fastapilabs/cloud/pull/1017) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor ArgoCD as pulumi component. PR [#1005](https://github.com/fastapilabs/cloud/pull/1005) by [@malvex](https://github.com/malvex).
