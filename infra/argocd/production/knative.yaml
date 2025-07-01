@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: knative
+  namespace: argo-cd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:fastapilabs/cloud.git
+    targetRevision: HEAD
+    path: infra/k8s/knative/kustomize/overlays/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: knative-serving

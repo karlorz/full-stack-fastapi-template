@@ -4,8 +4,21 @@ import json
 import pulumi
 import pulumi_kubernetes as k8s
 import pulumi_kubernetes.helm.v4 as helm
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
+
+
+@dataclass
+class RepositoryConfig:
+    """Configuration for a single repository"""
+    name: str
+    url: str
+    type: str = "git"  # git, helm
+    ssh_private_key: Optional[pulumi.Output[str]] = None
+    username: Optional[str] = None
+    password: Optional[pulumi.Output[str]] = None
+    enable_oci: bool = False
+    insecure: bool = False
 
 
 @dataclass
@@ -19,6 +32,12 @@ class ArgoCDConfig:
     google_client_secret: Optional[pulumi.Output[str]] = None
     acm_certificate_arn: Optional[pulumi.Output[str]] = None
     admin_emails: list[str] = None
+    repositories: List[RepositoryConfig] = None
+    # Root application configuration
+    environment: str = "development"  # expecting one of: development, staging, production
+    root_app_repo_url: Optional[str] = None  # defaults to first repository URL
+    root_app_target_revision: str = "HEAD"
+    root_app_project: str = "default"
 
 
 class ArgoCDComponent(pulumi.ComponentResource):
@@ -45,8 +64,17 @@ class ArgoCDComponent(pulumi.ComponentResource):
         if config.enable_oauth:
             self._create_oauth_secret()
 
+        # Create repository secrets
+        self.repository_secrets = {}
+        if config.repositories:
+            self._create_repository_secrets()
+
         # Deploy ArgoCD
         self._deploy_argocd()
+
+        # Create root application - this is a special application that
+        # will deploy all other applications of the environment
+        self._create_root_application()
 
         # Register outputs
         self.register_outputs(
@@ -55,6 +83,7 @@ class ArgoCDComponent(pulumi.ComponentResource):
                 "service_name": "argocd-server",
                 "domain": config.domain,
                 "oauth_enabled": config.enable_oauth,
+                "repositories_configured": len(config.repositories or []),
             }
         )
 
@@ -74,6 +103,63 @@ class ArgoCDComponent(pulumi.ComponentResource):
                 parent=self, provider=self.k8s_provider, protect=True
             ),
         )
+
+    def _create_repository_secrets(self):
+        """Create secrets for repository authentication"""
+        for repo in self.config.repositories:
+            if repo.ssh_private_key:
+                # Create secret for SSH private key
+                secret_name = f"argocd-repo-{repo.name}-ssh"
+                self.repository_secrets[repo.name] = k8s.core.v1.Secret(
+                    secret_name,
+                    metadata=k8s.meta.v1.ObjectMetaArgs(
+                        name=secret_name,
+                        namespace=self.config.namespace,
+                        labels={
+                            **self.tags,
+                            "app.kubernetes.io/name": "argocd",
+                            "app.kubernetes.io/component": "repository-secret",
+                            "app.kubernetes.io/part-of": "argocd",
+                            "argocd.argoproj.io/secret-type": "repository",
+                        },
+                    ),
+                    string_data={
+                        "url": repo.url,  # Required for ArgoCD to match this secret to repositories
+                        "sshPrivateKey": repo.ssh_private_key,
+                    },
+                    opts=pulumi.ResourceOptions(
+                        parent=self,
+                        provider=self.k8s_provider,
+                        depends_on=[self.namespace]
+                    ),
+                )
+            elif repo.password:
+                # Create secret for username/password auth
+                secret_name = f"argocd-repo-{repo.name}-creds"
+                self.repository_secrets[repo.name] = k8s.core.v1.Secret(
+                    secret_name,
+                    metadata=k8s.meta.v1.ObjectMetaArgs(
+                        name=secret_name,
+                        namespace=self.config.namespace,
+                        labels={
+                            **self.tags,
+                            "app.kubernetes.io/name": "argocd",
+                            "app.kubernetes.io/component": "repository-secret",
+                            "app.kubernetes.io/part-of": "argocd",
+                            "argocd.argoproj.io/secret-type": "repository",
+                        },
+                    ),
+                    string_data={
+                        "url": repo.url,
+                        "username": repo.username or "",
+                        "password": repo.password,
+                    },
+                    opts=pulumi.ResourceOptions(
+                        parent=self,
+                        provider=self.k8s_provider,
+                        depends_on=[self.namespace]
+                    ),
+                )
 
     def _create_oauth_secret(self):
         """Create OAuth secrets for both ALB and ArgoCD"""
@@ -204,6 +290,10 @@ class ArgoCDComponent(pulumi.ComponentResource):
         )
 
         # Deploy ArgoCD Helm chart
+        depends_on = [self.namespace, self.redis_secret]
+        if self.repository_secrets:
+            depends_on.extend(list(self.repository_secrets.values()))
+
         self.helm_chart = helm.Chart(
             "argocd",
             helm.ChartArgs(
@@ -216,12 +306,49 @@ class ArgoCDComponent(pulumi.ComponentResource):
             opts=pulumi.ResourceOptions(
                 parent=self,
                 provider=self.k8s_provider,
-                depends_on=[
-                    self.namespace,
-                    self.redis_secret,
-                ],
+                depends_on=depends_on,
             ),
         )
+
+    def _build_repository_config(self) -> Dict[str, Any]:
+        """Build repository configuration for ArgoCD"""
+        repositories = {}
+
+        if not self.config.repositories:
+            return repositories
+
+        for repo in self.config.repositories:
+            repo_config = {
+                "url": repo.url,
+            }
+
+            if repo.type == "helm":
+                repo_config["type"] = "helm"
+                if repo.enable_oci:
+                    repo_config["enableOCI"] = "true"
+                if repo.username:
+                    repo_config["username"] = repo.username
+                if repo.password:
+                    # Inject password directly into repository config
+                    # repo_config["password"] = repo.password
+                    repo_config["password"] = f"$argocd-repo-{repo.name}-creds:password"
+
+            elif repo.type == "git":
+                if repo.ssh_private_key:
+                    # Inject SSH key directly into repository config
+                    # repo_config["sshPrivateKey"] = repo.ssh_private_key
+                    repo_config["sshPrivateKey"] = f"$argocd-repo-{repo.name}-ssh:sshPrivateKey"
+                elif repo.username and repo.password:
+                    repo_config["username"] = repo.username
+                    # repo_config["password"] = repo.password
+                    repo_config["password"] = f"$argocd-repo-{repo.name}-creds:password"
+
+            if repo.insecure:
+                repo_config["insecure"] = True
+
+            repositories[repo.name] = repo_config
+
+        return repositories
 
     def _build_helm_values(self) -> Dict[str, Any]:
         """Build Helm values for ArgoCD deployment"""
@@ -233,7 +360,8 @@ class ArgoCDComponent(pulumi.ComponentResource):
             "configs": {
                 "params": {
                     "server.insecure": True,  # Required for ALB TLS termination
-                }
+                },
+                "repositories": self._build_repository_config(),
             },
             "server": {
                 "service": {
@@ -355,6 +483,61 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
             }
 
         return values
+
+    def _create_root_application(self):
+        """Create root ArgoCD Application for app-of-apps pattern"""
+        # Determine repository URL
+        repo_url = self.config.root_app_repo_url
+        if not repo_url and self.config.repositories:
+            repo_url = self.config.repositories[0].url
+
+        if not repo_url:
+            raise ValueError("No repository URL available for root application. Either provide root_app_repo_url or configure at least one repository.")
+
+        # Create the root ArgoCD Application
+        self.root_application = k8s.apiextensions.CustomResource(
+            "argocd-root-application",
+            api_version="argoproj.io/v1alpha1",
+            kind="Application",
+            metadata=k8s.meta.v1.ObjectMetaArgs(
+                name=f"root-{self.config.environment}",
+                namespace=self.config.namespace,
+                labels={
+                    **self.tags,
+                    "app.kubernetes.io/name": "argocd-root-app",
+                    "app.kubernetes.io/component": "root-application",
+                    "app.kubernetes.io/part-of": "argocd",
+                    "environment": self.config.environment,
+                },
+            ),
+            spec={
+                "project": self.config.root_app_project,
+                "source": {
+                    "repoURL": repo_url,
+                    "targetRevision": self.config.root_app_target_revision,
+                    "path": f"infra/argocd/{self.config.environment}",
+                    "directory": {
+                        "include": "*.yaml",
+                        "exclude": "root.yaml",  # Exclude any existing root.yaml files
+                    },
+                },
+                "destination": {
+                    "server": "https://kubernetes.default.svc",
+                    "namespace": "argocd",  # Deploy other apps to argocd namespace by default
+                },
+                "syncPolicy": {
+                    "automated": {
+                        "prune": False if self.config.environment == "production" else True,
+                        "selfHeal": True,
+                    },
+                },
+            },
+            opts=pulumi.ResourceOptions(
+                parent=self,
+                provider=self.k8s_provider,
+                depends_on=[self.helm_chart],  # Wait for ArgoCD to be deployed
+            ),
+        )
 
     @property
     def namespace_name(self) -> pulumi.Output[str]:

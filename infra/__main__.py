@@ -17,7 +17,7 @@ from pulumi_deployment_workflow.config import (
 )
 import pulumi_kubernetes as k8s
 import pulumi_kubernetes.helm.v4 as helm
-from components.argocd import ArgoCDComponent, ArgoCDConfig
+from components.argocd import ArgoCDComponent, ArgoCDConfig, RepositoryConfig
 import json
 
 # Get configuration
@@ -645,6 +645,17 @@ argocd_component = ArgoCDComponent(
         google_client_secret=ARGOCD_GOOGLE_CLIENT_SECRET,
         acm_certificate_arn=argocd_certificate.arn,
         admin_emails=allowed_emails,
+        repositories=[
+            RepositoryConfig(
+                name="fastapi-cloud",
+                url="git@github.com:fastapilabs/cloud.git",
+                ssh_private_key=cfg.require_secret("fastapi-cloud-github-ssh-key"),
+            ),
+        ],
+        # Root application configuration
+        environment=stack_name,  # Use stack name as environment (development, staging, production)
+        root_app_target_revision="HEAD",
+        root_app_project="default",
     ),
     k8s_provider=k8s_provider,
     tags=default_tags,
@@ -711,6 +722,7 @@ fastapicloud_secrets: dict[str, any] = {
     "SMTP_HOST": SMTP_HOST,
     "SMTP_PASSWORD": SMTP_PASSWORD,
     "SMTP_PORT": SMTP_PORT,
+    "SMTP_USER": SMTP_USER,
     "SMTP_SSL": SMTP_SSL,
     "SMTP_TLS": SMTP_TLS,
 }

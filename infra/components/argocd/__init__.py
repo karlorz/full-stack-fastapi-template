@@ -1,5 +1,5 @@
 """ArgoCD Component Module"""
 
-from .argocd_component import ArgoCDComponent, ArgoCDConfig
+from .argocd_component import ArgoCDComponent, ArgoCDConfig, RepositoryConfig
 
-__all__ = ["ArgoCDComponent", "ArgoCDConfig"]
+__all__ = ["ArgoCDComponent", "ArgoCDConfig", "RepositoryConfig"]
