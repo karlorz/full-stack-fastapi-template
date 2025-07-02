@@ -1,0 +1,69 @@
+name: Update EKS Addon Versions
+
+on:
+  schedule:
+    # Every Monday at 8am UTC
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+jobs:
+  update-eks-addons:
+    runs-on: depot-ubuntu-22.04
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-region: ${{ vars.AWS_REGION }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Check for EKS updates
+      id: check
+      run: |
+        LATEST_EKS=$(aws eks describe-addon-versions --query 'addons[0].addonVersions[0].compatibilities[0].clusterVersion' --output text)
+        LATEST_KUBE_PROXY=$(aws eks describe-addon-versions --addon-name kube-proxy --query 'addons[0].addonVersions[0].addonVersion' --output text)
+        LATEST_COREDNS=$(aws eks describe-addon-versions --addon-name coredns --query 'addons[0].addonVersions[0].addonVersion' --output text)
+        LATEST_VPC_CNI=$(aws eks describe-addon-versions --addon-name vpc-cni --query 'addons[0].addonVersions[0].addonVersion' --output text)
+
+        # SSM Parameter Store has the officially tested AMI for each EKS version
+        LATEST_AMI_ID=$(aws ssm get-parameter \
+          --name "/aws/service/eks/optimized-ami/${LATEST_EKS}/amazon-linux-2/recommended/image_id" \
+          --query "Parameter.Value" --output text)
+
+        echo "Latest versions: EKS=$LATEST_EKS, AMI=$LATEST_AMI_ID, CoreDNS=$LATEST_COREDNS, kube-proxy=$LATEST_KUBE_PROXY, VPC-CNI=$LATEST_VPC_CNI"
+
+        # Apply to all environments to ensure consistency
+        for env in development staging production; do
+          yq -i ".config.\"k8s-cluster:eks_node_ami_id\" = \"$LATEST_AMI_ID\"" infra/Pulumi.$env.yaml
+          yq -i ".config.\"k8s-cluster:eks_coredns_version\" = \"$LATEST_COREDNS\"" infra/Pulumi.$env.yaml
+          yq -i ".config.\"k8s-cluster:eks_kube_proxy_version\" = \"$LATEST_KUBE_PROXY\"" infra/Pulumi.$env.yaml
+          yq -i ".config.\"k8s-cluster:eks_vpc_cni_version\" = \"$LATEST_VPC_CNI\"" infra/Pulumi.$env.yaml
+        done
+
+        # Only create PR if versions actually changed
+        if git diff --quiet; then
+          echo "changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "changed=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create Pull Request
+      if: steps.check.outputs.changed == 'true'
+      uses: peter-evans/create-pull-request@v7
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+        commit-message: "⬆ Update EKS addon versions"
+        title: "⬆ Update EKS addon versions"
+        body: |
+          This PR updates the EKS addon versions (CoreDNS, kube-proxy, VPC CNI) and node AMI to the latest available.
+
+          Please review the changes and test in staging before merging.
+        branch: update-eks-addons
+        delete-branch: true

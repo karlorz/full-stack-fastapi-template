@@ -24,6 +24,13 @@ import json
 cfg = pulumi.Config()
 INFRA_DOMAIN = cfg.require("infra_domain")
 
+# Pin versions to prevent breaking changes from AWS auto-updates
+eks_cluster_version = cfg.require("eks_cluster_version")
+eks_node_ami_id = cfg.require("eks_node_ami_id")
+eks_coredns_version = cfg.require("eks_coredns_version")
+eks_kube_proxy_version = cfg.require("eks_kube_proxy_version")
+eks_vpc_cni_version = cfg.require("eks_vpc_cni_version")
+
 ALLOW_SIGNUP_TOKEN = cfg.require_secret("fastapicloud_allow_signup_token")
 API_DOMAIN = cfg.require("fastapicloud_api_domain")
 AWS_STS_REGIONAL_ENDPOINTS = "regional"
@@ -94,12 +101,15 @@ eks_vpc = awsx.ec2.Vpc(
 # Create the EKS cluster
 eks_cluster = eks.Cluster(
     f"eks-cluster-{stack_name}",
+    # Lock cluster version for controlled upgrades
+    version=eks_cluster_version,
     # Put the cluster in the new VPC created earlier
     vpc_id=eks_vpc.vpc_id,
     # Public subnets will be used for load balancers
     public_subnet_ids=eks_vpc.public_subnet_ids,
     # Private subnets will be used for cluster nodes
     private_subnet_ids=eks_vpc.private_subnet_ids,
+    node_ami_id=eks_node_ami_id,
     # Change configuration values to change any of the following settings
     instance_type=eks_node_instance_type,
     desired_capacity=desired_cluster_size,
@@ -110,6 +120,16 @@ eks_cluster = eks.Cluster(
     # Change these values for a private cluster (VPN access required)
     endpoint_private_access=False,
     endpoint_public_access=True,
+    # Lock addon version for controlled upgrades
+    coredns_addon_options=eks.CoreDnsAddonOptionsArgs(
+        version=eks_coredns_version,
+    ),
+    kube_proxy_addon_options=eks.KubeProxyAddonOptionsArgs(
+        version=eks_kube_proxy_version,
+    ),
+    vpc_cni_options=eks.VpcCniOptionsArgs(
+        addon_version=eks_vpc_cni_version,
+    ),
     # Enable access via access entries, not just role maps
     authentication_mode=eks.AuthenticationMode.API_AND_CONFIG_MAP,
     # Add access entries for IAM
