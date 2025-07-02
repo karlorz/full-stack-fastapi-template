@@ -439,6 +439,7 @@
 
 ### Infrastructure
 
+* ✈️ Implement a controlled way of handling k8s upgrades. PR [#1054](https://github.com/fastapilabs/cloud/pull/1054) by [@malvex](https://github.com/malvex).
 * ✨ Add cloudflare stack. PR [#1052](https://github.com/fastapilabs/cloud/pull/1052) by [@malvex](https://github.com/malvex).
 * Deploy `knative` as an argo-cd application. PR [#1022](https://github.com/fastapilabs/cloud/pull/1022) by [@siryur](https://github.com/siryur).
 * 👷 Deploy PostHog to cluster using Knative. PR [#1033](https://github.com/fastapilabs/cloud/pull/1033) by [@tiangolo](https://github.com/tiangolo).
