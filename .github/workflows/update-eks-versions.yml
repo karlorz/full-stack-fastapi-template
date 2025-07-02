@@ -1,4 +1,4 @@
-name: Update EKS Addon Versions
+name: Update EKS Versions
 
 on:
   schedule:
@@ -7,11 +7,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-eks-addons:
+  update-eks-versions:
     runs-on: depot-ubuntu-22.04
     permissions:
       contents: write
       pull-requests: write
+
+    environment: staging
 
     steps:
     - uses: actions/checkout@v4
@@ -40,6 +42,7 @@ jobs:
 
         # Apply to all environments to ensure consistency
         for env in development staging production; do
+          yq -i ".config.\"k8s-cluster:eks_cluster_version\" = \"$LATEST_EKS\"" infra/Pulumi.$env.yaml
           yq -i ".config.\"k8s-cluster:eks_node_ami_id\" = \"$LATEST_AMI_ID\"" infra/Pulumi.$env.yaml
           yq -i ".config.\"k8s-cluster:eks_coredns_version\" = \"$LATEST_COREDNS\"" infra/Pulumi.$env.yaml
           yq -i ".config.\"k8s-cluster:eks_kube_proxy_version\" = \"$LATEST_KUBE_PROXY\"" infra/Pulumi.$env.yaml
@@ -59,11 +62,11 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-        commit-message: "⬆ Update EKS addon versions"
-        title: "⬆ Update EKS addon versions"
+        commit-message: "⬆ Update EKS version and addon versions"
+        title: "⬆ Update EKS version and addon versions"
         body: |
-          This PR updates the EKS addon versions (CoreDNS, kube-proxy, VPC CNI) and node AMI to the latest available.
+          This PR updates the EKS cluster version and addon versions (CoreDNS, kube-proxy, VPC CNI) along with the node AMI to the latest available.
 
           Please review the changes and test in staging before merging.
-        branch: update-eks-addons
+        branch: update-eks-versions
         delete-branch: true
