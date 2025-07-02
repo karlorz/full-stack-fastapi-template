@@ -483,6 +483,7 @@
 
 ### Internal
 
+* 🔧 Add missing environment. PR [#1056](https://github.com/fastapilabs/cloud/pull/1056) by [@malvex](https://github.com/malvex).
 * ⬆ Bump @sentry/react from 9.16.1 to 9.33.0 in /frontend. PR [#1049](https://github.com/fastapilabs/cloud/pull/1049) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump tw-animate-css from 1.2.8 to 1.3.4 in /frontend. PR [#1048](https://github.com/fastapilabs/cloud/pull/1048) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-avatar from 1.1.9 to 1.1.10 in /frontend. PR [#1047](https://github.com/fastapilabs/cloud/pull/1047) by [@dependabot[bot]](https://github.com/apps/dependabot).
