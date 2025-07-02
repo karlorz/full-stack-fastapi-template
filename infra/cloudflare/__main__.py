@@ -27,6 +27,12 @@ domains = {
                 "value": "k8s-argocd-argocdse-c4b5cebe6f-926241929.us-east-1.elb.amazonaws.com",
                 "proxied": False,
             },
+            {
+                "name": "argocd.prod",
+                "type": "CNAME",
+                "value": "k8s-argocd-argocdse-f97df9857d-483031861.us-east-1.elb.amazonaws.com",
+                "proxied": False,
+            },
         ]
     }
 }
