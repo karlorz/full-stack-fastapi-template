@@ -9,10 +9,8 @@ export const Route = createFileRoute("/verify-email")({
 
 function VerifyEmail() {
   return (
-    <>
-      <BackgroundPanel>
-        <EmailVerification />
-      </BackgroundPanel>
-    </>
+    <BackgroundPanel>
+      <EmailVerification />
+    </BackgroundPanel>
   )
 }

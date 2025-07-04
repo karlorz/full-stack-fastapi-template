@@ -61,46 +61,42 @@ const Logs = ({ logs }: LogsProps) => {
   }, [logs.length, rowVirtualizer])
 
   return (
-    <>
-      <LogContainer ref={parentRef}>
-        {logs.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center text-center">
-            <p>No logs to show</p>
-            <p>New logs will appear here when available</p>
-          </div>
-        ) : (
-          <div
-            style={{
-              height: `${rowVirtualizer.getTotalSize()}px`,
-              width: "100%",
-              position: "relative",
-            }}
-          >
-            {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-              const log = logs[virtualItem.index]
-              return (
-                <div
-                  data-index={virtualItem.index}
-                  ref={rowVirtualizer.measureElement}
-                  key={virtualItem.key}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    transform: `translateY(${virtualItem.start}px)`,
-                  }}
-                >
-                  {log && (
-                    <LogLine time={log.timestamp} message={log.message} />
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        )}
-      </LogContainer>
-    </>
+    <LogContainer ref={parentRef}>
+      {logs.length === 0 ? (
+        <div className="flex h-full flex-col items-center justify-center text-center">
+          <p>No logs to show</p>
+          <p>New logs will appear here when available</p>
+        </div>
+      ) : (
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+            width: "100%",
+            position: "relative",
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+            const log = logs[virtualItem.index]
+            return (
+              <div
+                data-index={virtualItem.index}
+                ref={rowVirtualizer.measureElement}
+                key={virtualItem.key}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  transform: `translateY(${virtualItem.start}px)`,
+                }}
+              >
+                {log && <LogLine time={log.timestamp} message={log.message} />}
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </LogContainer>
   )
 }
 

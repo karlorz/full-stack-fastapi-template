@@ -6,11 +6,13 @@ import {
 } from "@tanstack/react-router"
 import { Lock, Mail } from "lucide-react"
 import { useForm } from "react-hook-form"
+import { FaGithub } from "react-icons/fa"
 import { z } from "zod"
 
 import type { Body_login_login_access_token as AccessToken } from "@/client"
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
 import TeamInvitation from "@/components/Invitations/TeamInvitation"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -28,6 +30,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
+import { Separator } from "@/components/ui/separator"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
 
 const formSchema = z.object({
@@ -59,7 +62,7 @@ function Login() {
   const redirectRaw = searchParams.get("redirect")
   const redirectDecoded = redirectRaw ? decodeURIComponent(redirectRaw) : "/"
   const redirectUrl = redirectDecoded.startsWith("/") ? redirectDecoded : "/"
-  const { loginMutation } = useAuth()
+  const { loginMutation, loginWithProvider } = useAuth()
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -153,11 +156,27 @@ function Login() {
                 </div>
                 <LoadingButton
                   type="submit"
-                  className="w-full"
+                  className="w-full mb-0"
                   loading={loginMutation.isPending}
                 >
                   Log In
                 </LoadingButton>
+
+                <div className="flex items-center w-full my-4">
+                  <Separator className="flex-1" />
+                  <span className="px-4 text-sm text-muted-foreground">or</span>
+                  <Separator className="flex-1" />
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => loginWithProvider("github")}
+                >
+                  <FaGithub className="h-5 w-5 text-accent-foreground" />
+                  Log In with GitHub
+                </Button>
               </form>
             </Form>
           </CardContent>

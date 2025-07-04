@@ -204,7 +204,7 @@ test("User cannot login without verifying email", async ({ page }) => {
   await page.goto("/login")
   await page.getByTestId("email-input").fill(email)
   await page.getByTestId("password-input").fill(password)
-  await page.getByRole("button", { name: "Log In" }).click()
+  await page.getByRole("button", { name: "Log In", exact: true }).click()
 
   await expect(page.getByText("Email not verified")).toBeVisible()
 })

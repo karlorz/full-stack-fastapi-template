@@ -6,6 +6,7 @@ import {
 import { useNavigate } from "@tanstack/react-router"
 import { AxiosError } from "axios"
 import { usePostHog } from "posthog-js/react"
+import { FastAPIAuth } from "@/lib/auth"
 import {
   type ApiError,
   type Body_login_login_access_token as LoginFormData,
@@ -15,6 +16,8 @@ import {
   UsersService,
 } from "../client"
 import useCustomToast from "./useCustomToast"
+
+const fastapiAuth = new FastAPIAuth()
 
 const isLoggedIn = () => {
   return localStorage.getItem("access_token") !== null
@@ -101,6 +104,9 @@ const useAuth = () => {
     signUpMutation,
     loginMutation,
     logout,
+    loginWithProvider: fastapiAuth.socialLogin.bind(fastapiAuth),
+    linkWithProvider: fastapiAuth.linkWithProvider.bind(fastapiAuth),
+    handleOAuthCallback: fastapiAuth.handleOAuthCallback.bind(fastapiAuth),
   }
 }
 

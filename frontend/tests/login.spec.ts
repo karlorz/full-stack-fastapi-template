@@ -30,7 +30,9 @@ test("Inputs are visible, empty and editable", async ({ page }) => {
 test("Log In button is visible", async ({ page }) => {
   await page.goto("/login")
 
-  await expect(page.getByRole("button", { name: "Log In" })).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Log In", exact: true }),
+  ).toBeVisible()
 })
 
 test("Forgot Password link is visible", async ({ page }) => {
@@ -51,7 +53,7 @@ test("Log in with valid email and password ", async ({ page }) => {
   await page.goto("/login")
 
   await fillForm(page, "sebastian@fastapilabs.com", "secretsecret")
-  await page.getByRole("button", { name: "Log In" }).click()
+  await page.getByRole("button", { name: "Log In", exact: true }).click()
 
   await page.waitForURL("/")
 
@@ -62,7 +64,7 @@ test("Log in with invalid email", async ({ page }) => {
   await page.goto("/login")
 
   await fillForm(page, "invalidemail", "secretsecret")
-  await page.getByRole("button", { name: "Log In" }).click()
+  await page.getByRole("button", { name: "Log In", exact: true }).click()
 
   await expect(page.getByText("Invalid email address")).toBeVisible()
 })
@@ -71,7 +73,7 @@ test("Log in with invalid password", async ({ page }) => {
   await page.goto("/login")
 
   await fillForm(page, "sebastian@fastapilabs.com", "changethat")
-  await page.getByRole("button", { name: "Log In" }).click()
+  await page.getByRole("button", { name: "Log In", exact: true }).click()
 
   await expect(page.getByText("Invalid credentials")).toBeVisible()
 })
@@ -82,7 +84,7 @@ test("Successful log out", async ({ page }) => {
   await page.goto("/login")
 
   await fillForm(page, "sebastian@fastapilabs.com", "secretsecret")
-  await page.getByRole("button", { name: "Log In" }).click()
+  await page.getByRole("button", { name: "Log In", exact: true }).click()
 
   await page.waitForURL("/")
 
@@ -98,7 +100,7 @@ test("Logged-out user cannot access protected routes", async ({ page }) => {
   await page.goto("/login")
 
   await fillForm(page, "sebastian@fastapilabs.com", "secretsecret")
-  await page.getByRole("button", { name: "Log In" }).click()
+  await page.getByRole("button", { name: "Log In", exact: true }).click()
 
   await page.waitForURL("/")
 

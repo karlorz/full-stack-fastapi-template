@@ -19,7 +19,7 @@ setup("authenticate", async ({ page }) => {
   await page.goto("/login")
   await page.getByTestId("email-input").fill(email)
   await page.getByTestId("password-input").fill(password)
-  await page.getByRole("button", { name: "Log In" }).click()
+  await page.getByRole("button", { name: "Log In", exact: true }).click()
   await page.waitForURL("/")
   await page.context().storageState({ path: authFile })
 })

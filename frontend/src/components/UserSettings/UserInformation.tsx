@@ -24,7 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useCurrentUser } from "@/hooks/useAuth"
+import useAuth, { useCurrentUser } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 import DangerZoneAlert from "../Common/DangerZone"
@@ -52,8 +52,11 @@ const UserInformationContent = () => {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const currentUser = useCurrentUser()
   const [isOpen, setIsOpen] = useState(false)
+  const [isRedirectingToGithub, setIsRedirectingToGithub] = useState(false)
   const [isEditingName, setIsEditingName] = useState(false)
   const [isEditingEmail, setIsEditingEmail] = useState(false)
+
+  const { linkWithProvider } = useAuth()
 
   const nameForm = useForm<NameFormValues>({
     resolver: zodResolver(nameSchema),
@@ -101,6 +104,11 @@ const UserInformationContent = () => {
 
   const onSubmitEmail = (values: EmailFormValues) => {
     emailMutation.mutate(values.email)
+  }
+
+  const handleConnectGithub = () => {
+    setIsRedirectingToGithub(true)
+    linkWithProvider("github")
   }
 
   return (
@@ -248,16 +256,26 @@ const UserInformationContent = () => {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div className="flex items-center gap-3">
-                <FaGithub className="h-5 w-5 text-gray-700" />
+                <FaGithub className="h-5 w-5 text-accent-foreground" />
                 <div>
                   <h4 className="font-medium">GitHub</h4>
-                  <p className="text-sm text-muted-foreground">Not connected</p>
+                  <p className="text-sm text-muted-foreground">
+                    {currentUser?.github_account
+                      ? `Connected as ${currentUser?.github_account?.provider_username}`
+                      : "Not connected"}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Badge className="bg-gray-100 text-gray-800">Coming Soon</Badge>
-                <Button variant="outline" size="sm" disabled>
-                  Connect
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleConnectGithub}
+                  disabled={isRedirectingToGithub}
+                >
+                  {currentUser?.github_account
+                    ? "Update GitHub Connection"
+                    : "Connect to GitHub"}
                 </Button>
               </div>
             </div>

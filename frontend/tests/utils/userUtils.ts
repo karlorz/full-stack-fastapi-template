@@ -10,7 +10,7 @@ export async function logInUser(page: Page, email: string, password: string) {
 
   await page.getByTestId("email-input").fill(email)
   await page.getByTestId("password-input").fill(password)
-  await page.getByRole("button", { name: "Log In" }).click()
+  await page.getByRole("button", { name: "Log In", exact: true }).click()
 
   await page.waitForURL("/", { waitUntil: "networkidle" })
 
