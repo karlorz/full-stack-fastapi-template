@@ -485,6 +485,7 @@
 
 ### Internal
 
+* ⬆ Bump react-error-boundary from 4.1.2 to 6.0.0 in /frontend. PR [#1064](https://github.com/fastapilabs/cloud/pull/1064) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🔧 Add missing environment. PR [#1056](https://github.com/fastapilabs/cloud/pull/1056) by [@malvex](https://github.com/malvex).
 * ⬆ Bump @sentry/react from 9.16.1 to 9.33.0 in /frontend. PR [#1049](https://github.com/fastapilabs/cloud/pull/1049) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump tw-animate-css from 1.2.8 to 1.3.4 in /frontend. PR [#1048](https://github.com/fastapilabs/cloud/pull/1048) by [@dependabot[bot]](https://github.com/apps/dependabot).
