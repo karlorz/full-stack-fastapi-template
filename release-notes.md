@@ -485,6 +485,7 @@
 
 ### Internal
 
+* ⬆ Bump react-hook-form from 7.59.0 to 7.60.0 in /frontend. PR [#1065](https://github.com/fastapilabs/cloud/pull/1065) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/router-devtools from 1.124.0 to 1.125.4 in /frontend. PR [#1062](https://github.com/fastapilabs/cloud/pull/1062) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump dotenv from 16.6.1 to 17.0.1 in /frontend. PR [#1063](https://github.com/fastapilabs/cloud/pull/1063) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump react-error-boundary from 4.1.2 to 6.0.0 in /frontend. PR [#1064](https://github.com/fastapilabs/cloud/pull/1064) by [@dependabot[bot]](https://github.com/apps/dependabot).
