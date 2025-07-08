@@ -533,7 +533,8 @@ sa_map: dict[str, any] = {
     },
 }
 for k, sa in sa_map.items():
-    sa["values"].setdefault("global", {}).setdefault("labels", {}).update(k8s_labels)
+    sa["values"].setdefault("global", {}).setdefault(
+        "labels", {}).update(k8s_labels)
     sa_map[k]["chart"] = helm.Chart(
         k,
         helm.ChartArgs(
@@ -558,45 +559,9 @@ for k, sa in sa_map.items():
 # )
 
 # Ensure the Helm chart configuration includes the correct service account annotations
-external_secrets_sa_name = "external-secrets"
-external_secrets_sa_namespace = "external-secrets"
 external_secrets_parameter_store_kind = "ClusterSecretStore"
 external_secrets_parameter_store_name = "external-parameter-store"
 external_secrets_enabled = True
-
-external_secrets_chart = helm.Chart(
-    "external-secrets",
-    helm.ChartArgs(
-        chart="./helm/charts/external-secrets",
-        dependency_update=True,
-        namespace=external_secrets_sa_namespace,
-        values={
-            "external-secrets": {
-                "serviceAccount": {
-                    "name": external_secrets_sa_name,
-                    "annotations": {
-                        "eks.amazonaws.com/role-arn": external_secrets_iam_role.arn,
-                    },
-                },
-            },
-            "config": {
-                "kind": external_secrets_parameter_store_kind,
-                "stores": {
-                    # This is being done because of the helm chart logic
-                    external_secrets_parameter_store_name.replace("external-", ""): {
-                        "provider": {
-                            "aws": {
-                                "service": "ParameterStore",
-                                "region": region,
-                            },
-                        },
-                    },
-                },
-            },
-        },
-    ),
-    opts=pulumi.ResourceOptions(provider=k8s_provider),
-)
 
 cloudflare_credentials_secret = aws.ssm.Parameter(
     "cloudflare-credentials",
@@ -623,7 +588,7 @@ cert_manager_chart = helm.Chart(
         },
     ),
     opts=pulumi.ResourceOptions(
-        depends_on=[external_secrets_chart],
+        depends_on=[],
         provider=k8s_provider,
     ),
 )
@@ -714,7 +679,8 @@ argocd_component = ArgoCDComponent(
             ),
         ],
         # Root application configuration
-        environment=stack_name,  # Use stack name as environment (development, staging, production)
+        # Use stack name as environment (development, staging, production)
+        environment=stack_name,
         root_app_target_revision="HEAD",
         root_app_project="default",
     ),
@@ -747,7 +713,6 @@ vector_chart = helm.Chart(
     opts=pulumi.ResourceOptions(
         depends_on=[
             cert_manager_chart,
-            external_secrets_chart,
         ],
         provider=k8s_provider,
     ),

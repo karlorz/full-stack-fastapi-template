@@ -34,7 +34,8 @@ class ArgoCDConfig:
     admin_emails: list[str] = None
     repositories: List[RepositoryConfig] = None
     # Root application configuration
-    environment: str = "development"  # expecting one of: development, staging, production
+    # expecting one of: development, staging, production
+    environment: str = "development"
     root_app_repo_url: Optional[str] = None  # defaults to first repository URL
     root_app_target_revision: str = "HEAD"
     root_app_project: str = "default"
@@ -75,6 +76,7 @@ class ArgoCDComponent(pulumi.ComponentResource):
         # Create root application - this is a special application that
         # will deploy all other applications of the environment
         self._create_root_application()
+        self._create_multi_chart_apps_applicationset()
 
         # Register outputs
         self.register_outputs(
@@ -164,7 +166,8 @@ class ArgoCDComponent(pulumi.ComponentResource):
     def _create_oauth_secret(self):
         """Create OAuth secrets for both ALB and ArgoCD"""
         if not self.config.google_client_id or not self.config.google_client_secret:
-            raise ValueError("Google OAuth credentials required when oauth is enabled")
+            raise ValueError(
+                "Google OAuth credentials required when oauth is enabled")
 
         # Create secret for ArgoCD internal OAuth
         self.oauth_secret = k8s.core.v1.Secret(
@@ -184,7 +187,8 @@ class ArgoCDComponent(pulumi.ComponentResource):
                 "oidc.google.clientSecret": self.config.google_client_secret,
             },
             opts=pulumi.ResourceOptions(
-                parent=self, provider=self.k8s_provider, depends_on=[self.namespace]
+                parent=self, provider=self.k8s_provider, depends_on=[
+                    self.namespace]
             ),
         )
 
@@ -205,7 +209,8 @@ class ArgoCDComponent(pulumi.ComponentResource):
                 "clientSecret": self.config.google_client_secret,
             },
             opts=pulumi.ResourceOptions(
-                parent=self, provider=self.k8s_provider, depends_on=[self.namespace]
+                parent=self, provider=self.k8s_provider, depends_on=[
+                    self.namespace]
             ),
         )
 
@@ -229,7 +234,8 @@ class ArgoCDComponent(pulumi.ComponentResource):
                 )
             ],
             opts=pulumi.ResourceOptions(
-                parent=self, provider=self.k8s_provider, depends_on=[self.namespace]
+                parent=self, provider=self.k8s_provider, depends_on=[
+                    self.namespace]
             ),
         )
 
@@ -285,7 +291,8 @@ class ArgoCDComponent(pulumi.ComponentResource):
                 "auth": pulumi.Output.secret("argocd-redis-password"),
             },
             opts=pulumi.ResourceOptions(
-                parent=self, provider=self.k8s_provider, depends_on=[self.namespace]
+                parent=self, provider=self.k8s_provider, depends_on=[
+                    self.namespace]
             ),
         )
 
@@ -297,7 +304,7 @@ class ArgoCDComponent(pulumi.ComponentResource):
         self.helm_chart = helm.Chart(
             "argocd",
             helm.ChartArgs(
-                chart="./helm/charts/argo-cd",
+                chart="./helm/charts/argo-cd/argo-cd",
                 dependency_update=True,
                 namespace=self.config.namespace,
                 values=helm_values,
@@ -492,7 +499,8 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
             repo_url = self.config.repositories[0].url
 
         if not repo_url:
-            raise ValueError("No repository URL available for root application. Either provide root_app_repo_url or configure at least one repository.")
+            raise ValueError(
+                "No repository URL available for root application. Either provide root_app_repo_url or configure at least one repository.")
 
         # Create the root ArgoCD Application
         self.root_application = k8s.apiextensions.CustomResource(
@@ -523,13 +531,112 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                 },
                 "destination": {
                     "server": "https://kubernetes.default.svc",
-                    "namespace": "argocd",  # Deploy other apps to argocd namespace by default
+                    "namespace": "argo-cd",  # Deploy other apps to argo-cd namespace by default
                 },
                 "syncPolicy": {
                     "automated": {
                         "prune": False if self.config.environment == "production" else True,
                         "selfHeal": True,
                     },
+                },
+            },
+            opts=pulumi.ResourceOptions(
+                parent=self,
+                provider=self.k8s_provider,
+                depends_on=[self.helm_chart],  # Wait for ArgoCD to be deployed
+            ),
+        )
+
+    def _create_multi_chart_apps_applicationset(self):
+        """
+        Create a multi-chart application for a given environment.
+        This will create an ApplicationSet that will deploy all the charts in the given environment.
+        """
+        # Determine repository URL
+        repo_url = self.config.root_app_repo_url
+        if not repo_url and self.config.repositories:
+            repo_url = self.config.repositories[0].url
+
+        if not repo_url:
+            raise ValueError(
+                "No repository URL available for root application. Either provide root_app_repo_url or configure at least one repository.")
+
+        # Create the root ArgoCD Application
+        self.multi_chart_apps_application_set = k8s.apiextensions.CustomResource(
+            "multi-chart-apps-application-set",
+            api_version="argoproj.io/v1alpha1",
+            kind="ApplicationSet",
+            metadata=k8s.meta.v1.ObjectMetaArgs(
+                name=f"multi-chart-apps-{self.config.environment}",
+                namespace=self.config.namespace,
+                labels={
+                    **self.tags,
+                    "app.kubernetes.io/name": "argocd-multi-chart-apps",
+                    "app.kubernetes.io/component": "multi-chart-apps",
+                    "app.kubernetes.io/part-of": "argocd",
+                    "environment": self.config.environment,
+                },
+            ),
+            spec={
+                "generators": [
+                    {
+                        "git": {
+                            "repoURL": repo_url,
+                            "revision": self.config.root_app_target_revision,
+                            "directories": [
+                                # Include all charts
+                                {"path": "infra/helm/charts/**/**"},
+                            ],
+                        },
+                        "selector": {
+                            "matchExpressions": [
+                                {
+                                    "key": "path.basename",
+                                    "operator": "NotIn",
+                                    "values": [
+                                        "argo-cd",
+                                        "service-account",
+                                        "templates",
+                                        # TODO: Remove these namespaces from the list
+                                        "cert-manager",
+                                        "fastapicloud",
+                                        "prometheus",
+                                        "vector",
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "template": {
+                    "metadata": {
+                        "name": "{{path.basename}}",
+                    },
+                    "spec": {
+                        "project": self.config.root_app_project,
+                        "source": {
+                            "repoURL": repo_url,
+                            "targetRevision": self.config.root_app_target_revision,
+                            "path": "{{path}}",
+                            "helm": {
+                                "ignoreMissingValueFiles": True,
+                                "valueFiles": [
+                                    # "{{path}}/values.yaml",
+                                    f"infra/argocd/{self.config.environment}/{{{{path[3]}}}}/{{{{path[4]}}}}.yaml",
+                                ]
+                            }
+                        },
+                        "destination": {
+                            "server": "https://kubernetes.default.svc",
+                            "namespace": '{{path[3]}}',
+                        },
+                        "syncPolicy": {
+                            "automated": {
+                                "prune": False if self.config.environment == "production" else True,
+                                "selfHeal": True,
+                            },
+                        },
+                    }
                 },
             },
             opts=pulumi.ResourceOptions(
