@@ -18,6 +18,7 @@ from pulumi_deployment_workflow.config import (
 import pulumi_kubernetes as k8s
 import pulumi_kubernetes.helm.v4 as helm
 from components.argocd import ArgoCDComponent, ArgoCDConfig, RepositoryConfig
+from components.monitoring import MonitoringStorageComponent
 import json
 
 # Get configuration
@@ -454,8 +455,8 @@ aws.iam.RolePolicyAttachment(
     policy_arn=external_secrets_policy.arn,
 )
 
-k8s_provider = k8s.Provider("k8s-provider",
-    kubeconfig=eks_cluster.kubeconfig.apply(lambda k: json.dumps(k))
+k8s_provider = k8s.Provider(
+    "k8s-provider", kubeconfig=eks_cluster.kubeconfig.apply(lambda k: json.dumps(k))
 )
 
 k8s_labels = {
@@ -654,6 +655,46 @@ argocd_certificate = aws.acm.Certificate(
     },
 )
 
+# Create monitoring storage components for Mimir, Tempo, and Loki
+mimir_storage = MonitoringStorageComponent(
+    "mimir-storage",
+    service_name="mimir",
+    stack_name=stack_name,
+    cluster_oidc_provider_url=oidc_url,
+    cluster_oidc_provider_arn=oidc_arn,
+    retention_days=365,  # 1 year for metrics
+    opts=pulumi.ResourceOptions(
+        provider=k8s_provider,
+        depends_on=[eks_cluster],
+    ),
+)
+
+tempo_storage = MonitoringStorageComponent(
+    "tempo-storage",
+    service_name="tempo",
+    stack_name=stack_name,
+    cluster_oidc_provider_url=oidc_url,
+    cluster_oidc_provider_arn=oidc_arn,
+    retention_days=30,  # 1 month for traces
+    opts=pulumi.ResourceOptions(
+        provider=k8s_provider,
+        depends_on=[eks_cluster],
+    ),
+)
+
+loki_storage = MonitoringStorageComponent(
+    "loki-storage",
+    service_name="loki",
+    stack_name=stack_name,
+    cluster_oidc_provider_url=oidc_url,
+    cluster_oidc_provider_arn=oidc_arn,
+    retention_days=90,  # 3 months for logs
+    opts=pulumi.ResourceOptions(
+        provider=k8s_provider,
+        depends_on=[eks_cluster],
+    ),
+)
+
 # Deploy ArgoCD component
 argocd_component = ArgoCDComponent(
     "argocd",
@@ -774,3 +815,11 @@ pulumi.export("builder_queue_name", sqs.builder_queue.name)
 pulumi.export("external_secrets_iam_role_arn", external_secrets_iam_role.arn)
 pulumi.export("argocd_url", f"https://argocd.{INFRA_DOMAIN}")
 pulumi.export("infra_domain", INFRA_DOMAIN)
+
+# Export monitoring storage resources
+pulumi.export("mimir_bucket_name", mimir_storage.bucket.id)
+pulumi.export("mimir_role_arn", mimir_storage.role.arn)
+pulumi.export("tempo_bucket_name", tempo_storage.bucket.id)
+pulumi.export("tempo_role_arn", tempo_storage.role.arn)
+pulumi.export("loki_bucket_name", loki_storage.bucket.id)
+pulumi.export("loki_role_arn", loki_storage.role.arn)
