@@ -459,6 +459,7 @@
 
 ### Docs
 
+* ✨ Multi-chart deployment with ArgoCD. PR [#1074](https://github.com/fastapilabs/cloud/pull/1074) by [@siryur](https://github.com/siryur).
 * 📝 Fix typos in `infra/README.md`. PR [#1031](https://github.com/fastapilabs/cloud/pull/1031) by [@alejsdev](https://github.com/alejsdev).
 * 📝 Tweak READMEs for new uv workspaces setup. PR [#729](https://github.com/fastapilabs/cloud/pull/729) by [@tiangolo](https://github.com/tiangolo).
 * 📝 Update README for infra deployment, include deploying all cloud backend parts, clarify instructions. PR [#688](https://github.com/fastapilabs/cloud/pull/688) by [@tiangolo](https://github.com/tiangolo).
