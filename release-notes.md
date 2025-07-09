@@ -441,6 +441,7 @@
 
 ### Infrastructure
 
+* 📋 Add values for external-secrets environments. PR [#1092](https://github.com/fastapilabs/cloud/pull/1092) by [@siryur](https://github.com/siryur).
 * ✨ New argo-cd prod domain to cloudflare stack. PR [#1058](https://github.com/fastapilabs/cloud/pull/1058) by [@siryur](https://github.com/siryur).
 * ✈️ Implement a controlled way of handling k8s upgrades. PR [#1054](https://github.com/fastapilabs/cloud/pull/1054) by [@malvex](https://github.com/malvex).
 * ✨ Add cloudflare stack. PR [#1052](https://github.com/fastapilabs/cloud/pull/1052) by [@malvex](https://github.com/malvex).
