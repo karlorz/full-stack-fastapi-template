@@ -131,6 +131,20 @@ eks_cluster = eks.Cluster(
     vpc_cni_options=eks.VpcCniOptionsArgs(
         addon_version=eks_vpc_cni_version,
     ),
+    # Configure gp3 as the default storage class
+    storage_classes={
+        "gp3": eks.StorageClassArgs(
+            type="gp3",
+            default=True,
+            encrypted=True,
+            allow_volume_expansion=True,
+            volume_binding_mode="WaitForFirstConsumer",
+            reclaim_policy="Retain",
+            metadata=k8s.meta.v1.ObjectMetaArgs(
+                name="gp3",
+            ),
+        ),
+    },
     # Enable access via access entries, not just role maps
     authentication_mode=eks.AuthenticationMode.API_AND_CONFIG_MAP,
     # Add access entries for IAM
@@ -533,8 +547,7 @@ sa_map: dict[str, any] = {
     },
 }
 for k, sa in sa_map.items():
-    sa["values"].setdefault("global", {}).setdefault(
-        "labels", {}).update(k8s_labels)
+    sa["values"].setdefault("global", {}).setdefault("labels", {}).update(k8s_labels)
     sa_map[k]["chart"] = helm.Chart(
         k,
         helm.ChartArgs(
