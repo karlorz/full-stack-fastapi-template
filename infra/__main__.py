@@ -31,6 +31,7 @@ eks_node_ami_id = cfg.require("eks_node_ami_id")
 eks_coredns_version = cfg.require("eks_coredns_version")
 eks_kube_proxy_version = cfg.require("eks_kube_proxy_version")
 eks_vpc_cni_version = cfg.require("eks_vpc_cni_version")
+eks_ebs_csi_version = cfg.require("eks_ebs_csi_version")
 
 # Validate AWS Account ID to prevent deploying to wrong account
 current_account = aws.get_caller_identity()
@@ -201,6 +202,7 @@ aws_lb_controller_policy_content = (
 
 
 service_account_name = f"system:serviceaccount:kube-system:{aws_load_balancer_name}"
+cluster_name = eks_cluster.core.apply(lambda x: x.cluster.name)
 oidc_url = eks_cluster.core.apply(lambda x: x.oidc_provider and x.oidc_provider.url)
 oidc_arn = eks_cluster.core.apply(lambda x: x.oidc_provider and x.oidc_provider.arn)
 oidc_id = oidc_url.apply(lambda x: x.split("/")[-1])
@@ -250,6 +252,52 @@ aws.iam.PolicyAttachment(
     f"{aws_load_balancer_name}-attachment",
     policy_arn=aws_lb_controller_policy.arn,
     roles=[aws_lb_controller_role.name],
+)
+
+# AWS EBS CSI Driver
+# Create IAM role for EBS CSI
+ebs_csi_driver_role = aws.iam.Role(
+    "ebs-csi-driver-role",
+    assume_role_policy=pulumi.Output.json_dumps(
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Federated": oidc_arn,
+                    },
+                    "Action": "sts:AssumeRoleWithWebIdentity",
+                    "Condition": {
+                        "StringEquals": {
+                            pulumi.Output.format(
+                                "{oidc_url}:aud", oidc_url=oidc_url
+                            ): "sts.amazonaws.com",
+                            pulumi.Output.format(
+                                "{oidc_url}:sub", oidc_url=oidc_url
+                            ): "system:serviceaccount:kube-system:ebs-csi-controller-sa",
+                        },
+                    },
+                }
+            ],
+        }
+    ),
+)
+
+# Attach the AWS managed policy for EBS CSI Driver
+ebs_csi_driver_policy_attachment = aws.iam.RolePolicyAttachment(
+    "ebs-csi-driver-policy",
+    role=ebs_csi_driver_role.name,
+    policy_arn="arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
+)
+
+# AWS EBS CSI Driver Addon
+ebs_csi_driver = aws.eks.Addon(
+    "aws-ebs-csi-driver",
+    cluster_name=cluster_name,
+    addon_name="aws-ebs-csi-driver",
+    addon_version=eks_ebs_csi_version,
+    service_account_role_arn=ebs_csi_driver_role.arn,
 )
 
 # FastAPI Cloud Admin Service Account Role and policy attachment
@@ -330,8 +378,6 @@ aws.iam.RolePolicyAttachment(
     role=ecr_iam_role.name,
     policy_arn=iam.ecr_read_policy.arn,
 )
-
-cluster_name = eks_cluster.core.apply(lambda x: x.cluster.name)
 
 # Redis backend
 

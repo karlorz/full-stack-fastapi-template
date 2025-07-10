@@ -32,13 +32,14 @@ jobs:
         LATEST_KUBE_PROXY=$(aws eks describe-addon-versions --addon-name kube-proxy --query 'addons[0].addonVersions[0].addonVersion' --output text)
         LATEST_COREDNS=$(aws eks describe-addon-versions --addon-name coredns --query 'addons[0].addonVersions[0].addonVersion' --output text)
         LATEST_VPC_CNI=$(aws eks describe-addon-versions --addon-name vpc-cni --query 'addons[0].addonVersions[0].addonVersion' --output text)
+        LATEST_EBS_CSI=$(aws eks describe-addon-versions --addon-name aws-ebs-csi-driver --query 'addons[0].addonVersions[0].addonVersion' --output text)
 
         # SSM Parameter Store has the officially tested AMI for each EKS version
         LATEST_AMI_ID=$(aws ssm get-parameter \
           --name "/aws/service/eks/optimized-ami/${LATEST_EKS}/amazon-linux-2/recommended/image_id" \
           --query "Parameter.Value" --output text)
 
-        echo "Latest versions: EKS=$LATEST_EKS, AMI=$LATEST_AMI_ID, CoreDNS=$LATEST_COREDNS, kube-proxy=$LATEST_KUBE_PROXY, VPC-CNI=$LATEST_VPC_CNI"
+        echo "Latest versions: EKS=$LATEST_EKS, AMI=$LATEST_AMI_ID, CoreDNS=$LATEST_COREDNS, kube-proxy=$LATEST_KUBE_PROXY, VPC-CNI=$LATEST_VPC_CNI, EBS-CSI=$LATEST_EBS_CSI"
 
         # Apply to all environments to ensure consistency
         for env in development staging production; do
@@ -47,6 +48,7 @@ jobs:
           yq -i ".config.\"k8s-cluster:eks_coredns_version\" = \"$LATEST_COREDNS\"" infra/Pulumi.$env.yaml
           yq -i ".config.\"k8s-cluster:eks_kube_proxy_version\" = \"$LATEST_KUBE_PROXY\"" infra/Pulumi.$env.yaml
           yq -i ".config.\"k8s-cluster:eks_vpc_cni_version\" = \"$LATEST_VPC_CNI\"" infra/Pulumi.$env.yaml
+          yq -i ".config.\"k8s-cluster:eks_ebs_csi_version\" = \"$LATEST_EBS_CSI\"" infra/Pulumi.$env.yaml
         done
 
         # Only create PR if versions actually changed
@@ -65,7 +67,7 @@ jobs:
         commit-message: "⬆ Update EKS version and addon versions"
         title: "⬆ Update EKS version and addon versions"
         body: |
-          This PR updates the EKS cluster version and addon versions (CoreDNS, kube-proxy, VPC CNI) along with the node AMI to the latest available.
+          This PR updates the EKS cluster version and addon versions (CoreDNS, kube-proxy, VPC CNI, EBS CSI) along with the node AMI to the latest available.
 
           Please review the changes and test in staging before merging.
         branch: update-eks-versions

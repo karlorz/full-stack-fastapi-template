@@ -55,6 +55,7 @@ config:
   k8s-cluster:eks_coredns_version: v1.11.4-eksbuild.14
   k8s-cluster:eks_kube_proxy_version: v1.31.7-eksbuild.7
   k8s-cluster:eks_vpc_cni_version: v1.19.6-eksbuild.1
+  k8s-cluster:eks_ebs_csi_version: v1.45.0-eksbuild.2
   argocd:google_client_id:
     secure: AAABAFBspYDQeXP4YvxVc+rsdqfQemppTQdVrEnQosbQpcHqjnjBgdHwGA5o/lAy9tCn488Yswoo38xR58IWelIxmfDHiiwKFgLS6e97t3YsTf3E3DiIZtiZ3cocqmBVvKylU97BNA==
   argocd:google_client_secret:
