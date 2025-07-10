@@ -441,6 +441,7 @@
 
 ### Infrastructure
 
+* ✈️  Migrate cert-manager and vector to argo-cd. PR [#1093](https://github.com/fastapilabs/cloud/pull/1093) by [@siryur](https://github.com/siryur).
 * 🔧 Exclude ArgoCD/Helm from Pulumi Preview and disable temporarily ArgoCD AppSet auto-sync. PR [#1094](https://github.com/fastapilabs/cloud/pull/1094) by [@malvex](https://github.com/malvex).
 * ✨ Add AWS EBS CSI driver addon to EKS cluster. PR [#1095](https://github.com/fastapilabs/cloud/pull/1095) by [@malvex](https://github.com/malvex).
 * 🔒 Add AWS account ID validation to prevent deploying to wrong account. PR [#1096](https://github.com/fastapilabs/cloud/pull/1096) by [@malvex](https://github.com/malvex).
