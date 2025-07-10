@@ -11,6 +11,7 @@ from pulumi_deployment_workflow.config import (
     max_cluster_size,
     desired_cluster_size,
     eks_node_instance_type,
+    eks_node_root_volume_size,
     vpc_network_cidr,
     stack_name,
     aws_load_balancer_name,
@@ -129,6 +130,8 @@ eks_cluster = eks.Cluster(
     max_size=max_cluster_size,
     # Do not give worker nodes a public IP address
     node_associate_public_ip_address=False,
+    # Increase node disk size (default is 20 GB)
+    node_root_volume_size=eks_node_root_volume_size,
     # Change these values for a private cluster (VPN access required)
     endpoint_private_access=False,
     endpoint_public_access=True,

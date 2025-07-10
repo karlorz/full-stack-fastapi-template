@@ -10,6 +10,7 @@ min_cluster_size = config.get_int("min_cluster_size", 3)
 max_cluster_size = config.get_int("max_cluster_size", 6)
 desired_cluster_size = config.get_int("desired_cluster_size", 3)
 eks_node_instance_type = config.get("eks_node_instance_type", "t3.medium")
+eks_node_root_volume_size = config.require_int("eks_node_root_volume_size")
 vpc_network_cidr = config.get("vpc_network_cidr", "10.0.0.0/16")
 stack = pulumi.get_stack()
 stack_name = stack.split("/")[-1]
