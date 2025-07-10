@@ -1,0 +1,7 @@
+externalSecrets:
+  kind: ClusterSecretStore
+  name: external-parameter-store
+  synadia:
+    enabled: true
+    remoteRef:
+      key: synadia-credentials

@@ -597,14 +597,12 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                                         "service-account",
                                         "templates",
                                         # TODO: Remove these namespaces from the list
-                                        "cert-manager",
                                         "fastapicloud",
                                         "prometheus",
-                                        "vector",
-                                    ]
+                                    ],
                                 }
                             ]
-                        }
+                        },
                     }
                 ],
                 "template": {

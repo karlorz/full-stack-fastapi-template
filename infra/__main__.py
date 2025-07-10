@@ -614,19 +614,6 @@ for k, sa in sa_map.items():
         opts=pulumi.ResourceOptions(provider=k8s_provider),
     )
 
-# prometheus_chart = helm.Chart(
-#     "prometheus",
-#     helm.ChartArgs(
-#         chart="./helm/charts/prometheus",
-#         dependency_update=True,
-#         namespace="monitoring",
-#         # values={},
-#     ),
-#     opts=pulumi.ResourceOptions(
-#         provider=k8s_provider,
-#     ),
-# )
-
 # Ensure the Helm chart configuration includes the correct service account annotations
 external_secrets_parameter_store_kind = "ClusterSecretStore"
 external_secrets_parameter_store_name = "external-parameter-store"
@@ -638,30 +625,6 @@ cloudflare_credentials_secret = aws.ssm.Parameter(
     type=aws.ssm.ParameterType.SECURE_STRING,
     value=CLOUDFLARE_API_KEY,
 )
-
-cert_manager_chart = helm.Chart(
-    "cert-manager",
-    helm.ChartArgs(
-        chart="./helm/charts/cert-manager",
-        dependency_update=True,
-        namespace="cert-manager",
-        values={
-            "externalSecrets": {
-                "cloudflare": {
-                    "enabled": external_secrets_enabled,
-                    "key": cloudflare_credentials_secret.name,
-                },
-                "kind": external_secrets_parameter_store_kind,
-                "name": external_secrets_parameter_store_name,
-            },
-        },
-    ),
-    opts=pulumi.ResourceOptions(
-        depends_on=[],
-        provider=k8s_provider,
-    ),
-)
-
 
 synadia_credentials_secret = aws.ssm.Parameter(
     "synadia-credentials",
@@ -755,36 +718,7 @@ argocd_component = ArgoCDComponent(
     ),
     k8s_provider=k8s_provider,
     tags=default_tags,
-    opts=pulumi.ResourceOptions(
-        depends_on=[cert_manager_chart],
-    ),
-)
-
-vector_chart = helm.Chart(
-    "vector",
-    helm.ChartArgs(
-        chart="./helm/charts/vector",
-        dependency_update=True,
-        namespace="vector",
-        values={
-            "externalSecrets": {
-                "kind": external_secrets_parameter_store_kind,
-                "name": external_secrets_parameter_store_name,
-                "synadia": {
-                    "enabled": external_secrets_enabled,
-                    "remoteRef": {
-                        "key": synadia_credentials_secret.name,
-                    },
-                },
-            },
-        },
-    ),
-    opts=pulumi.ResourceOptions(
-        depends_on=[
-            cert_manager_chart,
-        ],
-        provider=k8s_provider,
-    ),
+    opts=pulumi.ResourceOptions(),
 )
 
 fastapicloud_secrets: dict[str, any] = {

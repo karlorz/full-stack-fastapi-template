@@ -1,0 +1,6 @@
+externalSecrets:
+  cloudflare:
+    enabled: true
+    key: cloudflare-credentials
+  kind: ClusterSecretStore
+  name: external-parameter-store
