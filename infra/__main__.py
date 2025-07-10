@@ -32,6 +32,16 @@ eks_coredns_version = cfg.require("eks_coredns_version")
 eks_kube_proxy_version = cfg.require("eks_kube_proxy_version")
 eks_vpc_cni_version = cfg.require("eks_vpc_cni_version")
 
+# Validate AWS Account ID to prevent deploying to wrong account
+current_account = aws.get_caller_identity()
+expected_account_id = cfg.require("aws_account_id")
+
+if current_account.account_id != expected_account_id:
+    raise Exception(
+        f"AWS Account mismatch! Expected account {expected_account_id} but current AWS profile is using account {current_account.account_id}. "
+        f"Please check your AWS_PROFILE environment variable or AWS credentials."
+    )
+
 ALLOW_SIGNUP_TOKEN = cfg.require_secret("fastapicloud_allow_signup_token")
 API_DOMAIN = cfg.require("fastapicloud_api_domain")
 AWS_STS_REGIONAL_ENDPOINTS = "regional"
