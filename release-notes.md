@@ -441,6 +441,7 @@
 
 ### Infrastructure
 
+* ✨ Add AWS EBS CSI driver addon to EKS cluster. PR [#1095](https://github.com/fastapilabs/cloud/pull/1095) by [@malvex](https://github.com/malvex).
 * 🔒 Add AWS account ID validation to prevent deploying to wrong account. PR [#1096](https://github.com/fastapilabs/cloud/pull/1096) by [@malvex](https://github.com/malvex).
 * 🔧 Add gp3 storage class configuration to EKS cluster. PR [#1079](https://github.com/fastapilabs/cloud/pull/1079) by [@malvex](https://github.com/malvex).
 * 📋 Add values for external-secrets environments. PR [#1092](https://github.com/fastapilabs/cloud/pull/1092) by [@siryur](https://github.com/siryur).
