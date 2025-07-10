@@ -37,6 +37,8 @@ jobs:
           k8s:
             - 'infra/**'
             - '!infra/cloudflare/**'
+            - '!infra/argocd/**'
+            - '!infra/helm/**'
           cloudflare:
             - 'infra/cloudflare/**'
           workflow:

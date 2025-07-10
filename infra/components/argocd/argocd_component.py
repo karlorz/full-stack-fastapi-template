@@ -515,7 +515,6 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                     "app.kubernetes.io/name": "argocd-root-app",
                     "app.kubernetes.io/component": "root-application",
                     "app.kubernetes.io/part-of": "argocd",
-                    "environment": self.config.environment,
                 },
             ),
             spec={
@@ -533,12 +532,13 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                     "server": "https://kubernetes.default.svc",
                     "namespace": "argo-cd",  # Deploy other apps to argo-cd namespace by default
                 },
-                "syncPolicy": {
-                    "automated": {
-                        "prune": False if self.config.environment == "production" else True,
-                        "selfHeal": True,
-                    },
-                },
+                # temporarily disabled during heavy development
+                # "syncPolicy": {
+                #     "automated": {
+                #         "prune": False if self.config.environment == "production" else True,
+                #         "selfHeal": True,
+                #     },
+                # },
             },
             opts=pulumi.ResourceOptions(
                 parent=self,
@@ -574,7 +574,6 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                     "app.kubernetes.io/name": "argocd-multi-chart-apps",
                     "app.kubernetes.io/component": "multi-chart-apps",
                     "app.kubernetes.io/part-of": "argocd",
-                    "environment": self.config.environment,
                 },
             ),
             spec={
@@ -611,6 +610,10 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                 "template": {
                     "metadata": {
                         "name": "{{path.basename}}",
+                        # Prevent App deletion when AppSet is deleted
+                        "finalizers": [
+                            "resources-finalizer.argocd.argoproj.io"
+                        ]
                     },
                     "spec": {
                         "project": self.config.root_app_project,
@@ -621,8 +624,8 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                             "helm": {
                                 "ignoreMissingValueFiles": True,
                                 "valueFiles": [
-                                    # "{{path}}/values.yaml",
-                                    f"infra/argocd/{self.config.environment}/{{{{path[3]}}}}/{{{{path[4]}}}}.yaml",
+                                    # relative path from Helm Chart location
+                                    f"../../../../argocd/{self.config.environment}/{{{{path[3]}}}}/{{{{path[4]}}}}.yaml",
                                 ]
                             }
                         },
@@ -630,14 +633,19 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                             "server": "https://kubernetes.default.svc",
                             "namespace": '{{path[3]}}',
                         },
-                        "syncPolicy": {
-                            "automated": {
-                                "prune": False if self.config.environment == "production" else True,
-                                "selfHeal": True,
-                            },
-                        },
+                        # temporarily disabled during heavy development
+                        # "syncPolicy": {
+                        #     "automated": {
+                        #         "prune": False if self.config.environment == "production" else True,
+                        #         "selfHeal": True,
+                        #     },
+                        # },
                     }
                 },
+                "syncPolicy": {
+                    # Prevent appset controller from deleting App
+                    "applicationsSync": "create-update"
+                }
             },
             opts=pulumi.ResourceOptions(
                 parent=self,
