@@ -441,6 +441,7 @@
 
 ### Infrastructure
 
+* ↔️ Change argocd production CNAME value. PR [#1099](https://github.com/fastapilabs/cloud/pull/1099) by [@siryur](https://github.com/siryur).
 * 🚀 Upgrade EKS nodes to t3a.large with 50GB disk. PR [#1097](https://github.com/fastapilabs/cloud/pull/1097) by [@malvex](https://github.com/malvex).
 * ✈️  Migrate cert-manager and vector to argo-cd. PR [#1093](https://github.com/fastapilabs/cloud/pull/1093) by [@siryur](https://github.com/siryur).
 * 🔧 Exclude ArgoCD/Helm from Pulumi Preview and disable temporarily ArgoCD AppSet auto-sync. PR [#1094](https://github.com/fastapilabs/cloud/pull/1094) by [@malvex](https://github.com/malvex).
