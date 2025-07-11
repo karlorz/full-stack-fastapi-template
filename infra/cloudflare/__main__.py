@@ -30,7 +30,7 @@ domains = {
             {
                 "name": "argocd.prod",
                 "type": "CNAME",
-                "value": "k8s-argocd-argocdse-f97df9857d-483031861.us-east-1.elb.amazonaws.com",
+                "value": "k8s-argocd-argocdse-f97df9857d-1251066385.us-east-1.elb.amazonaws.com",
                 "proxied": False,
             },
         ]
