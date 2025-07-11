@@ -1,0 +1,58 @@
+metrics-server:
+  nameOverride: "metrics-server"
+  fullnameOverride: "metrics-server"
+
+  # apiService:
+  #   # Specifies whether to skip TLS verification
+  #   insecureSkipTLSVerify: true
+
+  commonLabels: {}
+  podLabels: {}
+  podAnnotations: {}
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+    maxUnavailable: 0
+
+  service:
+    labels:
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: "Metrics-server"
+
+  metrics:
+    enabled: true
+
+  serviceMonitor:
+    enabled: false
+
+  # See https://github.com/kubernetes-sigs/metrics-server#scaling
+  resources:
+    requests:
+      cpu: 10m
+      memory: 200Mi
+    limits:
+      memory: 200Mi
+
+  tls:
+    # Set the TLS method to use. Supported values:
+    # - `metrics-server` : Metrics-server will generate a self-signed certificate
+    # - `helm`           : Helm will generate a self-signed certificate
+    # - `cert-manager`   : Use cert-manager.io to create and maintain the certificate
+    type: "cert-manager"
+
+    certManager:
+      # Automatically add the cert-manager.io/inject-ca-from annotation to the APIService resource.
+      # See https://cert-manager.io/docs/concepts/ca-injector
+      addInjectorAnnotations: true
+      existingIssuer:
+        # Use an existing cert-manager issuer
+        enabled: false
+        # Kind of the existing cert-manager issuer
+        kind: "Issuer"
+        # Name of the existing cert-manager issuer
+        name: "my-issuer"
+      # Add extra annotations to the Certificate resource
+      annotations: {}
+      # Add extra labels to the Certificate resource
+      labels: {}
