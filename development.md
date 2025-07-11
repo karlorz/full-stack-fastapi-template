@@ -215,12 +215,12 @@ Once you have created a new FastAPI demo application, you can deploy it to FastA
   * Run the following command to install the necessary packages:
 
      ```sh
-     pip install --upgrade --index-url https://pypi.fastapicloud.com/simple --extra-index-url https://pypi.python.org/simple fastapi-cli fastapi-cloud-cli
+     pip install "fastapi[standard]"
      ```
 
 * **Configure the Environment**
 
-  * Run the script `use_env.py` to configure the environment for deploying the demo FastAPI app. This script will modify `~/.config/fastapi/fastapi-cli/cli.json`, which is used by `fastapi-cli`. The environment can be `local` (your local development environment) or one of the three AWS environments (`development`, `staging`, and `production`).
+  * Run the script `use_env.py` to configure the environment for deploying the demo FastAPI app. This script will modify `~/.config/fastapi/fastapi-cli/cli.json`, which is used by `fastapi-cloud-cli`. The environment can be `local` (your local development environment) or one of the three AWS environments (`development`, `staging`, and `production`).
 
      ```sh
      python use_env.py development

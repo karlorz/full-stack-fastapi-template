@@ -17,9 +17,9 @@ export interface CodeWithCopyProps {
   padding?: number
 }
 
-const PIP_INSTALL_COMMAND = `pip install --upgrade --index-url https://pypi.fastapicloud.com/simple --extra-index-url https://pypi.python.org/simple fastapi-cli fastapi-cloud-cli "fastapi[standard]"`
+const PIP_INSTALL_COMMAND = `pip install --upgrade "fastapi[standard]"`
 
-const UV_INSTALL_COMMAND = `uv add --upgrade --default-index https://fastapi-cli.pages.dev/simple --index-strategy unsafe-best-match --index https://pypi.python.org/simple fastapi-cli fastapi-cloud-cli "fastapi[standard]"`
+const UV_INSTALL_COMMAND = `uv add --upgrade "fastapi[standard]"`
 
 const CodeWithCopy = ({ code }: CodeWithCopyProps) => {
   const [copied, setCopied] = useState(false)
