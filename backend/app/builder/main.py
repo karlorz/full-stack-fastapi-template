@@ -562,6 +562,13 @@ def _create_build(
     )
 
 
+def _cleanup_line(line: str) -> str:
+    """
+    Remove the depot prefix from the line.
+    """
+    return line.replace("[depot] ", "")
+
+
 def build_and_push_docker_image(
     *, full_image_tag: str, docker_context_path: str
 ) -> Generator[str, None, None]:
@@ -669,6 +676,8 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
                 full_image_tag=full_image_tag,
                 docker_context_path=build_context,
             ):
+                line = _cleanup_line(line)
+
                 progress_log = BuildLogMessage(message=line)
 
                 _send_build_log(deployment_with_team.id, progress_log, redis_client)
