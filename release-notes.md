@@ -498,6 +498,7 @@
 
 ### Internal
 
+* ⬆ Bump @hey-api/openapi-ts from 0.76.0 to 0.78.3 in /frontend. PR [#1111](https://github.com/fastapilabs/cloud/pull/1111) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @biomejs/biome from 2.0.6 to 2.1.1 in /frontend. PR [#1112](https://github.com/fastapilabs/cloud/pull/1112) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @sentry/react from 9.34.0 to 9.38.0 in /frontend. PR [#1113](https://github.com/fastapilabs/cloud/pull/1113) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump posthog-js from 1.256.1 to 1.257.0 in /frontend. PR [#1114](https://github.com/fastapilabs/cloud/pull/1114) by [@dependabot[bot]](https://github.com/apps/dependabot).
