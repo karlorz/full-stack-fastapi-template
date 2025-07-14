@@ -1,11 +1,12 @@
-import { useSuspenseQuery } from "@tanstack/react-query"
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, notFound } from "@tanstack/react-router"
 import { formatDistanceToNow } from "date-fns"
-
+import type { DeploymentStatus } from "@/client"
 import Logs from "@/components/Deployment/Logs"
 import { Status } from "@/components/Deployment/Status"
 import PendingDeployment from "@/components/PendingComponents/PendingDeployment"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useBuildLogs } from "@/hooks/use-build-logs"
 import { getAppQueryOptions } from "@/queries/apps"
 import {
   getDeploymentQueryOptions,
@@ -37,6 +38,36 @@ export const Route = createFileRoute(
   pendingComponent: PendingDeployment,
 })
 
+function DeploymentBuildLogs({ deployment }: { deployment: { id: string } }) {
+  const logs = useBuildLogs({
+    deploymentId: deployment.id,
+  })
+
+  return <Logs logs={logs} />
+}
+
+function DeploymentLogs({
+  deployment,
+}: {
+  deployment: { id: string; status: DeploymentStatus }
+}) {
+  const { data: logsData, isLoading: logsLoading } = useQuery({
+    ...getLogsQueryOptions(deployment.id),
+    enabled: deployment.status === "success",
+  })
+
+  if (logsLoading) {
+    return <Logs logs={[{ message: "Loading logs..." }]} />
+  }
+
+  const logs = (logsData?.logs || []).map((log: any) => ({
+    timestamp: log.timestamp,
+    message: log.message,
+  }))
+
+  return <Logs logs={logs} />
+}
+
 function DeploymentDetail() {
   const { teamSlug, appSlug, deploymentId } = Route.useParams()
 
@@ -45,7 +76,6 @@ function DeploymentDetail() {
   const { data: deployment } = useSuspenseQuery(
     getDeploymentQueryOptions(app.id, deploymentId),
   )
-  const { data: logsData } = useSuspenseQuery(getLogsQueryOptions(deploymentId))
 
   return (
     <div className="container p-0 mx-auto w-full">
@@ -68,14 +98,21 @@ function DeploymentDetail() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Logs</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Logs logs={logsData.logs} />
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="build-logs" className="space-y-6">
+        <TabsList className="grid grid-cols-2 w-full">
+          <TabsTrigger value="build-logs">Build Logs</TabsTrigger>
+          <TabsTrigger value="logs" disabled={deployment.status !== "success"}>
+            Logs
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="build-logs">
+          <DeploymentBuildLogs deployment={deployment} />
+        </TabsContent>
+        <TabsContent value="logs">
+          <DeploymentLogs deployment={deployment} />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

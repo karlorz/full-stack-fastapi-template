@@ -8,336 +8,131 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyUpdateEmailRouteImport } from './routes/verify-update-email'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
+import { Route as TeamInvitationRouteImport } from './routes/team-invitation'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as CallbackRouteImport } from './routes/callback'
+import { Route as LayoutRouteImport } from './routes/_layout'
+import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
+import { Route as LayoutDeviceRouteImport } from './routes/_layout/device'
+import { Route as LayoutTeamSlugIndexRouteImport } from './routes/_layout/$teamSlug/index'
+import { Route as LayoutTeamsNewRouteImport } from './routes/_layout/teams/new'
+import { Route as LayoutTeamsAllRouteImport } from './routes/_layout/teams/all'
+import { Route as LayoutTeamSlugSettingsRouteImport } from './routes/_layout/$teamSlug/settings'
+import { Route as LayoutTeamSlugNewAppRouteImport } from './routes/_layout/$teamSlug/new-app'
+import { Route as LayoutTeamSlugAppsIndexRouteImport } from './routes/_layout/$teamSlug/apps/index'
+import { Route as LayoutTeamSlugAppsAppSlugIndexRouteImport } from './routes/_layout/$teamSlug/apps/$appSlug/index'
+import { Route as LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRouteImport } from './routes/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as VerifyUpdateEmailImport } from './routes/verify-update-email'
-import { Route as VerifyEmailImport } from './routes/verify-email'
-import { Route as TeamInvitationImport } from './routes/team-invitation'
-import { Route as SignupImport } from './routes/signup'
-import { Route as ResetPasswordImport } from './routes/reset-password'
-import { Route as RecoverPasswordImport } from './routes/recover-password'
-import { Route as LoginImport } from './routes/login'
-import { Route as CallbackImport } from './routes/callback'
-import { Route as LayoutImport } from './routes/_layout'
-import { Route as LayoutIndexImport } from './routes/_layout/index'
-import { Route as LayoutSettingsImport } from './routes/_layout/settings'
-import { Route as LayoutDeviceImport } from './routes/_layout/device'
-import { Route as LayoutTeamSlugIndexImport } from './routes/_layout/$teamSlug/index'
-import { Route as LayoutTeamsNewImport } from './routes/_layout/teams/new'
-import { Route as LayoutTeamsAllImport } from './routes/_layout/teams/all'
-import { Route as LayoutTeamSlugSettingsImport } from './routes/_layout/$teamSlug/settings'
-import { Route as LayoutTeamSlugNewAppImport } from './routes/_layout/$teamSlug/new-app'
-import { Route as LayoutTeamSlugAppsIndexImport } from './routes/_layout/$teamSlug/apps/index'
-import { Route as LayoutTeamSlugAppsAppSlugIndexImport } from './routes/_layout/$teamSlug/apps/$appSlug/index'
-import { Route as LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdImport } from './routes/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId'
-
-// Create/Update Routes
-
-const VerifyUpdateEmailRoute = VerifyUpdateEmailImport.update({
+const VerifyUpdateEmailRoute = VerifyUpdateEmailRouteImport.update({
   id: '/verify-update-email',
   path: '/verify-update-email',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const VerifyEmailRoute = VerifyEmailImport.update({
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
   path: '/verify-email',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const TeamInvitationRoute = TeamInvitationImport.update({
+const TeamInvitationRoute = TeamInvitationRouteImport.update({
   id: '/team-invitation',
   path: '/team-invitation',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const SignupRoute = SignupImport.update({
+const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const ResetPasswordRoute = ResetPasswordImport.update({
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const RecoverPasswordRoute = RecoverPasswordImport.update({
+const RecoverPasswordRoute = RecoverPasswordRouteImport.update({
   id: '/recover-password',
   path: '/recover-password',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const LoginRoute = LoginImport.update({
+const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const CallbackRoute = CallbackImport.update({
+const CallbackRoute = CallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const LayoutRoute = LayoutImport.update({
+const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const LayoutIndexRoute = LayoutIndexImport.update({
+const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
-
-const LayoutSettingsRoute = LayoutSettingsImport.update({
+const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => LayoutRoute,
 } as any)
-
-const LayoutDeviceRoute = LayoutDeviceImport.update({
+const LayoutDeviceRoute = LayoutDeviceRouteImport.update({
   id: '/device',
   path: '/device',
   getParentRoute: () => LayoutRoute,
 } as any)
-
-const LayoutTeamSlugIndexRoute = LayoutTeamSlugIndexImport.update({
+const LayoutTeamSlugIndexRoute = LayoutTeamSlugIndexRouteImport.update({
   id: '/$teamSlug/',
   path: '/$teamSlug/',
   getParentRoute: () => LayoutRoute,
 } as any)
-
-const LayoutTeamsNewRoute = LayoutTeamsNewImport.update({
+const LayoutTeamsNewRoute = LayoutTeamsNewRouteImport.update({
   id: '/teams/new',
   path: '/teams/new',
   getParentRoute: () => LayoutRoute,
 } as any)
-
-const LayoutTeamsAllRoute = LayoutTeamsAllImport.update({
+const LayoutTeamsAllRoute = LayoutTeamsAllRouteImport.update({
   id: '/teams/all',
   path: '/teams/all',
   getParentRoute: () => LayoutRoute,
 } as any)
-
-const LayoutTeamSlugSettingsRoute = LayoutTeamSlugSettingsImport.update({
+const LayoutTeamSlugSettingsRoute = LayoutTeamSlugSettingsRouteImport.update({
   id: '/$teamSlug/settings',
   path: '/$teamSlug/settings',
   getParentRoute: () => LayoutRoute,
 } as any)
-
-const LayoutTeamSlugNewAppRoute = LayoutTeamSlugNewAppImport.update({
+const LayoutTeamSlugNewAppRoute = LayoutTeamSlugNewAppRouteImport.update({
   id: '/$teamSlug/new-app',
   path: '/$teamSlug/new-app',
   getParentRoute: () => LayoutRoute,
 } as any)
-
-const LayoutTeamSlugAppsIndexRoute = LayoutTeamSlugAppsIndexImport.update({
+const LayoutTeamSlugAppsIndexRoute = LayoutTeamSlugAppsIndexRouteImport.update({
   id: '/$teamSlug/apps/',
   path: '/$teamSlug/apps/',
   getParentRoute: () => LayoutRoute,
 } as any)
-
 const LayoutTeamSlugAppsAppSlugIndexRoute =
-  LayoutTeamSlugAppsAppSlugIndexImport.update({
+  LayoutTeamSlugAppsAppSlugIndexRouteImport.update({
     id: '/$teamSlug/apps/$appSlug/',
     path: '/$teamSlug/apps/$appSlug/',
     getParentRoute: () => LayoutRoute,
   } as any)
-
 const LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute =
-  LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdImport.update({
+  LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRouteImport.update({
     id: '/$teamSlug/apps/$appSlug/deployments/$deploymentId',
     path: '/$teamSlug/apps/$appSlug/deployments/$deploymentId',
     getParentRoute: () => LayoutRoute,
   } as any)
 
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/_layout': {
-      id: '/_layout'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof LayoutImport
-      parentRoute: typeof rootRoute
-    }
-    '/callback': {
-      id: '/callback'
-      path: '/callback'
-      fullPath: '/callback'
-      preLoaderRoute: typeof CallbackImport
-      parentRoute: typeof rootRoute
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
-    }
-    '/recover-password': {
-      id: '/recover-password'
-      path: '/recover-password'
-      fullPath: '/recover-password'
-      preLoaderRoute: typeof RecoverPasswordImport
-      parentRoute: typeof rootRoute
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordImport
-      parentRoute: typeof rootRoute
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupImport
-      parentRoute: typeof rootRoute
-    }
-    '/team-invitation': {
-      id: '/team-invitation'
-      path: '/team-invitation'
-      fullPath: '/team-invitation'
-      preLoaderRoute: typeof TeamInvitationImport
-      parentRoute: typeof rootRoute
-    }
-    '/verify-email': {
-      id: '/verify-email'
-      path: '/verify-email'
-      fullPath: '/verify-email'
-      preLoaderRoute: typeof VerifyEmailImport
-      parentRoute: typeof rootRoute
-    }
-    '/verify-update-email': {
-      id: '/verify-update-email'
-      path: '/verify-update-email'
-      fullPath: '/verify-update-email'
-      preLoaderRoute: typeof VerifyUpdateEmailImport
-      parentRoute: typeof rootRoute
-    }
-    '/_layout/device': {
-      id: '/_layout/device'
-      path: '/device'
-      fullPath: '/device'
-      preLoaderRoute: typeof LayoutDeviceImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/settings': {
-      id: '/_layout/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof LayoutSettingsImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/': {
-      id: '/_layout/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof LayoutIndexImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/$teamSlug/new-app': {
-      id: '/_layout/$teamSlug/new-app'
-      path: '/$teamSlug/new-app'
-      fullPath: '/$teamSlug/new-app'
-      preLoaderRoute: typeof LayoutTeamSlugNewAppImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/$teamSlug/settings': {
-      id: '/_layout/$teamSlug/settings'
-      path: '/$teamSlug/settings'
-      fullPath: '/$teamSlug/settings'
-      preLoaderRoute: typeof LayoutTeamSlugSettingsImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/teams/all': {
-      id: '/_layout/teams/all'
-      path: '/teams/all'
-      fullPath: '/teams/all'
-      preLoaderRoute: typeof LayoutTeamsAllImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/teams/new': {
-      id: '/_layout/teams/new'
-      path: '/teams/new'
-      fullPath: '/teams/new'
-      preLoaderRoute: typeof LayoutTeamsNewImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/$teamSlug/': {
-      id: '/_layout/$teamSlug/'
-      path: '/$teamSlug'
-      fullPath: '/$teamSlug'
-      preLoaderRoute: typeof LayoutTeamSlugIndexImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/$teamSlug/apps/': {
-      id: '/_layout/$teamSlug/apps/'
-      path: '/$teamSlug/apps'
-      fullPath: '/$teamSlug/apps'
-      preLoaderRoute: typeof LayoutTeamSlugAppsIndexImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/$teamSlug/apps/$appSlug/': {
-      id: '/_layout/$teamSlug/apps/$appSlug/'
-      path: '/$teamSlug/apps/$appSlug'
-      fullPath: '/$teamSlug/apps/$appSlug'
-      preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugIndexImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId': {
-      id: '/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId'
-      path: '/$teamSlug/apps/$appSlug/deployments/$deploymentId'
-      fullPath: '/$teamSlug/apps/$appSlug/deployments/$deploymentId'
-      preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdImport
-      parentRoute: typeof LayoutImport
-    }
-  }
-}
-
-// Create and export the route tree
-
-interface LayoutRouteChildren {
-  LayoutDeviceRoute: typeof LayoutDeviceRoute
-  LayoutSettingsRoute: typeof LayoutSettingsRoute
-  LayoutIndexRoute: typeof LayoutIndexRoute
-  LayoutTeamSlugNewAppRoute: typeof LayoutTeamSlugNewAppRoute
-  LayoutTeamSlugSettingsRoute: typeof LayoutTeamSlugSettingsRoute
-  LayoutTeamsAllRoute: typeof LayoutTeamsAllRoute
-  LayoutTeamsNewRoute: typeof LayoutTeamsNewRoute
-  LayoutTeamSlugIndexRoute: typeof LayoutTeamSlugIndexRoute
-  LayoutTeamSlugAppsIndexRoute: typeof LayoutTeamSlugAppsIndexRoute
-  LayoutTeamSlugAppsAppSlugIndexRoute: typeof LayoutTeamSlugAppsAppSlugIndexRoute
-  LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute: typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute
-}
-
-const LayoutRouteChildren: LayoutRouteChildren = {
-  LayoutDeviceRoute: LayoutDeviceRoute,
-  LayoutSettingsRoute: LayoutSettingsRoute,
-  LayoutIndexRoute: LayoutIndexRoute,
-  LayoutTeamSlugNewAppRoute: LayoutTeamSlugNewAppRoute,
-  LayoutTeamSlugSettingsRoute: LayoutTeamSlugSettingsRoute,
-  LayoutTeamsAllRoute: LayoutTeamsAllRoute,
-  LayoutTeamsNewRoute: LayoutTeamsNewRoute,
-  LayoutTeamSlugIndexRoute: LayoutTeamSlugIndexRoute,
-  LayoutTeamSlugAppsIndexRoute: LayoutTeamSlugAppsIndexRoute,
-  LayoutTeamSlugAppsAppSlugIndexRoute: LayoutTeamSlugAppsAppSlugIndexRoute,
-  LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute:
-    LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute,
-}
-
-const LayoutRouteWithChildren =
-  LayoutRoute._addFileChildren(LayoutRouteChildren)
-
 export interface FileRoutesByFullPath {
-  '': typeof LayoutRouteWithChildren
   '/callback': typeof CallbackRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
@@ -358,7 +153,6 @@ export interface FileRoutesByFullPath {
   '/$teamSlug/apps/$appSlug': typeof LayoutTeamSlugAppsAppSlugIndexRoute
   '/$teamSlug/apps/$appSlug/deployments/$deploymentId': typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute
 }
-
 export interface FileRoutesByTo {
   '/callback': typeof CallbackRoute
   '/login': typeof LoginRoute
@@ -380,9 +174,8 @@ export interface FileRoutesByTo {
   '/$teamSlug/apps/$appSlug': typeof LayoutTeamSlugAppsAppSlugIndexRoute
   '/$teamSlug/apps/$appSlug/deployments/$deploymentId': typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
   '/callback': typeof CallbackRoute
   '/login': typeof LoginRoute
@@ -404,11 +197,9 @@ export interface FileRoutesById {
   '/_layout/$teamSlug/apps/$appSlug/': typeof LayoutTeamSlugAppsAppSlugIndexRoute
   '/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId': typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | ''
     | '/callback'
     | '/login'
     | '/recover-password'
@@ -473,7 +264,6 @@ export interface FileRouteTypes {
     | '/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
   CallbackRoute: typeof CallbackRoute
@@ -486,6 +276,183 @@ export interface RootRouteChildren {
   VerifyUpdateEmailRoute: typeof VerifyUpdateEmailRoute
 }
 
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/verify-update-email': {
+      id: '/verify-update-email'
+      path: '/verify-update-email'
+      fullPath: '/verify-update-email'
+      preLoaderRoute: typeof VerifyUpdateEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team-invitation': {
+      id: '/team-invitation'
+      path: '/team-invitation'
+      fullPath: '/team-invitation'
+      preLoaderRoute: typeof TeamInvitationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recover-password': {
+      id: '/recover-password'
+      path: '/recover-password'
+      fullPath: '/recover-password'
+      preLoaderRoute: typeof RecoverPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/callback': {
+      id: '/callback'
+      path: '/callback'
+      fullPath: '/callback'
+      preLoaderRoute: typeof CallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof LayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_layout/': {
+      id: '/_layout/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof LayoutIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/settings': {
+      id: '/_layout/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof LayoutSettingsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/device': {
+      id: '/_layout/device'
+      path: '/device'
+      fullPath: '/device'
+      preLoaderRoute: typeof LayoutDeviceRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/$teamSlug/': {
+      id: '/_layout/$teamSlug/'
+      path: '/$teamSlug'
+      fullPath: '/$teamSlug'
+      preLoaderRoute: typeof LayoutTeamSlugIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/teams/new': {
+      id: '/_layout/teams/new'
+      path: '/teams/new'
+      fullPath: '/teams/new'
+      preLoaderRoute: typeof LayoutTeamsNewRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/teams/all': {
+      id: '/_layout/teams/all'
+      path: '/teams/all'
+      fullPath: '/teams/all'
+      preLoaderRoute: typeof LayoutTeamsAllRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/$teamSlug/settings': {
+      id: '/_layout/$teamSlug/settings'
+      path: '/$teamSlug/settings'
+      fullPath: '/$teamSlug/settings'
+      preLoaderRoute: typeof LayoutTeamSlugSettingsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/$teamSlug/new-app': {
+      id: '/_layout/$teamSlug/new-app'
+      path: '/$teamSlug/new-app'
+      fullPath: '/$teamSlug/new-app'
+      preLoaderRoute: typeof LayoutTeamSlugNewAppRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/$teamSlug/apps/': {
+      id: '/_layout/$teamSlug/apps/'
+      path: '/$teamSlug/apps'
+      fullPath: '/$teamSlug/apps'
+      preLoaderRoute: typeof LayoutTeamSlugAppsIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/$teamSlug/apps/$appSlug/': {
+      id: '/_layout/$teamSlug/apps/$appSlug/'
+      path: '/$teamSlug/apps/$appSlug'
+      fullPath: '/$teamSlug/apps/$appSlug'
+      preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId': {
+      id: '/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId'
+      path: '/$teamSlug/apps/$appSlug/deployments/$deploymentId'
+      fullPath: '/$teamSlug/apps/$appSlug/deployments/$deploymentId'
+      preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+  }
+}
+
+interface LayoutRouteChildren {
+  LayoutDeviceRoute: typeof LayoutDeviceRoute
+  LayoutSettingsRoute: typeof LayoutSettingsRoute
+  LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutTeamSlugNewAppRoute: typeof LayoutTeamSlugNewAppRoute
+  LayoutTeamSlugSettingsRoute: typeof LayoutTeamSlugSettingsRoute
+  LayoutTeamsAllRoute: typeof LayoutTeamsAllRoute
+  LayoutTeamsNewRoute: typeof LayoutTeamsNewRoute
+  LayoutTeamSlugIndexRoute: typeof LayoutTeamSlugIndexRoute
+  LayoutTeamSlugAppsIndexRoute: typeof LayoutTeamSlugAppsIndexRoute
+  LayoutTeamSlugAppsAppSlugIndexRoute: typeof LayoutTeamSlugAppsAppSlugIndexRoute
+  LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute: typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutDeviceRoute: LayoutDeviceRoute,
+  LayoutSettingsRoute: LayoutSettingsRoute,
+  LayoutIndexRoute: LayoutIndexRoute,
+  LayoutTeamSlugNewAppRoute: LayoutTeamSlugNewAppRoute,
+  LayoutTeamSlugSettingsRoute: LayoutTeamSlugSettingsRoute,
+  LayoutTeamsAllRoute: LayoutTeamsAllRoute,
+  LayoutTeamsNewRoute: LayoutTeamsNewRoute,
+  LayoutTeamSlugIndexRoute: LayoutTeamSlugIndexRoute,
+  LayoutTeamSlugAppsIndexRoute: LayoutTeamSlugAppsIndexRoute,
+  LayoutTeamSlugAppsAppSlugIndexRoute: LayoutTeamSlugAppsAppSlugIndexRoute,
+  LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute:
+    LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
   CallbackRoute: CallbackRoute,
@@ -497,112 +464,6 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyEmailRoute: VerifyEmailRoute,
   VerifyUpdateEmailRoute: VerifyUpdateEmailRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/_layout",
-        "/callback",
-        "/login",
-        "/recover-password",
-        "/reset-password",
-        "/signup",
-        "/team-invitation",
-        "/verify-email",
-        "/verify-update-email"
-      ]
-    },
-    "/_layout": {
-      "filePath": "_layout.tsx",
-      "children": [
-        "/_layout/device",
-        "/_layout/settings",
-        "/_layout/",
-        "/_layout/$teamSlug/new-app",
-        "/_layout/$teamSlug/settings",
-        "/_layout/teams/all",
-        "/_layout/teams/new",
-        "/_layout/$teamSlug/",
-        "/_layout/$teamSlug/apps/",
-        "/_layout/$teamSlug/apps/$appSlug/",
-        "/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId"
-      ]
-    },
-    "/callback": {
-      "filePath": "callback.tsx"
-    },
-    "/login": {
-      "filePath": "login.tsx"
-    },
-    "/recover-password": {
-      "filePath": "recover-password.tsx"
-    },
-    "/reset-password": {
-      "filePath": "reset-password.tsx"
-    },
-    "/signup": {
-      "filePath": "signup.tsx"
-    },
-    "/team-invitation": {
-      "filePath": "team-invitation.tsx"
-    },
-    "/verify-email": {
-      "filePath": "verify-email.tsx"
-    },
-    "/verify-update-email": {
-      "filePath": "verify-update-email.tsx"
-    },
-    "/_layout/device": {
-      "filePath": "_layout/device.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/settings": {
-      "filePath": "_layout/settings.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/": {
-      "filePath": "_layout/index.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/$teamSlug/new-app": {
-      "filePath": "_layout/$teamSlug/new-app.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/$teamSlug/settings": {
-      "filePath": "_layout/$teamSlug/settings.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/teams/all": {
-      "filePath": "_layout/teams/all.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/teams/new": {
-      "filePath": "_layout/teams/new.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/$teamSlug/": {
-      "filePath": "_layout/$teamSlug/index.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/$teamSlug/apps/": {
-      "filePath": "_layout/$teamSlug/apps/index.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/$teamSlug/apps/$appSlug/": {
-      "filePath": "_layout/$teamSlug/apps/$appSlug/index.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId": {
-      "filePath": "_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId.tsx",
-      "parent": "/_layout"
-    }
-  }
-}
-ROUTE_MANIFEST_END */

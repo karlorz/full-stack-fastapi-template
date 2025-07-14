@@ -1,20 +1,28 @@
 import { useVirtualizer } from "@tanstack/react-virtual"
 import React, { useEffect } from "react"
-import type { Log } from "@/client"
 import { cn } from "@/lib/utils"
 
 interface LogLineProps {
-  time: string
+  time?: string
   message: string
 }
+
+interface Log {
+  timestamp?: string
+  message: string
+}
+
 interface LogsProps {
   logs: Log[]
 }
+
 const LogLine = ({ time, message }: LogLineProps) => {
-  const timestamp = new Date(time).toLocaleString()
+  const timestamp = time ? new Date(time).toLocaleString() : undefined
   return (
     <div className="hover:bg-white/5 transition-colors">
-      <span className="text-muted-foreground">[{timestamp}]</span>{" "}
+      {timestamp && (
+        <span className="text-muted-foreground">[{timestamp}] </span>
+      )}
       <span>{message}</span>
     </div>
   )
@@ -27,7 +35,7 @@ const LogContainer = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "h-[400px] p-6 overflow-y-auto rounded-md bg-black text-white",
+      "h-[400px] px-6 overflow-y-auto rounded-md bg-black text-white",
       "font-mono text-sm",
       "[&::-webkit-scrollbar]:w-4 [&::-webkit-scrollbar]:rounded-lg",
       "[&::-webkit-scrollbar-thumb]:rounded-lg",
@@ -48,14 +56,19 @@ const Logs = ({ logs }: LogsProps) => {
     count: logs.length || 0,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 22,
+    paddingStart: 24,
+    paddingEnd: 24,
+    scrollPaddingStart: 24,
+    scrollPaddingEnd: 24,
   })
 
   useEffect(() => {
     if (logs.length > 0) {
       const lastIndex = logs.length - 1
+
       rowVirtualizer.scrollToIndex(lastIndex, {
         align: "end",
-        behavior: "smooth",
+        behavior: "auto",
       })
     }
   }, [logs.length, rowVirtualizer])
