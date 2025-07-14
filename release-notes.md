@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Notify previous email of email change. PR [#1098](https://github.com/fastapilabs/cloud/pull/1098) by [@patrick91](https://github.com/patrick91).
 * ✨ Show build logs on deployment page. PR [#1077](https://github.com/fastapilabs/cloud/pull/1077) by [@patrick91](https://github.com/patrick91).
 * ✨ Hide depot prefix from build logs. PR [#1059](https://github.com/fastapilabs/cloud/pull/1059) by [@patrick91](https://github.com/patrick91).
 * ✨ Update CLI installation command. PR [#1107](https://github.com/fastapilabs/cloud/pull/1107) by [@patrick91](https://github.com/patrick91).
