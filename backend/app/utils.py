@@ -316,6 +316,26 @@ def generate_verification_update_email(
     return EmailData(html_content=html_content, subject=subject)
 
 
+def generate_email_change_success_email(
+    username: str, old_email: str, new_email: str
+) -> EmailData:
+    settings = MainSettings.get_settings()
+
+    project_name = settings.PROJECT_NAME
+    subject = f"{project_name} - Email successfully changed"
+    html_content = render_email_template(
+        template_name="email_change_success.html",
+        context={
+            "server_host": settings.FRONTEND_HOST,
+            "project_name": settings.PROJECT_NAME,
+            "username": username,
+            "old_email": old_email,
+            "new_email": new_email,
+        },
+    )
+    return EmailData(html_content=html_content, subject=subject)
+
+
 def generate_account_deletion_email(email_to: str) -> EmailData:
     settings = MainSettings.get_settings()
 

@@ -37,6 +37,7 @@ from app.models import (
 )
 from app.utils import (
     generate_account_deletion_email,
+    generate_email_change_success_email,
     generate_invitation_email_for_waiting_list_user,
     generate_verification_email,
     generate_verification_email_token,
@@ -114,8 +115,22 @@ def verify_update_email_token(
     ).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    user.email = token_data["email"]
+
+    old_email = user.email
+    new_email = token_data["email"]
+    user.email = new_email
     session.commit()
+
+    # Send confirmation email to the old email address for security
+    email_data = generate_email_change_success_email(
+        username=user.full_name, old_email=old_email, new_email=new_email
+    )
+    send_email(
+        email_to=old_email,
+        subject=email_data.subject,
+        html_content=email_data.html_content,
+    )
+
     return Message(
         message="New email has been successfully verified and the account has been updated"
     )

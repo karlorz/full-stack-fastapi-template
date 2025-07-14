@@ -143,7 +143,9 @@ def test_request_email_update(
     assert r.json()["message"] == "Email update request has been sent"
 
 
-def test_update_user_email_me(client: TestClient, db: Session) -> None:
+def test_update_user_email_me(
+    client: TestClient, db: Session, send_email_mock: MagicMock
+) -> None:
     new_email = random_email()
     email = random_email()
     password = random_lower_string()
@@ -172,6 +174,12 @@ def test_update_user_email_me(client: TestClient, db: Session) -> None:
     assert (
         r.json()["message"]
         == "New email has been successfully verified and the account has been updated"
+    )
+
+    send_email_mock.assert_called_once_with(
+        email_to=email,  # Send to old email for security
+        subject=f"{settings.PROJECT_NAME} - Email successfully changed",
+        html_content=ANY,
     )
 
     user_query = select(User).where(User.email == new_email)

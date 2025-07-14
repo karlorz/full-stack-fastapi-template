@@ -1,0 +1,66 @@
+<mjml>
+  <mj-head>
+    <mj-title>FastAPI Cloud Email Successfully Changed</mj-title>
+    <mj-preview>Your email address has been successfully changed</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif" />
+      <mj-text font-size="14px" color="#333" line-height="24px" />
+    </mj-attributes>
+    <mj-style>
+      .link {
+        color: #01507f;
+        text-decoration: underline;
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body background-color="#fff">
+    <mj-wrapper padding="20px" background-color="#eee">
+      <mj-section background-color="#010100" padding="20px 0">
+        <mj-column>
+          <mj-image src="{{ server_host }}/assets/images/logo.png" width="150px" alt="FastAPI Cloud Logo" align="center" />
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#fff" padding="25px 35px">
+        <mj-column>
+          <mj-text font-size="20px" font-weight="bold" color="#333" padding-bottom="15px">
+            Email Successfully Changed
+          </mj-text>
+          <mj-text padding-bottom="14px">
+            Hello {{ username }},
+          </mj-text>
+          <mj-text padding-bottom="14px">
+            Your email address has been successfully changed from <strong>{{ old_email }}</strong> to <strong>{{ new_email }}</strong>.
+          </mj-text>
+          <mj-text padding-bottom="14px">
+            This change took effect immediately. You can now use your new email address to log in to your FastAPI Cloud account.
+          </mj-text>
+          <mj-text padding-top="20px">
+            Happy deploying!<br />
+            The FastAPI Cloud team
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+      <mj-section background-color="#fff" padding="0">
+        <mj-column>
+          <mj-divider border-color="#ccc" border-width="1px" />
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#fff" padding="25px 35px">
+        <mj-column>
+          <mj-text>
+            🔒 If you did not make this change, please contact our support team immediately at <a href="mailto:support@fastapicloud.com" class="link">support@fastapicloud.com</a>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+      <mj-section padding="0">
+        <mj-column>
+          <mj-text font-size="12px" padding="20px" align="center">
+            © 2025 FastAPI Cloud. All rights reserved.
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+  </mj-body>
+</mjml>
