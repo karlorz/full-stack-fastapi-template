@@ -498,6 +498,7 @@
 
 ### Internal
 
+* ⬆ Bump posthog-js from 1.256.1 to 1.257.0 in /frontend. PR [#1114](https://github.com/fastapilabs/cloud/pull/1114) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump vite from 6.3.5 to 7.0.2 in /frontend. PR [#1066](https://github.com/fastapilabs/cloud/pull/1066) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump react-hook-form from 7.59.0 to 7.60.0 in /frontend. PR [#1065](https://github.com/fastapilabs/cloud/pull/1065) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @tanstack/router-devtools from 1.124.0 to 1.125.4 in /frontend. PR [#1062](https://github.com/fastapilabs/cloud/pull/1062) by [@dependabot[bot]](https://github.com/apps/dependabot).
