@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Hide depot prefix from build logs. PR [#1059](https://github.com/fastapilabs/cloud/pull/1059) by [@patrick91](https://github.com/patrick91).
 * ✨ Update CLI installation command. PR [#1107](https://github.com/fastapilabs/cloud/pull/1107) by [@patrick91](https://github.com/patrick91).
 * ✨ Add MonitoringStorageComponent (S3 + IAM for mimir,loki,tempo). PR [#1076](https://github.com/fastapilabs/cloud/pull/1076) by [@malvex](https://github.com/malvex).
 * ✨ Add login with GitHub. PR [#748](https://github.com/fastapilabs/cloud/pull/748) by [@patrick91](https://github.com/patrick91).
