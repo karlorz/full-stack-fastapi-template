@@ -512,7 +512,9 @@ external_secrets_policy = aws.iam.Policy(
                         "secretsmanager:ListSecrets",
                         "kms:Decrypt",
                         "ssm:GetParameter",
+                        "ssm:GetParameters",
                         "ssm:GetParametersByPath",
+                        "ssm:ListTagsForResource",
                     ],
                     "Resource": "*",  # Adjust to specific resources for better security
                 }
