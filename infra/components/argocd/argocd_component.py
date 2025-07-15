@@ -598,7 +598,6 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                                         "templates",
                                         # TODO: Remove these namespaces from the list
                                         "fastapicloud",
-                                        "prometheus",
                                     ],
                                 }
                             ]

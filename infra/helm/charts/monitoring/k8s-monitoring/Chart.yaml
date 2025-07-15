@@ -1,0 +1,8 @@
+apiVersion: v2
+name: k8s-monitoring
+version: 0.1.0
+description: A Helm chart for k8s-monitoring
+dependencies:
+- name: k8s-monitoring
+  version: 3.1.1
+  repository: https://grafana.github.io/helm-charts

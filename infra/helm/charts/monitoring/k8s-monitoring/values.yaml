@@ -1,0 +1,118 @@
+k8s-monitoring:
+  # Configure destinations to point to local services
+  destinations:
+    - name: metrics-mimir
+      type: prometheus
+      url: http://mimir-gateway.monitoring.svc.cluster.local/api/v1/push  # tbd
+
+  # Collectors configuration
+  alloy-metrics:
+    enabled: true
+    alloy:
+      enableReporting: false
+      resources:
+        requests:
+          cpu: 10m
+          memory: 512Mi
+        limits:
+          memory: 512Mi
+
+  alloy-logs:
+    enabled: false  # needs loki
+    alloy:
+      enableReporting: false
+      resources:
+        requests:
+          cpu: 10m
+          memory: 512Mi
+        limits:
+          memory: 512Mi
+
+  alloy-receiver:
+    enabled: false
+    alloy:
+      enableReporting: false
+      resources:
+        requests:
+          cpu: 10m
+          memory: 512Mi
+        limits:
+          memory: 512Mi
+
+  alloy-singleton:
+    enabled: true
+    alloy:
+      enableReporting: false
+      resources:
+        requests:
+          cpu: 10m
+          memory: 512Mi
+        limits:
+          memory: 512Mi
+    extraConfig: |-
+      mimir.rules.kubernetes "default" {
+        address = "http://mimir-ruler.monitoring.svc:8080"
+        tenant_id = "anonymous"
+      }
+
+  clusterMetrics:
+    enabled: true
+
+    apiServer:
+      enabled: true
+      scrapeInterval: 30s
+
+    cadvisor:
+      enabled: true
+      scrapeInterval: 30s
+
+    controlPlane:
+      enabled: true
+
+    kubelet:
+      enabled: true
+      scrapeInterval: 30s
+
+    opencost:
+      enabled: false
+
+    # lol
+    windows-exporter:
+      enabled: false
+      deploy: false
+
+    # energy metrics
+    kepler:
+      enabled: false
+
+  # Feature: Cluster Events
+  clusterEvents:
+    enabled: false  # needs loki
+
+  # Feature: Pod Logs
+  podLogs:
+    enabled: false  # needs loki
+
+  # Feature: Node Logs
+  nodeLogs:
+    enabled: false  # needs loki
+
+  # Feature: Application Observability
+  applicationObservability:
+    enabled: false  #  enable if we want OTLP and/or traces
+
+  # Feature: Annotation Autodiscovery
+  annotationAutodiscovery:
+    enabled: false  # tbd
+
+  # Feature: Prometheus Operator Objects
+  prometheusOperatorObjects:
+    enabled: true
+
+  # Feature: Profiling
+  profiling:
+    enabled: false
+
+  # Feature: Auto-instrumentation
+  autoInstrumentation:
+    enabled: false
