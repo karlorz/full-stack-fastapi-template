@@ -445,6 +445,7 @@
 
 ### Infrastructure
 
+* ✨ Add k8s-monitoring Helm chart for cluster observability. PR [#1080](https://github.com/fastapilabs/cloud/pull/1080) by [@malvex](https://github.com/malvex).
 * ✨ New kubernetes metrics-server helm chart. PR [#1108](https://github.com/fastapilabs/cloud/pull/1108) by [@siryur](https://github.com/siryur).
 * ↔️ Change argocd production CNAME value. PR [#1099](https://github.com/fastapilabs/cloud/pull/1099) by [@siryur](https://github.com/siryur).
 * 🚀 Upgrade EKS nodes to t3a.large with 50GB disk. PR [#1097](https://github.com/fastapilabs/cloud/pull/1097) by [@malvex](https://github.com/malvex).
