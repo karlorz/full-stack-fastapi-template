@@ -1,0 +1,16 @@
+mimir:
+  serviceAccount:
+    create: true
+    name: mimir
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::961341535962:role/mimir-irsa-development"
+
+  mimir:
+    structuredConfig:
+      common:
+        storage:
+          backend: s3
+          s3:
+            bucket_name: "fastapicloud-mimir-development"
+            region: "us-east-1"
+            endpoint: "s3.us-east-1.amazonaws.com"

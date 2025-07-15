@@ -1,0 +1,188 @@
+mimir:
+  fullnameOverride: mimir
+  image:
+    pullPolicy: IfNotPresent
+
+  minio:
+    enabled: false  # use AWS S3
+
+  mimir:
+    structuredConfig:
+      usage_stats:
+        enabled: false
+
+      multitenancy_enabled: false
+
+      ingester:
+        ring:
+          replication_factor: 1
+          num_tokens: 128
+          heartbeat_period: 15s
+          heartbeat_timeout: 1m
+
+      compactor:
+        max_closing_blocks_concurrency: 1
+        max_opening_blocks_concurrency: 1
+        symbols_flushers_concurrency: 1
+
+      querier:
+        max_concurrent: 16
+
+      frontend:
+        parallelize_shardable_queries: true
+        max_outstanding_per_tenant: 1000
+        log_queries_longer_than: 10s
+
+      blocks_storage:
+        storage_prefix: blocks
+
+      ruler_storage:
+        storage_prefix: ruler
+
+      limits:
+        align_queries_with_step: true
+        # Adjust max query parallelism to 16x sharding, without sharding we can run 14d queries fully in parallel.
+        # With sharding we can further shard each day another 16 times. 14 days * 16 shards = 224 subqueries.
+        max_query_parallelism: 224
+        # The maximum number of in-memory series per tenant, across the cluster before
+        max_global_series_per_user: 16000000
+        # Maximum number of label names per series.
+        max_label_names_per_series: 200
+        # Per-tenant ingestion rate limit in samples per second
+        ingestion_rate: 2000000
+        # Per-tenant allowed ingestion burst size (in number of samples).
+        ingestion_burst_size: 10000000
+        compactor_block_upload_enabled: true
+        compactor_blocks_retention_period: 1y
+        ruler_max_rules_per_rule_group: 0
+        ruler_max_rule_groups_per_tenant: 0
+        # Enables cardinality endpoints
+        cardinality_analysis_enabled: true
+
+  # disabled for now, we will enable it later
+  alertmanager:
+    enabled: false
+
+  distributor:
+    replicas: 1
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 10m
+        memory: 256Mi
+    affinity: {}
+    topologySpreadConstraints: {}
+
+  ingester:
+    replicas: 1
+    zoneAwareReplication:
+      enabled: false
+    persistentVolume:
+      enabled: true
+      size: 10Gi
+    resources:
+      limits:
+        memory: 1Gi
+      requests:
+        cpu: 10m
+        memory: 512Mi
+    affinity: {}
+    topologySpreadConstraints: {}
+
+  querier:
+    replicas: 1
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 10m
+        memory: 256Mi
+    affinity: {}
+    topologySpreadConstraints: {}
+
+  query_frontend:
+    replicas: 1
+    resources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 10m
+        memory: 256Mi
+    affinity: {}
+    topologySpreadConstraints: {}
+
+  # only needed if we have multiple query_frontends
+  query_scheduler:
+    enabled: false
+
+  compactor:
+    replicas: 1
+    persistentVolume:
+      enabled: true
+      size: 10Gi
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 10m
+        memory: 256Mi
+    affinity: {}
+    topologySpreadConstraints: {}
+
+  store_gateway:
+    replicas: 1
+    zoneAwareReplication:
+      enabled: false
+    persistentVolume:
+      enabled: true
+      size: 10Gi
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 10m
+        memory: 256Mi
+    affinity: {}
+    topologySpreadConstraints: {}
+
+  gateway:
+    enabledNonEnterprise: true
+    nginx:
+      config:
+        enableIPv6: false
+    affinity: null
+    topologySpreadConstraints: null
+
+  # ruler:
+  #   enabled: false
+
+  overrides_exporter:
+    enabled: false
+
+  chunks-cache:
+    enabled: false
+
+  index-cache:
+    enabled: false
+
+  metadata-cache:
+    enabled: false
+
+  results-cache:
+    enabled: false
+
+  nginx:
+    enabled: false
+
+  metaMonitoring:
+    serviceMonitor:
+      enabled: true
+    dashboards:
+      enabled: true
+
+    prometheusRule:
+      enabled: true
+
+  rollout_operator:
+    enabled: false
