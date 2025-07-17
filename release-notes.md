@@ -209,6 +209,7 @@
 
 ### Refactors
 
+* 💄 Enhance auth pages. PR [#1118](https://github.com/fastapilabs/cloud/pull/1118) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor how we handle images in ECR. PR [#1044](https://github.com/fastapilabs/cloud/pull/1044) by [@patrick91](https://github.com/patrick91).
 * ♻️ Add function to get an app namespace. PR [#1043](https://github.com/fastapilabs/cloud/pull/1043) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor builder into its own folder. PR [#1045](https://github.com/fastapilabs/cloud/pull/1045) by [@patrick91](https://github.com/patrick91).
