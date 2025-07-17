@@ -1,5 +1,4 @@
 import type { ReactNode } from "react"
-import logo from "@/assets/logo.svg"
 
 interface BackgroundPanelProps {
   children: ReactNode
@@ -7,18 +6,31 @@ interface BackgroundPanelProps {
 
 const BackgroundPanel = ({ children }: BackgroundPanelProps) => {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
-      <div className="flex w-full max-w-sm flex-col gap-6">
-        <a href="/" className="flex items-center self-center font-medium">
-          <img
-            src={logo}
-            alt="FastAPI Cloud"
-            className="h-8
-          w-auto dark:invert-0 invert"
-          />
-        </a>
+    <div className="min-h-screen flex flex-col justify-between items-center p-4">
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
+      <div className="w-full flex-1 flex flex-col items-center justify-center">
         {children}
       </div>
+      <footer className="text-center text-sm text-zinc-500 dark:text-zinc-400 font-body tracking-wide select-none">
+        © 2025 FastAPI Labs, Inc ·{" "}
+        <a
+          href="https://fastapicloud.com/legal/terms"
+          target="_blank"
+          className="hover:underline"
+          rel="noopener"
+        >
+          Terms of Use
+        </a>{" "}
+        ·{" "}
+        <a
+          href="https://fastapicloud.com/legal/privacy-policy"
+          target="_blank"
+          className="hover:underline"
+          rel="noopener"
+        >
+          Privacy Policy
+        </a>
+      </footer>
     </div>
   )
 }

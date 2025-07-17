@@ -1,19 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
+import {
+  createFileRoute,
+  Link as RouterLink,
+  redirect,
+  useNavigate,
+} from "@tanstack/react-router"
 import { Lock } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { LoginService } from "@/client"
-
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import AuthCard from "@/components/ui/auth-card"
 import {
   Form,
   FormControl,
@@ -94,75 +92,83 @@ function ResetPassword() {
 
   return (
     <BackgroundPanel>
-      <Card>
-        <CardHeader>
-          <CardTitle>Reset Password</CardTitle>
-          <CardDescription>
-            Please enter your new password and confirm it to reset your
-            password.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="new_password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>New Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                          data-testid="password-input"
-                          type="password"
-                          placeholder="••••••••"
-                          className="pl-10"
-                          {...field}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      <AuthCard
+        title="Reset Password"
+        description="Please enter your new password and confirm it to reset your
+              password"
+        footer={
+          <p className="pb-6 text-center text-sm font-body text-zinc-500 dark:text-zinc-400">
+            Remembered your password?{" "}
+            <RouterLink
+              to="/login"
+              className="text-primary font-medium hover:underline hover:text-primary/80 transition-colors"
+            >
+              Log In
+            </RouterLink>
+          </p>
+        }
+      >
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="new_password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-heading uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                    New Password
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500 dark:text-zinc-400" />
+                      <Input
+                        data-testid="password-input"
+                        type="password"
+                        placeholder="••••••••"
+                        className="pl-10 h-11 rounded-md border-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 transition-all focus:border-primary/30 dark:focus:border-primary/50 focus:ring-1 focus:ring-primary/30 dark:focus:ring-primary/50"
+                        {...field}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="confirm_password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                          data-testid="confirm-password-input"
-                          type="password"
-                          placeholder="••••••••"
-                          className="pl-10"
-                          {...field}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <LoadingButton
-                type="submit"
-                className="w-full"
-                loading={mutation.isPending}
-              >
-                Reset Password
-              </LoadingButton>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+            <FormField
+              control={form.control}
+              name="confirm_password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-heading uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                    Confirm Password
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500 dark:text-zinc-400" />
+                      <Input
+                        data-testid="confirm-password-input"
+                        type="password"
+                        placeholder="••••••••"
+                        className="pl-10 h-11 rounded-md border-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 transition-all focus:border-primary/30 dark:focus:border-primary/50 focus:ring-1 focus:ring-primary/30 dark:focus:ring-primary/50"
+                        {...field}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            <LoadingButton
+              type="submit"
+              className="w-full h-11 mb-0 rounded-md bg-primary text-primary-foreground font-medium shadow-md shadow-primary/20 hover:bg-primary/80"
+              loading={mutation.isPending}
+            >
+              Reset Password
+            </LoadingButton>
+          </form>
+        </Form>
+      </AuthCard>
     </BackgroundPanel>
   )
 }
-
-export default ResetPassword

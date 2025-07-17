@@ -47,17 +47,21 @@ test("Sign Up button is visible", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Sign Up" })).toBeVisible()
 })
 
-// test("Log In link is visible", async ({ page }) => {
-//   await page.goto("/signup")
+test("Log In link is visible", async ({ page }) => {
+  await page.goto("/signup")
 
-//   await expect(page.getByRole("link", { name: "Log In" })).toBeVisible()
-// })
+  await expect(page.getByRole("link", { name: "Log In" })).toBeVisible()
+})
 
 test("Terms and Privacy Policy links are visible", async ({ page }) => {
   await page.goto("/signup")
 
-  await expect(page.getByRole("link", { name: "Privacy Policy" })).toBeVisible()
-  await expect(page.getByRole("link", { name: "Terms" })).toBeVisible()
+  await expect(
+    page.locator("form").getByRole("link", { name: "Terms of Use" }),
+  ).toBeVisible()
+  await expect(
+    page.locator("form").getByRole("link", { name: "Privacy Policy" }),
+  ).toBeVisible()
 })
 
 // This also includes the successful email verification flow
@@ -94,10 +98,9 @@ test("Sign up with valid name, email, and password", async ({
   // Check if the user is redirected to the email verification success page
   await page.goto(url)
 
-  await expect(page.getByTestId("result")).toContainText(
-    "Successful Email Verification",
-    { timeout: 5000 },
-  )
+  await expect(page.getByText("Successful Email Verification")).toBeVisible({
+    timeout: 5000,
+  })
 })
 
 test("Sign up with invalid email", async ({ page }) => {
@@ -223,8 +226,7 @@ test("Error message is displayed if an invalid token is used", async ({
   await expect(page.getByTestId("email-sent")).toBeVisible()
 
   await page.goto("/verify-email?token=invalid-token")
-  await expect(page.getByTestId("error")).toContainText(
-    "Email Verification Failed",
-    { timeout: 1000 },
-  )
+  await expect(page.getByText("Email Verification Failed")).toBeVisible({
+    timeout: 1000,
+  })
 })
