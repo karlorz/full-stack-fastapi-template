@@ -504,6 +504,7 @@
 
 ### Internal
 
+* 🔧 Add Martin to default users lists. PR [#1123](https://github.com/fastapilabs/cloud/pull/1123) by [@malvex](https://github.com/malvex).
 * ⬆ Bump playwright from v1.53.0-noble to v1.54.1-noble in /frontend. PR [#1115](https://github.com/fastapilabs/cloud/pull/1115) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump vite from 7.0.2 to 7.0.4 in /frontend. PR [#1116](https://github.com/fastapilabs/cloud/pull/1116) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @hey-api/openapi-ts from 0.76.0 to 0.78.3 in /frontend. PR [#1111](https://github.com/fastapilabs/cloud/pull/1111) by [@dependabot[bot]](https://github.com/apps/dependabot).
