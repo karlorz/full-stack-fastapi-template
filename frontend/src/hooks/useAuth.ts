@@ -7,6 +7,7 @@ import { useNavigate } from "@tanstack/react-router"
 import { AxiosError } from "axios"
 import { usePostHog } from "posthog-js/react"
 import { FastAPIAuth } from "@/lib/auth"
+import { handleError } from "@/utils"
 import {
   type ApiError,
   type Body_login_login_access_token as LoginFormData,
@@ -42,15 +43,7 @@ const useAuth = () => {
   const signUpMutation = useMutation({
     mutationFn: (data: UserRegister) =>
       UsersService.registerUser({ requestBody: data }),
-    onError: (err: ApiError) => {
-      let errDetail = (err.body as any)?.detail
-
-      if (err instanceof AxiosError) {
-        errDetail = err.message
-      }
-
-      showErrorToast(errDetail)
-    },
+    onError: handleError.bind(showErrorToast),
     onSettled: () => queryClient.invalidateQueries(),
   })
 
