@@ -104,7 +104,7 @@ function Login() {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-heading uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                  <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
                     Email
                   </FormLabel>
                   <FormControl>
@@ -129,7 +129,7 @@ function Login() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-heading uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                  <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
                     Password
                   </FormLabel>
                   <FormControl>

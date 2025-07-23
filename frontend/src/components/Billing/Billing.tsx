@@ -3,12 +3,6 @@ import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
 import { Badge } from "../../components/ui/badge"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card"
 import { Skeleton } from "../../components/ui/skeleton"
 import {
   Table,
@@ -18,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table"
+import { CustomCard } from "../ui/custom-card"
 import { billings } from "./Billings"
 import CurrentPlan from "./CurrentPlan"
 import PaymentMethod from "./PaymentMethod"
@@ -99,35 +94,20 @@ function BillingTable() {
 const Billing = () => {
   return (
     <div className="container my-4 p-0">
-      <Card className="mb-4">
-        <CardHeader>
-          <CardTitle>Billing Email</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>team1@domain.com</p>
-        </CardContent>
-      </Card>
+      <CustomCard title="Billing Email">
+        <p>team1@domain.com</p>
+      </CustomCard>
 
-      <Card className="mb-4">
-        <CardHeader>
-          <CardTitle>Current Plan</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-4 p-4">
-            <CurrentPlan />
-            <PaymentMethod />
-          </div>
-        </CardContent>
-      </Card>
+      <CustomCard title="Current Plan">
+        <div className="flex flex-col md:flex-row gap-4 p-4">
+          <CurrentPlan />
+          <PaymentMethod />
+        </div>
+      </CustomCard>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Invoice History</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <BillingTable />
-        </CardContent>
-      </Card>
+      <CustomCard title="Invoice History">
+        <BillingTable />
+      </CustomCard>
     </div>
   )
 }

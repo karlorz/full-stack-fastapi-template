@@ -5,6 +5,7 @@ import type { DeploymentStatus } from "@/client"
 import Logs from "@/components/Deployment/Logs"
 import { Status } from "@/components/Deployment/Status"
 import PendingDeployment from "@/components/PendingComponents/PendingDeployment"
+import { Section } from "@/components/ui/section"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useBuildLogs } from "@/hooks/use-build-logs"
 import { getAppQueryOptions } from "@/queries/apps"
@@ -78,26 +79,23 @@ function DeploymentDetail() {
   )
 
   return (
-    <div className="container p-0 mx-auto w-full">
-      <div className="flex items-center">
-        <h1 className="text-2xl font-extrabold tracking-tight">
-          Deployment Details
-        </h1>
-      </div>
-
-      <div className="mb-10">
-        <p className="text-sm text-muted-foreground py-1">
-          Last updated:{" "}
-          {formatDistanceToNow(new Date(deployment.created_at), {
-            addSuffix: true,
-          })}
-        </p>
-        <div className="flex items-center gap-2">
-          <p className="text-sm text-muted-foreground">Status:</p>
-          <Status status={deployment.status} />
+    <Section
+      title="Deployment Details"
+      description={
+        <div>
+          <p className="text-sm text-muted-foreground py-1">
+            Last updated:{" "}
+            {formatDistanceToNow(new Date(deployment.created_at), {
+              addSuffix: true,
+            })}
+          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground">Status:</p>
+            <Status status={deployment.status} />
+          </div>
         </div>
-      </div>
-
+      }
+    >
       <Tabs defaultValue="build-logs" className="space-y-6">
         <TabsList className="grid grid-cols-2 w-full">
           <TabsTrigger value="build-logs">Build Logs</TabsTrigger>
@@ -113,7 +111,7 @@ function DeploymentDetail() {
           <DeploymentLogs deployment={deployment} />
         </TabsContent>
       </Tabs>
-    </div>
+    </Section>
   )
 }
 

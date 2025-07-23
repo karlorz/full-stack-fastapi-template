@@ -1,5 +1,4 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router"
-import { Loader2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
 import AuthCard from "@/components/ui/auth-card"
@@ -29,10 +28,8 @@ function Callback() {
         <AuthCard
           title="Authenticating..."
           description="Please wait while we log you in with your provider"
-          showLogo
         >
           <div className="flex flex-col items-center justify-center space-y-6">
-            <Loader2 className="h-6 w-6 animate-spin text-primary mb-4" />
             <p className="text-center text-sm text-zinc-600 dark:text-zinc-300">
               Logging you in, please wait...
             </p>
@@ -45,7 +42,6 @@ function Callback() {
       <AuthCard
         title="Authentication Failed"
         description="There was a problem logging you in with your provider"
-        showLogo
       >
         <div className="space-y-6">
           <p className="text-xs text-destructive bg-destructive/10 p-3 rounded-md">

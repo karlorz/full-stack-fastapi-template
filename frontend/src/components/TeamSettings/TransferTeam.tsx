@@ -25,6 +25,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -104,12 +105,15 @@ const TransferTeam = ({ adminUsers, team: teamSlug }: TransferTeamProps) => {
 
   return (
     <Form {...form}>
-      <div className="pt-4 lg:w-1/2 space-y-4">
+      <div className="w-full max-w-lg space-y-2">
         <FormField
           control={form.control}
           name="userId"
           render={({ field }) => (
-            <FormItem className="my-4">
+            <FormItem>
+              <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                Select Admin User
+              </FormLabel>
               <FormControl>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger data-testid="user-select" className="w-full">
@@ -138,7 +142,9 @@ const TransferTeam = ({ adminUsers, team: teamSlug }: TransferTeamProps) => {
 
       <Dialog>
         <DialogTrigger asChild>
-          <Button disabled={!form.watch("userId")}>Transfer Team</Button>
+          <Button disabled={!form.watch("userId")} className="mt-4">
+            Transfer Team
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <form

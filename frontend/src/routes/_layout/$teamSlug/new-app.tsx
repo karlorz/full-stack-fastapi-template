@@ -13,7 +13,7 @@ import confetti from "@/assets/confetti.json"
 import warning from "@/assets/failed.json"
 import { type ApiError, type AppCreate, AppsService } from "@/client"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CustomCard } from "@/components/ui/custom-card"
 import {
   Dialog,
   DialogContent,
@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
+import { Section } from "@/components/ui/section"
 import { getTeamQueryOptions } from "@/queries/teams"
 import { extractErrorMessage } from "@/utils"
 
@@ -83,50 +84,38 @@ function NewApp() {
   }
 
   return (
-    <div className="w-full p-0">
-      <h1 className="text-2xl font-extrabold tracking-tight">New App</h1>
-      <p className="text-muted-foreground">Create a new app in your team.</p>
-
-      <div className="pt-10">
-        <Card>
-          <CardHeader>
-            <CardTitle>App Name</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="w-1/2 space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex gap-2">
-                          <Input
-                            placeholder="App 1"
-                            data-testid="app-name-input"
-                            {...field}
-                          />
-                          <LoadingButton
-                            type="submit"
-                            loading={mutation.isPending}
-                          >
-                            Create App
-                          </LoadingButton>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      </div>
+    <Section title="New App" description="Create a new app in your team.">
+      <CustomCard title="App Name">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="w-full max-w-lg space-y-4"
+          >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="App 1"
+                        data-testid="app-name-input"
+                        {...field}
+                        className="w-full"
+                      />
+                      <LoadingButton type="submit" loading={mutation.isPending}>
+                        Create App
+                      </LoadingButton>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
+      </CustomCard>
 
       <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
         <DialogContent>
@@ -195,6 +184,6 @@ function NewApp() {
           ) : null}
         </DialogContent>
       </Dialog>
-    </div>
+    </Section>
   )
 }

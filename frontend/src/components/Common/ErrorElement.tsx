@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 const ErrorElement = () => {
   return (
     <div
-      className="flex h-screen flex-col items-center justify-center p-4 text-muted-foreground"
+      className="flex h-screen flex-col items-center justify-center p-4"
       data-testid="not-found"
     >
       <div className="z-10 flex items-center">

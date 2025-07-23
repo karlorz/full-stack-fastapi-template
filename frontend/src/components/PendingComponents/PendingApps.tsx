@@ -1,49 +1,49 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { CustomCard } from "@/components/ui/custom-card"
+import { Section } from "@/components/ui/section"
 import { Skeleton } from "@/components/ui/skeleton"
 
 const PendingApps = () => {
   return (
-    <div>
-      <div className="flex justify-between mb-10">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Apps</h1>
-          <p className="text-muted-foreground">
-            View and manage all your applications.
-          </p>
-        </div>
-        <Skeleton className="h-10 w-[120px]" />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
+    <Section
+      title="Apps"
+      description="View and manage all your applications."
+      action={<Skeleton className="h-10 w-[120px]" />}
+    >
+      <div className="grid gap-8 [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">
         {[...Array(3)].map((_, index) => (
-          <Card key={index} className="h-full">
-            <CardHeader className="pb-2">
-              <div>
+          <CustomCard
+            key={index}
+            className="flex flex-col justify-between"
+            header={
+              <>
                 <div className="flex justify-between">
-                  <Skeleton className="h-6 w-[150px]" />
-                  <Skeleton className="h-6 w-[80px]" />
+                  <Skeleton className="h-6 w-[150px] rounded" />
+                  <Skeleton className="h-5 w-16 rounded" />
                 </div>
-                <Skeleton className="h-4 w-[200px] my-2" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                <div className="space-y-1">
-                  <Skeleton className="h-4 w-[80px]" />
-                  <Skeleton className="h-5 w-[120px]" />
+                <Skeleton className="h-5 w-full my-2 rounded" />
+              </>
+            }
+          >
+            <div className="grid grid-cols-2 gap-4 mt-2">
+              <div className="space-y-1">
+                <div className="text-xs text-muted-foreground">
+                  Last Updated
                 </div>
+                <Skeleton className="h-4 w-[100px] rounded" />
               </div>
-              <div className="mt-4 pt-4 border-t">
-                <div className="flex items-center justify-between">
-                  <Skeleton className="h-4 w-[60px]" />
-                  <Skeleton className="h-6 w-[80px]" />
+            </div>
+            <div className="mt-4 pt-4 border-t">
+              <div className="flex items-center justify-between">
+                <div className="text-xs text-muted-foreground truncate">
+                  Region
                 </div>
+                <Skeleton className="h-5 w-16 rounded" />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CustomCard>
         ))}
       </div>
-    </div>
+    </Section>
   )
 }
 

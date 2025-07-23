@@ -139,7 +139,7 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
                     <span className="font-bold">{mutation.data?.email}.</span>
                     They just need to accept it to join your team.
                   </p>
-                  <p className="text-muted-foreground text-sm">
+                  <p>
                     You can manage invitations from your team dashboard or send
                     another one.
                   </p>
@@ -169,7 +169,7 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
                   <p>
                     Oops! Something went wrong while sending the invitation.
                   </p>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-sm">
                     Please try again or double-check the information. If the
                     problem continues, please contact our support team.
                   </p>

@@ -1,78 +1,92 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import { FaGithub } from "react-icons/fa"
+import { FcGoogle } from "react-icons/fc"
+import { Badge } from "@/components/ui/badge"
+import { CustomCard } from "@/components/ui/custom-card"
+import { Skeleton } from "../../components/ui/skeleton"
+import DangerZoneAlert from "../Common/DangerZone"
 
-const PendingUserInformation = () => {
-  return (
-    <div className="container my-4 px-0 pt-10">
-      <div className="flex flex-col md:flex-row gap-4">
-        <Card className="flex-1">
-          <CardHeader>
-            <CardTitle>Full Name</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex gap-2">
-                <Skeleton className="h-10 flex-1" />
-                <Skeleton className="h-10 w-[70px]" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="flex-1">
-          <CardHeader>
-            <CardTitle>Email</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex gap-2">
-                <Skeleton className="h-10 flex-1" />
-                <Skeleton className="h-10 w-[70px]" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+const PendingUserInformation = () => (
+  <div className="space-y-10">
+    {/* Profile Information */}
+    <CustomCard
+      title="Profile Information"
+      description="Update your personal information."
+    >
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="w-full max-w-lg space-y-4">
+          <Skeleton className="h-4 w-20 mb-1" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+        <div className="w-full max-w-lg space-y-4">
+          <Skeleton className="h-4 w-20 mb-1" />
+          <Skeleton className="h-10 w-full" />
+        </div>
       </div>
+      <div className="flex justify-end mt-4">
+        <Skeleton className="h-10 w-32" />
+      </div>
+    </CustomCard>
 
-      <Card className="mt-4 gap-0">
-        <CardHeader>
-          <CardTitle>Password</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CardDescription>
-            <Skeleton className="h-5 w-[400px]" />
-          </CardDescription>
-          <div className="mt-6 space-y-4">
-            <div className="flex gap-2">
-              <Skeleton className="h-10 flex-1" />
-            </div>
-            <div className="flex gap-2">
-              <Skeleton className="h-10 flex-1" />
-            </div>
-            <div className="flex gap-2">
-              <Skeleton className="h-10 flex-1" />
-            </div>
-            <Skeleton className="h-10 w-[100px]" />
+    {/* Security */}
+    <CustomCard
+      title="Security"
+      description="Manage your password and security settings."
+    >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[...Array(3)].map((_, i) => (
+          <div className="space-y-2" key={i}>
+            <Skeleton className="h-4 w-32 mb-1" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-4 w-24" />
           </div>
-        </CardContent>
-      </Card>
+        ))}
+      </div>
+      <div className="flex justify-end mt-4">
+        <Skeleton className="h-10 w-32" />
+      </div>
+    </CustomCard>
 
-      <Card className="mt-4">
-        <CardContent>
-          <div className="flex flex-col space-y-4">
-            <Skeleton className="h-5 w-[250px]" />
-            <Skeleton className="h-10 w-[150px]" />
+    {/* Connected Accounts */}
+    <CustomCard
+      title="Connected Accounts"
+      description="Manage your connected accounts and integrations."
+    >
+      <div className="divide-y divide-border">
+        {/* GitHub */}
+        <div className="flex items-center justify-between py-4">
+          <div className="flex items-center gap-3">
+            <FaGithub className="h-5 w-5 text-accent-foreground" />
+            <div>
+              <Skeleton className="h-5 w-[120px]" />
+              <Skeleton className="h-4 w-[80px] mt-1" />
+            </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
+          <Skeleton className="h-8 w-[160px]" />
+        </div>
+        {/* Google */}
+        <div className="flex items-center justify-between py-4">
+          <div className="flex items-center gap-3">
+            <FcGoogle className="h-5 w-5" />
+            <div>
+              <Skeleton className="h-5 w-[120px]" />
+              <Skeleton className="h-4 w-[80px] mt-1" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge className="bg-gray-100 text-gray-800">Coming Soon</Badge>
+            <Skeleton className="h-8 w-[80px]" />
+          </div>
+        </div>
+      </div>
+    </CustomCard>
+
+    {/* Danger Zone */}
+    <CustomCard>
+      <DangerZoneAlert description="Permanently delete your data and everything associated with your account">
+        <Skeleton className="h-10 w-32" />
+      </DangerZoneAlert>
+    </CustomCard>
+  </div>
+)
 
 export default PendingUserInformation

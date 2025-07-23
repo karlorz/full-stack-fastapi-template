@@ -31,7 +31,7 @@ const CodeWithCopy = ({ code }: CodeWithCopyProps) => {
   }
 
   return (
-    <div className="flex items-center gap-2 bg-muted my-2 rounded-md">
+    <div className="flex items-center gap-2my-2 rounded-md">
       <code className="text-xs flex-1 px-4 py-3">{code}</code>
       <Button
         variant="ghost"
@@ -72,14 +72,14 @@ const QuickStart = () => {
           View Guide
         </Button>
       </SheetTrigger>
-      <SheetContent className="overflow-y-auto sm:max-w-lg">
-        <SheetHeader className="mb-4 px-6">
+      <SheetContent className="overflow-y-auto sm:max-w-lg p-0">
+        <SheetHeader className="mb-2 px-6 pt-6">
           <SheetTitle>QuickStart Guide</SheetTitle>
         </SheetHeader>
-        <div data-testid="fastapi-cli" className="space-y-6 px-6">
-          <div className="space-y-3">
-            <h2 className="text-base font-semibold">Installation</h2>
-            <div className="text-sm text-muted-foreground space-y-2">
+        <div data-testid="fastapi-cli" className="space-y-8 px-6 pb-6">
+          <div className="rounded-lg bg-muted/50 p-6 space-y-4">
+            <h2 className="text-base font-semibold mb-2">Installation</h2>
+            <div className="text-sm space-y-2">
               <p>
                 Get started by installing FastAPI Cloud CLI, your primary tool
                 for deploying FastAPI apps to the cloud.
@@ -87,10 +87,10 @@ const QuickStart = () => {
               <InstallInstructions />
             </div>
           </div>
-          <Separator className="-mx-6" />
-          <div className="space-y-3">
-            <h2 className="text-base font-semibold">Deploying your app</h2>
-            <div className="text-sm text-muted-foreground space-y-2">
+          <Separator />
+          <div className="rounded-lg bg-muted/50 p-6 space-y-4">
+            <h2 className="text-base font-semibold mb-2">Deploying your app</h2>
+            <div className="text-sm space-y-3">
               <p>
                 Before deploying, ensure you have a{" "}
                 <a
@@ -103,16 +103,19 @@ const QuickStart = () => {
                 </a>{" "}
                 activated.
               </p>
-              <div>
-                1. Login to FastAPI Cloud:{" "}
-                <CodeWithCopy code={"fastapi login"} />
-              </div>
-              <div>
-                2. Deploy your app: <CodeWithCopy code={"fastapi deploy"} />
+              <div className="flex flex-col gap-2">
+                <div>
+                  <span className="font-medium">1.</span> Login to FastAPI
+                  Cloud: <CodeWithCopy code={"fastapi login"} />
+                </div>
+                <div>
+                  <span className="font-medium">2.</span> Deploy your app:{" "}
+                  <CodeWithCopy code={"fastapi deploy"} />
+                </div>
               </div>
               <p>
-                And that's it! Your app will be deployed to the cloud in
-                seconds.
+                <span className="font-semibold">And that's it!</span> Your app
+                will be deployed to the cloud in seconds.
               </p>
             </div>
           </div>

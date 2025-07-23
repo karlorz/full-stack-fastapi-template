@@ -5,6 +5,7 @@ import { type TeamPublic, TeamsService, UsersService } from "@/client"
 import { DataTable } from "@/components/Common/DataTable"
 import PendingTeams from "@/components/PendingComponents/PendingTeams"
 import { ALL_TEAMS_COLUMNS } from "@/components/Teams/columns"
+import { Section } from "@/components/ui/section"
 import { isLoggedIn } from "@/hooks/useAuth"
 
 export const Route = createFileRoute("/_layout/teams/all")({
@@ -30,18 +31,13 @@ function AllTeams() {
   }))
 
   return (
-    <div className="container p-0">
-      <div className="mb-10">
-        <h1 className="text-2xl font-extrabold tracking-tight">Teams</h1>
-        <p className="text-sm text-muted-foreground">View all your teams.</p>
-      </div>
-
+    <Section title="All Teams" description="View and manage all your teams.">
       <DataTable
         dataTestId="teams-table"
         columns={ALL_TEAMS_COLUMNS}
         data={teamsData}
         getRowLink={(team) => `/${team.slug}/`}
       />
-    </div>
+    </Section>
   )
 }

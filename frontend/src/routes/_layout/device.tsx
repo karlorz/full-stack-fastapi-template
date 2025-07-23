@@ -55,9 +55,7 @@ function CodeNotFound() {
       <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
         Invalid code
       </h2>
-      <p className="text-muted-foreground">
-        The code you provided is invalid or has expired.
-      </p>
+      <p>The code you provided is invalid or has expired.</p>
     </div>
   )
 }
@@ -91,9 +89,7 @@ function AuthorizeDevice() {
           <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center md:text-left">
             Authorize FastAPI CLI
           </h2>
-          <p className="text-muted-foreground">
-            Click the button below to authorize FastAPI CLI
-          </p>
+          <p>Click the button below to authorize FastAPI CLI</p>
           <Alert>
             <AlertDescription>
               This authorization was requested from{" "}
@@ -122,9 +118,7 @@ function AuthorizeDevice() {
             <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center md:text-left">
               Device authorized
             </h2>
-            <p className="text-muted-foreground">
-              FastAPI CLI has been authorized successfully
-            </p>
+            <p>FastAPI CLI has been authorized successfully</p>
           </CardContent>
         </Card>
       )}

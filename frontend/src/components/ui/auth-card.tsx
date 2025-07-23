@@ -46,7 +46,7 @@ const AuthCard = ({
         )}
       </CardHeader>
     )}
-    <CardContent className="pt-0 pb-6 md:pb-8 px-6 md:px-8 text-sm text-foreground">
+    <CardContent className="pt-0 pb-6 md:pb-8 px-6 md:px-8 text-sm">
       {children}
     </CardContent>
     {footer}

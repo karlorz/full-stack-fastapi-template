@@ -115,7 +115,7 @@ function ResetPassword() {
               name="new_password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-heading uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                  <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
                     New Password
                   </FormLabel>
                   <FormControl>
@@ -140,7 +140,7 @@ function ResetPassword() {
               name="confirm_password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-heading uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                  <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
                     Confirm Password
                   </FormLabel>
                   <FormControl>

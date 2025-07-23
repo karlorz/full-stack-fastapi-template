@@ -9,7 +9,7 @@ const NotFound = () => {
 
   return (
     <div
-      className="relative flex h-screen flex-col items-center justify-center p-4 text-primary dark:text-muted-foreground overflow-hidden bg-gradient-to-br from-background to-secondary"
+      className="relative flex h-screen flex-col items-center justify-center p-4 text-primary dark:overflow-hidden bg-gradient-to-br from-background to-secondary"
       data-testid="not-found"
     >
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
@@ -28,7 +28,7 @@ const NotFound = () => {
         </div>
       </div>
 
-      <p className="z-10 mb-4 text-center text-lg max-w-md text-primary/90 dark:text-muted-foreground">
+      <p className="z-10 mb-4 text-center text-lg max-w-md text-primary/90">
         The page you are looking for at{" "}
         <span className="font-mono text-primary bg-secondary/50 px-2 py-0.5 rounded">
           {location.pathname}

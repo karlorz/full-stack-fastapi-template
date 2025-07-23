@@ -75,7 +75,7 @@ export function AppSidebar({ teams }: { teams: TeamsPublic }) {
     <Sidebar collapsible="icon">
       <a
         href="/"
-        className="flex items-center self-center font-medium pt-8 pb-4"
+        className="flex items-center self-center font-medium pt-16 pb-8"
       >
         <img
           src={logo}

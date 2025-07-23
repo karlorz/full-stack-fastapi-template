@@ -11,13 +11,9 @@ import DangerZoneAlert from "@/components/Common/DangerZone"
 import Logs from "@/components/Deployment/Logs"
 import { Status } from "@/components/Deployment/Status"
 import PendingApp from "@/components/PendingComponents/PendingApp"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { CustomCard } from "@/components/ui/custom-card"
+import { Label } from "@/components/ui/label"
+import { Section } from "@/components/ui/section"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -60,12 +56,8 @@ function AppDetail() {
   const { data: logsData } = useSuspenseQuery(getAppLogsQueryOptions(app.id))
 
   return (
-    <div>
-      <h1 className="text-2xl font-extrabold tracking-tight pb-10">
-        App Details
-      </h1>
-
-      <Tabs defaultValue="general" className="space-y-6" data-testid="tabs">
+    <Section title="App Details">
+      <Tabs defaultValue="general" className="space-y-12" data-testid="tabs">
         <TabsList className="grid grid-cols-3 w-full">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="configuration">Configuration</TabsTrigger>
@@ -74,141 +66,119 @@ function AppDetail() {
 
         {/* General Information Tab */}
         <TabsContent value="general">
-          <Card className="shadow-md">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <CardTitle>App Details</CardTitle>
-              </div>
-              <CardDescription>Overview of your application</CardDescription>
-            </CardHeader>
-
-            <CardContent>
-              <div className="space-y-6">
-                <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Globe className="h-4 w-4 text-muted-foreground" />
-                    <h3 className="text-md font-medium">General Information</h3>
-                  </div>
-
-                  <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                    <div className="space-y-2 p-4 rounded-lg border">
-                      <div className="text-sm font-medium text-muted-foreground mb-6">
-                        App Name
-                      </div>
-                      <div className="font-semibold">{app.name}</div>
-                    </div>
-                    <div className="space-y-2 p-4 rounded-lg border group">
-                      <div className="text-sm font-medium text-muted-foreground mb-6">
-                        App URL
-                      </div>
-                      {app.latest_deployment ? (
-                        <div className="flex items-center gap-2">
-                          <a
-                            href={app.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 text-xs font-mono text-primary hover:underline"
-                          >
-                            <Link className="h-3.5 w-3.5" />
-                            {app.url}
-                          </a>
-                        </div>
-                      ) : (
-                        <span className="text-sm my-2 text-muted-foreground">
-                          URL will be available after deployment
-                        </span>
-                      )}
-                    </div>
-                    <div className="space-y-2 p-4 rounded-lg border">
-                      <div className="text-sm font-medium text-muted-foreground mb-6">
-                        Deployment Status
-                      </div>
-                      <Status status={app.latest_deployment?.status ?? null} />
-                    </div>
-                  </div>
+          <CustomCard
+            title="General"
+            description="Overview of your application."
+          >
+            <div className="space-y-12">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Globe className="h-4 w-4" />
+                  <h3 className="text-md font-medium">App Information</h3>
                 </div>
 
-                <Separator />
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <RecentDeployments deployments={deployments.data} />
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="space-y-2 p-4 rounded-lg border ">
+                    <Label className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300 mb-6">
+                      App Name
+                    </Label>
+                    <div className="text-muted-foreground flex items-center">
+                      <span className="truncate overflow-hidden whitespace-nowrap w-full pr-2">
+                        {app.name}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="space-y-2 p-4 rounded-lg border group">
+                    <Label className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300 mb-6">
+                      App URL
+                    </Label>
+                    {app.latest_deployment ? (
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={app.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-xs font-mono text-primary hover:underline"
+                        >
+                          <Link className="h-3.5 w-3.5 text-muted-foreground" />
+                          {app.url}
+                        </a>
+                      </div>
+                    ) : (
+                      <span className="text-sm my-2 text-muted-foreground">
+                        URL will be available after deployment
+                      </span>
+                    )}
+                  </div>
+                  <div className="space-y-2 p-4 rounded-lg border">
+                    <Label className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300 mb-6">
+                      Deployment Status
+                    </Label>
+                    <Status status={app.latest_deployment?.status ?? null} />
+                  </div>
                 </div>
-
-                <Separator />
-
-                <DangerZoneAlert description="Permanently delete your data and everything associated with your team">
-                  <DeleteConfirmation appId={app.id} appSlug={appSlug} />
-                </DangerZoneAlert>
               </div>
-            </CardContent>
-          </Card>
+
+              <Separator />
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <RecentDeployments deployments={deployments.data} />
+              </div>
+
+              <Separator />
+
+              <DangerZoneAlert description="Permanently delete your data and everything associated with your team">
+                <DeleteConfirmation appId={app.id} appSlug={appSlug} />
+              </DangerZoneAlert>
+            </div>
+          </CustomCard>
         </TabsContent>
 
         {/* Configuration Tab */}
         <TabsContent value="configuration">
-          <Card className="shadow-md">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <CardTitle>Configuration</CardTitle>
-              </div>
-              <CardDescription>
-                Application configuration and resource settings
-              </CardDescription>
-            </CardHeader>
+          <CustomCard
+            title="Configuration"
+            description="Application configuration and resource settings."
+          >
+            <div className="space-y-12">
+              {/* Environment Variables */}
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Code2 className="h-5 w-5" />
+                  <h3 className="text-md font-medium">Environment Variables</h3>
+                </div>
 
-            <CardContent>
-              <div className="space-y-6">
-                {/* Environment Variables */}
                 <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Code2 className="h-5 w-5 text-muted-foreground" />
-                    <h3 className="text-md font-medium">
-                      Environment Variables
-                    </h3>
-                  </div>
-
-                  <div>
-                    <EnvironmentVariables
-                      environmentVariables={environmentVariables?.data || []}
-                      appId={app.id}
-                    />
-                  </div>
+                  <EnvironmentVariables
+                    environmentVariables={environmentVariables?.data || []}
+                    appId={app.id}
+                  />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CustomCard>
         </TabsContent>
 
         {/* Logs Tab */}
         <TabsContent value="logs">
-          <Card className="shadow-md">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <CardTitle>Logs</CardTitle>
-              </div>
-              <CardDescription>
-                Application logs and monitoring data
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent>
-              <div className="space-y-6">
-                {/* Real-time Logs */}
-                <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Terminal className="h-5 w-5 text-muted-foreground" />
-                    <h3 className="text-md font-medium">Real-time Logs</h3>
-                  </div>
-                  <Logs logs={logsData?.logs || []} />
+          <CustomCard
+            title="Logs"
+            description="Application logs and monitoring data."
+          >
+            <div className="space-y-12">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Terminal className="h-5 w-5" />
+                  <h3 className="text-md font-medium">Real-time Logs</h3>
                 </div>
-
-                <Separator />
-                <Deployments deployments={deployments.data} />
+                <Logs logs={logsData?.logs || []} />
               </div>
-            </CardContent>
-          </Card>
+              <Separator />
+              <Deployments deployments={deployments.data} />
+            </div>
+          </CustomCard>
         </TabsContent>
       </Tabs>
-    </div>
+    </Section>
   )
 }

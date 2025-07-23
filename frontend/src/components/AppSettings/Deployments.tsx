@@ -6,7 +6,8 @@ import { Fragment } from "react"
 import type { DeploymentPublic } from "@/client"
 import { Status } from "@/components/Deployment/Status"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { CustomCard } from "@/components/ui/custom-card"
+import { Label } from "@/components/ui/label"
 import EmptyState from "../Common/EmptyState"
 
 export const RecentDeployments = ({
@@ -18,17 +19,17 @@ export const RecentDeployments = ({
 }) => {
   return (
     <div className="space-y-2 p-4 rounded-lg border">
-      <div className="text-sm font-medium text-muted-foreground mb-6">
+      <Label className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300 mb-6">
         Recent Deployments
-      </div>
-      <div className="font-semibold">
+      </Label>
+      <div>
         <ul className="text-sm">
           {deployments.slice(0, limit).map((deployment) => (
             <li
               key={deployment.id}
               className="flex justify-between items-center my-2"
             >
-              <span className="text-muted-foreground font-normal">
+              <span className="text-muted-foreground">
                 {formatDistanceToNow(new Date(deployment.created_at), {
                   addSuffix: true,
                 })}
@@ -55,37 +56,33 @@ const Deployments = ({
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
-        <Server className="h-5 w-5 text-muted-foreground" />
+        <Server className="h-5 w-5" />
         <h3 className="text-md font-medium">Deployments Logs</h3>
       </div>
 
       {deployments?.length > 0 ? (
-        <Card>
-          <CardContent className="p-0">
-            {deployments.map((deployment: DeploymentPublic) => (
-              <Fragment key={deployment.id}>
-                <div className="p-4 border-b last:border-b-0">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium">
-                      Deployment {deployment.id}
-                    </div>
-                    <Status status={deployment.status} />
-                  </div>
-                  <div className="text-sm text-muted-foreground mb-2">
-                    {formatDistanceToNow(new Date(deployment.created_at), {
-                      addSuffix: true,
-                    })}
-                  </div>
-                  <RouterLink to={`./deployments/${deployment.id}`}>
-                    <Button variant="outline" size="sm">
-                      View Details
-                    </Button>
-                  </RouterLink>
+        <CustomCard>
+          {deployments.map((deployment: DeploymentPublic) => (
+            <Fragment key={deployment.id}>
+              <div className="p-4 border-b last:border-b-0">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="font-medium">Deployment {deployment.id}</div>
+                  <Status status={deployment.status} />
                 </div>
-              </Fragment>
-            ))}
-          </CardContent>
-        </Card>
+                <div className="text-sm mb-2 text-muted-foreground">
+                  {formatDistanceToNow(new Date(deployment.created_at), {
+                    addSuffix: true,
+                  })}
+                </div>
+                <RouterLink to={`./deployments/${deployment.id}`}>
+                  <Button variant="outline" size="sm">
+                    View Details
+                  </Button>
+                </RouterLink>
+              </div>
+            </Fragment>
+          ))}
+        </CustomCard>
       ) : (
         <EmptyState
           title="No deployments yet"

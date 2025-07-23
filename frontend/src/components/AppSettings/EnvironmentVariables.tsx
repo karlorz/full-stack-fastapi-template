@@ -355,9 +355,13 @@ const EnvironmentVariables = ({
         <div className="grid grid-cols-[1fr_1fr_80px] gap-4">
           {hasEnvironmentVariables ? (
             <>
-              <div className="capitalize">Name</div>
-              <div className="capitalize">Value</div>
-              <div className="capitalize" />
+              <div className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                Name
+              </div>
+              <div className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                Value
+              </div>
+              <div />
             </>
           ) : (
             <EmptyState

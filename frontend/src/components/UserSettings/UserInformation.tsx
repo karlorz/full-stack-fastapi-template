@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Key, Mail, User } from "lucide-react"
 import { Suspense, useState } from "react"
 import { useForm } from "react-hook-form"
 import { FaGithub } from "react-icons/fa"
@@ -8,31 +7,26 @@ import { FcGoogle } from "react-icons/fc"
 import * as z from "zod"
 
 import { UsersService } from "@/client"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { CustomCard } from "@/components/ui/custom-card"
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Separator } from "@/components/ui/separator"
 import useAuth, { useCurrentUser } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 import DangerZoneAlert from "../Common/DangerZone"
 import UpdateEmailInfo from "../Common/UpdateEmailInfo"
 import PendingUserInformation from "../PendingComponents/PendingUserInformation"
-import { Badge } from "../ui/badge"
 import { Dialog, DialogContent } from "../ui/dialog"
-import { Label } from "../ui/label"
 import ChangePassword from "./ChangePassword"
 import DeleteConfirmation from "./DeleteConfirmation"
 
@@ -113,148 +107,135 @@ const UserInformationContent = () => {
 
   return (
     <>
-      <div className="pt-10 space-y-10">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              Profile Information
-            </CardTitle>
-            <CardDescription>Update your personal information.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col md:flex-row gap-6">
-              <Form {...nameForm}>
-                <form
-                  onSubmit={nameForm.handleSubmit(onSubmitName)}
-                  className="flex-1"
-                >
-                  <FormField
-                    control={nameForm.control}
-                    name="full_name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Label htmlFor="full-name-input">Full Name</Label>
-                        <FormControl>
-                          <div className="flex gap-2">
-                            <Input
-                              data-testid="full-name-input"
-                              {...field}
-                              disabled={!isEditingName}
-                            />
-                            {!isEditingName ? (
+      <div className="space-y-10">
+        <CustomCard
+          title="Profile Information"
+          description="Update your personal information."
+        >
+          <div className="flex flex-col md:flex-row gap-6">
+            <Form {...nameForm}>
+              <form
+                onSubmit={nameForm.handleSubmit(onSubmitName)}
+                className="w-full md:w-1/2 space-y-4"
+              >
+                <FormField
+                  control={nameForm.control}
+                  name="full_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                        Full Name
+                      </FormLabel>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <Input
+                            data-testid="full-name-input"
+                            {...field}
+                            disabled={!isEditingName}
+                            className="w-full"
+                          />
+                          {!isEditingName ? (
+                            <Button
+                              type="button"
+                              onClick={() => setIsEditingName(true)}
+                            >
+                              Edit
+                            </Button>
+                          ) : (
+                            <div className="flex gap-2">
+                              <Button type="submit">Save</Button>
                               <Button
                                 type="button"
-                                onClick={() => setIsEditingName(true)}
+                                variant="outline"
+                                onClick={() => {
+                                  setIsEditingName(false)
+                                  nameForm.reset({
+                                    full_name: currentUser?.full_name ?? "",
+                                  })
+                                }}
                               >
-                                Edit
+                                Cancel
                               </Button>
-                            ) : (
-                              <div className="flex gap-2">
-                                <Button type="submit">Save</Button>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  onClick={() => {
-                                    setIsEditingName(false)
-                                    nameForm.reset({
-                                      full_name: currentUser?.full_name ?? "",
-                                    })
-                                  }}
-                                >
-                                  Cancel
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </form>
-              </Form>
-              <Form {...emailForm}>
-                <form
-                  onSubmit={emailForm.handleSubmit(onSubmitEmail)}
-                  className="flex-1"
-                >
-                  <FormField
-                    control={emailForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Label htmlFor="email-input">Email</Label>
-                        <FormControl>
-                          <div className="flex gap-2">
-                            <Input
-                              data-testid="email-input"
-                              {...field}
-                              disabled={!isEditingEmail}
-                            />
-                            {!isEditingEmail ? (
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+            <Form {...emailForm}>
+              <form
+                onSubmit={emailForm.handleSubmit(onSubmitEmail)}
+                className="w-full md:w-1/2 space-y-4"
+              >
+                <FormField
+                  control={emailForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                        Email
+                      </FormLabel>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <Input
+                            data-testid="email-input"
+                            {...field}
+                            disabled={!isEditingEmail}
+                            className="w-full"
+                          />
+                          {!isEditingEmail ? (
+                            <Button
+                              type="button"
+                              onClick={() => setIsEditingEmail(true)}
+                            >
+                              Edit
+                            </Button>
+                          ) : (
+                            <div className="flex gap-2">
+                              <Button type="submit">Save</Button>
                               <Button
                                 type="button"
-                                onClick={() => setIsEditingEmail(true)}
+                                variant="outline"
+                                onClick={() => {
+                                  setIsEditingEmail(false)
+                                  emailForm.reset({
+                                    email: currentUser?.email ?? "",
+                                  })
+                                }}
                               >
-                                Edit
+                                Cancel
                               </Button>
-                            ) : (
-                              <div className="flex gap-2">
-                                <Button type="submit">Save</Button>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  onClick={() => {
-                                    setIsEditingEmail(false)
-                                    emailForm.reset({
-                                      email: currentUser?.email ?? "",
-                                    })
-                                  }}
-                                >
-                                  Cancel
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </form>
-              </Form>
-            </div>
-          </CardContent>
-        </Card>
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          </div>
+        </CustomCard>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Key className="h-5 w-5" />
-              Security
-            </CardTitle>
-            <CardDescription>
-              Manage your password and security settings.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ChangePassword />
-          </CardContent>
-        </Card>
+        <CustomCard
+          title="Security"
+          description="Manage your password and security settings."
+        >
+          <ChangePassword />
+        </CustomCard>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5" />
-              Connected Accounts
-            </CardTitle>
-            <CardDescription>
-              Manage your social login connections and integrations.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 border rounded-lg">
+        <CustomCard
+          title="Connected Accounts"
+          description="Manage your connected accounts and integrations."
+        >
+          <div className="space-y-8">
+            {/* GitHub */}
+            <div className="flex items-center justify-between py-4">
               <div className="flex items-center gap-3">
                 <FaGithub className="h-5 w-5 text-accent-foreground" />
                 <div>
@@ -280,7 +261,10 @@ const UserInformationContent = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-4 border rounded-lg">
+            <Separator />
+
+            {/* Google */}
+            <div className="flex items-center justify-between py-4">
               <div className="flex items-center gap-3">
                 <FcGoogle className="h-5 w-5" />
                 <div>
@@ -295,16 +279,14 @@ const UserInformationContent = () => {
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CustomCard>
 
-        <Card>
-          <CardContent>
-            <DangerZoneAlert description="Permanently delete your data and everything associated with your account">
-              <DeleteConfirmation />
-            </DangerZoneAlert>
-          </CardContent>
-        </Card>
+        <CustomCard>
+          <DangerZoneAlert description="Permanently delete your data and everything associated with your account">
+            <DeleteConfirmation />
+          </DangerZoneAlert>
+        </CustomCard>
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>

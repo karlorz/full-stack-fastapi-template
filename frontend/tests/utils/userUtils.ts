@@ -14,7 +14,7 @@ export async function logInUser(page: Page, email: string, password: string) {
 
   await page.waitForURL("/", { waitUntil: "networkidle" })
 
-  await expect(page.getByTestId("result")).toBeVisible()
+  await expect(page.getByTestId("dashboard-greeting")).toBeVisible()
 }
 
 export async function logOutUser(page: Page) {

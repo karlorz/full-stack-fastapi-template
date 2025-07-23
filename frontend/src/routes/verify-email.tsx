@@ -45,7 +45,6 @@ function VerifyEmail() {
         <AuthCard
           title="Verifying Email"
           description="Please wait while we verify your email address"
-          showLogo
         >
           <div className="flex flex-col items-center justify-center space-y-6">
             <p className="text-center text-sm text-zinc-600 dark:text-zinc-300">

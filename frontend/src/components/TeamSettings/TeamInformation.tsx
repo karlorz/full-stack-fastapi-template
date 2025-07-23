@@ -4,24 +4,18 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query"
-import { Building2, CircleArrowRight, Users } from "lucide-react"
 import { Suspense, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { TeamsService, type TeamUpdate } from "@/client"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -34,6 +28,7 @@ import Invitations from "../Invitations/Invitations"
 import NewInvitation from "../Invitations/NewInvitation"
 import PendingTeamInformation from "../PendingComponents/PendingTeamInformation"
 import Team from "../Teams/Team"
+import { CustomCard } from "../ui/custom-card"
 import DeleteConfirmation from "./DeleteConfirmation"
 import TransferTeam from "./TransferTeam"
 
@@ -84,139 +79,135 @@ const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
 
   return (
     <Suspense fallback={<PendingTeamInformation />}>
-      <div className="pt-10 space-y-10">
-        <Card data-testid="team-name">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Building2 className="h-5 w-5" />
-              Team Name
-            </CardTitle>
-            <CardDescription>
-              Update your team’s name as it appears across your workspace.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {currentUserRole === "admin" ? (
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="w-full lg:w-1/2 space-y-4"
-                >
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <div className="flex gap-2">
-                            <Input
-                              {...field}
-                              disabled={!isEditing}
-                              data-testid="team-name-input"
-                            />
-                            {!isEditing ? (
+      <div className="space-y-12">
+        <CustomCard
+          title="Team Information"
+          description="Update your team’s information."
+          data-testid="team-information-card"
+        >
+          {currentUserRole === "admin" ? (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="w-full max-w-lg space-y-4"
+              >
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                        Team Name
+                      </FormLabel>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <Input
+                            {...field}
+                            disabled={!isEditing}
+                            data-testid="team-name-input"
+                            className="w-full"
+                          />
+                          {!isEditing ? (
+                            <Button
+                              type="button"
+                              onClick={() => setIsEditing(true)}
+                            >
+                              Edit
+                            </Button>
+                          ) : (
+                            <div className="flex gap-2">
+                              <Button type="submit">Save</Button>
                               <Button
                                 type="button"
-                                onClick={() => setIsEditing(true)}
+                                variant="outline"
+                                onClick={() => {
+                                  setIsEditing(false)
+                                  form.reset({ name: team.name })
+                                }}
                               >
-                                Edit
+                                Cancel
                               </Button>
-                            ) : (
-                              <div className="flex gap-2">
-                                <Button type="submit">Save</Button>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  onClick={() => {
-                                    setIsEditing(false)
-                                    form.reset({ name: team.name })
-                                  }}
-                                >
-                                  Cancel
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </form>
-              </Form>
-            ) : (
-              <Input value={team.name} disabled className="w-1/2" />
-            )}
-          </CardContent>
-        </Card>
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          ) : (
+            <Input value={team.name} disabled className="w-1/2" />
+          )}
+        </CustomCard>
 
         {!team.is_personal_team && (
           <>
-            <Card className="mt-4" data-testid="team-members">
-              <CardHeader className="relative">
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  Team Members
-                </CardTitle>
-                <CardDescription>
-                  Manage active members and pending invitations.
-                </CardDescription>
-                {currentUserRole === "admin" && (
-                  <div className="sm:absolute sm:top-4 sm:right-4 mt-4 sm:mt-0">
-                    <NewInvitation teamId={team.id} />
-                  </div>
-                )}
-              </CardHeader>
-              <CardContent>
-                <Tabs defaultValue="active">
-                  <TabsList>
-                    <TabsTrigger value="active">Active Members</TabsTrigger>
-                    {currentUserRole === "admin" && (
-                      <TabsTrigger value="pending">
-                        Pending Invitations
-                      </TabsTrigger>
-                    )}
-                  </TabsList>
-                  <TabsContent value="active">
-                    <Team team={team} />
-                  </TabsContent>
-                  {currentUserRole === "admin" && (
-                    <TabsContent value="pending">
-                      <Invitations team={team} />
-                    </TabsContent>
-                  )}
-                </Tabs>
-              </CardContent>
-            </Card>
-
-            {isCurrentUserOwner && (
-              <Card className="mt-4 gap-0">
-                <CardHeader>
+            <CustomCard
+              data-testid="team-members"
+              header={
+                <CardHeader className="p-0 relative">
                   <CardTitle className="flex items-center gap-2">
-                    <CircleArrowRight className="h-5 w-5" />
-                    Transfer Team Ownership
+                    Team Members
                   </CardTitle>
                   <CardDescription>
-                    You are the{" "}
-                    <span className="font-bold">current team owner.</span> You
-                    can transfer ownership to a team admin by selecting their
-                    name from the list below.
+                    Manage active members and pending invitations.
                   </CardDescription>
+                  {currentUserRole === "admin" && (
+                    <div className="sm:absolute sm:top-4 sm:right-4 mt-4 sm:mt-0">
+                      <NewInvitation teamId={team.id} />
+                    </div>
+                  )}
                 </CardHeader>
-                <CardContent>
-                  <TransferTeam adminUsers={adminUsers} team={teamSlug} />
-                </CardContent>
-              </Card>
+              }
+            >
+              <Tabs defaultValue="active">
+                <TabsList>
+                  <TabsTrigger value="active">Active Members</TabsTrigger>
+                  {currentUserRole === "admin" && (
+                    <TabsTrigger value="pending">
+                      Pending Invitations
+                    </TabsTrigger>
+                  )}
+                </TabsList>
+                <TabsContent value="active">
+                  <Team team={team} />
+                </TabsContent>
+                {currentUserRole === "admin" && (
+                  <TabsContent value="pending">
+                    <Invitations team={team} />
+                  </TabsContent>
+                )}
+              </Tabs>
+            </CustomCard>
+
+            {isCurrentUserOwner && (
+              <CustomCard
+                header={
+                  <CardHeader className="p-0">
+                    <CardTitle className="flex items-center gap-2">
+                      Transfer Team Ownership
+                    </CardTitle>
+                    <CardDescription>
+                      You are the{" "}
+                      <span className="font-bold">current team owner.</span> You
+                      can transfer ownership to a team admin by selecting their
+                      name from the list below.
+                    </CardDescription>
+                  </CardHeader>
+                }
+              >
+                <TransferTeam adminUsers={adminUsers} team={teamSlug} />
+              </CustomCard>
             )}
 
             {currentUserRole === "admin" && (
-              <Card className="mt-4">
-                <CardContent>
-                  <DangerZoneAlert description="Permanently delete your data and everything associated with your team">
-                    <DeleteConfirmation team={team} />
-                  </DangerZoneAlert>
-                </CardContent>
-              </Card>
+              <CustomCard>
+                <DangerZoneAlert description="Permanently delete your data and everything associated with your team">
+                  <DeleteConfirmation team={team} />
+                </DangerZoneAlert>
+              </CustomCard>
             )}
           </>
         )}

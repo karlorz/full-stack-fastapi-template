@@ -38,5 +38,7 @@ test.skip("Log In with GitHub", async ({ page }) => {
 
   await page.getByRole("textbox", { name: "Authentication code" }).fill(code)
 
-  await expect(page.getByTestId("result")).toContainText("Hi, Pollo Listo")
+  await expect(page.getByTestId("dashboard-greeting")).toContainText(
+    "Hi, Pollo Listo",
+  )
 })

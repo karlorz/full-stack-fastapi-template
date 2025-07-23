@@ -129,7 +129,7 @@ function RecoverPassword() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-heading uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                  <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
                     Email
                   </FormLabel>
                   <FormControl>

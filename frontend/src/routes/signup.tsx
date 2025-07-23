@@ -164,7 +164,7 @@ function SignUp() {
               name="full_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-heading uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                  <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
                     Full Name
                   </FormLabel>
                   <FormControl>
@@ -188,7 +188,7 @@ function SignUp() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-heading uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                  <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
                     Email
                   </FormLabel>
                   <FormControl>
@@ -213,7 +213,7 @@ function SignUp() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-heading uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                  <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
                     Password
                   </FormLabel>
                   <FormControl>
@@ -238,7 +238,7 @@ function SignUp() {
               name="confirm_password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-heading uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                  <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
                     Confirm Password
                   </FormLabel>
                   <FormControl>

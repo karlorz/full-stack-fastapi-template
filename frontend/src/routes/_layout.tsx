@@ -49,58 +49,55 @@ function Layout() {
 
   return (
     <>
-      <SidebarProvider>
-        <AppSidebar teams={teams} />
-        <SidebarInset>
-          <header className="sticky top-0 flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-            <div className="md:hidden flex items-center gap-2 px-4">
-              <SidebarTrigger className="-ml-1" />
-            </div>
-            <div className="ml-auto flex items-center pr-4">
-              <Appearance />
-            </div>
-          </header>
-          <main className="flex-1 px-4 py-6 md:px-8">
-            <div className="mx-auto w-full max-w-[1200px]">
+      <div className="relative min-h-screen flex flex-col">
+        <div className="fixed inset-0 -z-10 bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
+        <SidebarProvider>
+          <AppSidebar teams={teams} />
+          <SidebarInset>
+            <header className="sticky top-0 flex h-16 shrink-0 items-center justify-between gap-2">
+              <div className="md:hidden flex items-center gap-2 px-4">
+                <SidebarTrigger className="-ml-1" />
+              </div>
+              <div className="ml-auto flex items-center pr-4">
+                <Appearance />
+              </div>
+            </header>
+            <main className="flex-1 px-2 mx-auto w-full sm:px-8 lg:px-16 2xl:px-32 py-6">
               <Outlet />
-            </div>
-          </main>
+            </main>
 
-          <footer className="w-full py-4 border-t mt-8 text-center text-xs text-muted-foreground flex flex-col items-center gap-2">
-            <div>
-              &copy; {new Date().getFullYear()} FastAPI Labs
-              {" | "}
+            <footer className="w-full text-center text-sm text-zinc-500 dark:text-zinc-400 font-body tracking-wide select-none py-6 mt-8">
+              © {new Date().getFullYear()} FastAPI Labs, Inc &middot;{" "}
               <a
                 href="https://fastapicloud.com/legal/terms"
                 target="_blank"
-                className="text-primary hover:underline"
-                rel="noreferrer"
+                className="hover:underline"
+                rel="noopener"
               >
                 Terms of Use
-              </a>
-              {" | "}
+              </a>{" "}
+              &middot;{" "}
               <a
                 href="https://fastapicloud.com/legal/privacy-policy"
                 target="_blank"
-                className="text-primary hover:underline"
-                rel="noreferrer"
+                className="hover:underline"
+                rel="noopener"
               >
                 Privacy Policy
-              </a>
-              {" | "}
+              </a>{" "}
+              &middot;{" "}
               <a
                 href="https://fastapicloud.instatus.com/"
                 target="_blank"
-                className="text-primary hover:underline"
-                rel="noreferrer"
+                className="hover:underline"
+                rel="noopener"
               >
                 Status
               </a>
-            </div>
-          </footer>
-        </SidebarInset>
-      </SidebarProvider>
-
+            </footer>
+          </SidebarInset>
+        </SidebarProvider>
+      </div>
       <TeamInvitation />
     </>
   )
