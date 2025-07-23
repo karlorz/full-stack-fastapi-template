@@ -38,8 +38,8 @@ class Route:
         operation_id: str | None = None,
         request_type: Any | None = None,
         summary: str | None = None,
-        responses: dict[int | str, dict[str, Any]] | None = None,
-        openapi_extra: dict[str, Any] | None = None,
+        openapi: dict[str, Any] | None = None,
+        openapi_schemas: dict[str, Any] | None = None,
     ):
         self.path = path
         self.methods = methods
@@ -48,15 +48,14 @@ class Route:
         self.operation_id = operation_id
         self.request_type = request_type
         self.summary = summary
-        self.openapi_extra = openapi_extra
-        self.responses = responses
+        self.openapi = openapi
+        self.openapi_schemas = openapi_schemas
 
     def to_fastapi_endpoint(self, context: Context) -> Callable[..., Any]:
+        from fastapi import Request as FastAPIRequest
         from fastapi import Response as FastAPIResponse
 
-        RequestType = _get_fastapi_request_type(self)
-
-        async def wrapper(request: RequestType) -> FastAPIResponse:
+        async def wrapper(request: FastAPIRequest) -> FastAPIResponse:
             route_request = AsyncHTTPRequest.from_fastapi(request)
 
             route_response = await self.function(route_request, context)

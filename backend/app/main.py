@@ -1,3 +1,5 @@
+from typing import Any
+
 import logfire
 import sentry_sdk
 from fastapi import FastAPI, Request
@@ -6,6 +8,7 @@ from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
 from app.api.main import api_router
+from app.api.routes.auth.router import router as auth_router
 from app.core.config import CommonSettings, MainSettings
 from app.core.db import engine
 from app.core.exceptions import OAuth2Exception
@@ -67,3 +70,22 @@ if settings.all_cors_origins:
     )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+
+original_openapi = app.openapi
+
+
+# Custom OpenAPI schema to include additional schemas from FastAPI auth
+def custom_openapi() -> dict[str, Any]:
+    if app.openapi_schema:
+        return app.openapi_schema
+
+    openapi_schema = original_openapi()
+    openapi_schema["components"]["schemas"].update(auth_router.extra_schemas)
+
+    app.openapi_schema = openapi_schema
+
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi  # type: ignore

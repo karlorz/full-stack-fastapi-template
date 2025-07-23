@@ -147,71 +147,6 @@ export const AppsPublicSchema = {
   title: "AppsPublic",
 } as const
 
-export const AuthorizationCodeGrantRequestSchema = {
-  properties: {
-    grant_type: {
-      type: "string",
-      const: "authorization_code",
-      title: "Grant Type",
-      description: "The OAuth 2.0 grant type",
-    },
-    client_id: {
-      type: "string",
-      title: "Client Id",
-      description: "The client identifier",
-    },
-    client_secret: {
-      anyOf: [
-        {
-          type: "string",
-        },
-        {
-          type: "null",
-        },
-      ],
-      title: "Client Secret",
-      description: "The client secret (for confidential clients)",
-    },
-    code: {
-      type: "string",
-      title: "Code",
-      description:
-        "The authorization code received from the authorization server",
-    },
-    redirect_uri: {
-      type: "string",
-      title: "Redirect Uri",
-      description: "The redirect URI used in the authorization request",
-    },
-    code_verifier: {
-      type: "string",
-      title: "Code Verifier",
-      description: "The PKCE code verifier",
-    },
-    scope: {
-      anyOf: [
-        {
-          type: "string",
-        },
-        {
-          type: "null",
-        },
-      ],
-      title: "Scope",
-      description: "Space-delimited list of scopes",
-    },
-  },
-  type: "object",
-  required: [
-    "grant_type",
-    "client_id",
-    "code",
-    "redirect_uri",
-    "code_verifier",
-  ],
-  title: "AuthorizationCodeGrantRequest",
-} as const
-
 export const AuthorizeDeviceInSchema = {
   properties: {
     user_code: {
@@ -1022,59 +957,6 @@ export const NewPasswordSchema = {
   title: "NewPassword",
 } as const
 
-export const PasswordGrantRequestSchema = {
-  properties: {
-    grant_type: {
-      type: "string",
-      const: "password",
-      title: "Grant Type",
-      description: "The OAuth 2.0 grant type",
-    },
-    client_id: {
-      type: "string",
-      title: "Client Id",
-      description: "The client identifier",
-    },
-    client_secret: {
-      anyOf: [
-        {
-          type: "string",
-        },
-        {
-          type: "null",
-        },
-      ],
-      title: "Client Secret",
-      description: "The client secret (for confidential clients)",
-    },
-    username: {
-      type: "string",
-      title: "Username",
-      description: "The resource owner username",
-    },
-    password: {
-      type: "string",
-      title: "Password",
-      description: "The resource owner password",
-    },
-    scope: {
-      anyOf: [
-        {
-          type: "string",
-        },
-        {
-          type: "null",
-        },
-      ],
-      title: "Scope",
-      description: "Space-delimited list of scopes",
-    },
-  },
-  type: "object",
-  required: ["grant_type", "client_id", "username", "password"],
-  title: "PasswordGrantRequest",
-} as const
-
 export const ResendEmailVerificationSchema = {
   properties: {
     email: {
@@ -1303,59 +1185,17 @@ export const TokenSchema = {
   title: "Token",
 } as const
 
-export const TokenErrorResponseSchema = {
-  properties: {
-    error: {
-      type: "string",
-      enum: [
-        "invalid_request",
-        "invalid_client",
-        "invalid_grant",
-        "unauthorized_client",
-        "unsupported_grant_type",
-        "invalid_scope",
-      ],
-      title: "Error",
-    },
-    error_description: {
-      anyOf: [
-        {
-          type: "string",
-        },
-        {
-          type: "null",
-        },
-      ],
-      title: "Error Description",
-    },
-    error_uri: {
-      anyOf: [
-        {
-          type: "string",
-        },
-        {
-          type: "null",
-        },
-      ],
-      title: "Error Uri",
-    },
-  },
-  type: "object",
-  required: ["error"],
-  title: "TokenErrorResponse",
-} as const
-
 export const TokenResponseSchema = {
   properties: {
     token_type: {
-      type: "string",
-      title: "Token Type",
       description: "The type of token, usually 'Bearer'",
+      title: "Token Type",
+      type: "string",
     },
     access_token: {
-      type: "string",
-      title: "Access Token",
       description: "The issued access token",
+      title: "Access Token",
+      type: "string",
     },
     expires_in: {
       anyOf: [
@@ -1366,8 +1206,9 @@ export const TokenResponseSchema = {
           type: "null",
         },
       ],
-      title: "Expires In",
+      default: null,
       description: "Lifetime of the access token in seconds",
+      title: "Expires In",
     },
     refresh_token: {
       anyOf: [
@@ -1378,8 +1219,9 @@ export const TokenResponseSchema = {
           type: "null",
         },
       ],
-      title: "Refresh Token",
+      default: null,
       description: "Token used to obtain new access tokens",
+      title: "Refresh Token",
     },
     refresh_token_expires_in: {
       anyOf: [
@@ -1390,8 +1232,9 @@ export const TokenResponseSchema = {
           type: "null",
         },
       ],
-      title: "Refresh Token Expires In",
+      default: null,
       description: "Lifetime of the refresh token in seconds",
+      title: "Refresh Token Expires In",
     },
     scope: {
       anyOf: [
@@ -1402,14 +1245,15 @@ export const TokenResponseSchema = {
           type: "null",
         },
       ],
-      title: "Scope",
+      default: null,
       description:
         "Space-delimited list of scopes associated with the access token",
+      title: "Scope",
     },
   },
-  type: "object",
   required: ["token_type", "access_token"],
   title: "TokenResponse",
+  type: "object",
 } as const
 
 export const TransferTeamOwnershipSchema = {
@@ -1733,4 +1577,173 @@ export const WaitingListUserCreateSchema = {
   type: "object",
   required: ["email"],
   title: "WaitingListUserCreate",
+} as const
+
+export const AuthorizationCodeGrantRequestSchema = {
+  properties: {
+    grant_type: {
+      const: "authorization_code",
+      description: "The OAuth 2.0 grant type",
+      title: "Grant Type",
+      type: "string",
+    },
+    client_id: {
+      description: "The client identifier",
+      title: "Client Id",
+      type: "string",
+    },
+    client_secret: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      default: null,
+      description: "The client secret (for confidential clients)",
+      title: "Client Secret",
+    },
+    code: {
+      description:
+        "The authorization code received from the authorization server",
+      title: "Code",
+      type: "string",
+    },
+    redirect_uri: {
+      description: "The redirect URI used in the authorization request",
+      title: "Redirect Uri",
+      type: "string",
+    },
+    code_verifier: {
+      description: "The PKCE code verifier",
+      title: "Code Verifier",
+      type: "string",
+    },
+    scope: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      default: null,
+      description: "Space-delimited list of scopes",
+      title: "Scope",
+    },
+  },
+  required: [
+    "grant_type",
+    "client_id",
+    "code",
+    "redirect_uri",
+    "code_verifier",
+  ],
+  title: "AuthorizationCodeGrantRequest",
+  type: "object",
+} as const
+
+export const PasswordGrantRequestSchema = {
+  properties: {
+    grant_type: {
+      const: "password",
+      description: "The OAuth 2.0 grant type",
+      title: "Grant Type",
+      type: "string",
+    },
+    client_id: {
+      description: "The client identifier",
+      title: "Client Id",
+      type: "string",
+    },
+    client_secret: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      default: null,
+      description: "The client secret (for confidential clients)",
+      title: "Client Secret",
+    },
+    username: {
+      description: "The resource owner username",
+      title: "Username",
+      type: "string",
+    },
+    password: {
+      description: "The resource owner password",
+      title: "Password",
+      type: "string",
+    },
+    scope: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      default: null,
+      description: "Space-delimited list of scopes",
+      title: "Scope",
+    },
+  },
+  required: ["grant_type", "client_id", "username", "password"],
+  title: "PasswordGrantRequest",
+  type: "object",
+} as const
+
+export const TokenErrorResponseSchema = {
+  properties: {
+    error: {
+      description: "Error code as per OAuth 2.0 specification",
+      enum: [
+        "invalid_request",
+        "invalid_client",
+        "invalid_grant",
+        "unauthorized_client",
+        "unsupported_grant_type",
+        "invalid_scope",
+      ],
+      title: "Error",
+      type: "string",
+    },
+    error_description: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      default: null,
+      description: "Human-readable explanation of the error",
+      title: "Error Description",
+    },
+    error_uri: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+      default: null,
+      description: "URI to a web page with more information about the error",
+      title: "Error Uri",
+    },
+  },
+  required: ["error"],
+  title: "TokenErrorResponse",
+  type: "object",
 } as const

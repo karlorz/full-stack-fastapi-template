@@ -349,6 +349,9 @@ export type Token = {
 }
 
 export type TokenErrorResponse = {
+  /**
+   * Error code as per OAuth 2.0 specification
+   */
   error:
     | "invalid_request"
     | "invalid_client"
@@ -356,10 +359,19 @@ export type TokenErrorResponse = {
     | "unauthorized_client"
     | "unsupported_grant_type"
     | "invalid_scope"
+  /**
+   * Human-readable explanation of the error
+   */
   error_description?: string | null
+  /**
+   * URI to a web page with more information about the error
+   */
   error_uri?: string | null
 }
 
+/**
+ * Error code as per OAuth 2.0 specification
+ */
 export type error =
   | "invalid_request"
   | "invalid_client"

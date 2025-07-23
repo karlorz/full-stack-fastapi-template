@@ -1,30 +1,12 @@
 from fastapi import FastAPI
-from fastapi_auth._context import AccountsStorage, SecondaryStorage
-from fastapi_auth.router import AuthRouter
 from inline_snapshot import snapshot
 
 
-def test_router(
-    secondary_storage: SecondaryStorage,
-    accounts_storage: AccountsStorage,
-):
-    router = AuthRouter(
-        providers=[],
-        secondary_storage=secondary_storage,
-        accounts_storage=accounts_storage,
-        get_user_from_request=lambda _: None,
-        create_token=lambda _: ("", 0),
-        trusted_origins=[],
-    )
-
-    app = FastAPI()
-
-    app.include_router(router)
-
-    assert app.openapi() == snapshot(
+def test_router(test_app: FastAPI):
+    assert test_app.openapi() == snapshot(
         {
             "openapi": "3.1.0",
-            "info": {"title": "FastAPI", "version": "0.1.0"},
+            "info": {"title": "FastAPI", "version": "1.0.0"},
             "paths": {
                 "/token": {
                     "post": {
@@ -34,7 +16,22 @@ def test_router(
                             "content": {
                                 "application/x-www-form-urlencoded": {
                                     "schema": {
-                                        "$ref": "#/components/schemas/Body_token"
+                                        "oneOf": [
+                                            {
+                                                "$ref": "#/components/schemas/AuthorizationCodeGrantRequest"
+                                            },
+                                            {
+                                                "$ref": "#/components/schemas/PasswordGrantRequest"
+                                            },
+                                        ],
+                                        "title": "Request",
+                                        "discriminator": {
+                                            "propertyName": "grant_type",
+                                            "mapping": {
+                                                "authorization_code": "#/components/schemas/AuthorizationCodeGrantRequest",
+                                                "password": "#/components/schemas/PasswordGrantRequest",
+                                            },
+                                        },
                                     }
                                 }
                             },
@@ -61,16 +58,6 @@ def test_router(
                                     }
                                 },
                             },
-                            "422": {
-                                "description": "Validation Error",
-                                "content": {
-                                    "application/json": {
-                                        "schema": {
-                                            "$ref": "#/components/schemas/HTTPValidationError"
-                                        }
-                                    }
-                                },
-                            },
                         },
                     }
                 }
@@ -92,6 +79,7 @@ def test_router(
                             },
                             "client_secret": {
                                 "anyOf": [{"type": "string"}, {"type": "null"}],
+                                "default": None,
                                 "title": "Client Secret",
                                 "description": "The client secret (for confidential clients)",
                             },
@@ -112,6 +100,7 @@ def test_router(
                             },
                             "scope": {
                                 "anyOf": [{"type": "string"}, {"type": "null"}],
+                                "default": None,
                                 "title": "Scope",
                                 "description": "Space-delimited list of scopes",
                             },
@@ -125,31 +114,6 @@ def test_router(
                             "code_verifier",
                         ],
                         "title": "AuthorizationCodeGrantRequest",
-                    },
-                    "Body_token": {
-                        "properties": {
-                            "request": {
-                                "oneOf": [
-                                    {
-                                        "$ref": "#/components/schemas/AuthorizationCodeGrantRequest"
-                                    },
-                                    {
-                                        "$ref": "#/components/schemas/PasswordGrantRequest"
-                                    },
-                                ],
-                                "title": "Request",
-                                "discriminator": {
-                                    "propertyName": "grant_type",
-                                    "mapping": {
-                                        "authorization_code": "#/components/schemas/AuthorizationCodeGrantRequest",
-                                        "password": "#/components/schemas/PasswordGrantRequest",
-                                    },
-                                },
-                            }
-                        },
-                        "type": "object",
-                        "required": ["request"],
-                        "title": "Body_token",
                     },
                     "HTTPValidationError": {
                         "properties": {
@@ -179,6 +143,7 @@ def test_router(
                             },
                             "client_secret": {
                                 "anyOf": [{"type": "string"}, {"type": "null"}],
+                                "default": None,
                                 "title": "Client Secret",
                                 "description": "The client secret (for confidential clients)",
                             },
@@ -194,6 +159,7 @@ def test_router(
                             },
                             "scope": {
                                 "anyOf": [{"type": "string"}, {"type": "null"}],
+                                "default": None,
                                 "title": "Scope",
                                 "description": "Space-delimited list of scopes",
                             },
@@ -201,33 +167,6 @@ def test_router(
                         "type": "object",
                         "required": ["grant_type", "client_id", "username", "password"],
                         "title": "PasswordGrantRequest",
-                    },
-                    "TokenErrorResponse": {
-                        "properties": {
-                            "error": {
-                                "type": "string",
-                                "enum": [
-                                    "invalid_request",
-                                    "invalid_client",
-                                    "invalid_grant",
-                                    "unauthorized_client",
-                                    "unsupported_grant_type",
-                                    "invalid_scope",
-                                ],
-                                "title": "Error",
-                            },
-                            "error_description": {
-                                "anyOf": [{"type": "string"}, {"type": "null"}],
-                                "title": "Error Description",
-                            },
-                            "error_uri": {
-                                "anyOf": [{"type": "string"}, {"type": "null"}],
-                                "title": "Error Uri",
-                            },
-                        },
-                        "type": "object",
-                        "required": ["error"],
-                        "title": "TokenErrorResponse",
                     },
                     "TokenResponse": {
                         "properties": {
@@ -243,21 +182,25 @@ def test_router(
                             },
                             "expires_in": {
                                 "anyOf": [{"type": "integer"}, {"type": "null"}],
+                                "default": None,
                                 "title": "Expires In",
                                 "description": "Lifetime of the access token in seconds",
                             },
                             "refresh_token": {
                                 "anyOf": [{"type": "string"}, {"type": "null"}],
+                                "default": None,
                                 "title": "Refresh Token",
                                 "description": "Token used to obtain new access tokens",
                             },
                             "refresh_token_expires_in": {
                                 "anyOf": [{"type": "integer"}, {"type": "null"}],
+                                "default": None,
                                 "title": "Refresh Token Expires In",
                                 "description": "Lifetime of the refresh token in seconds",
                             },
                             "scope": {
                                 "anyOf": [{"type": "string"}, {"type": "null"}],
+                                "default": None,
                                 "title": "Scope",
                                 "description": "Space-delimited list of scopes associated with the access token",
                             },
@@ -266,21 +209,37 @@ def test_router(
                         "required": ["token_type", "access_token"],
                         "title": "TokenResponse",
                     },
-                    "ValidationError": {
+                    "TokenErrorResponse": {
                         "properties": {
-                            "loc": {
-                                "items": {
-                                    "anyOf": [{"type": "string"}, {"type": "integer"}]
-                                },
-                                "type": "array",
-                                "title": "Location",
+                            "error": {
+                                "description": "Error code as per OAuth 2.0 specification",
+                                "type": "string",
+                                "enum": [
+                                    "invalid_request",
+                                    "invalid_client",
+                                    "invalid_grant",
+                                    "unauthorized_client",
+                                    "unsupported_grant_type",
+                                    "invalid_scope",
+                                ],
+                                "title": "Error",
                             },
-                            "msg": {"type": "string", "title": "Message"},
-                            "type": {"type": "string", "title": "Error Type"},
+                            "error_description": {
+                                "anyOf": [{"type": "string"}, {"type": "null"}],
+                                "default": None,
+                                "description": "Human-readable explanation of the error",
+                                "title": "Error Description",
+                            },
+                            "error_uri": {
+                                "anyOf": [{"type": "string"}, {"type": "null"}],
+                                "default": None,
+                                "description": "URI to a web page with more information about the error",
+                                "title": "Error Uri",
+                            },
                         },
                         "type": "object",
-                        "required": ["loc", "msg", "type"],
-                        "title": "ValidationError",
+                        "required": ["error"],
+                        "title": "TokenErrorResponse",
                     },
                 }
             },

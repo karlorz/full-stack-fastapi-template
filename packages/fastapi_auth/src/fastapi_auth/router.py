@@ -1,6 +1,7 @@
 import logging
 from collections.abc import Callable
 from itertools import chain
+from typing import Any
 
 from duck import AsyncHTTPRequest
 from fastapi import APIRouter
@@ -13,6 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 class AuthRouter(APIRouter):
+    extra_schemas: dict[str, Any]
+
     def __init__(
         self,
         providers: list[OAuth2Provider],
@@ -25,6 +28,7 @@ class AuthRouter(APIRouter):
         super().__init__()
 
         self.issuer = Issuer()
+        self.extra_schemas = {}
 
         self._secondary_storage = secondary_storage
         self._accounts_storage = accounts_storage
@@ -52,7 +56,9 @@ class AuthRouter(APIRouter):
                 methods=route.methods,
                 response_model=route.response_model,
                 operation_id=route.operation_id,
-                openapi_extra=route.openapi_extra,
-                responses=route.responses,
+                openapi_extra=route.openapi,
                 summary=route.summary,
             )
+
+            if route.openapi_schemas:
+                self.extra_schemas.update(route.openapi_schemas)

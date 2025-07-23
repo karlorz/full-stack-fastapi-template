@@ -429,7 +429,6 @@ export class AuthService {
       mediaType: "application/x-www-form-urlencoded",
       errors: {
         400: "Bad request - invalid parameters or grant",
-        422: "Validation Error",
       },
     })
   }

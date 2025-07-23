@@ -1,6 +1,5 @@
-import json
 from datetime import datetime, timezone
-from typing import Annotated, Literal, Required, TypedDict
+from typing import Annotated, Literal
 
 from duck import AsyncHTTPRequest, Response
 from passlib.context import CryptContext
@@ -64,15 +63,16 @@ TokenErrorType = Literal[
 ]
 
 
-class TokenErrorResponse(TypedDict, total=False):
-    error: Required[TokenErrorType] = Field(
+class TokenErrorResponse(BaseModel):
+    error: TokenErrorType = Field(
         description="Error code as per OAuth 2.0 specification"
     )
     error_description: str | None = Field(
-        None, description="Human-readable explanation of the error"
+        default=None, description="Human-readable explanation of the error"
     )
     error_uri: str | None = Field(
-        None, description="URI to a web page with more information about the error"
+        default=None,
+        description="URI to a web page with more information about the error",
     )
 
 
@@ -98,17 +98,17 @@ class Issuer:
         error_description: str | None = None,
         error_uri: str | None = None,
     ) -> Response:
-        body: TokenErrorResponse = {"error": error}
+        body = TokenErrorResponse(error=error)
 
         if error_description:
-            body["error_description"] = error_description
+            body.error_description = error_description
 
         if error_uri:
-            body["error_uri"] = error_uri
+            body.error_uri = error_uri
 
         return Response(
             status_code=400,
-            body=json.dumps(body),
+            body=body.model_dump_json(exclude_none=True),
             headers={"Content-Type": "application/json"},
         )
 
@@ -281,15 +281,73 @@ class Issuer:
                 operation_id="token",
                 request_type=TokenRequest,
                 summary="OAuth 2.0 token endpoint",
-                responses={
-                    "200": {
-                        "description": "Successful token response",
-                        "model": TokenResponse,
+                openapi={
+                    "requestBody": {
+                        "content": {
+                            "application/x-www-form-urlencoded": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/AuthorizationCodeGrantRequest"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/PasswordGrantRequest"
+                                        },
+                                    ],
+                                    "title": "Request",
+                                    "discriminator": {
+                                        "propertyName": "grant_type",
+                                        "mapping": {
+                                            "authorization_code": "#/components/schemas/AuthorizationCodeGrantRequest",
+                                            "password": "#/components/schemas/PasswordGrantRequest",
+                                        },
+                                    },
+                                }
+                            }
+                        },
+                        "required": True,
                     },
-                    "400": {
-                        "description": "Bad request - invalid parameters or grant",
-                        "model": TokenErrorResponse,
+                    "responses": {
+                        "200": {
+                            "description": "Successful token response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/TokenResponse"
+                                    }
+                                }
+                            },
+                        },
+                        "400": {
+                            "description": "Bad request - invalid parameters or grant",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/TokenErrorResponse"
+                                    }
+                                }
+                            },
+                        },
                     },
+                },
+                openapi_schemas={
+                    "AuthorizationCodeGrantRequest": AuthorizationCodeGrantRequest.model_json_schema(),
+                    "HTTPValidationError": {
+                        "properties": {
+                            "detail": {
+                                "items": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                },
+                                "type": "array",
+                                "title": "Detail",
+                            }
+                        },
+                        "type": "object",
+                        "title": "HTTPValidationError",
+                    },
+                    "PasswordGrantRequest": PasswordGrantRequest.model_json_schema(),
+                    "TokenErrorResponse": TokenErrorResponse.model_json_schema(),
+                    "TokenResponse": TokenResponse.model_json_schema(),
                 },
             ),
         ]
