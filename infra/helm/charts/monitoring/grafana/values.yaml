@@ -1,0 +1,118 @@
+grafana:
+  fullnameOverride: grafana
+
+  # temporary
+  adminUser: admin
+  adminPassword: thisisthereasonwhyIhateHelm
+
+  # Persistence for dashboards and settings
+  persistence:
+    enabled: true
+    size: 5Gi
+    accessModes:
+      - ReadWriteOnce
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 256Mi
+
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        # Prometheus/Mimir datasource
+        - name: Prometheus
+          type: prometheus
+          uid: prometheus
+          url: http://mimir-gateway.monitoring.svc.cluster.local/prometheus
+          access: proxy
+          isDefault: true
+          jsonData:
+            prometheusType: Mimir
+            prometheusVersion: "2.9.1"
+            cacheLevel: 'High'
+            incrementalQuerying: true
+            queryTimeout: 300s
+          editable: false
+
+  # Sidecar configuration for loading dashboards and datasources
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: ALL
+      folderAnnotation: grafana_folder
+      provider:
+        allowUiUpdates: true
+        disableDelete: false
+        foldersFromFilesStructure: true
+    datasources:
+      enabled: true
+      label: grafana_datasource
+      labelValue: "1"
+      searchNamespace: ALL
+
+  grafana.ini:
+    # disable stalking
+    analytics:
+      check_for_updates: false
+      check_for_plugin_updates: false
+      reporting_enabled: false
+
+    auth:
+      disable_login_form: true
+
+    # Google Oauth2
+    auth.google:
+      enabled: true
+      allow_sign_up: true
+      auto_login: false
+      client_id: $__file{/etc/secrets/auth_google_oauth/clientID}
+      client_secret: $__file{/etc/secrets/auth_google_oauth/clientSecret}
+      scopes: openid email profile
+      auth_url: https://accounts.google.com/o/oauth2/v2/auth
+      token_url: https://oauth2.googleapis.com/token
+      api_url: https://openidconnect.googleapis.com/v1/userinfo
+      allowed_domains: fastapilabs.com
+      hosted_domain: fastapilabs.com
+      use_pkce: true
+      role_attribute_path: contains(email, '@fastapilabs.com') && 'GrafanaAdmin' # give everyone GrafanaAdmin for now
+      skip_org_role_sync: false
+      allow_assign_grafana_admin: true  # needed to allow assigning GrafanaAdmin role
+
+  # Ingress configuration (optional)
+  ingress:
+    enabled: true
+    ingressClassName: alb
+
+    annotations:
+      # ALB stuff
+      alb.ingress.kubernetes.io/scheme: "internet-facing"
+      alb.ingress.kubernetes.io/target-type: "ip"
+      alb.ingress.kubernetes.io/healthcheck-path: "/healthz"
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}, {"HTTPS":443}]'
+      alb.ingress.kubernetes.io/ssl-redirect: "443"
+      alb.ingress.kubernetes.io/tags: "Application=Grafana"
+      # Google Oauth2
+      alb.ingress.kubernetes.io/auth-idp-oidc: |
+        {"issuer": "https://accounts.google.com", "authorizationEndpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+        "tokenEndpoint": "https://oauth2.googleapis.com/token",
+        "userInfoEndpoint": "https://openidconnect.googleapis.com/v1/userinfo", "secretName": "grafana-alb-oauth-secret"}
+      alb.ingress.kubernetes.io/auth-on-unauthenticated-request: authenticate
+      alb.ingress.kubernetes.io/auth-session-cookie: AWSELBAuthSessionCookie
+      alb.ingress.kubernetes.io/auth-session-timeout: "86400"
+      alb.ingress.kubernetes.io/auth-type: oidc
+
+  extraSecretMounts:
+    - name: grafana-oauth-secret
+      secretName: grafana-alb-oauth-secret
+      defaultMode: 0440
+      mountPath: /etc/secrets/auth_google_oauth
+      readOnly: true
+
+  initChownData:
+    enabled: false

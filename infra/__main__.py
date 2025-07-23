@@ -79,6 +79,10 @@ argocd_config = pulumi.Config("argocd")
 ARGOCD_GOOGLE_CLIENT_ID = argocd_config.require_secret("google_client_id")
 ARGOCD_GOOGLE_CLIENT_SECRET = argocd_config.require_secret("google_client_secret")
 
+# Grafana OAuth configuration
+GRAFANA_GOOGLE_CLIENT_ID = cfg.require_secret("grafana_google_client_id")
+GRAFANA_GOOGLE_CLIENT_SECRET = cfg.require_secret("grafana_google_client_secret")
+
 ### AWS Resources ###
 
 # Role generated automatically by AWS from permission set from AWS IAM Identity Center
@@ -765,6 +769,26 @@ for k, secret in fastapicloud_secrets.items():
     aws.ssm.Parameter(
         k.lower(), name=k, type=aws.ssm.ParameterType.SECURE_STRING, value=secret
     )
+
+# Grafana ALB OAuth Secret
+k8s.core.v1.Secret(
+    "grafana-alb-oauth-secret",
+    metadata=k8s.meta.v1.ObjectMetaArgs(
+        name="grafana-alb-oauth-secret",
+        namespace="monitoring",
+        labels={
+            "app.kubernetes.io/name": "grafana",
+            "app.kubernetes.io/component": "grafana",
+        } | k8s_labels,
+    ),
+    string_data={
+        "clientID": GRAFANA_GOOGLE_CLIENT_ID,
+        "clientSecret": GRAFANA_GOOGLE_CLIENT_SECRET,
+    },
+    opts=pulumi.ResourceOptions(
+        provider=k8s_provider, depends_on=[ns_map["monitoring"]["resource"]]
+    ),
+)
 
 # Export values to use elsewhere
 # pulumi.export("kubeconfig_data", eks_cluster.kubeconfig)

@@ -1,0 +1,9 @@
+grafana:
+
+  grafana.ini:
+    server:
+      root_url: https://grafana.staging.madinfra.wtf/
+
+  ingress:
+    hosts:
+      - grafana.staging.madinfra.wtf
