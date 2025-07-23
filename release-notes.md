@@ -451,6 +451,7 @@
 
 ### Infrastructure
 
+* ✨ Add grafana. PR [#1130](https://github.com/fastapilabs/cloud/pull/1130) by [@malvex](https://github.com/malvex).
 * 🐛 Add missing AWS SSM permissions for external-secrets. PR [#1119](https://github.com/fastapilabs/cloud/pull/1119) by [@siryur](https://github.com/siryur).
 * ✨ Add Grafana mimir. PR [#1075](https://github.com/fastapilabs/cloud/pull/1075) by [@malvex](https://github.com/malvex).
 * ✨ Add k8s-monitoring Helm chart for cluster observability. PR [#1080](https://github.com/fastapilabs/cloud/pull/1080) by [@malvex](https://github.com/malvex).
