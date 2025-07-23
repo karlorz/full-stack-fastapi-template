@@ -317,46 +317,6 @@ class ArgoCDComponent(pulumi.ComponentResource):
             ),
         )
 
-    def _build_repository_config(self) -> Dict[str, Any]:
-        """Build repository configuration for ArgoCD"""
-        repositories = {}
-
-        if not self.config.repositories:
-            return repositories
-
-        for repo in self.config.repositories:
-            repo_config = {
-                "url": repo.url,
-            }
-
-            if repo.type == "helm":
-                repo_config["type"] = "helm"
-                if repo.enable_oci:
-                    repo_config["enableOCI"] = "true"
-                if repo.username:
-                    repo_config["username"] = repo.username
-                if repo.password:
-                    # Inject password directly into repository config
-                    # repo_config["password"] = repo.password
-                    repo_config["password"] = f"$argocd-repo-{repo.name}-creds:password"
-
-            elif repo.type == "git":
-                if repo.ssh_private_key:
-                    # Inject SSH key directly into repository config
-                    # repo_config["sshPrivateKey"] = repo.ssh_private_key
-                    repo_config["sshPrivateKey"] = f"$argocd-repo-{repo.name}-ssh:sshPrivateKey"
-                elif repo.username and repo.password:
-                    repo_config["username"] = repo.username
-                    # repo_config["password"] = repo.password
-                    repo_config["password"] = f"$argocd-repo-{repo.name}-creds:password"
-
-            if repo.insecure:
-                repo_config["insecure"] = True
-
-            repositories[repo.name] = repo_config
-
-        return repositories
-
     def _build_helm_values(self) -> Dict[str, Any]:
         """Build Helm values for ArgoCD deployment"""
         # Build the inner ArgoCD chart values
@@ -368,7 +328,6 @@ class ArgoCDComponent(pulumi.ComponentResource):
                 "params": {
                     "server.insecure": True,  # Required for ALB TLS termination
                 },
-                "repositories": self._build_repository_config(),
             },
             "server": {
                 "service": {
