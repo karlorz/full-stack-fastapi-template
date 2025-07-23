@@ -52,19 +52,19 @@ class UserBase(SQLModel):
 
 # Properties to receive via API on creation
 class UserCreate(UserBase):
-    password: str = Field(min_length=8, max_length=40)
+    password: str = Field(min_length=8)
 
 
 class UserRegister(SQLModel):
     email: EmailStr = Field(max_length=255)
-    password: str = Field(min_length=8, max_length=40)
+    password: str = Field(min_length=8)
     full_name: str = Field(max_length=255, min_length=3)
 
 
 # Properties to receive via API on update, all are optional
 class UserUpdate(UserBase):
     email: EmailStr | None = Field(default=None, max_length=255)  # type: ignore
-    password: str | None = Field(default=None, min_length=8, max_length=40)
+    password: str | None = Field(default=None, min_length=8)
     full_name: str | None = Field(default=None, max_length=255, min_length=3)  # type: ignore
 
 
@@ -77,8 +77,8 @@ class UserUpdateMe(SQLModel):
 
 
 class UpdatePassword(SQLModel):
-    current_password: str = Field(min_length=8, max_length=40)
-    new_password: str = Field(min_length=8, max_length=40)
+    current_password: str = Field(min_length=8)
+    new_password: str = Field(min_length=8)
 
 
 # Database model, database table inferred from class name
@@ -165,7 +165,7 @@ class TokenPayload(SQLModel):
 
 class NewPassword(SQLModel):
     token: str
-    new_password: str = Field(min_length=8, max_length=40)
+    new_password: str = Field(min_length=8)
 
 
 class EmailVerificationToken(SQLModel):

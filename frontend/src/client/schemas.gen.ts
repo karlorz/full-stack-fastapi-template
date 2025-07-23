@@ -1013,7 +1013,6 @@ export const NewPasswordSchema = {
     },
     new_password: {
       type: "string",
-      maxLength: 40,
       minLength: 8,
       title: "New Password",
     },
@@ -1430,13 +1429,11 @@ export const UpdatePasswordSchema = {
   properties: {
     current_password: {
       type: "string",
-      maxLength: 40,
       minLength: 8,
       title: "Current Password",
     },
     new_password: {
       type: "string",
-      maxLength: 40,
       minLength: 8,
       title: "New Password",
     },
@@ -1550,7 +1547,6 @@ export const UserRegisterSchema = {
     },
     password: {
       type: "string",
-      maxLength: 40,
       minLength: 8,
       title: "Password",
     },
