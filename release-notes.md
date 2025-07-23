@@ -210,6 +210,7 @@
 
 ### Refactors
 
+* ♻️ Refactor how we generate OpenAPI for FastAPI auth. PR [#1117](https://github.com/fastapilabs/cloud/pull/1117) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor layout. PR [#1121](https://github.com/fastapilabs/cloud/pull/1121) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Simplify password field constraints by removing max_length. PR [#1141](https://github.com/fastapilabs/cloud/pull/1141) by [@alejsdev](https://github.com/alejsdev).
 * 💄 Enhance auth pages. PR [#1118](https://github.com/fastapilabs/cloud/pull/1118) by [@alejsdev](https://github.com/alejsdev).
