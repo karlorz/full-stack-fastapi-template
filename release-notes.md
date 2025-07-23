@@ -210,6 +210,7 @@
 
 ### Refactors
 
+* ♻️ Simplify password field constraints by removing max_length. PR [#1141](https://github.com/fastapilabs/cloud/pull/1141) by [@alejsdev](https://github.com/alejsdev).
 * 💄 Enhance auth pages. PR [#1118](https://github.com/fastapilabs/cloud/pull/1118) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor how we handle images in ECR. PR [#1044](https://github.com/fastapilabs/cloud/pull/1044) by [@patrick91](https://github.com/patrick91).
 * ♻️ Add function to get an app namespace. PR [#1043](https://github.com/fastapilabs/cloud/pull/1043) by [@patrick91](https://github.com/patrick91).
