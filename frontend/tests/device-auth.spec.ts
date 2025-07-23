@@ -4,9 +4,7 @@ import { requestDeviceCode } from "./utils/device"
 test("Error when code is wrong", async ({ page }) => {
   await page.goto("/device?code=12-34-56")
 
-  await expect(
-    page.getByRole("heading", { name: "Invalid code" }),
-  ).toBeVisible()
+  await expect(page.getByText("Invalid Code")).toBeVisible()
 })
 
 test("Has IP information", async ({ page, request }) => {
@@ -24,7 +22,7 @@ test("Success when code is correct", async ({ page, request }) => {
 
   await page.goto(`/device?code=${code}`)
   await expect(
-    page.getByRole("heading", { name: "Authorize FastAPI CLI" }),
+    page.getByText("Authorize FastAPI CLI", { exact: true }).first(),
   ).toBeVisible()
 
   await page.getByRole("button", { name: "Authorize" }).click()

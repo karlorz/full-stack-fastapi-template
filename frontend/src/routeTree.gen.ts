@@ -16,11 +16,11 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as DeviceRouteImport } from './routes/device'
 import { Route as CallbackRouteImport } from './routes/callback'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
-import { Route as LayoutDeviceRouteImport } from './routes/_layout/device'
 import { Route as LayoutTeamSlugIndexRouteImport } from './routes/_layout/$teamSlug/index'
 import { Route as LayoutTeamsNewRouteImport } from './routes/_layout/teams/new'
 import { Route as LayoutTeamsAllRouteImport } from './routes/_layout/teams/all'
@@ -65,6 +65,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DeviceRoute = DeviceRouteImport.update({
+  id: '/device',
+  path: '/device',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CallbackRoute = CallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
@@ -82,11 +87,6 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
 const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutDeviceRoute = LayoutDeviceRouteImport.update({
-  id: '/device',
-  path: '/device',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutTeamSlugIndexRoute = LayoutTeamSlugIndexRouteImport.update({
@@ -134,6 +134,7 @@ const LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute =
 
 export interface FileRoutesByFullPath {
   '/callback': typeof CallbackRoute
+  '/device': typeof DeviceRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -141,7 +142,6 @@ export interface FileRoutesByFullPath {
   '/team-invitation': typeof TeamInvitationRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-update-email': typeof VerifyUpdateEmailRoute
-  '/device': typeof LayoutDeviceRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
   '/$teamSlug/new-app': typeof LayoutTeamSlugNewAppRoute
@@ -155,6 +155,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/callback': typeof CallbackRoute
+  '/device': typeof DeviceRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -162,7 +163,6 @@ export interface FileRoutesByTo {
   '/team-invitation': typeof TeamInvitationRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-update-email': typeof VerifyUpdateEmailRoute
-  '/device': typeof LayoutDeviceRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
   '/$teamSlug/new-app': typeof LayoutTeamSlugNewAppRoute
@@ -178,6 +178,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
   '/callback': typeof CallbackRoute
+  '/device': typeof DeviceRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -185,7 +186,6 @@ export interface FileRoutesById {
   '/team-invitation': typeof TeamInvitationRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-update-email': typeof VerifyUpdateEmailRoute
-  '/_layout/device': typeof LayoutDeviceRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/$teamSlug/new-app': typeof LayoutTeamSlugNewAppRoute
@@ -201,6 +201,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/callback'
+    | '/device'
     | '/login'
     | '/recover-password'
     | '/reset-password'
@@ -208,7 +209,6 @@ export interface FileRouteTypes {
     | '/team-invitation'
     | '/verify-email'
     | '/verify-update-email'
-    | '/device'
     | '/settings'
     | '/'
     | '/$teamSlug/new-app'
@@ -222,6 +222,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/callback'
+    | '/device'
     | '/login'
     | '/recover-password'
     | '/reset-password'
@@ -229,7 +230,6 @@ export interface FileRouteTypes {
     | '/team-invitation'
     | '/verify-email'
     | '/verify-update-email'
-    | '/device'
     | '/settings'
     | '/'
     | '/$teamSlug/new-app'
@@ -244,6 +244,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_layout'
     | '/callback'
+    | '/device'
     | '/login'
     | '/recover-password'
     | '/reset-password'
@@ -251,7 +252,6 @@ export interface FileRouteTypes {
     | '/team-invitation'
     | '/verify-email'
     | '/verify-update-email'
-    | '/_layout/device'
     | '/_layout/settings'
     | '/_layout/'
     | '/_layout/$teamSlug/new-app'
@@ -267,6 +267,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
   CallbackRoute: typeof CallbackRoute
+  DeviceRoute: typeof DeviceRoute
   LoginRoute: typeof LoginRoute
   RecoverPasswordRoute: typeof RecoverPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -327,6 +328,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/device': {
+      id: '/device'
+      path: '/device'
+      fullPath: '/device'
+      preLoaderRoute: typeof DeviceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/callback': {
       id: '/callback'
       path: '/callback'
@@ -353,13 +361,6 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof LayoutSettingsRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/device': {
-      id: '/_layout/device'
-      path: '/device'
-      fullPath: '/device'
-      preLoaderRoute: typeof LayoutDeviceRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/$teamSlug/': {
@@ -422,7 +423,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface LayoutRouteChildren {
-  LayoutDeviceRoute: typeof LayoutDeviceRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutTeamSlugNewAppRoute: typeof LayoutTeamSlugNewAppRoute
@@ -436,7 +436,6 @@ interface LayoutRouteChildren {
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
-  LayoutDeviceRoute: LayoutDeviceRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutTeamSlugNewAppRoute: LayoutTeamSlugNewAppRoute,
@@ -456,6 +455,7 @@ const LayoutRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
   CallbackRoute: CallbackRoute,
+  DeviceRoute: DeviceRoute,
   LoginRoute: LoginRoute,
   RecoverPasswordRoute: RecoverPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
