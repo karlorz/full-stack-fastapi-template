@@ -210,6 +210,7 @@
 
 ### Refactors
 
+* 💄 Minor tweaks. PR [#1144](https://github.com/fastapilabs/cloud/pull/1144) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update device authorization styling. PR [#1129](https://github.com/fastapilabs/cloud/pull/1129) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor how we generate OpenAPI for FastAPI auth. PR [#1117](https://github.com/fastapilabs/cloud/pull/1117) by [@patrick91](https://github.com/patrick91).
 * ♻️ Refactor layout. PR [#1121](https://github.com/fastapilabs/cloud/pull/1121) by [@alejsdev](https://github.com/alejsdev).
