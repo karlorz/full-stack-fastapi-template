@@ -82,7 +82,7 @@ const PendingUserInformation = () => (
 
     {/* Danger Zone */}
     <CustomCard>
-      <DangerZoneAlert description="Permanently delete your data and everything associated with your account">
+      <DangerZoneAlert description="Permanently delete your data and everything associated with your account.">
         <Skeleton className="h-10 w-32" />
       </DangerZoneAlert>
     </CustomCard>

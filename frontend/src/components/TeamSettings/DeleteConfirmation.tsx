@@ -1,12 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import { AlertTriangle } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { type TeamPublic, TeamsService } from "@/client"
-import { Alert, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -29,6 +27,7 @@ import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
+import { DestructiveAlert } from "../Common/DestructiveAlert"
 
 const formSchema = (teamSlug: string) =>
   z.object({
@@ -93,10 +92,7 @@ const DeleteConfirmation = ({ team }: { team: TeamPublic }) => {
               <DialogTitle>Delete Team</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Warning: This action cannot be undone.</AlertTitle>
-              </Alert>
+              <DestructiveAlert />
               <DialogDescription>
                 {/* TODO: Update this text when the other features are completed*/}
                 This team will be{" "}

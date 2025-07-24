@@ -283,7 +283,7 @@ const UserInformationContent = () => {
         </CustomCard>
 
         <CustomCard>
-          <DangerZoneAlert description="Permanently delete your data and everything associated with your account">
+          <DangerZoneAlert description="Permanently delete your data and everything associated with your account.">
             <DeleteConfirmation />
           </DangerZoneAlert>
         </CustomCard>

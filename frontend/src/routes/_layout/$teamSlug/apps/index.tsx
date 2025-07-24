@@ -101,7 +101,7 @@ function Apps() {
         </RouterLink>
       }
     >
-      <div className="grid gap-8 [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">
+      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
         {appsData.data.map((app) => (
           <RouterLink to={app.slug} key={app.id} className="block">
             <CustomCard

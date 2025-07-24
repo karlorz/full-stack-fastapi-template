@@ -204,7 +204,7 @@ const TeamInformation = ({ teamSlug }: { teamSlug: string }) => {
 
             {currentUserRole === "admin" && (
               <CustomCard>
-                <DangerZoneAlert description="Permanently delete your data and everything associated with your team">
+                <DangerZoneAlert description="Permanently delete your data and everything associated with your team.">
                   <DeleteConfirmation team={team} />
                 </DangerZoneAlert>
               </CustomCard>

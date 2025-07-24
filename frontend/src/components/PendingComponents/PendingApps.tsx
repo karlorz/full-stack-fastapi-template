@@ -9,7 +9,7 @@ const PendingApps = () => {
       description="View and manage all your applications."
       action={<Skeleton className="h-10 w-[120px]" />}
     >
-      <div className="grid gap-8 [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">
+      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
         {[...Array(3)].map((_, index) => (
           <CustomCard
             key={index}

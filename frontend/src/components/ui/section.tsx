@@ -16,7 +16,9 @@ export function Section({
   className = "",
 }: SectionProps) {
   return (
-    <section className={`w-full px-2 sm:px-6 md:px-8 xl:px-12 ${className}`}>
+    <section
+      className={`w-full max-w-screen-xl 2xl:max-w-[66vw] px-2 sm:px-6 md:px-8 xl:px-12 ${className} mx-auto`}
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between w-full mb-4 sm:mb-6">
         <div>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight leading-tight">

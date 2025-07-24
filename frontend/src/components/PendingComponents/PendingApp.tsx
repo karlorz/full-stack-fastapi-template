@@ -64,7 +64,7 @@ const PendingApp = () => {
 
               <Separator />
 
-              <DangerZoneAlert description="Permanently delete your data and everything associated with your account">
+              <DangerZoneAlert description="Permanently delete your data and everything associated with your app.">
                 <Skeleton className="h-10 w-32" />
               </DangerZoneAlert>
             </div>

@@ -127,7 +127,7 @@ function AppDetail() {
 
               <Separator />
 
-              <DangerZoneAlert description="Permanently delete your data and everything associated with your team">
+              <DangerZoneAlert description="Permanently delete your data and everything associated with your app.">
                 <DeleteConfirmation appId={app.id} appSlug={appSlug} />
               </DangerZoneAlert>
             </div>

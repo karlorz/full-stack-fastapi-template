@@ -1,12 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import { AlertTriangle } from "lucide-react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
 import { AppsService } from "@/client"
-import { Alert, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -28,6 +26,7 @@ import {
 import { Input } from "@/components/ui/input"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
+import { DestructiveAlert } from "../Common/DestructiveAlert"
 import { LoadingButton } from "../ui/loading-button"
 
 interface DeleteProps {
@@ -96,10 +95,7 @@ const DeleteConfirmation = ({ appId, appSlug }: DeleteProps) => {
               <DialogTitle>Delete App</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Warning: This action cannot be undone.</AlertTitle>
-              </Alert>
+              <DestructiveAlert />
               <DialogDescription>
                 {/* TODO: Update this text when the other features are completed*/}
                 Type <span className="font-bold">delete app {appSlug}</span>{" "}

@@ -1,12 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link as RouterLink } from "@tanstack/react-router"
-import { AlertTriangle } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { TeamsService, UsersService } from "@/client"
-import { Alert, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -29,6 +27,7 @@ import { Input } from "@/components/ui/input"
 import useAuth from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
+import { DestructiveAlert } from "../Common/DestructiveAlert"
 import { LoadingButton } from "../ui/loading-button"
 
 const formSchema = z.object({
@@ -99,10 +98,7 @@ const DeleteConfirmation = () => {
               <DialogTitle>Delete Account</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Warning: This action cannot be undone.</AlertTitle>
-              </Alert>
+              <DestructiveAlert />
               <DialogDescription>
                 You must remove or transfer ownership of your teams before
                 deleting your account. Please visit the{" "}
@@ -137,12 +133,7 @@ const DeleteConfirmation = () => {
                 <DialogTitle>Delete Account</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-4">
-                <Alert variant="destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle>
-                    Warning: This action cannot be undone.
-                  </AlertTitle>
-                </Alert>
+                <DestructiveAlert />
                 <DialogDescription>
                   {/* TODO: Update this text when the other features are completed*/}
                   All your account data will be{" "}
