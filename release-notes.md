@@ -453,6 +453,7 @@
 
 ### Infrastructure
 
+* ✨ Add DNS record for Grafana dev environment. PR [#1131](https://github.com/fastapilabs/cloud/pull/1131) by [@malvex](https://github.com/malvex).
 * 🚀 Configure high availability for Knative components. PR [#1133](https://github.com/fastapilabs/cloud/pull/1133) by [@malvex](https://github.com/malvex).
 * 🐛 Fix ArgoCD webhook diff for Knative apps. PR [#1134](https://github.com/fastapilabs/cloud/pull/1134) by [@malvex](https://github.com/malvex).
 * 🔥 Remove repository config from ArgoCD Helm values. PR [#1132](https://github.com/fastapilabs/cloud/pull/1132) by [@malvex](https://github.com/malvex).
