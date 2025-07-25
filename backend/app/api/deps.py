@@ -121,8 +121,21 @@ def rate_limit_20_per_minute(request: Request, redis: RedisDep) -> None:
 def posthog_client() -> Generator[Posthog, None, None]:
     settings = MainSettings.get_settings()
 
-    client = Posthog(settings.POSTHOG_API_KEY, settings.POSTHOG_HOST)  # type: ignore
-    client.disabled = not settings.posthog_enabled
+    assert settings.POSTHOG_API_KEY
+
+    client = Posthog(
+        settings.POSTHOG_API_KEY,
+        settings.POSTHOG_HOST,
+        disabled=not settings.posthog_enabled,
+        # Explicitly disable the send parameter when PostHog is disabled to prevent
+        # background thread creation. Even when PostHog is disabled via the 'disabled'
+        # parameter, the client still spawns worker threads to handle event processing.
+        # Since we're not actually sending events during testing, these threads serve
+        # no purpose and can cause test jobs to hang indefinitely when they get stuck
+        # waiting for work. By setting send=False, we prevent thread creation entirely,
+        # ensuring clean test execution and avoiding hanging test suites.
+        send=settings.posthog_enabled,
+    )
 
     yield client
 
