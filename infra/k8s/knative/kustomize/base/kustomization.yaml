@@ -29,3 +29,9 @@ patches:
     kind: ConfigMap
     name: config-features
     namespace: knative-serving
+- path: patch-knative-ha-replicas.yaml
+- path: patch-knative-hpa.yaml
+- path: patch-knative-anti-affinity.yaml
+- path: patch-kourier-ha-replicas.yaml
+- path: patch-kourier-anti-affinity.yaml
+- path: patch-pdb-min-available.yaml

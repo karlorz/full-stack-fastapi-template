@@ -1,0 +1,23 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: activator-pdb
+  namespace: knative-serving
+spec:
+  minAvailable: 1
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: webhook-pdb
+  namespace: knative-serving
+spec:
+  minAvailable: 1
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: 3scale-kourier-gateway-pdb
+  namespace: kourier-system
+spec:
+  minAvailable: 1
