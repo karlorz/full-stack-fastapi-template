@@ -33,6 +33,24 @@ domains = {
                 "value": "k8s-argocd-argocdse-f97df9857d-1251066385.us-east-1.elb.amazonaws.com",
                 "proxied": False,
             },
+            {
+                "name": "grafana.dev",
+                "type": "CNAME",
+                "value": "k8s-monitori-grafana-ad5a0c9204-1644469182.us-east-1.elb.amazonaws.com",
+                "proxied": False,
+            },
+            {
+                "name": "grafana.staging",
+                "type": "CNAME",
+                "value": "k8s-monitori-grafana-168a389605-1654218198.us-east-1.elb.amazonaws.com",
+                "proxied": False,
+            },
+            {
+                "name": "grafana.prod",
+                "type": "CNAME",
+                "value": "k8s-monitori-grafana-776bb1cfa4-214158257.us-east-1.elb.amazonaws.com",
+                "proxied": False,
+            },
         ]
     }
 }
