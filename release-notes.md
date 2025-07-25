@@ -516,6 +516,7 @@
 
 ### Internal
 
+* ⬆️ Upgrade posthog to latest. PR [#1155](https://github.com/fastapilabs/cloud/pull/1155) by [@patrick91](https://github.com/patrick91).
 * 🔧 Add Martin to default users lists. PR [#1123](https://github.com/fastapilabs/cloud/pull/1123) by [@malvex](https://github.com/malvex).
 * ⬆ Bump playwright from v1.53.0-noble to v1.54.1-noble in /frontend. PR [#1115](https://github.com/fastapilabs/cloud/pull/1115) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump vite from 7.0.2 to 7.0.4 in /frontend. PR [#1116](https://github.com/fastapilabs/cloud/pull/1116) by [@dependabot[bot]](https://github.com/apps/dependabot).
