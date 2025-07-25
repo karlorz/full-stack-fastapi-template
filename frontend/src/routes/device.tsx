@@ -66,7 +66,10 @@ function CodeNotFound() {
           <p className="text-xs text-destructive bg-destructive/10 p-3 rounded-md">
             The code you provided is invalid or has expired.
           </p>
-          <Button className="w-full h-11 mb-0 rounded-md bg-primary text-primary-foreground font-medium shadow-md shadow-primary/20 hover:bg-primary/80 transition-colors mt-6">
+          <Button
+            asChild
+            className="w-full h-11 mb-0 rounded-md bg-primary text-primary-foreground font-medium shadow-md shadow-primary/20 hover:bg-primary/80 transition-colors mt-6"
+          >
             <RouterLink to="/">Go to Dashboard</RouterLink>
           </Button>
         </div>
@@ -137,7 +140,10 @@ function AuthorizeDevice() {
           </>
         ) : null}
         {(success || error) && (
-          <Button className="w-full h-11 mb-0 rounded-md bg-primary text-primary-foreground font-medium shadow-md shadow-primary/20 hover:bg-primary/80 transition-colors mt-6">
+          <Button
+            asChild
+            className="w-full h-11 mb-0 rounded-md bg-primary text-primary-foreground font-medium shadow-md shadow-primary/20 hover:bg-primary/80 transition-colors mt-6"
+          >
             <RouterLink to="/">Go to Dashboard</RouterLink>
           </Button>
         )}
