@@ -155,6 +155,7 @@
 
 ### Fixes
 
+* 🐛 Fully disable Posthog when running tests. PR [#1157](https://github.com/fastapilabs/cloud/pull/1157) by [@patrick91](https://github.com/patrick91).
 * 🐛 Add missing asChild prop to button components . PR [#1154](https://github.com/fastapilabs/cloud/pull/1154) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix signup error handling. PR [#1122](https://github.com/fastapilabs/cloud/pull/1122) by [@alejsdev](https://github.com/alejsdev).
 * ⬆️ Upgrade sentry-sdk to latest. PR [#1036](https://github.com/fastapilabs/cloud/pull/1036) by [@patrick91](https://github.com/patrick91).
