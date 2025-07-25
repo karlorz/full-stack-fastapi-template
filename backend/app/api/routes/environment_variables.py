@@ -128,8 +128,8 @@ def create_environment_variable(
 
     background_tasks.add_task(
         posthog.capture,
-        current_user.id,
         "environment_variable_created",
+        distinct_id=current_user.id,
         properties=posthog_properties,
     )
 
@@ -208,8 +208,8 @@ def update_environment_variables(
 
     background_tasks.add_task(
         posthog.capture,
-        current_user.id,
         "environment_variables_updated",
+        distinct_id=current_user.id,
         properties=posthog_properties,
     )
 
@@ -263,8 +263,8 @@ def delete_environment_variable(
 
     background_tasks.add_task(
         posthog.capture,
-        current_user.id,
         "environment_variable_deleted",
+        distinct_id=current_user.id,
         properties=posthog_properties,
     )
 
@@ -324,8 +324,8 @@ def update_environment_variable(
 
     background_tasks.add_task(
         posthog.capture,
-        current_user.id,
         "environment_variable_updated",
+        distinct_id=current_user.id,
         properties=posthog_properties,
     )
 

@@ -205,8 +205,8 @@ def create_deployment(
 
     background_tasks.add_task(
         posthog.capture,
-        current_user.id,
         "deployment_created",
+        distinct_id=current_user.id,
         properties={
             "deployment_id": new_deployment.id,
             "app_id": app.id,

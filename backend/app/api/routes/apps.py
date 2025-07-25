@@ -101,8 +101,8 @@ def create_app(
 
     background_tasks.add_task(
         posthog.capture,
-        current_user.id,
         "app_created",
+        distinct_id=current_user.id,
         properties={
             "app_id": app.id,
             "app_name": app.name,
@@ -209,8 +209,8 @@ def delete_app(
 
     background_tasks.add_task(
         posthog.capture,
-        current_user.id,
         "app_deleted",
+        distinct_id=current_user.id,
         properties={
             "app_id": app.id,
             "app_name": app.name,

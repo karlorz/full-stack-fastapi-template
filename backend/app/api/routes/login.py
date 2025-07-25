@@ -229,8 +229,8 @@ async def authorize_device(
 
     background_tasks.add_task(
         posthog.capture,
-        current_user.id,
         "device_authorized",
+        distinct_id=current_user.id,
         properties={
             "device_code": device_data.device_code,
             **posthog_properties,
