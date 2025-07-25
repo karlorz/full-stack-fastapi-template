@@ -12,3 +12,21 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: knative-serving
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: validation.webhook.serving.knative.dev
+      jsonPointers:
+        - /webhooks/0/rules
+        - /webhooks/1/rules
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: webhook.serving.knative.dev
+      jsonPointers:
+        - /webhooks/0/rules
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
+      - RespectIgnoreDifferences=true
