@@ -18,6 +18,7 @@ from app.api.deps import (
     SessionDep,
 )
 from app.api.utils.aws_s3 import generate_presigned_url_post
+from app.api.utils.stream import stream_with_heartbeat
 from app.aws_utils import get_sqs_client
 from app.builder.models import BuildLog, BuildLogComplete, BuildLogFailed
 from app.core.config import CommonSettings, MainSettings
@@ -377,6 +378,7 @@ def get_build_logs(
 
     timeout_seconds = MainSettings.get_settings().BUILD_LOGS_STREAM_TIMEOUT_SECONDS
 
+    @stream_with_heartbeat(interval=10, message='{"type": "heartbeat"}\n')
     async def _stream_logs(deployment_id: uuid.UUID) -> AsyncGenerator[str, None]:
         redis_key = f"build_logs:{deployment_id}"
         last_id = "0"
