@@ -453,6 +453,7 @@
 
 ### Infrastructure
 
+* 🐛 Fix ArgoCD webhook diff for Knative apps. PR [#1134](https://github.com/fastapilabs/cloud/pull/1134) by [@malvex](https://github.com/malvex).
 * 🔥 Remove repository config from ArgoCD Helm values. PR [#1132](https://github.com/fastapilabs/cloud/pull/1132) by [@malvex](https://github.com/malvex).
 * ✨ Add grafana. PR [#1130](https://github.com/fastapilabs/cloud/pull/1130) by [@malvex](https://github.com/malvex).
 * 🐛 Add missing AWS SSM permissions for external-secrets. PR [#1119](https://github.com/fastapilabs/cloud/pull/1119) by [@siryur](https://github.com/siryur).
