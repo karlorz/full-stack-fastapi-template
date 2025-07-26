@@ -12,4 +12,4 @@ metadata:
   name: 3scale-kourier-gateway
   namespace: kourier-system
 spec:
-  replicas: 3
+  replicas: 2

@@ -20,7 +20,7 @@ metadata:
   name: activator
   namespace: knative-serving
 spec:
-  replicas: 3
+  replicas: 2
 ---
 apiVersion: apps/v1
 kind: Deployment

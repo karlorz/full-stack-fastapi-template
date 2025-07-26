@@ -4,12 +4,20 @@ metadata:
   name: activator
   namespace: knative-serving
 spec:
-  minReplicas: 3
+  minReplicas: 2
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: webhook
   namespace: knative-serving
+spec:
+  minReplicas: 2
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: 3scale-kourier-gateway
+  namespace: kourier-system
 spec:
   minReplicas: 2
