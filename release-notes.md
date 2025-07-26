@@ -455,6 +455,7 @@
 
 ### Infrastructure
 
+* 🐛 Fix high availability for Knative components. PR [#1160](https://github.com/fastapilabs/cloud/pull/1160) by [@malvex](https://github.com/malvex).
 * 🔥 Remove memory autoscaling from messenger HPA. PR [#1158](https://github.com/fastapilabs/cloud/pull/1158) by [@malvex](https://github.com/malvex).
 * ✨ Add DNS record for Grafana dev environment. PR [#1131](https://github.com/fastapilabs/cloud/pull/1131) by [@malvex](https://github.com/malvex).
 * 🚀 Configure high availability for Knative components. PR [#1133](https://github.com/fastapilabs/cloud/pull/1133) by [@malvex](https://github.com/malvex).
