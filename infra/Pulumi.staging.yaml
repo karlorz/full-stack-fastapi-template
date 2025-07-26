@@ -51,12 +51,12 @@ config:
   k8s-cluster:fastapicloud_smtp_ssl: "False"
   k8s-cluster:fastapicloud_smtp_tls: "True"
   k8s-cluster:infra_domain: staging.madinfra.wtf
-  k8s-cluster:eks_cluster_version: "1.31"
-  k8s-cluster:eks_node_ami_id: ami-0439ed38c399c07cc
-  k8s-cluster:eks_coredns_version: v1.11.4-eksbuild.14
-  k8s-cluster:eks_kube_proxy_version: v1.31.7-eksbuild.7
-  k8s-cluster:eks_vpc_cni_version: v1.19.6-eksbuild.1
-  k8s-cluster:eks_ebs_csi_version: v1.45.0-eksbuild.2
+  k8s-cluster:eks_cluster_version: "1.33"
+  k8s-cluster:eks_node_ami_id: ami-03db9f32eaa4c3c75
+  k8s-cluster:eks_coredns_version: v1.12.2-eksbuild.4
+  k8s-cluster:eks_kube_proxy_version: v1.33.0-eksbuild.2
+  k8s-cluster:eks_vpc_cni_version: v1.20.0-eksbuild.1
+  k8s-cluster:eks_ebs_csi_version: v1.46.0-eksbuild.1
   argocd:google_client_id:
     secure: AAABAFBspYDQeXP4YvxVc+rsdqfQemppTQdVrEnQosbQpcHqjnjBgdHwGA5o/lAy9tCn488Yswoo38xR58IWelIxmfDHiiwKFgLS6e97t3YsTf3E3DiIZtiZ3cocqmBVvKylU97BNA==
   argocd:google_client_secret:
