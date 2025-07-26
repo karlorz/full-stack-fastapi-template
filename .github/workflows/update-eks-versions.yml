@@ -28,16 +28,21 @@ jobs:
     - name: Check for EKS updates
       id: check
       run: |
-        LATEST_EKS=$(aws eks describe-addon-versions --query 'addons[0].addonVersions[0].compatibilities[0].clusterVersion' --output text)
-        LATEST_KUBE_PROXY=$(aws eks describe-addon-versions --addon-name kube-proxy --query 'addons[0].addonVersions[0].addonVersion' --output text)
-        LATEST_COREDNS=$(aws eks describe-addon-versions --addon-name coredns --query 'addons[0].addonVersions[0].addonVersion' --output text)
-        LATEST_VPC_CNI=$(aws eks describe-addon-versions --addon-name vpc-cni --query 'addons[0].addonVersions[0].addonVersion' --output text)
-        LATEST_EBS_CSI=$(aws eks describe-addon-versions --addon-name aws-ebs-csi-driver --query 'addons[0].addonVersions[0].addonVersion' --output text)
+        # Get all supported EKS versions and find the latest
+        LATEST_EKS=$(aws eks describe-addon-versions --addon-name vpc-cni --output json | \
+          jq -r '.addons[0].addonVersions[].compatibilities[].clusterVersion' | \
+          sort -V | tail -n 1)
+
+        # Get all addon versions in one call and extract with jq
+        ADDONS_JSON=$(aws eks describe-addon-versions --kubernetes-version "$LATEST_EKS" --output json)
+
+        LATEST_KUBE_PROXY=$(echo "$ADDONS_JSON" | jq -r '.addons[] | select(.addonName=="kube-proxy") | .addonVersions[0].addonVersion')
+        LATEST_COREDNS=$(echo "$ADDONS_JSON" | jq -r '.addons[] | select(.addonName=="coredns") | .addonVersions[0].addonVersion')
+        LATEST_VPC_CNI=$(echo "$ADDONS_JSON" | jq -r '.addons[] | select(.addonName=="vpc-cni") | .addonVersions[0].addonVersion')
+        LATEST_EBS_CSI=$(echo "$ADDONS_JSON" | jq -r '.addons[] | select(.addonName=="aws-ebs-csi-driver") | .addonVersions[0].addonVersion')
 
         # SSM Parameter Store has the officially tested AMI for each EKS version
-        LATEST_AMI_ID=$(aws ssm get-parameter \
-          --name "/aws/service/eks/optimized-ami/${LATEST_EKS}/amazon-linux-2/recommended/image_id" \
-          --query "Parameter.Value" --output text)
+        LATEST_AMI_ID=$(aws ssm get-parameter --name /aws/service/eks/optimized-ami/${LATEST_EKS}/amazon-linux-2023/x86_64/standard/recommended/image_id --query "Parameter.Value" --output text)
 
         echo "Latest versions: EKS=$LATEST_EKS, AMI=$LATEST_AMI_ID, CoreDNS=$LATEST_COREDNS, kube-proxy=$LATEST_KUBE_PROXY, VPC-CNI=$LATEST_VPC_CNI, EBS-CSI=$LATEST_EBS_CSI"
 
