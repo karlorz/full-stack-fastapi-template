@@ -18,9 +18,6 @@ const NotFound = () => {
         <div className="flex flex-col items-center justify-center p-4">
           <h1 className="relative mb-4 text-[6rem] font-bold leading-none md:text-[8rem] font-mono text-primary cursor-pointer">
             {scrambled404}
-            <span className="absolute -inset-0.5 text-primary/20">
-              {scrambled404}
-            </span>
           </h1>
           <h2 className="mb-2 text-2xl font-bold font-mono text-primary cursor-pointer">
             {scrambledOops}
@@ -36,13 +33,20 @@ const NotFound = () => {
         was not found.
       </p>
 
-      <div className="z-10">
+      <div className="z-10 flex gap-4">
+        <Button
+          onClick={() => window.history.back()}
+          variant="outline"
+          className="backdrop-blur-sm border-primary/30 text-primary hover:bg-primary/10"
+        >
+          Go Back
+        </Button>
         <Link to="/">
           <Button
             variant="default"
-            className="mt-4 backdrop-blur-sm bg-primary text-primary-foreground hover:bg-primary/90"
+            className="backdrop-blur-sm bg-primary text-primary-foreground hover:bg-primary/90"
           >
-            Go Back
+            Go Home
           </Button>
         </Link>
       </div>
