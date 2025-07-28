@@ -213,6 +213,7 @@
 
 ### Refactors
 
+* ♻️ Improve UX for expired token during device authorization. PR [#1176](https://github.com/fastapilabs/cloud/pull/1176) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update error views. PR [#1164](https://github.com/fastapilabs/cloud/pull/1164) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Improve how we set labels on k8s. PR [#1161](https://github.com/fastapilabs/cloud/pull/1161) by [@patrick91](https://github.com/patrick91).
 * 💄 Minor tweaks. PR [#1144](https://github.com/fastapilabs/cloud/pull/1144) by [@alejsdev](https://github.com/alejsdev).
