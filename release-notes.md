@@ -455,6 +455,7 @@
 
 ### Infrastructure
 
+* 🐛 Fix Tempo crashloop by adding S3 endpoint configuration. PR [#1172](https://github.com/fastapilabs/cloud/pull/1172) by [@malvex](https://github.com/malvex).
 * ✨ Add Grafana Loki and Tempo. PR [#1171](https://github.com/fastapilabs/cloud/pull/1171) by [@malvex](https://github.com/malvex).
 * ⬆ Update EKS version and addon versions. PR [#1057](https://github.com/fastapilabs/cloud/pull/1057) by [@github-actions[bot]](https://github.com/apps/github-actions).
 * 🐛 Fix high availability for Knative components. PR [#1160](https://github.com/fastapilabs/cloud/pull/1160) by [@malvex](https://github.com/malvex).
