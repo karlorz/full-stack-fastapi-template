@@ -360,11 +360,11 @@ def deploy_to_kubernetes(
             "template": {
                 "metadata": {
                     "annotations": {
-                        "autoscaling.knative.dev/minScale": str(min_scale),
+                        "autoscaling.knative.dev/min-scale": str(min_scale),
                         # As this annotation will be different, it will trigger a
                         # new Knative Revision, deploying again, getting the latest
                         # external configs (ConfigMap, Secret, etc.)
-                        "last-updated": use_last_updated.isoformat(),
+                        "fastapicloud.com/last-updated": use_last_updated.isoformat(),
                     },
                     "labels": use_labels,
                 },
@@ -693,6 +693,12 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
                 namespace=get_app_namespace(deployment_with_team.app),
                 env=env_vars,
                 labels={
+                    "fastapicloud.com/team": str(team.id),
+                    "fastapicloud.com/team-slug": team.slug,
+                    "fastapicloud.com/app": str(deployment_with_team.app.id),
+                    "fastapicloud.com/app-slug": deployment_with_team.app.slug,
+                    "fastapicloud.com/deployment": str(deployment_with_team.id),
+                    # legacy for vector, to remove once we remove vector
                     "fastapicloud_team": team.slug,
                     "fastapicloud_app": deployment_with_team.app.slug,
                     "fastapicloud_deployment": str(deployment_with_team.id),
@@ -755,6 +761,12 @@ def deploy(
         namespace=get_app_namespace(deployment.app),
         env=env_vars,
         labels={
+            "fastapicloud.com/team": str(deployment.app.team.id),
+            "fastapicloud.com/team-slug": deployment.app.team.slug,
+            "fastapicloud.com/app": str(deployment.app.id),
+            "fastapicloud.com/app-slug": deployment.app.slug,
+            "fastapicloud.com/deployment": str(deployment.id),
+            # legacy for vector, to remove once we remove vector
             "fastapicloud_team": deployment.app.team.slug,
             "fastapicloud_app": deployment.app.slug,
             "fastapicloud_deployment": str(deployment.id),
