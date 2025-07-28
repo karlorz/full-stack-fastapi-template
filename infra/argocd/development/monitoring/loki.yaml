@@ -1,0 +1,17 @@
+loki:
+  serviceAccount:
+    create: true
+    name: loki
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::961341535962:role/loki-irsa-development"
+
+  loki:
+    auth_enabled: false
+
+    storage:
+      type: s3
+      bucketNames:
+        chunks: "fastapicloud-loki-development"
+        ruler: "fastapicloud-loki-development"
+      s3:
+        region: "us-east-1"

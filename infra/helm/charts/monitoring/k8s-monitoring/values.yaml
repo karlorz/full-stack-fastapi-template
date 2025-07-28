@@ -3,7 +3,20 @@ k8s-monitoring:
   destinations:
     - name: metrics-mimir
       type: prometheus
-      url: http://mimir-gateway.monitoring.svc.cluster.local/api/v1/push  # tbd
+      url: http://mimir-gateway.monitoring.svc.cluster.local/api/v1/push
+
+    - name: logs-loki
+      type: loki
+      url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
+      tenantId: "1"
+
+    - name: traces-tempo
+      type: otlp
+      url: http://tempo.monitoring.svc.cluster.local:4317/v1/traces
+      protocol: grpc
+      metrics: { enabled: false }
+      logs:    { enabled: false }
+      traces:  { enabled: true }
 
   # Collectors configuration
   alloy-metrics:
@@ -18,26 +31,51 @@ k8s-monitoring:
           memory: 512Mi
 
   alloy-logs:
-    enabled: false  # needs loki
+    enabled: true
     alloy:
       enableReporting: false
       resources:
         requests:
           cpu: 10m
-          memory: 512Mi
+          memory: 256Mi
         limits:
-          memory: 512Mi
+          memory: 256Mi
 
   alloy-receiver:
-    enabled: false
+    enabled: true
     alloy:
       enableReporting: false
       resources:
         requests:
           cpu: 10m
-          memory: 512Mi
+          memory: 256Mi
         limits:
-          memory: 512Mi
+          memory: 256Mi
+      extraPorts:
+        - name: otlp-grpc
+          port: 4317
+          targetPort: 4317
+          protocol: TCP
+        - name: otlp-http
+          port: 4318
+          targetPort: 4318
+          protocol: TCP
+        - name: zipkin
+          port: 9411
+          targetPort: 9411
+          protocol: TCP
+        # - name: jaeger-compact
+        #   port: 6831
+        #   targetPort: 6831
+        #   protocol: UDP
+        # - name: jaeger-grpc
+        #   port: 14250
+        #   targetPort: 14250
+        #   protocol: TCP
+        # - name: jaeger-http
+        #   port: 14268
+        #   targetPort: 14268
+        #   protocol: TCP
 
   alloy-singleton:
     enabled: true
@@ -87,23 +125,39 @@ k8s-monitoring:
 
   # Feature: Cluster Events
   clusterEvents:
-    enabled: false  # needs loki
+    enabled: true
 
   # Feature: Pod Logs
   podLogs:
-    enabled: false  # needs loki
+    enabled: true
 
   # Feature: Node Logs
   nodeLogs:
-    enabled: false  # needs loki
+    enabled: true
 
   # Feature: Application Observability
   applicationObservability:
-    enabled: false  #  enable if we want OTLP and/or traces
+    enabled: true
+
+    connectors:
+      grafanaCloudMetrics:
+        enabled: false
+
+    receivers:
+      otlp:
+        grpc:
+          enabled: true
+          port: 4317
+        http:
+          enabled: true
+          port: 4318
+      zipkin:
+        enabled: true
+        port: 9411
 
   # Feature: Annotation Autodiscovery
   annotationAutodiscovery:
-    enabled: false  # tbd
+    enabled: true
 
   # Feature: Prometheus Operator Objects
   prometheusOperatorObjects:

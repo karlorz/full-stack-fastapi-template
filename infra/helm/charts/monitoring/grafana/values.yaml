@@ -38,6 +38,52 @@ grafana:
             queryTimeout: 300s
           editable: false
 
+        # Loki datasource
+        - name: Loki
+          type: loki
+          uid: loki
+          access: proxy
+          url: http://loki-gateway.monitoring.svc.cluster.local
+          jsonData:
+            httpHeaderName1: 'X-Scope-OrgID'
+          secureJsonData:
+            httpHeaderValue1: '1'
+          editable: false
+
+        # # Tempo datasource
+        - name: Tempo
+          type: tempo
+          url: http://tempo.monitoring.svc.cluster.local:3200
+          access: proxy
+          uid: tempo
+          jsonData:
+            nodeGraph:
+              enabled: true
+            search:
+              hide: false
+            lokiSearch:
+              datasourceUid: loki
+            tracesToLogsV2:
+              datasourceUid: loki
+              spanStartTimeShift: '-1h'
+              spanEndTimeShift: '1h'
+              filterByTraceID: true
+              filterBySpanID: true
+              customQuery: false
+            tracesToMetrics:
+              datasourceUid: prometheus
+              spanStartTimeShift: '-1h'
+              spanEndTimeShift: '1h'
+              queries:
+                - name: 'Sample query'
+                  query: 'sum(rate(tempo_spanmetrics_latency_bucket{$__tags}[5m]))'
+            serviceMap:
+              datasourceUid: prometheus
+            spanBar:
+              type: 'Tag'
+              tag: 'http.path'
+          editable: false
+
   # Sidecar configuration for loading dashboards and datasources
   sidecar:
     dashboards:

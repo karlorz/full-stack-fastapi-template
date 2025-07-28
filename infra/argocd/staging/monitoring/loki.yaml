@@ -1,0 +1,17 @@
+loki:
+  serviceAccount:
+    create: true
+    name: loki
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::992382821657:role/loki-irsa-staging"
+
+  loki:
+    auth_enabled: false
+
+    storage:
+      type: s3
+      bucketNames:
+        chunks: "fastapicloud-loki-staging"
+        ruler: "fastapicloud-loki-staging"
+      s3:
+        region: "us-east-1"

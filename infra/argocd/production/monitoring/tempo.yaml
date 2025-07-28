@@ -1,0 +1,14 @@
+tempo:
+  serviceAccount:
+    create: true
+    name: tempo
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::471112862740:role/tempo-irsa-production"
+
+  tempo:
+    storage:
+      trace:
+        backend: s3
+        s3:
+          bucket: "fastapicloud-tempo-production"
+          region: "us-east-1"
