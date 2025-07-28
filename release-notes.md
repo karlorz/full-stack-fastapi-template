@@ -213,6 +213,7 @@
 
 ### Refactors
 
+* ♻️ Improve how we set labels on k8s. PR [#1161](https://github.com/fastapilabs/cloud/pull/1161) by [@patrick91](https://github.com/patrick91).
 * 💄 Minor tweaks. PR [#1144](https://github.com/fastapilabs/cloud/pull/1144) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update device authorization styling. PR [#1129](https://github.com/fastapilabs/cloud/pull/1129) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor how we generate OpenAPI for FastAPI auth. PR [#1117](https://github.com/fastapilabs/cloud/pull/1117) by [@patrick91](https://github.com/patrick91).
