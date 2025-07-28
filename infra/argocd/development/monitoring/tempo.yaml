@@ -12,3 +12,4 @@ tempo:
         s3:
           bucket: "fastapicloud-tempo-development"
           region: "us-east-1"
+          endpoint: "s3.us-east-1.amazonaws.com"
