@@ -5,10 +5,10 @@ import {
   redirect,
 } from "@tanstack/react-router"
 import { Lock, Mail } from "lucide-react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { FaGithub } from "react-icons/fa"
 import { z } from "zod"
-
 import type { Body_login_login_access_token as AccessToken } from "@/client"
 import BackgroundPanel from "@/components/Auth/BackgroundPanel"
 import TeamInvitation from "@/components/Invitations/TeamInvitation"
@@ -57,6 +57,28 @@ function Login() {
   const redirectDecoded = redirectRaw ? decodeURIComponent(redirectRaw) : "/"
   const redirectUrl = redirectDecoded.startsWith("/") ? redirectDecoded : "/"
   const { loginMutation, loginWithProvider } = useAuth()
+  const [pendingDeviceAuth, setPendingDeviceAuth] = useState<{
+    code: string
+    timestamp: number
+  } | null>(null)
+
+  useEffect(() => {
+    const pending = sessionStorage.getItem("pending_device_auth")
+    if (pending) {
+      try {
+        const authData = JSON.parse(pending)
+        // Only restore if less than 10 minutes old
+        if (Date.now() - authData.timestamp < 10 * 60 * 1000) {
+          setPendingDeviceAuth(authData)
+        } else {
+          sessionStorage.removeItem("pending_device_auth")
+        }
+      } catch {
+        sessionStorage.removeItem("pending_device_auth")
+      }
+    }
+  }, [])
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -71,10 +93,18 @@ function Login() {
     if (loginMutation.isPending) return
 
     try {
+      const finalRedirectUrl = pendingDeviceAuth
+        ? `/device?code=${pendingDeviceAuth.code}`
+        : redirectUrl
+
       await loginMutation.mutateAsync({
-        redirect: redirectUrl,
+        redirect: finalRedirectUrl,
         formData: values,
       })
+
+      if (pendingDeviceAuth) {
+        sessionStorage.removeItem("pending_device_auth")
+      }
     } catch {
       // error is handled by useAuth hook
     }

@@ -93,10 +93,28 @@ const useAuth = () => {
     navigate({ to: "/login", search })
   }
 
+  const checkTokenValidity = async (): Promise<boolean> => {
+    const token = localStorage.getItem("access_token")
+    if (!token) {
+      return false
+    }
+
+    try {
+      await UsersService.readUserMe()
+      return true
+    } catch (error: any) {
+      if (error?.status === 401 || error?.status === 403) {
+        return false
+      }
+      return true
+    }
+  }
+
   return {
     signUpMutation,
     loginMutation,
     logout,
+    checkTokenValidity,
     loginWithProvider: fastapiAuth.socialLogin.bind(fastapiAuth),
     linkWithProvider: fastapiAuth.linkWithProvider.bind(fastapiAuth),
     handleOAuthCallback: fastapiAuth.handleOAuthCallback.bind(fastapiAuth),
