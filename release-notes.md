@@ -527,6 +527,7 @@
 
 ### Internal
 
+* ⬆ Bump @biomejs/biome from 2.1.1 to 2.1.2 in /frontend. PR [#1166](https://github.com/fastapilabs/cloud/pull/1166) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🐛 Fix EKS version detection in update workflow. PR [#1142](https://github.com/fastapilabs/cloud/pull/1142) by [@malvex](https://github.com/malvex).
 * ⬆️ Upgrade posthog to latest. PR [#1155](https://github.com/fastapilabs/cloud/pull/1155) by [@patrick91](https://github.com/patrick91).
 * 🔧 Add Martin to default users lists. PR [#1123](https://github.com/fastapilabs/cloud/pull/1123) by [@malvex](https://github.com/malvex).
