@@ -1,8 +1,5 @@
 import pytest
 import respx
-from duck import AsyncHTTPRequest
-from duck.request import TestingRequestAdapter
-from fastapi_auth._context import Context
 from fastapi_auth.social_providers.github import GitHubProvider
 
 pytestmark = pytest.mark.asyncio

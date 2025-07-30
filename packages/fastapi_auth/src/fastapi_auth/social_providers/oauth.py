@@ -362,7 +362,16 @@ class OAuth2Provider:
                     "client_secret": self.client_secret,
                 },
             )
+
+            response.raise_for_status()
+
             return OAuth2TokenEndpointResponse.from_query_string(response.text)
+        except httpx.HTTPStatusError as e:
+            logger.warning(
+                f"HTTP error during token exchange: {e.response.status_code} - {e.response.text}"
+            )
+
+            return None
         except ValidationError as e:
             logger.error(f"Failed to exchange code for token: {str(e)}")
 
