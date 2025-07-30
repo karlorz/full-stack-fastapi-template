@@ -458,6 +458,34 @@
 * ⬆️ Upgrade SQLModel. PR [#56](https://github.com/fastapilabs/cloud/pull/56) by [@tiangolo](https://github.com/tiangolo).
 * Bump follow-redirects from 1.15.5 to 1.15.6 in /frontend. PR [#734](https://github.com/tiangolo/full-stack-fastapi-template/pull/734) by [@dependabot[bot]](https://github.com/apps/dependabot).
 
+### Docs
+
+* ✨ Multi-chart deployment with ArgoCD. PR [#1074](https://github.com/fastapilabs/cloud/pull/1074) by [@siryur](https://github.com/siryur).
+* 📝 Fix typos in `infra/README.md`. PR [#1031](https://github.com/fastapilabs/cloud/pull/1031) by [@alejsdev](https://github.com/alejsdev).
+* 📝 Tweak READMEs for new uv workspaces setup. PR [#729](https://github.com/fastapilabs/cloud/pull/729) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Update README for infra deployment, include deploying all cloud backend parts, clarify instructions. PR [#688](https://github.com/fastapilabs/cloud/pull/688) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Update `frontend/README.md`. PR [#660](https://github.com/fastapilabs/cloud/pull/660) by [@alejsdev](https://github.com/alejsdev).
+* 📝 Update README format. PR [#643](https://github.com/fastapilabs/cloud/pull/643) by [@tiangolo](https://github.com/tiangolo).
+* 🍱 Update architecture diagram. PR [#635](https://github.com/fastapilabs/cloud/pull/635) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Tweak infra README. PR [#516](https://github.com/fastapilabs/cloud/pull/516) by [@tiangolo](https://github.com/tiangolo).
+* ♻️ Refactor Kubernetes deployment, do not deploy from Pulumi. PR [#515](https://github.com/fastapilabs/cloud/pull/515) by [@tiangolo](https://github.com/tiangolo).
+* 🔒️ Migrate TLS and domain handling, use Cloudflare, support customer domains in cluster/cloud. PR [#485](https://github.com/fastapilabs/cloud/pull/485) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Update docs for Cloudflare pages CI in a new environment. PR [#452](https://github.com/fastapilabs/cloud/pull/452) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Update docs for deploying and production config. PR [#449](https://github.com/fastapilabs/cloud/pull/449) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Update infra README after several iterations of cluster destroy/create. PR [#447](https://github.com/fastapilabs/cloud/pull/447) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Update docs for Docker Compose watch. PR [#405](https://github.com/fastapilabs/cloud/pull/405) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Update infra README. PR [#386](https://github.com/fastapilabs/cloud/pull/386) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Add infra diagram. PR [#370](https://github.com/fastapilabs/cloud/pull/370) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Update docs about creating a new environment to deploy. PR [#361](https://github.com/fastapilabs/cloud/pull/361) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Update README about scripts location. PR [#326](https://github.com/fastapilabs/cloud/pull/326) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Update instructions to clone for a private repo, including updates. PR [#1127](https://github.com/tiangolo/full-stack-fastapi-template/pull/1127) by [@tiangolo](https://github.com/tiangolo).
+* 📝 Add docs about CI keys, LATEST_CHANGES and SMOKESHOW_AUTH_KEY. PR [#1126](https://github.com/tiangolo/full-stack-fastapi-template/pull/1126) by [@tiangolo](https://github.com/tiangolo).
+* ✏️ Fix file path in `backend/README.md` when not wanting to use migrations. PR [#1116](https://github.com/tiangolo/full-stack-fastapi-template/pull/1116) by [@leonlowitzki](https://github.com/leonlowitzki).
+* 📝 Add documentation for pre-commit and code linting. PR [#718](https://github.com/tiangolo/full-stack-fastapi-template/pull/718) by [@estebanx64](https://github.com/estebanx64).
+* 📝 Fix localhost URLs in `development.md`. PR [#1099](https://github.com/tiangolo/full-stack-fastapi-template/pull/1099) by [@efonte](https://github.com/efonte).
+* ✏ Update header titles for consistency. PR [#708](https://github.com/tiangolo/full-stack-fastapi-template/pull/708) by [@codesmith-emmy](https://github.com/codesmith-emmy).
+* 📝 Update `README.md`, dark mode screenshot position. PR [#706](https://github.com/tiangolo/full-stack-fastapi-template/pull/706) by [@alejsdev](https://github.com/alejsdev).
+
 ### Infrastructure
 
 * ⚡ Upgrade production EKS nodes to t3a.xlarge. PR [#1173](https://github.com/fastapilabs/cloud/pull/1173) by [@malvex](https://github.com/malvex).
@@ -499,36 +527,9 @@
 * ✈️ Migrate cert-manager deployment to helm chart. PR [#740](https://github.com/fastapilabs/cloud/pull/740) by [@siryur](https://github.com/siryur).
 * 🔧 Update latest-changes config to include infra section. PR [#645](https://github.com/fastapilabs/cloud/pull/645) by [@tiangolo](https://github.com/tiangolo).
 
-### Docs
-
-* ✨ Multi-chart deployment with ArgoCD. PR [#1074](https://github.com/fastapilabs/cloud/pull/1074) by [@siryur](https://github.com/siryur).
-* 📝 Fix typos in `infra/README.md`. PR [#1031](https://github.com/fastapilabs/cloud/pull/1031) by [@alejsdev](https://github.com/alejsdev).
-* 📝 Tweak READMEs for new uv workspaces setup. PR [#729](https://github.com/fastapilabs/cloud/pull/729) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Update README for infra deployment, include deploying all cloud backend parts, clarify instructions. PR [#688](https://github.com/fastapilabs/cloud/pull/688) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Update `frontend/README.md`. PR [#660](https://github.com/fastapilabs/cloud/pull/660) by [@alejsdev](https://github.com/alejsdev).
-* 📝 Update README format. PR [#643](https://github.com/fastapilabs/cloud/pull/643) by [@tiangolo](https://github.com/tiangolo).
-* 🍱 Update architecture diagram. PR [#635](https://github.com/fastapilabs/cloud/pull/635) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Tweak infra README. PR [#516](https://github.com/fastapilabs/cloud/pull/516) by [@tiangolo](https://github.com/tiangolo).
-* ♻️ Refactor Kubernetes deployment, do not deploy from Pulumi. PR [#515](https://github.com/fastapilabs/cloud/pull/515) by [@tiangolo](https://github.com/tiangolo).
-* 🔒️ Migrate TLS and domain handling, use Cloudflare, support customer domains in cluster/cloud. PR [#485](https://github.com/fastapilabs/cloud/pull/485) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Update docs for Cloudflare pages CI in a new environment. PR [#452](https://github.com/fastapilabs/cloud/pull/452) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Update docs for deploying and production config. PR [#449](https://github.com/fastapilabs/cloud/pull/449) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Update infra README after several iterations of cluster destroy/create. PR [#447](https://github.com/fastapilabs/cloud/pull/447) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Update docs for Docker Compose watch. PR [#405](https://github.com/fastapilabs/cloud/pull/405) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Update infra README. PR [#386](https://github.com/fastapilabs/cloud/pull/386) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Add infra diagram. PR [#370](https://github.com/fastapilabs/cloud/pull/370) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Update docs about creating a new environment to deploy. PR [#361](https://github.com/fastapilabs/cloud/pull/361) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Update README about scripts location. PR [#326](https://github.com/fastapilabs/cloud/pull/326) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Update instructions to clone for a private repo, including updates. PR [#1127](https://github.com/tiangolo/full-stack-fastapi-template/pull/1127) by [@tiangolo](https://github.com/tiangolo).
-* 📝 Add docs about CI keys, LATEST_CHANGES and SMOKESHOW_AUTH_KEY. PR [#1126](https://github.com/tiangolo/full-stack-fastapi-template/pull/1126) by [@tiangolo](https://github.com/tiangolo).
-* ✏️ Fix file path in `backend/README.md` when not wanting to use migrations. PR [#1116](https://github.com/tiangolo/full-stack-fastapi-template/pull/1116) by [@leonlowitzki](https://github.com/leonlowitzki).
-* 📝 Add documentation for pre-commit and code linting. PR [#718](https://github.com/tiangolo/full-stack-fastapi-template/pull/718) by [@estebanx64](https://github.com/estebanx64).
-* 📝 Fix localhost URLs in `development.md`. PR [#1099](https://github.com/tiangolo/full-stack-fastapi-template/pull/1099) by [@efonte](https://github.com/efonte).
-* ✏ Update header titles for consistency. PR [#708](https://github.com/tiangolo/full-stack-fastapi-template/pull/708) by [@codesmith-emmy](https://github.com/codesmith-emmy).
-* 📝 Update `README.md`, dark mode screenshot position. PR [#706](https://github.com/tiangolo/full-stack-fastapi-template/pull/706) by [@alejsdev](https://github.com/alejsdev).
-
 ### Internal
 
+* 👷 Update latest-changes GitHub Action. PR [#1182](https://github.com/fastapilabs/cloud/pull/1182) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Bump @types/node from 24.0.10 to 24.1.0 in /frontend. PR [#1167](https://github.com/fastapilabs/cloud/pull/1167) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @biomejs/biome from 2.1.1 to 2.1.2 in /frontend. PR [#1166](https://github.com/fastapilabs/cloud/pull/1166) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🐛 Fix EKS version detection in update workflow. PR [#1142](https://github.com/fastapilabs/cloud/pull/1142) by [@malvex](https://github.com/malvex).
