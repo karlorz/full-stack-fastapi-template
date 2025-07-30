@@ -30,7 +30,7 @@ jobs:
         with:
           # To allow latest-changes to commit to the main branch
           token: ${{ secrets.FASTAPI_CLOUD_LATEST_CHANGES }}
-      - uses: tiangolo/latest-changes@0.3.2
+      - uses: tiangolo/latest-changes@0.4.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           latest_changes_file: ./release-notes.md
@@ -38,15 +38,3 @@ jobs:
           end_regex: "^## "
           debug_logs: true
           label_header_prefix: "### "
-          labels: >
-            [
-              {"label": "breaking", "header": "Breaking Changes"},
-              {"label": "security", "header": "Security Fixes"},
-              {"label": "feature", "header": "Features"},
-              {"label": "bug", "header": "Fixes"},
-              {"label": "refactor", "header": "Refactors"},
-              {"label": "upgrade", "header": "Upgrades"},
-              {"label": "infra", "header": "Infrastructure"},
-              {"label": "docs", "header": "Docs"},
-              {"label": "internal", "header": "Internal"}
-            ]
