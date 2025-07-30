@@ -143,16 +143,33 @@ def update_password_me(
     """
     Update own password.
     """
-    # TODO: implement support for changing password when using social account
-    if not current_user.hashed_password:
-        raise HTTPException(status_code=400, detail="Password is not set")
+    # If user has no usable password (e.g., signed up via OAuth), allow setting initial password
+    if not current_user.has_usable_password:
+        if body.current_password:
+            raise HTTPException(
+                status_code=400,
+                detail="Current password should not be provided when setting initial password",
+            )
+        hashed_password = get_password_hash(body.new_password)
+        current_user.hashed_password = hashed_password
+        session.add(current_user)
+        session.commit()
+        return Message(message="Password set successfully")
+
+    # If user has a usable password, require current password for verification
+    if not body.current_password:
+        raise HTTPException(status_code=400, detail="Current password is required")
+
+    assert current_user.hashed_password is not None
 
     if not verify_password(body.current_password, current_user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect password")
+
     if body.current_password == body.new_password:
         raise HTTPException(
             status_code=400, detail="New password cannot be the same as the current one"
         )
+
     hashed_password = get_password_hash(body.new_password)
     current_user.hashed_password = hashed_password
     session.add(current_user)

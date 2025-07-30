@@ -9,7 +9,7 @@ export const createUser = async ({
   createPersonalTeam = true,
 }: {
   email: string
-  password: string
+  password?: string
   createPersonalTeam?: boolean
 }) => {
   const user = await PrivateService.createUser({
@@ -30,6 +30,16 @@ export const createUser = async ({
   }
 
   return user
+}
+
+export const createUserWithoutPassword = async ({
+  email,
+  createPersonalTeam = true,
+}: {
+  email: string
+  createPersonalTeam?: boolean
+}) => {
+  return createUser({ email, createPersonalTeam })
 }
 
 export const createTeam = async ({
@@ -105,6 +115,14 @@ export const addUserToTeam = async ({
     requestBody: {
       user_id: userId,
       role: role,
+    },
+  })
+}
+
+export const generateAccessToken = async (userId: string) => {
+  return PrivateService.generateAccessToken({
+    requestBody: {
+      user_id: userId,
     },
   })
 }

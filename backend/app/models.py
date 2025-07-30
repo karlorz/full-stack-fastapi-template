@@ -77,7 +77,7 @@ class UserUpdateMe(SQLModel):
 
 
 class UpdatePassword(SQLModel):
-    current_password: str = Field(min_length=8)
+    current_password: str | None = Field(default=None, min_length=8)
     new_password: str = Field(min_length=8)
 
 
@@ -120,12 +120,18 @@ class User(UserBase, table=True):
             None,
         )
 
+    @computed_field(return_type=bool)
+    @hybrid_property
+    def has_usable_password(self) -> bool:
+        return self.hashed_password is not None
+
 
 # Used for the current user
 class UserMePublic(UserBase):
     id: uuid.UUID
     personal_team_slug: str
     github_account: "GitHubAccount | None"
+    has_usable_password: bool
 
 
 class UserPublic(UserBase):

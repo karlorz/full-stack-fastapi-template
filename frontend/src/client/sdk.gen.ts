@@ -84,6 +84,8 @@ import type {
   PrivateCreateTeamResponse,
   PrivateCreateUserData,
   PrivateCreateUserResponse,
+  PrivateGenerateAccessTokenData,
+  PrivateGenerateAccessTokenResponse,
   TeamsCreateTeamData,
   TeamsCreateTeamResponse,
   TeamsDeleteTeamData,
@@ -1099,6 +1101,27 @@ export class PrivateService {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/v1/private/environment-variables/",
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Generate Access Token
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns AccessToken Successful Response
+   * @throws ApiError
+   */
+  public static generateAccessToken(
+    data: PrivateGenerateAccessTokenData,
+  ): CancelablePromise<PrivateGenerateAccessTokenResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/private/generate-access-token/",
       body: data.requestBody,
       mediaType: "application/json",
       errors: {

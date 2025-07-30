@@ -37,6 +37,9 @@ def test_get_users_normal_user_me(
     assert current_user["is_active"] is True
     assert current_user["email"] == settings.EMAIL_TEST_USER
     assert current_user["personal_team_slug"] is not None
+    assert (
+        current_user["has_usable_password"] is True
+    )  # Normal user should have password
 
 
 def test_update_user_me_full_name(
@@ -203,6 +206,124 @@ def test_update_password_me_same_password_error(logged_in_client: TestClient) ->
     assert (
         updated_user["detail"] == "New password cannot be the same as the current one"
     )
+
+
+def test_set_password_for_user_without_password(
+    client: TestClient, db: Session
+) -> None:
+    """Test setting initial password for user without password (e.g., OAuth users)"""
+    email = random_email()
+    full_name = random_lower_string()
+
+    # Create user without password using create_user_without_password
+    user = crud.create_user_without_password(
+        session=db, email=email, full_name=full_name, is_verified=True
+    )
+    create_random_team(db, owner_id=user.id, is_personal_team=True)
+    db.add(user)
+    db.commit()
+
+    # Manually set access token for authentication since user has no password
+    from datetime import timedelta
+
+    from app.core.security import create_access_token
+
+    access_token = create_access_token(
+        str(user.id), expires_delta=timedelta(minutes=30)
+    )
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    # First, verify user shows has_usable_password = False
+    r = client.get(f"{settings.API_V1_STR}/users/me", headers=headers)
+    user_data = r.json()
+    assert user_data["has_usable_password"] is False
+
+    new_password = random_lower_string()
+    data = {
+        "new_password": new_password,
+    }
+
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me/password",
+        headers=headers,
+        json=data,
+    )
+
+    assert r.status_code == 200
+    response_data = r.json()
+    assert response_data["message"] == "Password set successfully"
+
+    # Verify password was actually set
+    db.refresh(user)
+    assert user.hashed_password is not None
+    assert verify_password(new_password, user.hashed_password)
+
+    # Verify user now shows has_usable_password = True
+    r = client.get(f"{settings.API_V1_STR}/users/me", headers=headers)
+    user_data = r.json()
+    assert user_data["has_usable_password"] is True
+
+
+def test_set_password_error_when_current_password_provided_for_user_without_password(
+    client: TestClient, db: Session
+) -> None:
+    """Test error when providing current_password for user without password"""
+    email = random_email()
+    full_name = random_lower_string()
+
+    # Create user without password
+    user = crud.create_user_without_password(
+        session=db, email=email, full_name=full_name, is_verified=True
+    )
+    create_random_team(db, owner_id=user.id, is_personal_team=True)
+    db.add(user)
+    db.commit()
+
+    # Manually set access token for authentication
+    from datetime import timedelta
+
+    from app.core.security import create_access_token
+
+    access_token = create_access_token(
+        str(user.id), expires_delta=timedelta(minutes=30)
+    )
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    data = {
+        "current_password": "somepassword",
+        "new_password": random_lower_string(),
+    }
+
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me/password",
+        headers=headers,
+        json=data,
+    )
+
+    assert r.status_code == 400
+    response_data = r.json()
+    assert (
+        response_data["detail"]
+        == "Current password should not be provided when setting initial password"
+    )
+
+
+def test_update_password_error_when_current_password_missing_for_user_with_password(
+    logged_in_client: TestClient,
+) -> None:
+    """Test error when current_password is missing for user with existing password"""
+    data = {
+        "new_password": random_lower_string(),
+    }
+
+    r = logged_in_client.patch(
+        f"{settings.API_V1_STR}/users/me/password",
+        json=data,
+    )
+
+    assert r.status_code == 400
+    response_data = r.json()
+    assert response_data["detail"] == "Current password is required"
 
 
 def test_register_user(

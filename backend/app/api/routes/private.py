@@ -1,10 +1,13 @@
 import uuid
+from datetime import timedelta
 from typing import Any
 
 from fastapi import APIRouter
 from pydantic import BaseModel
 
 from app.api.deps import SessionDep
+from app.core import security
+from app.core.config import MainSettings
 from app.core.security import get_password_hash
 from app.models import (
     App,
@@ -28,7 +31,7 @@ router = APIRouter(tags=["private"])
 
 class CreateUser(BaseModel):
     email: str
-    password: str
+    password: str | None = None
     full_name: str
     is_verified: bool = False
 
@@ -43,7 +46,9 @@ def create_user(user_in: CreateUser, session: SessionDep) -> Any:
         username=user_in.email,
         email=user_in.email,
         full_name=user_in.full_name,
-        hashed_password=get_password_hash(user_in.password),
+        hashed_password=(
+            get_password_hash(user_in.password) if user_in.password else None
+        ),
         is_verified=user_in.is_verified,
     )
 
@@ -177,3 +182,24 @@ def create_environment_variable(
     session.commit()
 
     return env_var
+
+
+class GenerateAccessToken(BaseModel):
+    user_id: uuid.UUID
+
+
+class AccessToken(BaseModel):
+    access_token: str
+    token_type: str
+
+
+@router.post("/generate-access-token/", response_model=AccessToken)
+def generate_access_token(body: GenerateAccessToken) -> Any:
+    settings = MainSettings.get_settings()
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    access_token = security.create_access_token(
+        str(body.user_id), expires_delta=access_token_expires
+    )
+
+    return {"access_token": access_token, "token_type": "bearer"}

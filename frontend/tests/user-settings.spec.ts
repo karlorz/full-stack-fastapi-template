@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test"
 import { findLastEmail } from "./utils/mailcatcher"
-import { createUser } from "./utils/privateApi"
+import {
+  createUser,
+  createUserWithoutPassword,
+  generateAccessToken,
+} from "./utils/privateApi"
 import { randomEmail } from "./utils/random"
 import { logInUser, logOutUser } from "./utils/userUtils"
 
@@ -141,13 +145,69 @@ test.describe("Change password successfully", () => {
     await page.locator('input[name="current_password"]').fill(password)
     await page.locator('input[name="new_password"]').fill(NewPassword)
     await page.locator('input[name="confirm_password"]').fill(NewPassword)
-    await page.getByRole("button", { name: "Save Changes" }).click()
+    await page.getByRole("button", { name: "Update Password" }).click()
     await expect(page.getByText("Password updated successfully")).toBeVisible()
 
     await logOutUser(page)
 
     // Check if the user can log in with the new password
     await logInUser(page, email, NewPassword)
+  })
+})
+
+test.describe("Set initial password for OAuth users", () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test("Set initial password for user without password", async ({ page }) => {
+    const email = randomEmail()
+    const newPassword = "newPassword123"
+
+    // Create user without password (simulating OAuth signup)
+    const user = await createUserWithoutPassword({ email })
+
+    // Generate a real access token for the user
+    const tokenResponse = await generateAccessToken(user.id)
+
+    // Set the access token in localStorage to simulate being logged in
+    await page.goto("/")
+    await page.evaluate((token) => {
+      localStorage.setItem("access_token", token)
+    }, tokenResponse.access_token)
+
+    await page.goto("/settings")
+
+    // Verify the message for OAuth users is shown
+    await expect(
+      page.getByText(
+        "Set up a password to enable login with email and password.",
+      ),
+    ).toBeVisible()
+
+    // Click Add Password Button
+    await page.getByRole("button", { name: "Add Password" }).click()
+
+    // Verify current password field is not shown
+    await expect(
+      page.locator('input[name="current_password"]'),
+    ).not.toBeVisible()
+
+    // Fill out password form (only new password fields should be visible)
+    await page.locator('input[name="new_password"]').fill(newPassword)
+    await page.locator('input[name="confirm_password"]').fill(newPassword)
+
+    // Verify button text is "Set Password" instead of "Update Password"
+    await expect(
+      page.getByRole("button", { name: "Set Password" }),
+    ).toBeVisible()
+
+    await page.getByRole("button", { name: "Set Password" }).click()
+    await expect(page.getByText("Password set successfully")).toBeVisible()
+
+    // Log out
+    await logOutUser(page)
+
+    // Verify user can now log in with email/password
+    await logInUser(page, email, newPassword)
   })
 })
 
@@ -173,7 +233,7 @@ test.describe("Change password with invalid data", () => {
     await page.locator('input[name="current_password"]').fill(currentPassword)
     await page.locator('input[name="new_password"]').fill(newPassword)
     await page.locator('input[name="confirm_password"]').fill(confirmPassword)
-    await page.getByRole("button", { name: "Save Changes" }).click()
+    await page.getByRole("button", { name: "Update Password" }).click()
     await expect(page.getByText("Passwords do not match")).toBeVisible()
   })
 
@@ -183,7 +243,7 @@ test.describe("Change password with invalid data", () => {
     await page.locator('input[name="current_password"]').fill(currentPassword)
     await page.locator('input[name="new_password"]').fill(currentPassword)
     await page.locator('input[name="confirm_password"]').fill(currentPassword)
-    await page.getByRole("button", { name: "Save Changes" }).click()
+    await page.getByRole("button", { name: "Update Password" }).click()
     await expect(
       page.getByText("New password cannot be the same as the current one"),
     ).toBeVisible()
