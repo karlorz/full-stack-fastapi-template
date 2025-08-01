@@ -355,6 +355,7 @@ def deploy_to_kubernetes(
         "metadata": {
             "name": service_name,
             "namespace": namespace,
+            "labels": use_labels,
         },
         "spec": {
             "template": {
