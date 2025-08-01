@@ -101,7 +101,7 @@ def get_ecr_token() -> str:
     try:
         response = ecr.get_authorization_token()
     except NoCredentialsError:
-        print("Credentials not available")
+        logfire.info("Credentials not available")
         raise
 
     token = response["authorizationData"][0].get("authorizationToken")
@@ -115,7 +115,7 @@ def create_namespace(namespace: str) -> None:
 
     try:
         api_instance.read_namespace(name=namespace)  # type: ignore
-        print(
+        logfire.info(
             f"Namespace '{namespace}' already exists."
         )  # if there is no error, the namespace exists
     except K8sApiException as e:
@@ -123,14 +123,14 @@ def create_namespace(namespace: str) -> None:
             namespace_body = k8s.V1Namespace(metadata=k8s.V1ObjectMeta(name=namespace))
             try:
                 api_instance.create_namespace(namespace_body)  # type: ignore
-                print(
+                logfire.info(
                     f"Namespace '{namespace}' created."
                 )  # if there is no error, the namespace was created
             except K8sApiException as ex:
-                print(f"Error creating namespace: {ex}")
+                logfire.info(f"Error creating namespace: {ex}")
                 raise ex
         else:
-            print(f"Error reading namespace: {e}")
+            logfire.info(f"Error reading namespace: {e}")
             raise e
 
 
@@ -159,7 +159,7 @@ def create_or_patch_custom_namespaced_object(
             name=name,
             body=body,
         )
-        print(f"Custom object patched. Status='{api_response}'")
+        logfire.info(f"Custom object patched. Status='{api_response}'")
 
     except K8sApiException as e:
         if e.status == 404:  # Not Found
@@ -171,7 +171,7 @@ def create_or_patch_custom_namespaced_object(
                 plural=plural,
                 body=body,
             )
-            print(f"Custom object created. Status='{api_response}'")
+            logfire.info(f"Custom object created. Status='{api_response}'")
         else:
             raise e
 
@@ -200,7 +200,7 @@ def create_or_patch_custom_cluster_object(
             name=name,
             body=body,
         )
-        print(f"Custom object patched. Status='{api_response}'")
+        logfire.info(f"Custom object patched. Status='{api_response}'")
 
     except K8sApiException as e:
         if e.status == 404:  # Not Found
@@ -211,7 +211,7 @@ def create_or_patch_custom_cluster_object(
                 plural=plural,
                 body=body,
             )
-            print(f"Custom object created. Status='{api_response}'")
+            logfire.info(f"Custom object created. Status='{api_response}'")
         else:
             raise e
 
@@ -452,7 +452,7 @@ def download_and_extract_tar(
     *, bucket_name: str, object_key: str, object_id: str, extract_to: str
 ) -> None:
     with tempfile.TemporaryDirectory(prefix=f"download-tar-{object_id}-") as tar_dir:
-        print(f"Download directory: {tar_dir}")
+        logfire.info(f"Download directory: {tar_dir}")
         tar_path = f"{tar_dir}/code.tar"
         s3.download_file(bucket_name, object_key, tar_path)
 
@@ -576,7 +576,7 @@ def build_and_push_docker_image(
 
     build_request = _create_build(depot_client.build(), depot_settings)
 
-    print(f"Build request created: {build_request.build_id}")
+    logfire.info(f"Build request created: {build_request.build_id}")
 
     yield from depot_build_exec(
         context_dir=Path(docker_context_path),
@@ -594,7 +594,7 @@ def build_and_push_docker_image(
             check=True,
             capture_output=True,
         )
-        print(local_result.stdout)
+        print(local_result.stdout)  # noqa: T201 - this is only for local development
 
 
 def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:
@@ -646,7 +646,7 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
         context_name_prefix = f"build-context-{deployment_with_team.id}-"
 
         with tempfile.TemporaryDirectory(prefix=context_name_prefix) as build_context:
-            print(f"Build context: {build_context}")
+            logfire.info(f"Build context: {build_context}")
 
             deployment_with_team.status = DeploymentStatus.extracting
             session.commit()
