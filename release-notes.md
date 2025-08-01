@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Add labels to knative service. PR [#1185](https://github.com/fastapilabs/cloud/pull/1185) by [@patrick91](https://github.com/patrick91).
 * ✨ Add support for setting a password after using socials to sign in. PR [#1180](https://github.com/fastapilabs/cloud/pull/1180) by [@patrick91](https://github.com/patrick91).
 * ✨ Send heartbeat when sending build logs. PR [#1126](https://github.com/fastapilabs/cloud/pull/1126) by [@patrick91](https://github.com/patrick91).
 * ✨ Notify previous email of email change. PR [#1098](https://github.com/fastapilabs/cloud/pull/1098) by [@patrick91](https://github.com/patrick91).
