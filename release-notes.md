@@ -488,6 +488,7 @@
 
 ### Infrastructure
 
+* 📊 Add Knative monitoring with Grafana dashboards and ServiceMonitors. PR [#1183](https://github.com/fastapilabs/cloud/pull/1183) by [@malvex](https://github.com/malvex).
 * ⚡ Upgrade production EKS nodes to t3a.xlarge. PR [#1173](https://github.com/fastapilabs/cloud/pull/1173) by [@malvex](https://github.com/malvex).
 * 🐛 Fix Tempo crashloop by adding S3 endpoint configuration. PR [#1172](https://github.com/fastapilabs/cloud/pull/1172) by [@malvex](https://github.com/malvex).
 * ✨ Add Grafana Loki and Tempo. PR [#1171](https://github.com/fastapilabs/cloud/pull/1171) by [@malvex](https://github.com/malvex).
