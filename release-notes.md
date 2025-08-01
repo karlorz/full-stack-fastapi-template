@@ -529,6 +529,7 @@
 
 ### Internal
 
+* 🚨 Introduce `T201` to prevent debug prints in our code. PR [#1186](https://github.com/fastapilabs/cloud/pull/1186) by [@patrick91](https://github.com/patrick91).
 * 👷 Update latest-changes GitHub Action. PR [#1182](https://github.com/fastapilabs/cloud/pull/1182) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Bump @types/node from 24.0.10 to 24.1.0 in /frontend. PR [#1167](https://github.com/fastapilabs/cloud/pull/1167) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @biomejs/biome from 2.1.1 to 2.1.2 in /frontend. PR [#1166](https://github.com/fastapilabs/cloud/pull/1166) by [@dependabot[bot]](https://github.com/apps/dependabot).
