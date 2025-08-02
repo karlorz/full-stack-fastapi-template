@@ -73,7 +73,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
-          version: "0.4.15"
+          version: "0.8"
       - run: npm ci
         working-directory: frontend
       - run: npm run build
