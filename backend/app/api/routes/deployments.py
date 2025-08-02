@@ -25,7 +25,6 @@ from app.core.config import CommonSettings, MainSettings
 from app.crud import get_user_team_link
 from app.models import (
     App,
-    AppStatus,
     BuildMessage,
     Deployment,
     DeploymentPublic,
@@ -60,7 +59,7 @@ def read_deployments(
     Retrieve a list of deployments for the provided app.
     """
     app = session.exec(
-        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+        select(App).where(App.id == app_id).where(col(App.deleted_at).is_(None))
     ).first()
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -105,7 +104,7 @@ def read_deployment(
     Retrieve a list of deployments for the provided app.
     """
     app = session.exec(
-        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+        select(App).where(App.id == app_id).where(col(App.deleted_at).is_(None))
     ).first()
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -185,7 +184,7 @@ def create_deployment(
     """
 
     app = session.exec(
-        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+        select(App).where(App.id == app_id).where(col(App.deleted_at).is_(None))
     ).first()
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -237,7 +236,7 @@ def upload_deployment_artifact(
     app = session.exec(
         select(App)
         .where(App.id == deployment.app_id)
-        .where(App.status == AppStatus.active)
+        .where(col(App.deleted_at).is_(None))
     ).first()
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -282,7 +281,7 @@ def redeploy(
     app = session.exec(
         select(App)
         .where(App.id == deployment.app_id)
-        .where(App.status == AppStatus.active)
+        .where(col(App.deleted_at).is_(None))
     ).first()
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
@@ -327,7 +326,7 @@ def upload_complete(
     app = session.exec(
         select(App)
         .where(App.id == deployment.app_id)
-        .where(App.status == AppStatus.active)
+        .where(col(App.deleted_at).is_(None))
     ).first()
     if not app:
         raise HTTPException(status_code=404, detail="App not found")

@@ -13,7 +13,6 @@ from app.api.deps import (
 from app.crud import get_user_team_link
 from app.models import (
     App,
-    AppStatus,
     EnvironmentVariable,
     EnvironmentVariableCreate,
     EnvironmentVariablePublic,
@@ -37,7 +36,7 @@ def read_environment_variables(
     """
 
     app = session.exec(
-        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+        select(App).where(App.id == app_id).where(col(App.deleted_at).is_(None))
     ).first()
 
     if not app:
@@ -83,7 +82,7 @@ def create_environment_variable(
     """
 
     app = session.exec(
-        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+        select(App).where(App.id == app_id).where(col(App.deleted_at).is_(None))
     ).first()
 
     if not app:
@@ -151,7 +150,7 @@ def update_environment_variables(
     """
 
     app = session.exec(
-        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+        select(App).where(App.id == app_id).where(col(App.deleted_at).is_(None))
     ).first()
 
     if not app:
@@ -231,7 +230,7 @@ def delete_environment_variable(
     """
 
     app = session.exec(
-        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+        select(App).where(App.id == app_id).where(col(App.deleted_at).is_(None))
     ).first()
 
     if not app:
@@ -287,7 +286,7 @@ def update_environment_variable(
     """
 
     app = session.exec(
-        select(App).where(App.id == app_id).where(App.status == AppStatus.active)
+        select(App).where(App.id == app_id).where(col(App.deleted_at).is_(None))
     ).first()
 
     if not app:

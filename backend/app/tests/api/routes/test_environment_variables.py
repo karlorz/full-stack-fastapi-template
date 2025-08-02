@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 
 from app.core.config import MainSettings
 from app.crud import add_user_to_team
-from app.models import AppStatus, EnvironmentVariable, Role
+from app.models import EnvironmentVariable, Role, get_datetime_utc
 from app.tests.utils.apps import create_environment_variable, create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
@@ -714,9 +714,9 @@ def test_read_environment_variables_filters_by_app_status(
     team = create_random_team(db, owner_id=user.id)
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
-    pending_deletion_app = create_random_app(db, team=team)
-    pending_deletion_app.status = AppStatus.pending_deletion
-    db.add(pending_deletion_app)
+    soft_deleted_app = create_random_app(db, team=team)
+    soft_deleted_app.deleted_at = get_datetime_utc()
+    db.add(soft_deleted_app)
     db.commit()
 
     user_auth_headers = user_authentication_headers(
@@ -726,7 +726,7 @@ def test_read_environment_variables_filters_by_app_status(
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/environment-variables",
+        f"{settings.API_V1_STR}/apps/{soft_deleted_app.id}/environment-variables",
         headers=user_auth_headers,
     )
 
@@ -749,9 +749,9 @@ def test_create_environment_variable_filters_by_app_status(
     team = create_random_team(db, owner_id=user.id)
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
-    pending_deletion_app = create_random_app(db, team=team)
-    pending_deletion_app.status = AppStatus.pending_deletion
-    db.add(pending_deletion_app)
+    soft_deleted_app = create_random_app(db, team=team)
+    soft_deleted_app.deleted_at = get_datetime_utc()
+    db.add(soft_deleted_app)
     db.commit()
 
     user_auth_headers = user_authentication_headers(
@@ -766,7 +766,7 @@ def test_create_environment_variable_filters_by_app_status(
     }
 
     response = client.post(
-        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/environment-variables",
+        f"{settings.API_V1_STR}/apps/{soft_deleted_app.id}/environment-variables",
         headers=user_auth_headers,
         json=data,
     )
@@ -790,12 +790,12 @@ def test_update_environment_variable_filters_by_app_status(
     team = create_random_team(db, owner_id=user.id)
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
-    pending_deletion_app = create_random_app(db, team=team)
+    soft_deleted_app = create_random_app(db, team=team)
     env = create_environment_variable(
-        db, app=pending_deletion_app, name="TEST_VAR", value="old_value"
+        db, app=soft_deleted_app, name="TEST_VAR", value="old_value"
     )
-    pending_deletion_app.status = AppStatus.pending_deletion
-    db.add(pending_deletion_app)
+    soft_deleted_app.deleted_at = get_datetime_utc()
+    db.add(soft_deleted_app)
     db.commit()
 
     user_auth_headers = user_authentication_headers(
@@ -807,7 +807,7 @@ def test_update_environment_variable_filters_by_app_status(
     data = {"value": "new_value"}
 
     response = client.put(
-        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/environment-variables/{env.name}",
+        f"{settings.API_V1_STR}/apps/{soft_deleted_app.id}/environment-variables/{env.name}",
         headers=user_auth_headers,
         json=data,
     )
@@ -831,12 +831,12 @@ def test_delete_environment_variable_filters_by_app_status(
     team = create_random_team(db, owner_id=user.id)
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
-    pending_deletion_app = create_random_app(db, team=team)
+    soft_deleted_app = create_random_app(db, team=team)
     env = create_environment_variable(
-        db, app=pending_deletion_app, name="TEST_VAR", value="test_value"
+        db, app=soft_deleted_app, name="TEST_VAR", value="test_value"
     )
-    pending_deletion_app.status = AppStatus.pending_deletion
-    db.add(pending_deletion_app)
+    soft_deleted_app.deleted_at = get_datetime_utc()
+    db.add(soft_deleted_app)
     db.commit()
 
     user_auth_headers = user_authentication_headers(
@@ -846,7 +846,7 @@ def test_delete_environment_variable_filters_by_app_status(
     )
 
     response = client.delete(
-        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/environment-variables/{env.name}",
+        f"{settings.API_V1_STR}/apps/{soft_deleted_app.id}/environment-variables/{env.name}",
         headers=user_auth_headers,
     )
 
@@ -869,9 +869,9 @@ def test_batch_update_environment_variables_filters_by_app_status(
     team = create_random_team(db, owner_id=user.id)
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
-    pending_deletion_app = create_random_app(db, team=team)
-    pending_deletion_app.status = AppStatus.pending_deletion
-    db.add(pending_deletion_app)
+    soft_deleted_app = create_random_app(db, team=team)
+    soft_deleted_app.deleted_at = get_datetime_utc()
+    db.add(soft_deleted_app)
     db.commit()
 
     user_auth_headers = user_authentication_headers(
@@ -881,7 +881,7 @@ def test_batch_update_environment_variables_filters_by_app_status(
     )
 
     response = client.patch(
-        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/environment-variables",
+        f"{settings.API_V1_STR}/apps/{soft_deleted_app.id}/environment-variables",
         headers=user_auth_headers,
         json={
             "NEW_VAR": "new_value",

@@ -1,13 +1,14 @@
 import re
 import uuid
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 
+import time_machine
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 from app.core.config import MainSettings
 from app.crud import add_user_to_team
-from app.models import App, AppStatus, Role
+from app.models import App, Role, get_datetime_utc
 from app.tests.utils.apps import create_deployment_for_app, create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
@@ -563,6 +564,7 @@ def test_read_app_invalid_uuid(client: TestClient, db: Session) -> None:
     assert data["detail"] == "App not found"
 
 
+@time_machine.travel("2025-07-24 12:00:00+00:00", tick=False)
 def test_delete_app(client: TestClient, db: Session) -> None:
     user = create_user(
         session=db,
@@ -592,7 +594,7 @@ def test_delete_app(client: TestClient, db: Session) -> None:
     assert data["message"] == "App deleted"
 
     db.refresh(app)
-    assert app.status == AppStatus.pending_deletion
+    assert app.deleted_at == datetime.now(UTC)
 
 
 def test_delete_app_user_not_in_team(client: TestClient, db: Session) -> None:
@@ -652,8 +654,8 @@ def test_delete_app_user_not_admin(client: TestClient, db: Session) -> None:
     assert data["detail"] == "You do not have permission to delete this app"
 
 
-def test_read_apps_only_shows_active_apps(client: TestClient, db: Session) -> None:
-    """Test that list apps endpoint only returns active apps."""
+def test_read_apps_excludes_soft_deleted_apps(client: TestClient, db: Session) -> None:
+    """Test that list apps endpoint only returns apps which are not soft-deleted."""
     user = create_user(
         session=db,
         email=random_email(),
@@ -666,9 +668,9 @@ def test_read_apps_only_shows_active_apps(client: TestClient, db: Session) -> No
 
     active_app = create_random_app(db, team=team)
 
-    pending_app = create_random_app(db, team=team)
-    pending_app.status = AppStatus.pending_deletion
-    db.add(pending_app)
+    soft_deleted_app = create_random_app(db, team=team)
+    soft_deleted_app.deleted_at = get_datetime_utc()
+    db.add(soft_deleted_app)
 
     db.commit()
 
@@ -691,8 +693,8 @@ def test_read_apps_only_shows_active_apps(client: TestClient, db: Session) -> No
     assert data["data"][0]["id"] == str(active_app.id)
 
 
-def test_read_app_filters_by_status(client: TestClient, db: Session) -> None:
-    """Test that read app endpoint only returns active apps."""
+def test_read_app_excludes_soft_deleted_apps(client: TestClient, db: Session) -> None:
+    """Test that read app endpoint only returns apps which are not soft-deleted."""
     user = create_user(
         session=db,
         email=random_email(),
@@ -703,9 +705,9 @@ def test_read_app_filters_by_status(client: TestClient, db: Session) -> None:
     team = create_random_team(db, owner_id=user.id)
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
-    pending_app = create_random_app(db, team=team)
-    pending_app.status = AppStatus.pending_deletion
-    db.add(pending_app)
+    soft_deleted_app = create_random_app(db, team=team)
+    soft_deleted_app.deleted_at = get_datetime_utc()
+    db.add(soft_deleted_app)
     db.commit()
 
     user_auth_headers = user_authentication_headers(
@@ -715,7 +717,7 @@ def test_read_app_filters_by_status(client: TestClient, db: Session) -> None:
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/apps/{pending_app.id}",
+        f"{settings.API_V1_STR}/apps/{soft_deleted_app.id}",
         headers=user_auth_headers,
     )
 

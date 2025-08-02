@@ -102,6 +102,8 @@ class CommonSettings(SettingsEnv):
     REDIS_PASSWORD: str | None = None
     REDIS_DB: int = 0
 
+    SOFT_DELETED_APP_RETENTION_DAYS: int = 30
+
     @property
     def REDIS_URI(self) -> str:
         return f"redis://{self.REDIS_SERVER}:{self.REDIS_PORT}/{self.REDIS_DB}"

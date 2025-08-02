@@ -9,7 +9,7 @@ from sqlmodel import Session, select
 from app.api.routes.deployments import sqs
 from app.core.config import CommonSettings, MainSettings
 from app.crud import add_user_to_team
-from app.models import AppStatus, Deployment, Role
+from app.models import Deployment, Role, get_datetime_utc
 from app.tests.utils.apps import create_deployment_for_app, create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
@@ -500,10 +500,10 @@ def test_get_build_logs_timeout(client: TestClient, db: Session) -> None:
     assert response.content == b'{"type": "timeout"}\n'
 
 
-def test_read_deployments_filters_by_app_status(
+def test_read_deployments_excludes_deployments_of_soft_deleted_apps(
     client: TestClient, db: Session
 ) -> None:
-    """Test that read deployments endpoint filters by app status."""
+    """Test that read deployments endpoint only returns deployments of apps which are not soft-deleted."""
     user = create_user(
         session=db,
         email=random_email(),
@@ -514,9 +514,9 @@ def test_read_deployments_filters_by_app_status(
     team = create_random_team(db, owner_id=user.id)
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
-    pending_app = create_random_app(db, team=team)
-    pending_app.status = AppStatus.pending_deletion
-    db.add(pending_app)
+    soft_deleted_app = create_random_app(db, team=team)
+    soft_deleted_app.deleted_at = get_datetime_utc()
+    db.add(soft_deleted_app)
     db.commit()
 
     user_auth_headers = user_authentication_headers(
@@ -526,7 +526,7 @@ def test_read_deployments_filters_by_app_status(
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/apps/{pending_app.id}/deployments/",
+        f"{settings.API_V1_STR}/apps/{soft_deleted_app.id}/deployments/",
         headers=user_auth_headers,
     )
 
@@ -535,7 +535,9 @@ def test_read_deployments_filters_by_app_status(
     assert data["detail"] == "App not found"
 
 
-def test_read_deployment_filters_by_app_status(client: TestClient, db: Session) -> None:
+def test_read_deployment_excludes_deployments_of_soft_deleted_apps(
+    client: TestClient, db: Session
+) -> None:
     """Test that read deployment endpoint filters by app status."""
     user = create_user(
         session=db,
@@ -547,10 +549,10 @@ def test_read_deployment_filters_by_app_status(client: TestClient, db: Session) 
     team = create_random_team(db, owner_id=user.id)
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
-    pending_deletion_app = create_random_app(db, team=team)
-    deployment = create_deployment_for_app(db, app=pending_deletion_app)
-    pending_deletion_app.status = AppStatus.pending_deletion
-    db.add(pending_deletion_app)
+    soft_deleted_app = create_random_app(db, team=team)
+    deployment = create_deployment_for_app(db, app=soft_deleted_app)
+    soft_deleted_app.deleted_at = get_datetime_utc()
+    db.add(soft_deleted_app)
     db.commit()
 
     user_auth_headers = user_authentication_headers(
@@ -560,7 +562,7 @@ def test_read_deployment_filters_by_app_status(client: TestClient, db: Session) 
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/apps/{pending_deletion_app.id}/deployments/{deployment.id}",
+        f"{settings.API_V1_STR}/apps/{soft_deleted_app.id}/deployments/{deployment.id}",
         headers=user_auth_headers,
     )
 
@@ -569,10 +571,10 @@ def test_read_deployment_filters_by_app_status(client: TestClient, db: Session) 
     assert data["detail"] == "App not found"
 
 
-def test_create_deployment_filters_by_app_status(
+def test_create_deployment_rejects_soft_deleted_apps(
     client: TestClient, db: Session
 ) -> None:
-    """Test that create deployment endpoint filters by app status."""
+    """Test that create deployment endpoint does not deploy soft-deleted apps."""
     user = create_user(
         session=db,
         email=random_email(),
@@ -583,9 +585,9 @@ def test_create_deployment_filters_by_app_status(
     team = create_random_team(db, owner_id=user.id)
     add_user_to_team(session=db, user=user, team=team, role=Role.admin)
 
-    pending_app = create_random_app(db, team=team)
-    pending_app.status = AppStatus.pending_deletion
-    db.add(pending_app)
+    soft_deleted_app = create_random_app(db, team=team)
+    soft_deleted_app.deleted_at = get_datetime_utc()
+    db.add(soft_deleted_app)
     db.commit()
 
     user_auth_headers = user_authentication_headers(
@@ -595,7 +597,7 @@ def test_create_deployment_filters_by_app_status(
     )
 
     response = client.post(
-        f"{settings.API_V1_STR}/apps/{pending_app.id}/deployments/",
+        f"{settings.API_V1_STR}/apps/{soft_deleted_app.id}/deployments/",
         headers=user_auth_headers,
     )
 

@@ -1,12 +1,12 @@
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Annotated, Any, Literal
 
 from pydantic import AfterValidator, EmailStr, computed_field
-from sqlalchemy import DateTime
+from sqlalchemy import ColumnElement, DateTime
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, Relationship, SQLModel, and_, col, func
 
 from app.core.config import CommonSettings, MainSettings
 
@@ -23,11 +23,6 @@ class Role(str, Enum):
 class InvitationStatus(str, Enum):
     pending = "pending"
     accepted = "accepted"
-
-
-class AppStatus(str, Enum):
-    active = "active"
-    pending_deletion = "pending_deletion"
 
 
 class UserTeamLink(SQLModel, table=True):
@@ -308,13 +303,20 @@ class App(AppBase, table=True):
     team_id: uuid.UUID = Field(foreign_key="team.id")
     team: Team = Relationship(back_populates="apps")
     slug: str = Field(max_length=255, unique=True)
-    status: AppStatus = Field(default=AppStatus.active)
     created_at: datetime = Field(
         default_factory=get_datetime_utc,
         sa_type=DateTime(timezone=True),  # type: ignore
     )
     updated_at: datetime = Field(
         default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    deleted_at: datetime | None = Field(
+        default=None,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    cleaned_up_at: datetime | None = Field(
+        default=None,
         sa_type=DateTime(timezone=True),  # type: ignore
     )
     deployments: list["Deployment"] = Relationship(
@@ -341,6 +343,32 @@ class App(AppBase, table=True):
             return None
 
         return self.updated_at > self.latest_deployment.updated_at
+
+    @computed_field(return_type=bool)
+    @hybrid_property
+    def is_deletable(self) -> bool:
+        if self.cleaned_up_at is None or self.deleted_at is None:
+            return False
+
+        soft_deleted_app_retention_days = timedelta(
+            days=CommonSettings.get_settings().SOFT_DELETED_APP_RETENTION_DAYS
+        )
+
+        return get_datetime_utc() > (self.deleted_at + soft_deleted_app_retention_days)
+
+    @computed_field(return_type=bool)  # type: ignore[no-redef]
+    @is_deletable.expression
+    def is_deletable(cls) -> ColumnElement[bool]:
+        soft_deleted_app_retention_days = timedelta(
+            days=CommonSettings.get_settings().SOFT_DELETED_APP_RETENTION_DAYS
+        )
+
+        return and_(
+            col(cls.__class__.cleaned_up_at).is_not(None),
+            col(cls.__class__.deleted_at).is_not(None),
+            func.now()
+            > (col(cls.__class__.deleted_at) + soft_deleted_app_retention_days),
+        )
 
 
 class AppCreate(AppBase):
