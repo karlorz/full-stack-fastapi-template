@@ -1,0 +1,11 @@
+[project]
+name = "fastapicloud-infra"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "pulumi>=3.0.0,<4.0.0",
+    "pulumi-aws>=6.0.0,<7.0.0",
+    "pulumi-awsx>=2.0.0,<3.0.0",
+    "pulumi-eks>=2.0.0,<4.0.0",
+    "pulumi-kubernetes>=4.22.1,<5.0.0",
+]

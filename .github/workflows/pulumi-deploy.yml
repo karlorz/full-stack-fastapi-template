@@ -56,13 +56,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8"
+          enable-cache: true
       - name: Configure AWS Credentials for Staging
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: uv sync
         working-directory: infra
       - uses: pulumi/actions@v6
         id: pulumi
@@ -108,7 +114,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - run: pip install -r requirements.txt
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8"
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync
         working-directory: infra/cloudflare
       - uses: pulumi/actions@v6
         with:
