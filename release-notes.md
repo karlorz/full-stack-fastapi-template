@@ -533,6 +533,7 @@
 
 ### Internal
 
+* ⬆ Bump @tanstack/router-devtools from 1.125.4 to 1.130.13 in /frontend. PR [#1199](https://github.com/fastapilabs/cloud/pull/1199) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump uv to 0.8.x in GitHub workflows. PR [#1190](https://github.com/fastapilabs/cloud/pull/1190) by [@malvex](https://github.com/malvex).
 * 🚨 Introduce `T201` to prevent debug prints in our code. PR [#1186](https://github.com/fastapilabs/cloud/pull/1186) by [@patrick91](https://github.com/patrick91).
 * 👷 Update latest-changes GitHub Action. PR [#1182](https://github.com/fastapilabs/cloud/pull/1182) by [@tiangolo](https://github.com/tiangolo).
