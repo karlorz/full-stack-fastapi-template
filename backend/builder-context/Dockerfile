@@ -11,7 +11,7 @@ RUN apt-get update && \
 
 # Install uv
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
-COPY --from=ghcr.io/astral-sh/uv:0.4.23 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.8.4 /uv /bin/uv
 
 # Compile bytecode
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#compiling-bytecode
