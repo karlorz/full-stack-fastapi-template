@@ -533,6 +533,7 @@
 
 ### Internal
 
+* ⬆ Bump react-dom and @types/react-dom in /frontend. PR [#1202](https://github.com/fastapilabs/cloud/pull/1202) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆️ Bump uv to 0.8.4 in Dockerfiles. PR [#1203](https://github.com/fastapilabs/cloud/pull/1203) by [@buurro](https://github.com/buurro).
 * ⬆ Bump @tanstack/router-devtools from 1.125.4 to 1.130.13 in /frontend. PR [#1199](https://github.com/fastapilabs/cloud/pull/1199) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump uv to 0.8.x in GitHub workflows. PR [#1190](https://github.com/fastapilabs/cloud/pull/1190) by [@malvex](https://github.com/malvex).
