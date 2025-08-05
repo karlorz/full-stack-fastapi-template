@@ -1,0 +1,1 @@
+{{- include "fastapicloud.resource.clusterdomainclaim" (list "posthog" .) }}

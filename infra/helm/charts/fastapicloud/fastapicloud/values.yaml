@@ -1,0 +1,339 @@
+global:
+  externalSecrets:
+    kind: ClusterSecretStore
+    name: external-parameter-store
+
+    secrets: {}
+
+  environment: {}
+  #   ENVIRONMENT: development
+
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+kubernetesClusterDomain: cluster.local
+
+# This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  labels: {}
+
+api:
+  # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+  image:
+    repository: fastapicloud/builder
+    # This sets the pull policy for images.
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  autoscaling:
+    minScale: 1
+    maxScale: 10
+
+  containerConcurrency: 0
+  timeoutSeconds: 300
+
+  environment:
+    RESERVED_APP_NAMES: fastapicloud,fastapilabs,fastapi-cloud,fastapi-labs,fastapilab,fastapi-lab,fastapi,fastapi-cli,sqlmodel,typer,asyncer
+
+  # This is for the external-secrets to pull the secrets from the secret manager.
+  externalSecrets:
+    enabled: true
+    secrets:
+      ALLOW_SIGNUP_TOKEN:
+        remoteRef:
+          key: FASTAPICLOUD_ALLOW_SIGNUP_TOKEN
+      BACKEND_GITHUB_CLIENT_ID:
+        remoteRef:
+          key: FASTAPICLOUD_BACKEND_GITHUB_CLIENT_ID
+      BACKEND_GITHUB_CLIENT_SECRET:
+        remoteRef:
+          key: FASTAPICLOUD_BACKEND_GITHUB_CLIENT_SECRET
+      BACKEND_SENTRY_DSN:
+        remoteRef:
+          key: FASTAPICLOUD_BACKEND_SENTRY_DSN
+      BUILDER_API_KEY:
+        remoteRef:
+          key: FASTAPICLOUD_BUILDER_API_KEY
+      CLOUDFLARE_API_TOKEN_SSL:
+        remoteRef:
+          key: FASTAPICLOUD_CLOUDFLARE_API_KEY
+      CLOUDFLARE_ACCOUNT_ID:
+        remoteRef:
+          key: FASTAPICLOUD_CLOUDFLARE_ACCOUNT_ID
+      CLOUDFLARE_ZONE_ID:
+        remoteRef:
+          key: FASTAPICLOUD_CLOUDFLARE_ZONE_ID
+      DEPLOYMENTS_BUCKET_NAME:
+        remoteRef:
+          key: FASTAPICLOUD_DEPLOYMENTS_BUCKET_NAME
+      EMAILABLE_KEY:
+        remoteRef:
+          key: FASTAPICLOUD_EMAILABLE_KEY
+      LOGFIRE_TOKEN:
+        remoteRef:
+          key: FASTAPICLOUD_LOGFIRE_TOKEN
+      NATS_CREDS:
+        remoteRef:
+          key: synadia-credentials
+      POSTGRES_PASSWORD:
+        remoteRef:
+          key: FASTAPICLOUD_POSTGRES_PASSWORD
+      POSTHOG_API_KEY:
+        remoteRef:
+          key: FASTAPICLOUD_POSTHOG_API_KEY
+      SECRET_KEY:
+        remoteRef:
+          key: FASTAPICLOUD_BACKEND_SECRET_KEY
+      SMTP_PASSWORD:
+        remoteRef:
+          key: FASTAPICLOUD_SMTP_PASSWORD
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    # readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+
+  domainmapping:
+    hostname: api.example
+
+builder:
+  # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+  image:
+    repository: fastapicloud/builder
+    # This sets the pull policy for images.
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  autoscaling:
+    minScale: 1
+    maxScale: 10
+
+  containerConcurrency: 0
+  timeoutSeconds: 300
+
+  environment: {}
+
+  # This is for the external-secrets to pull the secrets from the secret manager.
+  externalSecrets:
+    enabled: true
+    secrets:
+      BUILDER_API_KEY:
+        remoteRef:
+          key: FASTAPICLOUD_BUILDER_API_KEY
+      BUILDER_SENTRY_DSN:
+        remoteRef:
+          key: FASTAPICLOUD_BUILDER_SENTRY_DSN
+      CLOUDFLARE_API_TOKEN_SSL:
+        remoteRef:
+          key: FASTAPICLOUD_CLOUDFLARE_API_KEY
+      CLOUDFLARE_ACCOUNT_ID:
+        remoteRef:
+          key: FASTAPICLOUD_CLOUDFLARE_ACCOUNT_ID
+      CLOUDFLARE_ZONE_ID:
+        remoteRef:
+          key: FASTAPICLOUD_CLOUDFLARE_ZONE_ID
+      DEPLOYMENTS_BUCKET_NAME:
+        remoteRef:
+          key: FASTAPICLOUD_DEPLOYMENTS_BUCKET_NAME
+      DEPOT_TOKEN:
+        remoteRef:
+          key: FASTAPICLOUD_DEPOT_TOKEN
+      LOGFIRE_TOKEN:
+        remoteRef:
+          key: FASTAPICLOUD_LOGFIRE_TOKEN
+      POSTGRES_PASSWORD:
+        remoteRef:
+          key: FASTAPICLOUD_POSTGRES_PASSWORD
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    # readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+
+messenger:
+  # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+  replicaCount: 1
+
+  # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+  image:
+    repository: fastapicloud/messenger
+    # This sets the pull policy for images.
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  command:
+    - python
+    - -m
+    - app.messenger
+
+  # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  imagePullSecrets: []
+
+  environment: {}
+
+  externalSecrets:
+    enabled: true
+    secrets:
+      BUILDER_API_KEY:
+        remoteRef:
+          key: FASTAPICLOUD_BUILDER_API_KEY
+      DEPLOYMENTS_BUCKET_NAME:
+        remoteRef:
+          key: FASTAPICLOUD_DEPLOYMENTS_BUCKET_NAME
+      LOGFIRE_TOKEN:
+        remoteRef:
+          key: FASTAPICLOUD_LOGFIRE_TOKEN
+      MESSENGER_SENTRY_DSN:
+        remoteRef:
+          key: FASTAPICLOUD_MESSENGER_SENTRY_DSN
+      NATS_CREDS:
+        remoteRef:
+          key: synadia-credentials
+
+  # This is for setting Kubernetes Annotations to a Pod.
+  # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+  podAnnotations: {}
+  # This is for setting Kubernetes Labels to a Pod.
+  # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    # readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+  livenessProbe: {}
+  # livenessProbe:
+  #   httpGet:
+  #     path: /
+  #     port: http
+
+  readinessProbe: {}
+  # readinessProbe:
+  #   httpGet:
+  #     path: /
+  #     port: http
+
+  # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+  autoscaling:
+    enabled: false
+
+  # Additional volumes on the output Deployment definition.
+  volumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+  #     optional: false
+
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts: []
+  # - name: foo
+  #   mountPath: "/etc/foo"
+  #   readOnly: true
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+posthog:
+  # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+  image:
+    repository: fastapicloud/posthog-proxy
+    # This sets the pull policy for images.
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  autoscaling:
+    minScale: 1
+    maxScale: 10
+
+  containerConcurrency: 0
+  timeoutSeconds: 300
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    # readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+
+  domainmapping:
+    hostname: ph.example

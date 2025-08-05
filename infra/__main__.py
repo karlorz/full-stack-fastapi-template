@@ -47,15 +47,20 @@ if current_account.account_id != expected_account_id:
 ALLOW_SIGNUP_TOKEN = cfg.require_secret("fastapicloud_allow_signup_token")
 API_DOMAIN = cfg.require("fastapicloud_api_domain")
 AWS_STS_REGIONAL_ENDPOINTS = "regional"
-# BACKEND_GITHUB_CLIENT_ID = cfg.require("fastapicloud_backend_github_client_id")
-# BACKEND_GITHUB_CLIENT_SECRET = cfg.require_secret("fastapicloud_backend_github_client_secret")
+BACKEND_GITHUB_CLIENT_ID = cfg.require("fastapicloud_backend_github_client_id")
+BACKEND_GITHUB_CLIENT_SECRET = cfg.require_secret(
+    "fastapicloud_backend_github_client_secret")
 BACKEND_SECRET_KEY = cfg.require_secret("fastapicloud_secret_key")
 BACKEND_SENTRY_DSN = cfg.require("fastapicloud_backend_sentry_dsn")
 BUILDER_API_KEY = cfg.require("fastapicloud_builder_api_key")
-# BUILDER_SENTRY_DSN = cfg.require("fastapicloud_builder_sentry_dsn")
+BUILDER_SENTRY_DSN = cfg.require("fastapicloud_builder_sentry_dsn")
 CLOUDFLARE_ACCOUNT_ID = cfg.require("fastapicloud_cloudflare_account_id")
-CLOUDFLARE_API_KEY = cfg.require_secret("fastapicloud_cloudflare_api_token_ssl")
+CLOUDFLARE_API_KEY = cfg.require_secret(
+    "cloudflare_api_token_ssl")
+CLOUDFLARE_FASTAPI_API_KEY = cfg.require_secret(
+    "fastapicloud_cloudflare_api_token_ssl")
 CLOUDFLARE_ZONE_ID = cfg.require("fastapicloud_cloudflare_zone_id")
+DEPOT_TOKEN = cfg.require("fastapicloud_depot_token")
 EMAILABLE_KEY = cfg.require_secret("fastapicloud_emailable_key")
 LOGFIRE_TOKEN = cfg.require_secret("fastapicloud_logfire_token")
 MESSENGER_SENTRY_DSN = cfg.require("fastapicloud_messenger_sentry_dsn")
@@ -736,18 +741,20 @@ fastapicloud_secrets: dict[str, any] = {
     "AWS_REGION": region,
     "AWS_ROLE_ARN": fastapicloud_iam_role,
     "AWS_STS_REGIONAL_ENDPOINTS": AWS_STS_REGIONAL_ENDPOINTS,
-    # TODO:
-    # "BACKEND_GITHUB_CLIENT_ID": BACKEND_GITHUB_CLIENT_ID,
-    # "BACKEND_GITHUB_CLIENT_SECRET": BACKEND_GITHUB_CLIENT_SECRET,
+    "BACKEND_GITHUB_CLIENT_ID": BACKEND_GITHUB_CLIENT_ID,
+    "BACKEND_GITHUB_CLIENT_SECRET": BACKEND_GITHUB_CLIENT_SECRET,
     "BACKEND_SECRET_KEY": BACKEND_SECRET_KEY,
     "BACKEND_SENTRY_DSN": BACKEND_SENTRY_DSN,
     "BUILDER_API_KEY": BUILDER_API_KEY,
+    "BUILDER_SENTRY_DSN": BUILDER_SENTRY_DSN,
     "CLOUDFLARE_ACCOUNT_ID": CLOUDFLARE_ACCOUNT_ID,
-    # "CLOUDFLARE_API_KEY": CLOUDFLARE_API_KEY, # ssm.Parameter already set above
+    "CLOUDFLARE_API_KEY": CLOUDFLARE_FASTAPI_API_KEY,
     "CLOUDFLARE_ZONE_ID": CLOUDFLARE_ZONE_ID,
+    "DEPOT_TOKEN": DEPOT_TOKEN,
     "DEPLOYMENTS_BUCKET_NAME": s3.deployments_bucket.bucket,
     "EMAILABLE_KEY": EMAILABLE_KEY,
     "LOGFIRE_TOKEN": LOGFIRE_TOKEN,
+    "MESSENGER_SENTRY_DSN": MESSENGER_SENTRY_DSN,
     # "NATS_LOGGING_WRITE_CREDS": NATS_LOGGING_WRITE_CREDS, # ssm.Parameter already set above
     "POSTGRES_DB": POSTGRES_DB,
     "POSTGRES_PASSWORD": POSTGRES_PASSWORD,

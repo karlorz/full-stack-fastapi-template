@@ -1,0 +1,74 @@
+global:
+  environment:
+    AWS_REGION: us-east-1
+    BUILDER_QUEUE_NAME: fastapicloud-builder-queue-staging
+    ENVIRONMENT: staging
+    NATS_HOST_NAME: connect.ngs.global
+    REDIS_SERVER: redis-backend.l8pagi.0001.use1.cache.amazonaws.com
+
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::992382821657:role/fastapicloud-iam-role-51d2809
+
+api:
+  image:
+    repository: 992382821657.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-backend
+    tag: ""
+
+  environment:
+    API_DOMAIN: api.fastapicloud.work
+    BACKEND_CORS_ORIGINS: http://localhost/,http://localhost:5173/,https://dashboard.fastapicloud.work/,https://fastapicloud.work/
+    DEPLOYMENTS_DOMAIN: fastapicloud.club
+    EMAILS_FROM_EMAIL: info@fastapicloud.work
+    EMAILS_FROM_NAME: FastAPI Cloud Staging
+    ENABLE_LOCALSTACK: "False"
+    FRONTEND_HOST: https://dashboard.fastapicloud.work
+    LOCALSTACK_HOST_NAME: localhost.localstack.cloud
+    POSTGRES_SERVER: ep-bold-dream-a44aix2j-pooler.us-east-1.aws.neon.tech
+    POSTGRES_PORT: "5432"
+    POSTGRES_USER: db_owner
+    POSTGRES_DB: db
+    POSTGRES_SSL_ENABLED: "True"
+    POSTHOG_HOST: https://eu.i.posthog.com
+    PROJECT_NAME: FastAPI Cloud Staging
+    REDIS_SERVER: redis-backend.l8pagi.0001.use1.cache.amazonaws.com
+    SMTP_HOST: smtp.mailgun.org
+    SMTP_PORT: "587"
+    SMTP_SSL: "False"
+    SMTP_TLS: "True"
+    SMTP_USER: postmaster@mg.fastapicloud.work
+
+  domainmapping:
+    hostname: api.fastapicloud.work
+
+builder:
+  image:
+    repository: 992382821657.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-builder
+    tag: ""
+
+  environment:
+    DEPLOYMENTS_DOMAIN: fastapicloud.club
+    DEPOT_PROJECT_ID: 5bmzsq3lt9
+    ECR_REGISTRY_URL: 992382821657.dkr.ecr.us-east-1.amazonaws.com
+    ENABLE_LOCALSTACK: "False"
+    LOCALSTACK_HOST_NAME: localhost.localstack.cloud
+    POSTGRES_SERVER: ep-bold-dream-a44aix2j-pooler.us-east-1.aws.neon.tech
+    POSTGRES_PORT: "5432"
+    POSTGRES_USER: db_owner
+    POSTGRES_DB: db
+    POSTGRES_SSL_ENABLED: "True"
+
+messenger:
+  image:
+    repository: 992382821657.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-messenger
+    tag: ""
+
+  environment: {}
+
+posthog:
+  image:
+    repository: 992382821657.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-posthog-proxy
+    tag: ""
+
+  domainmapping:
+    hostname: ph.fastapicloud.work

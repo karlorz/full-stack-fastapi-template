@@ -9,8 +9,10 @@ Expects a list with:
 {{- $key := index . 0 }}
 {{- $ctx := index . 1 }}
 {{- $app := index $ctx.Values $key }}
+{{- $app = set $app "name" $key }}
 {{- $appCtx := $ctx }}
 {{- $appCtx = set $appCtx "Values" (merge $ctx.Values $app) }}
+{{- $appCtx = set $appCtx "App" $app }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -46,13 +48,32 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ $ctx.Chart.Name }}
+        - name: {{ include "fastapicloud.fullname" $appCtx }}
+          {{- with $app.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with $app.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ $app.image.repository }}:{{ $app.image.tag | default $ctx.Chart.AppVersion }}"
+          image: "{{ $app.image.repository }}:{{ $app.image.tag | default $appCtx.Chart.AppVersion }}"
           imagePullPolicy: {{ $app.image.pullPolicy }}
+          {{- $computedEnvs := (include "fastapicloud.envs" $appCtx | fromYaml).envs }}
+          {{- $envs := merge $computedEnvs (default (dict) $app.environment) (default (dict) $appCtx.Values.global.environment) }}
+          {{- if gt (len $envs) 0 }}
+          env:
+          {{- range $key, $value := $envs }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- end }}
+          {{- $appExternalSecrets := default (dict) $app.externalSecrets }}
+          {{- if (or (default false $appExternalSecrets.enabled) (default false $appCtx.Values.global.externalSecrets.enabled)) }}
+          envFrom:
+          - secretRef:
+              name: {{ include "fastapicloud.fullname" $appCtx }}
+          {{- end }}
           {{- with (default (dict) $app.ports) }}
           ports:
             {{- toYaml . | nindent 12 }}

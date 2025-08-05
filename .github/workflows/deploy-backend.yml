@@ -53,13 +53,18 @@ jobs:
     runs-on: depot-ubuntu-22.04
     # Permissions for Depot Docker build
     permissions:
-      contents: read
+      contents: write
       id-token: write
+      pull-requests: write
     environment: ${{ matrix.environment }}
     env:
       IMAGE_TAG: ${{ matrix.environment }}-${{ github.sha }}
     steps:
     - uses: actions/checkout@v4
+      with:
+        # To allow deployment to commit to the main branch
+        # and for now, using the latest-changes token
+        token: ${{ secrets.FASTAPI_CLOUD_LATEST_CHANGES }}
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -140,59 +145,18 @@ jobs:
         ALLOW_SIGNUP_TOKEN: "${{ secrets.ALLOW_SIGNUP_TOKEN }}"
         BACKEND_GITHUB_CLIENT_ID: "${{ secrets.BACKEND_GITHUB_CLIENT_ID }}"
         BACKEND_GITHUB_CLIENT_SECRET: "${{ secrets.BACKEND_GITHUB_CLIENT_SECRET }}"
-    - name: Update Knative Service
-      run: uv run typer --func deploy_cloud app.builder.main run api-fastapicloud $IMAGE_URL --min-scale 1
-      working-directory: backend
-      env:
-        IMAGE_URL: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}
+    - name: Update ArgoCD image tag
+      run: |
+        argocd_file_path="infra/argocd/${{ matrix.environment }}/fastapicloud/fastapicloud.yaml"
 
-        # Env vars for the app
-        FRONTEND_HOST: "${{ vars.FRONTEND_HOST }}"
-        API_HOST: "${{ vars.API_HOST }}"
-        API_DOMAIN: "${{ vars.API_DOMAIN }}"
-        DEPLOYMENTS_DOMAIN: "${{ vars.DEPLOYMENTS_DOMAIN }}"
-        ENVIRONMENT: ${{ matrix.environment }}
-        PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
-        BACKEND_CORS_ORIGINS: "${{ vars.BACKEND_CORS_ORIGINS }}"
-        FIRST_SUPERUSER: "${{ vars.FIRST_SUPERUSER }}"
-        FIRST_SUPERUSER_FULL_NAME: "${{ vars.FIRST_SUPERUSER_FULL_NAME }}"
-        SMTP_HOST: "${{ vars.SMTP_HOST }}"
-        SMTP_USER: "${{ vars.SMTP_USER }}"
-        EMAILS_FROM_EMAIL: "${{ vars.EMAILS_FROM_EMAIL }}"
-        SMTP_TLS: "${{ vars.SMTP_TLS }}"
-        SMTP_SSL: "${{ vars.SMTP_SSL }}"
-        SMTP_PORT: "${{ vars.SMTP_PORT }}"
-        POSTGRES_SERVER: "${{ vars.POSTGRES_SERVER }}"
-        POSTGRES_PORT: "${{ vars.POSTGRES_PORT }}"
-        POSTGRES_DB: "${{ vars.POSTGRES_DB }}"
-        POSTGRES_USER: "${{ vars.POSTGRES_USER }}"
-        POSTGRES_SSL_ENABLED: "${{ vars.POSTGRES_SSL_ENABLED }}"
-        REDIS_SERVER: "${{ vars.REDIS_SERVER }}"
-        BACKEND_SENTRY_DSN: "${{ vars.BACKEND_SENTRY_DSN }}"
-        DOCKER_IMAGE_BACKEND: "${{ vars.DOCKER_IMAGE_BACKEND }}"
-        DOCKER_IMAGE_FRONTEND: "${{ vars.DOCKER_IMAGE_FRONTEND }}"
-        DEPLOYMENTS_BUCKET_NAME: "${{ vars.DEPLOYMENTS_BUCKET_NAME }}"
-        ECR_REGISTRY_URL: "${{ vars.ECR_REGISTRY_URL }}"
-        BUILDER_QUEUE_NAME: "${{ vars.BUILDER_QUEUE_NAME }}"
-        DEPOT_PROJECT_ID: "${{ vars.DEPOT_PROJECT_ID }}"
-        BUILDER_API_URL: "${{ vars.BUILDER_API_URL }}"
-        SECRET_KEY: "${{ secrets.SECRET_KEY }}"
-        FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
-        SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
-        POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
-        EMAILABLE_KEY: "${{ secrets.EMAILABLE_KEY }}"
-        DEPOT_TOKEN: "${{ secrets.DEPOT_TOKEN }}"
-        BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
-        CLOUDFLARE_ACCOUNT_ID: "${{ vars.CLOUDFLARE_ACCOUNT_ID }}"
-        CLOUDFLARE_ZONE_ID: "${{ vars.CLOUDFLARE_ZONE_ID }}"
-        CLOUDFLARE_API_TOKEN_SSL: "${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}"
-        LOGFIRE_TOKEN: "${{ secrets.LOGFIRE_TOKEN }}"
-        NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"
-        NATS_CREDS: "${{ secrets.NATS_CREDS }}"
-        ENABLE_LOCALSTACK: "False"
-        ALLOW_SIGNUP_TOKEN: "${{ secrets.ALLOW_SIGNUP_TOKEN }}"
-        BACKEND_GITHUB_CLIENT_ID: "${{ secrets.BACKEND_GITHUB_CLIENT_ID }}"
-        BACKEND_GITHUB_CLIENT_SECRET: "${{ secrets.BACKEND_GITHUB_CLIENT_SECRET }}"
+        yq -i ".api.image.tag = \"$IMAGE_TAG\"" ${argocd_file_path}
+
+        git config --global user.email "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+        git config --global user.name "github-actions[bot]"
+        git add ${argocd_file_path}
+        git commit -m "⬆ Deploy backend to ${{ matrix.environment }}" -m "[skip ci]"
+        git push
+
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-backend:  # This job does nothing and is only used for the branch protection
     if: always()

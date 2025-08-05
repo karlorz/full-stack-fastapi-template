@@ -49,13 +49,18 @@ jobs:
     runs-on: depot-ubuntu-22.04
     # Permissions for Depot Docker build
     permissions:
-      contents: read
+      contents: write
       id-token: write
+      pull-requests: write
     environment: ${{ matrix.environment }}
     env:
       IMAGE_TAG: ${{ matrix.environment }}-${{ github.sha }}
     steps:
     - uses: actions/checkout@v4
+      with:
+        # To allow deployment to commit to the main branch
+        # and for now, using the latest-changes token
+        token: ${{ secrets.FASTAPI_CLOUD_LATEST_CHANGES }}
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -82,21 +87,18 @@ jobs:
           ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
         context: infra/posthog-proxy
         file: infra/posthog-proxy/Dockerfile
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.13"
-    - name: Install uv
-      uses: astral-sh/setup-uv@v6
-      with:
-        version: "0.8"
-    - name: Update Knative Service
-      run: uv run typer --func deploy_cloud app.builder.main run posthog-fastapicloud $IMAGE_URL --min-scale 1 --container-port 8080 --domain $DOMAIN
-      working-directory: backend
-      env:
-        IMAGE_URL: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}
+    - name: Update ArgoCD image tag
+      run: |
+        argocd_file_path="infra/argocd/${{ matrix.environment }}/fastapicloud/fastapicloud.yaml"
 
-        DOMAIN: "${{ vars.POSTHOG_DOMAIN }}"
+        yq -i ".posthog.image.tag = \"$IMAGE_TAG\"" ${argocd_file_path}
+
+        git config --global user.email "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+        git config --global user.name "github-actions[bot]"
+        git add ${argocd_file_path}
+        git commit -m "⬆ Deploy posthog-proxy to ${{ matrix.environment }}" -m "[skip ci]"
+        git push
+
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-posthog-proxy:  # This job does nothing and is only used for the branch protection
     if: always()

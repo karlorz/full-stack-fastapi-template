@@ -56,11 +56,16 @@ jobs:
     runs-on: depot-ubuntu-22.04
     # Permissions for Depot Docker build
     permissions:
-      contents: read
+      contents: write
       id-token: write
+      pull-requests: write
     environment: ${{ matrix.environment }}
     steps:
     - uses: actions/checkout@v4
+      with:
+        # To allow deployment to commit to the main branch
+        # and for now, using the latest-changes token
+        token: ${{ secrets.FASTAPI_CLOUD_LATEST_CHANGES }}
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -87,22 +92,17 @@ jobs:
           ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
         context: ./
         file: ./backend/Dockerfile
-    - name: Update messenger deployment
-      run: envsubst < infra/k8s/messenger/messenger.yaml | kubectl apply -f -
-      env:
-        IMAGE: ${{steps.login-ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}@${{ steps.docker-build.outputs.digest }}
-        ENVIRONMENT: ${{ matrix.environment }}
-        AWS_REGION: "${{ vars.AWS_REGION }}"
-        DEPLOYMENTS_BUCKET_NAME: "${{ vars.DEPLOYMENTS_BUCKET_NAME }}"
-        AWS_SQS_BUILDER_QUEUE_NAME: "${{ vars.AWS_SQS_BUILDER_QUEUE_NAME }}"
-        BUILDER_QUEUE_NAME: "${{ vars.BUILDER_QUEUE_NAME }}"
-        BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
-        BUILDER_API_URL: "${{ vars.BUILDER_API_URL }}"
-        MESSENGER_SENTRY_DSN: "${{ vars.MESSENGER_SENTRY_DSN }}"
-        LOGFIRE_TOKEN: "${{ secrets.LOGFIRE_TOKEN }}"
-        NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"
-        NATS_CREDS_JSON_STR: "${{ secrets.NATS_CREDS_JSON_STR }}"
-        REDIS_SERVER: "${{ vars.REDIS_SERVER }}"
+    - name: Update ArgoCD image tag
+      run: |
+        argocd_file_path="infra/argocd/${{ matrix.environment }}/fastapicloud/fastapicloud.yaml"
+
+        yq -i ".messenger.image.tag = \"$IMAGE_TAG\"" ${argocd_file_path}
+
+        git config --global user.email "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+        git config --global user.name "github-actions[bot]"
+        git add ${argocd_file_path}
+        git commit -m "⬆ Deploy messenger to ${{ matrix.environment }}" -m "[skip ci]"
+        git push
 
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-messenger:  # This job does nothing and is only used for the branch protection

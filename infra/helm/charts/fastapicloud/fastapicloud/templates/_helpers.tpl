@@ -2,7 +2,11 @@
 Expand the name of the chart.
 */}}
 {{- define "fastapicloud.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- $name := default .Chart.Name .Values.nameOverride }}
+{{- if .App.name }}
+{{- $name = printf "%s-%s" .Release.Name .App.name }}
+{{- end }}
+{{- $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -15,11 +19,10 @@ If release name contains chart name it will be used as a full name.
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
 {{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- if .App.name }}
+{{- $name = .App.name }}
 {{- end }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 

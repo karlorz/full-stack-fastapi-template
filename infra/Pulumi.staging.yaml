@@ -15,9 +15,9 @@ config:
   k8s-cluster:fastapicloud_builder_api_key:
     secure: AAABAO6+UPtp67uaVDGYC5IaGj9p7E86jcBBmQ5x78SF0wziBMSnWTfh40CzUNK8osQ68PsC0MaoAgntXV3wGomd9ZYa5MtUV2h9+Q==
   k8s-cluster:fastapicloud_builder_sentry_dsn:
-    secure: AAABADgsNDC6zsC/TAQ4P8tD3n8YDqBoPttM4tDmKjbjJDA7yGCt5ZgAASgTZmwn09koG0/Npe9pNADms0QYceufk38vxz4L6wIwJ//soFmjZ8q5UTBtQ1S2rEyoaL6EtlMZnSdbGOeGahDrrX3xgjjJinRFfvgsEZHPuh/Ajw==
+    secure: AAABAAWre5x1pdGXVXkvIo4v58XRH0euMd/whYtKxSIaKe3QxiY2eTcrQdq7bpMsaR3TdILMYotRN1l4fcNWu+vZ79BD0FnHCA8SYhnsG7ioEyKt5jpqwESQ3ybX0xmLbE0TICq9Lqei6f7Yiv5PHEw1ZJ+D8N33M3aOnzSkYQ==
   k8s-cluster:fastapicloud_cloudflare_account_id: 41ebb51429ef1839d2933c1a93b1163f
-  k8s-cluster:fastapicloud_cloudflare_api_token_ssl:
+  k8s-cluster:cloudflare_api_token_ssl:
     secure: AAABAAGRoolgiaumocHdyH0Xe8A07GXBpK96pWDPcIvlicW3JG55nNVP1cvLVqzLBk7KwHB6Y0DxYscqMz13lIyVKY3ZQHER
   k8s-cluster:fastapicloud_cloudflare_zone_id: 3e31f7601b93ff47ef6ccf03c05d9113
   k8s-cluster:fastapicloud_emailable_key:
@@ -67,3 +67,11 @@ config:
     secure: AAABAEIreh5dRQoUcEIo67b6j91pLTF7T1aJwgGsamoXwLNFkoEHBESKPAbxIDDcZ0MZA388wsk4AYShNq6PEOq6iDIQVKwSGRRVwQIE5tP87wEJQOTK8NHYvIRMVfE82aRglQbBjQ==
   k8s-cluster:grafana_google_client_secret:
     secure: AAABANqyQ7Sx94zy2oxzS+NUVMH0vnsm9W/iLDhyUdo+V6HtHO0ZEb/3rCWKMg7PRj7St53lYGD089n5OJ3jDCbrlw==
+  k8s-cluster:fastapicloud_backend_github_client_id:
+    secure: AAABAAJ7uMzEPV1mCWudOrmuLuCKTMNGVrb1CautIYxFNjsHW3GAASj9Ubea6wOtQXIawg==
+  k8s-cluster:fastapicloud_backend_github_client_secret:
+    secure: AAABAJihP1pJtKhgs55o3GwAJMUS1NxHRzFBIxmp9lovhjtMviprQUlM6JF1rUp1kGIVsNPvQVKRfwrrqiqeN+ogNpgxnSm8
+  k8s-cluster:fastapicloud_cloudflare_api_token_ssl:
+    secure: AAABAF3DCQUb5nW4pJX+WLJ3zX76+HTEUahHhTA8h4AOGptchrQ4S3WRuoupaI3bNF4Hlm0q/I8L6ei5OkQ9lAjMVSNONYgg
+  k8s-cluster:fastapicloud_depot_token:
+    secure: AAABAAd2yYen5Z5ZyzUFFDOlj2+8w4GFE8PjBAcnQ7N7769x2DYynlzq/aFFs88eTOpKWLNYDJRIuI7Mwt37pxwkhHOd7s+1TqlW7dZ5bTNcbfagM4mnQ0F96TXgVuqdACZlDe7mbNn4Zg==

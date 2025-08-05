@@ -9,12 +9,14 @@ Expects a list with:
 {{- $key := index . 0 }}
 {{- $ctx := index . 1 }}
 {{- $app := index $ctx.Values $key }}
+{{- $app = set $app "name" $key }}
 {{- $appCtx := $ctx }}
 {{- $appCtx = set $appCtx "Values" (merge $ctx.Values $app) }}
+{{- $appCtx = set $appCtx "App" $app }}
 apiVersion: serving.knative.dev/v1beta1
 kind: DomainMapping
 metadata:
-  name: {{ $app.name }}
+  name: {{ $app.domainmapping.hostname }}
   labels:
     {{- include "fastapicloud.labels" $appCtx | nindent 4 }}
   {{- with $app.annotations }}
@@ -25,6 +27,6 @@ spec:
   ref:
     apiVersion: serving.knative.dev/v1
     kind: Service
-    name: {{ printf "%s-%s" (include "fastapicloud.fullname" $appCtx) $key }}
-    namespace: {{ default $ctx.Release.Namespace $app.namespace }}
+    name: {{ include "fastapicloud.fullname" $appCtx }}
+    namespace: {{ default $appCtx.Release.Namespace $app.namespace }}
 {{- end }}

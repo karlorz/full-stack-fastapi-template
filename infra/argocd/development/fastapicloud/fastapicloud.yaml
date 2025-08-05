@@ -1,0 +1,63 @@
+global:
+  environment:
+    AWS_REGION: us-east-1
+    BUILDER_QUEUE_NAME: fastapicloud-builder-queue-development
+    ENVIRONMENT: development
+    NATS_HOST_NAME: connect.ngs.global
+    REDIS_SERVER: redis-backend.knewds.0001.use1.cache.amazonaws.com
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::961341535962:role/fastapicloud-iam-role-9ffb069
+api:
+  image:
+    repository: 961341535962.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-backend
+    tag: "development-f55b788f1e0602c8b3ee8288167ced0d541c56e6"
+  environment:
+    API_DOMAIN: api.fastapicloud.site
+    BACKEND_CORS_ORIGINS: http://localhost/,http://localhost:5173/,https://dashboard.fastapicloud.site/,https://fastapicloud.site/
+    DEPLOYMENTS_DOMAIN: fastapicloud.space
+    EMAILS_FROM_EMAIL: info@fastapicloud.site
+    EMAILS_FROM_NAME: FastAPI Cloud Development
+    ENABLE_LOCALSTACK: "False"
+    FRONTEND_HOST: https://dashboard.fastapicloud.site
+    LOCALSTACK_HOST_NAME: localhost.localstack.cloud
+    POSTGRES_DB: neondb
+    POSTGRES_PORT: "5432"
+    POSTGRES_SERVER: ep-summer-cloud-a41s13on-pooler.us-east-1.aws.neon.tech
+    POSTGRES_SSL_ENABLED: "True"
+    POSTGRES_USER: neondb_owner
+    POSTHOG_HOST: https://eu.i.posthog.com
+    PROJECT_NAME: FastAPI Cloud Development
+    SMTP_HOST: smtp.mailgun.org
+    SMTP_PORT: "587"
+    SMTP_SSL: "False"
+    SMTP_TLS: "True"
+    SMTP_USER: postmaster@mg.fastapicloud.site
+  domainmapping:
+    hostname: api.fastapicloud.site
+builder:
+  image:
+    repository: 961341535962.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-builder
+    tag: "development-525652abfb0c0164ddaacc535683392f45523119"
+  environment:
+    DEPLOYMENTS_DOMAIN: fastapicloud.space
+    DEPOT_PROJECT_ID: 5bmzsq3lt9
+    ECR_REGISTRY_URL: 961341535962.dkr.ecr.us-east-1.amazonaws.com
+    ENABLE_LOCALSTACK: "False"
+    LOCALSTACK_HOST_NAME: localhost.localstack.cloud
+    POSTGRES_DB: neondb
+    POSTGRES_PORT: "5432"
+    POSTGRES_SERVER: ep-summer-cloud-a41s13on-pooler.us-east-1.aws.neon.tech
+    POSTGRES_SSL_ENABLED: "True"
+    POSTGRES_USER: neondb_owner
+messenger:
+  image:
+    repository: 961341535962.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-messenger
+    tag: "development-2158b32574f9ed274c11b90f44d5e7e5ae91f946"
+  environment: {}
+posthog:
+  image:
+    repository: 961341535962.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-posthog-proxy
+    tag: "development-74a764663561ed7c330c54cad7b9f1c1f3f1c8c7"
+  domainmapping:
+    hostname: ph.fastapicloud.site

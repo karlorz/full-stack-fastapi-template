@@ -555,8 +555,6 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                                         "argo-cd",
                                         "service-account",
                                         "templates",
-                                        # TODO: Remove these namespaces from the list
-                                        "fastapicloud",
                                     ],
                                 }
                             ]
