@@ -8,8 +8,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Literal, cast
 
-import emailable  # type: ignore
 import emails  # type: ignore
+import httpx
 import jwt
 import logfire
 from jinja2 import Template
@@ -512,17 +512,33 @@ def authorize_device_code(device_code: str, access_token: str, redis: Redis) -> 
 def validate_email_deliverability(email: str) -> bool:
     """
     Validate email deliverability using emailable service.
+
     Returns True if email is deliverable, False otherwise.
     """
     common_settings = CommonSettings.get_settings()
 
-    if common_settings.ENVIRONMENT == "production":
-        settings = MainSettings.get_settings()
-        emailable_client = emailable.Client(settings.EMAILABLE_KEY)
-        email_response = emailable_client.verify(email=email)
+    if common_settings.ENVIRONMENT != "production":
+        return True
 
-        if email_response.state == "deliverable":
-            return True
-        return False
+    settings = MainSettings.get_settings()
 
-    return True
+    response = httpx.get(
+        "https://api.emailable.com/v1/verify",
+        params={"email": email, "smtp": "true", "accept_all": "false"},
+        headers={"Authorization": f"Bearer {settings.EMAILABLE_KEY}"},
+        timeout=30.0,
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    if "state" not in data:
+        logfire.error(
+            "Unexpected response from Emailable API",
+            response=data,
+        )
+
+        raise ValueError("Unexpected response from Emailable API")
+
+    return bool(data["state"] == "deliverable")

@@ -2,7 +2,6 @@ import logging
 import secrets
 from typing import Annotated, Any
 
-import emailable  # type: ignore
 from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
 from pydantic.networks import EmailStr
@@ -55,7 +54,6 @@ from app.utils import (
 
 router = APIRouter()
 settings = MainSettings.get_settings()
-emailable_client = emailable.Client(settings.EMAILABLE_KEY)
 
 
 @router.patch("/me", response_model=UserPublic)
