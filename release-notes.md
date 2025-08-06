@@ -534,6 +534,7 @@
 
 ### Internal
 
+* ⬆ Bump lucide-react from 0.525.0 to 0.536.0 in /frontend. PR [#1195](https://github.com/fastapilabs/cloud/pull/1195) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump actions/download-artifact from 4 to 5. PR [#1205](https://github.com/fastapilabs/cloud/pull/1205) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ➕ Use `lia-web` instead of `duck`. PR [#1192](https://github.com/fastapilabs/cloud/pull/1192) by [@patrick91](https://github.com/patrick91).
 * ➖ Remove emailable in favour of a simple httpx call. PR [#1197](https://github.com/fastapilabs/cloud/pull/1197) by [@patrick91](https://github.com/patrick91).
