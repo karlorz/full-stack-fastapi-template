@@ -534,6 +534,7 @@
 
 ### Internal
 
+* ➖ Remove emailable in favour of a simple httpx call. PR [#1197](https://github.com/fastapilabs/cloud/pull/1197) by [@patrick91](https://github.com/patrick91).
 * ⬆ Bump react-dom and @types/react-dom in /frontend. PR [#1202](https://github.com/fastapilabs/cloud/pull/1202) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆️ Bump uv to 0.8.4 in Dockerfiles. PR [#1203](https://github.com/fastapilabs/cloud/pull/1203) by [@buurro](https://github.com/buurro).
 * ⬆ Bump @tanstack/router-devtools from 1.125.4 to 1.130.13 in /frontend. PR [#1199](https://github.com/fastapilabs/cloud/pull/1199) by [@dependabot[bot]](https://github.com/apps/dependabot).
