@@ -490,6 +490,7 @@
 
 ### Infrastructure
 
+* 🐛 Add missing helm fastapicloud k8s roles. PR [#1209](https://github.com/fastapilabs/cloud/pull/1209) by [@siryur](https://github.com/siryur).
 * 🚀 Deploy fastapicloud with argo-cd. PR [#1106](https://github.com/fastapilabs/cloud/pull/1106) by [@siryur](https://github.com/siryur).
 * 📦 Switch Pulumi to uv for dependency management. PR [#1189](https://github.com/fastapilabs/cloud/pull/1189) by [@malvex](https://github.com/malvex).
 * 📊 Add Knative monitoring with Grafana dashboards and ServiceMonitors. PR [#1183](https://github.com/fastapilabs/cloud/pull/1183) by [@malvex](https://github.com/malvex).
