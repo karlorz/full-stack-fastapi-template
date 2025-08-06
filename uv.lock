@@ -5,7 +5,6 @@ requires-python = ">=3.12, <4.0"
 [manifest]
 members = [
     "app",
-    "duck",
     "fastapi-auth",
     "fastapi-cloud",
 ]
@@ -539,41 +538,6 @@ wheels = [
 ]
 
 [[package]]
-name = "duck"
-version = "0.1.0"
-source = { editable = "packages/duck" }
-dependencies = [
-    { name = "pydantic" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "coverage" },
-    { name = "fastapi" },
-    { name = "httpx" },
-    { name = "inline-snapshot" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "python-multipart" },
-    { name = "starlette" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "pydantic", specifier = ">=2.11.3" }]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "coverage", extras = ["toml"], specifier = ">=7.8.0" },
-    { name = "fastapi", specifier = ">=0.115.12" },
-    { name = "httpx", specifier = ">=0.28.1" },
-    { name = "inline-snapshot", specifier = ">=0.20.10" },
-    { name = "pytest", specifier = ">=7.4.4" },
-    { name = "pytest-asyncio", specifier = ">=0.23.8" },
-    { name = "python-multipart", specifier = ">=0.0.20" },
-    { name = "starlette", specifier = ">=0.46.1" },
-]
-
-[[package]]
 name = "email-validator"
 version = "2.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -641,7 +605,7 @@ name = "fastapi-auth"
 version = "0.1.0"
 source = { editable = "packages/fastapi_auth" }
 dependencies = [
-    { name = "duck" },
+    { name = "lia-web" },
     { name = "passlib", extra = ["bcrypt"] },
     { name = "pydantic", extra = ["email"] },
 ]
@@ -662,7 +626,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "duck", editable = "packages/duck" },
+    { name = "lia-web", specifier = ">=0.1.2" },
     { name = "passlib", extras = ["bcrypt"], specifier = ">=1.7.4" },
     { name = "pydantic", extras = ["email"], specifier = ">=2.11.3" },
 ]
@@ -1060,6 +1024,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/37/4c/0f49075f2ca5f4bd2c5ec05f0ca37c1649076a3bd93ae13f593f95fb31ba/kubernetes_typed-18.20.2.tar.gz", hash = "sha256:5c2fcf5de2b3192133a4cba9d0d8f7187e4ccc7f7ad6d3a17dfe67ea5b90b101", size = 199120, upload-time = "2024-09-02T19:06:17.737Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/da/d5/d13cf0211d950b19b89683e65829b4da9c8b2eed0b71afec564f240e3bcb/kubernetes_typed-18.20.2-py3-none-any.whl", hash = "sha256:dff59feb21c092a83ac5b0e65b9cc5f9d00caa95833e0c486692dedfc1276a13", size = 757856, upload-time = "2024-09-02T19:06:16.201Z" },
+]
+
+[[package]]
+name = "lia-web"
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/54/39/c1cfafe1f2d189215fde1d42ab3aed1e8434f68f032bd8c4603a755b15d5/lia_web-0.2.0.tar.gz", hash = "sha256:a7d6f86bae8759e89b8cc61fbbec1375ec49bd5280a633df6943c700ff2d2761", size = 155794, upload-time = "2025-08-04T09:04:06.526Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e4/42/49194be4c5de3d43b7c20f4960deef5487eb94e96b946a452130de267c78/lia_web-0.2.0-py3-none-any.whl", hash = "sha256:2964cf16a9453cc367247cc832acde27106a943200c471d82270210325f741ce", size = 13026, upload-time = "2025-08-04T09:04:05.676Z" },
 ]
 
 [[package]]

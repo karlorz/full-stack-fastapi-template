@@ -5,12 +5,12 @@ from urllib.parse import urlencode
 import httpx
 import pytest
 import time_machine
-from duck import AsyncHTTPRequest
-from duck.request import TestingRequestAdapter
 from fastapi_auth._context import Context, SecondaryStorage
 from fastapi_auth._storage import AccountsStorage, User
 from fastapi_auth.social_providers.oauth import OAuth2Provider
 from inline_snapshot import snapshot
+from lia import AsyncHTTPRequest
+from lia.request import TestingRequestAdapter
 from respx import MockRouter
 
 pytestmark = pytest.mark.asyncio

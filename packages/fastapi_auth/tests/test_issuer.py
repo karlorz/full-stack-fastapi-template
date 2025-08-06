@@ -1,8 +1,8 @@
 import pytest
-from duck import AsyncHTTPRequest
 from fastapi_auth._context import Context
 from fastapi_auth._issuer import Issuer
 from inline_snapshot import snapshot
+from lia import AsyncHTTPRequest
 
 pytestmark = pytest.mark.asyncio
 

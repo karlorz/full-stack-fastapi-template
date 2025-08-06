@@ -30,7 +30,7 @@ ENV PATH="/app/.venv/bin:$PATH"
 RUN --mount=type=cache,target=/user/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --all-packages --no-install-package app --no-install-package duck --no-install-package fastapi-auth
+    uv sync --frozen --all-packages --no-install-package app --no-install-package fastapi-auth
 
 COPY --chown=user:user ./backend/scripts /app/backend/scripts
 

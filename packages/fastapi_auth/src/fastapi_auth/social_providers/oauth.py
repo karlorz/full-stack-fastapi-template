@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 from typing import ClassVar, Literal, TypedDict
 
 import httpx
-from duck import AsyncHTTPRequest
+from lia import AsyncHTTPRequest
 from pydantic import BaseModel, HttpUrl, TypeAdapter, ValidationError
 
 from fastapi_auth.exceptions import FastAPIAuthException

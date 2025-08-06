@@ -3,8 +3,8 @@ from collections.abc import Callable
 from itertools import chain
 from typing import Any
 
-from duck import AsyncHTTPRequest
 from fastapi import APIRouter
+from lia import AsyncHTTPRequest
 
 from ._context import AccountsStorage, Context, SecondaryStorage, User
 from ._issuer import Issuer

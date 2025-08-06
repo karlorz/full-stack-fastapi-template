@@ -1,7 +1,7 @@
 import json
 from typing import Self
 
-from duck import Response as DuckResponse
+from lia import Response as DuckResponse
 
 
 class Response(DuckResponse):

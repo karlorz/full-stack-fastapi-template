@@ -1,12 +1,12 @@
 import pytest
-from duck import AsyncHTTPRequest
-from duck.request import TestingRequestAdapter
 from fastapi_auth._context import Context
 from fastapi_auth._storage import SecondaryStorage
 from fastapi_auth.social_providers.oauth import (
     OAuth2AuthorizationRequestData,
     OAuth2Provider,
 )
+from lia import AsyncHTTPRequest
+from lia.request import TestingRequestAdapter
 
 pytestmark = pytest.mark.asyncio
 

@@ -4,12 +4,12 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import pytest
-from duck.request import AsyncHTTPRequest
 from fastapi_auth._context import Context
 from fastapi_auth._issuer import AuthorizationCodeGrantData, Issuer
 from fastapi_auth._storage import AccountsStorage, SecondaryStorage
 from fastapi_auth.exceptions import FastAPIAuthException
 from fastapi_auth.social_providers.oauth import OAuth2LinkCodeData
+from lia.request import AsyncHTTPRequest
 from passlib.context import CryptContext
 
 pytestmark = pytest.mark.asyncio

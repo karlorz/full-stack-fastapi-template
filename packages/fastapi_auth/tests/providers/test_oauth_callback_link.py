@@ -1,16 +1,13 @@
 import json
 from datetime import datetime, timezone
-from urllib.parse import urlencode
 
-import httpx
 import pytest
 import time_machine
-from duck import AsyncHTTPRequest
-from duck.request import TestingRequestAdapter
 from fastapi_auth._context import Context, SecondaryStorage
 from fastapi_auth.social_providers.oauth import OAuth2Provider
 from inline_snapshot import snapshot
-from respx import MockRouter
+from lia import AsyncHTTPRequest
+from lia.request import TestingRequestAdapter
 
 from ..conftest import MemoryAccountsStorage
 

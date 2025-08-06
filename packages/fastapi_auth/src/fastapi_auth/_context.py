@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from urllib.parse import urlparse
 
-from duck import AsyncHTTPRequest
+from lia import AsyncHTTPRequest
 
 from ._storage import AccountsStorage, SecondaryStorage, User
 from .utils._is_same_host import is_same_host

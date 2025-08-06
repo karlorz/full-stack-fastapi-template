@@ -1,8 +1,8 @@
 from datetime import timedelta
 
-from duck import AsyncHTTPRequest
 from fastapi_auth.router import AuthRouter
 from fastapi_auth.social_providers.github import GitHubProvider
+from lia import AsyncHTTPRequest
 from sqlmodel import Session
 
 from app.api.deps import get_current_user

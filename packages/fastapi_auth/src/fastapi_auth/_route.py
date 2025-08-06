@@ -1,7 +1,7 @@
 from collections.abc import Awaitable, Callable
 from typing import Annotated, Any, get_args
 
-from duck import AsyncHTTPRequest, Response
+from lia import AsyncHTTPRequest, Response
 from pydantic import BaseModel
 
 from ._context import Context

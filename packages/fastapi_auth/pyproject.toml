@@ -5,7 +5,11 @@ description = "Add your description here"
 readme = "README.md"
 authors = [{ name = "Patrick Arminio", email = "patrick.arminio@gmail.com" }]
 requires-python = ">=3.11"
-dependencies = ["duck", "passlib[bcrypt]>=1.7.4", "pydantic[email]>=2.11.3"]
+dependencies = [
+ "lia-web>=0.1.2",
+ "passlib[bcrypt]>=1.7.4",
+ "pydantic[email]>=2.11.3",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -24,9 +28,6 @@ dev = [
     "coverage>=7.8.0",
     "time-machine>=2.16.0",
 ]
-
-[tool.uv.sources]
-duck = { workspace = true }
 
 
 [tool.inline-snapshot]

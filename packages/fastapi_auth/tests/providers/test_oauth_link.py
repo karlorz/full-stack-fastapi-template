@@ -2,11 +2,11 @@ import json
 from urllib.parse import parse_qs, urlparse
 
 import pytest
-from duck import AsyncHTTPRequest
-from duck.request import TestingRequestAdapter
 from fastapi_auth._context import Context
 from fastapi_auth.social_providers.oauth import OAuth2Provider
 from inline_snapshot import snapshot
+from lia import AsyncHTTPRequest
+from lia.request import TestingRequestAdapter
 
 from tests.conftest import MemoryStorage
 
