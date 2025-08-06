@@ -111,6 +111,10 @@ api:
         remoteRef:
           key: FASTAPICLOUD_SMTP_PASSWORD
 
+  clusterRoles:
+    - knative-service-manager
+    - namespace-manager
+
   securityContext:
     allowPrivilegeEscalation: false
     runAsNonRoot: true
@@ -184,6 +188,10 @@ builder:
         remoteRef:
           key: FASTAPICLOUD_POSTGRES_PASSWORD
 
+  clusterRoles:
+    - knative-service-manager
+    - namespace-manager
+
   securityContext:
     allowPrivilegeEscalation: false
     runAsNonRoot: true
@@ -242,6 +250,8 @@ messenger:
 
   podSecurityContext: {}
     # fsGroup: 2000
+
+  clusterRoles: []
 
   securityContext:
     allowPrivilegeEscalation: false
@@ -326,6 +336,8 @@ posthog:
 
   containerConcurrency: 0
   timeoutSeconds: 300
+
+  clusterRoles: []
 
   securityContext:
     allowPrivilegeEscalation: false
