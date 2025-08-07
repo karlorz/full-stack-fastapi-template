@@ -80,6 +80,11 @@ jobs:
     - run: docker compose down -v --remove-orphans
     - name: Run Playwright tests
       run: docker compose run --rm playwright npx playwright test --fail-on-flaky-tests --trace=retain-on-failure --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      env:
+        ALLOWED_SIGNUP_DOMAINS: '["fastapilabs.com"]'
+        BACKEND_GITHUB_CLIENT_ID: "Iv23liGwLyNc4P3n4pCE"
+        BACKEND_GITHUB_CLIENT_SECRET: "9d362b8a973e2bac59259bf264c094e78cab4afd"
+
     - run: docker compose down -v --remove-orphans
     - name: Upload blob report to GitHub Actions Artifacts
       if: ${{ !cancelled() }}

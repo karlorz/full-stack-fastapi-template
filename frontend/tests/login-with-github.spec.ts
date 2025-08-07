@@ -36,7 +36,18 @@ test.skip("Log In with GitHub", async ({ page }) => {
 
   const code = authenticator.generate(TEST_GITHUB_USER_SECRET)
 
-  await page.getByRole("textbox", { name: "Authentication code" }).fill(code)
+  await page.locator("#app_totp").fill(code)
+
+  // Handle potential reauthorization page
+  const authorizeButton = page.getByRole("button", {
+    name: "Authorize FastAPI Cloud Local",
+  })
+  try {
+    await authorizeButton.waitFor({ timeout: 5000 })
+    await authorizeButton.click()
+  } catch (_error) {
+    // Authorization button not found, continue with normal flow
+  }
 
   await expect(page.getByTestId("dashboard-greeting")).toContainText(
     "Hi, Pollo Listo",
