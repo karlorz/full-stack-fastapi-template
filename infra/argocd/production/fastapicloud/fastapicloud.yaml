@@ -5,16 +5,13 @@ global:
     ENVIRONMENT: production
     NATS_HOST_NAME: connect.ngs.global
     REDIS_SERVER: redis-backend.mgvt0t.0001.use1.cache.amazonaws.com
-
 serviceAccount:
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::471112862740:role/fastapicloud-iam-role-eeab6a0
-
 api:
   image:
     repository: 471112862740.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-backend
-    tag: ""
-
+    tag: "production-b8a1a5e5babf555dac6d00e605d7b12ba6a89f53"
   environment:
     API_DOMAIN: api.fastapicloud.com
     BACKEND_CORS_ORIGINS: http://localhost/,http://localhost:5173/,https://dashboard.fastapicloud.com/,https://fastapicloud.com/
@@ -36,15 +33,12 @@ api:
     SMTP_SSL: "False"
     SMTP_TLS: "True"
     SMTP_USER: postmaster@mg.fastapicloud.com
-
   domainmapping:
     hostname: api.fastapicloud.com
-
 builder:
   image:
     repository: 471112862740.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-builder
     tag: ""
-
   environment:
     DEPLOYMENTS_DOMAIN: fastapicloud.dev
     DEPOT_PROJECT_ID: 5bmzsq3lt9
@@ -56,18 +50,14 @@ builder:
     POSTGRES_USER: neondb_owner
     POSTGRES_DB: neondb
     POSTGRES_SSL_ENABLED: "True"
-
 messenger:
   image:
     repository: 471112862740.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-messenger
     tag: ""
-
   environment: {}
-
 posthog:
   image:
     repository: 471112862740.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-posthog-proxy
     tag: ""
-
   domainmapping:
     hostname: ph.fastapicloud.com
