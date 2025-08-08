@@ -216,6 +216,7 @@
 
 ### Refactors
 
+* ♻️ Enhance dashboard home cards. PR [#1219](https://github.com/fastapilabs/cloud/pull/1219) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Handle status errors when exchanging token. PR [#1179](https://github.com/fastapilabs/cloud/pull/1179) by [@patrick91](https://github.com/patrick91).
 * ♻️ Improve UX for expired token during device authorization. PR [#1176](https://github.com/fastapilabs/cloud/pull/1176) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Update error views. PR [#1164](https://github.com/fastapilabs/cloud/pull/1164) by [@alejsdev](https://github.com/alejsdev).
