@@ -59,22 +59,37 @@ function Dashboard() {
           description="Number of apps in your team"
         >
           <div className="flex items-center justify-between pt-4">
-            <div>
+            <div className="flex items-center gap-3">
               <p className="font-bold mt-1 text-2xl">{totalApps || 0}</p>
+              {totalApps > 0 && (
+                <Badge
+                  variant="outline"
+                  className="bg-green-50 dark:bg-emerald-950/50 text-green-700 dark:text-emerald-400 border-green-200 dark:border-emerald-800"
+                >
+                  <span className="mr-1">+{apps?.length || 0}</span>
+                  last 30 days
+                </Badge>
+              )}
             </div>
-            <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
-              <LayoutGrid className="h-6 w-6" />
-            </div>
+            {totalApps > 0 ? (
+              <RouterLink to={"/$teamSlug/apps"}>
+                <div className="h-12 w-12 rounded-full bg-gray-400/10 hover:bg-gray-400/20 transition-colors flex items-center justify-center cursor-pointer">
+                  <LayoutGrid className="h-6 w-6" />
+                </div>
+              </RouterLink>
+            ) : (
+              <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
+                <LayoutGrid className="h-6 w-6" />
+              </div>
+            )}
           </div>
-          <div className="mt-4 flex items-center text-sm">
+          <div className="mt-4">
             {totalApps > 0 && (
-              <Badge
-                variant="outline"
-                className="bg-green-50 dark:bg-emerald-950/50 text-green-700 dark:text-emerald-400 border-green-200 dark:border-emerald-800"
-              >
-                <span className="mr-1">+{apps?.length || 0}</span>
-                last 30 days
-              </Badge>
+              <RouterLink to={"/$teamSlug/apps"}>
+                <Button variant="outline" size="sm">
+                  View Apps
+                </Button>
+              </RouterLink>
             )}
           </div>
         </CustomCard>
@@ -91,14 +106,22 @@ function Dashboard() {
                 )}
               </p>
             </div>
-            <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
-              <Rocket className="h-6 w-6" />
-            </div>
+            {lastApp ? (
+              <RouterLink to={`/$teamSlug/apps/${lastApp?.slug}`}>
+                <div className="h-12 w-12 rounded-full bg-gray-400/10 hover:bg-gray-400/20 transition-colors flex items-center justify-center cursor-pointer">
+                  <Rocket className="h-6 w-6" />
+                </div>
+              </RouterLink>
+            ) : (
+              <div className="h-12 w-12 rounded-full bg-gray-400/10 flex items-center justify-center">
+                <Rocket className="h-6 w-6" />
+              </div>
+            )}
           </div>
           <div className="mt-4 flex items-center text-sm">
             {lastApp && (
               <RouterLink to={`/$teamSlug/apps/${lastApp?.slug}`}>
-                <Button variant="outline" className="mt-2">
+                <Button variant="outline" size="sm">
                   View App
                 </Button>
               </RouterLink>
