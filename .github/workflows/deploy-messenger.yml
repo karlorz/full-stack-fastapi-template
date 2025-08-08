@@ -102,6 +102,7 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git add ${argocd_file_path}
         git commit -m "⬆ Deploy messenger to ${{ matrix.environment }}" -m "[skip ci]"
+        git fetch && git rebase origin/master
         git push
 
   # https://github.com/marketplace/actions/alls-green#why
