@@ -502,7 +502,7 @@ class WaitingListUserBase(SQLModel):
     role: str | None = Field(default=None, max_length=255)
     team_size: str | None = Field(default=None, max_length=255)
     location: str | None = Field(default=None, max_length=255)
-    use_case: str | None = Field(default=None, max_length=255)
+    use_case: str | None = Field(default=None, max_length=10_000)
     secret_code: str | None = Field(default=None, max_length=255)
 
 

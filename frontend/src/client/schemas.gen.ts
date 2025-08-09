@@ -1601,7 +1601,7 @@ export const WaitingListUserCreateSchema = {
       anyOf: [
         {
           type: "string",
-          maxLength: 255,
+          maxLength: 10000,
         },
         {
           type: "null",
