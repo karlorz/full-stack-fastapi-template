@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12, <4.0"
 
 [manifest]
@@ -72,6 +72,7 @@ dependencies = [
     { name = "boto3" },
     { name = "boto3-stubs", extra = ["ecr", "s3", "sqs"] },
     { name = "cloudflare" },
+    { name = "disposable-email-domains" },
     { name = "email-validator" },
     { name = "emails" },
     { name = "fastapi", extra = ["standard"] },
@@ -121,6 +122,7 @@ requires-dist = [
     { name = "boto3", specifier = ">=1.35.10,<2.0.0" },
     { name = "boto3-stubs", extras = ["s3", "ecr", "sqs"], specifier = ">=1.35.10,<2.0.0" },
     { name = "cloudflare", specifier = ">=3.1.0" },
+    { name = "disposable-email-domains", specifier = ">=0.0.130" },
     { name = "email-validator", specifier = ">=2.1.0.post1,<3.0.0.0" },
     { name = "emails", specifier = ">=0.6,<1.0" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.0,<1.0.0" },
@@ -508,6 +510,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/33/9f/329d26121fe165be44b1dfff21aa0dc348f04633931f1d20ed6cf448a236/cssutils-2.11.1.tar.gz", hash = "sha256:0563a76513b6af6eebbe788c3bf3d01c920e46b3f90c8416738c5cfc773ff8e2", size = 711657, upload-time = "2024-06-04T15:51:39.373Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a7/ec/bb273b7208c606890dc36540fe667d06ce840a6f62f9fae7e658fcdc90fb/cssutils-2.11.1-py3-none-any.whl", hash = "sha256:a67bfdfdff4f3867fab43698ec4897c1a828eca5973f4073321b3bccaf1199b1", size = 385747, upload-time = "2024-06-04T15:51:37.499Z" },
+]
+
+[[package]]
+name = "disposable-email-domains"
+version = "0.0.130"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0b/d8/7529876694c07c58a9236bb17bf0eff3796b9a407e8a86c37458fe1a8350/disposable_email_domains-0.0.130.tar.gz", hash = "sha256:e37f3b70aab11107b0f8f2dc08590bd98d0570f5fb16b11f7be75f93e3e3fefc", size = 57285, upload-time = "2025-08-08T14:03:00.474Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9b/75/81a55ac8321b3901c8bdd17de55a213216ca324aef68a085de5f0b89703b/disposable_email_domains-0.0.130-py2.py3-none-any.whl", hash = "sha256:d87c1cead28fbd0fd9cf48151dc0fab21817d906499d874ac3bd66bc2c95dc8e", size = 29277, upload-time = "2025-08-08T14:02:59.041Z" },
 ]
 
 [[package]]

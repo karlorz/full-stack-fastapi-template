@@ -240,8 +240,6 @@ class MainSettings(SettingsEnv):
         _check_default_secret("ALLOW_SIGNUP_TOKEN", self.ALLOW_SIGNUP_TOKEN)
         return self
 
-    EMAILABLE_KEY: str
-
     BUILD_LOGS_STREAM_TIMEOUT_SECONDS: int = 30
 
     BACKEND_GITHUB_CLIENT_ID: str

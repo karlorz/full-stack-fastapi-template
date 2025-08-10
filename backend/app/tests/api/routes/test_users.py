@@ -4,7 +4,6 @@ from datetime import datetime
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
-import respx
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
@@ -638,11 +637,12 @@ def test_update_waiting_list_user(
     )
 
 
-@respx.mock
 def test_add_to_waiting_list_invalid_email(
     client: TestClient, send_email_mock: MagicMock
 ) -> None:
-    email = "test@test.com"
+    # This won't pass validation even if the syntax is correct because example.com is
+    # a reserved domain name
+    email = "test@example.com"
     data = {
         "email": email,
         "name": "John Doe",
@@ -652,11 +652,6 @@ def test_add_to_waiting_list_invalid_email(
         "country": "US",
     }
 
-    # Mock the Emailable API request to return undeliverable status
-    respx.get("https://api.emailable.com/v1/verify").mock(
-        return_value=respx.MockResponse(200, json={"state": "undeliverable"})
-    )
-
     # Mock the environment to be production so the email validation runs
     from app.core.config import CommonSettings
 
@@ -664,7 +659,7 @@ def test_add_to_waiting_list_invalid_email(
         r = client.post(f"{settings.API_V1_STR}/users/waiting-list", json=data)
 
     assert r.status_code == 400
-    assert r.json()["detail"] == "This email is not valid"
+    assert r.json()["detail"] == "Email domain does not exist or has no mail server"
 
     send_email_mock.assert_not_called()
 

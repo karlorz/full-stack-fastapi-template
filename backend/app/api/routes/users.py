@@ -311,10 +311,20 @@ def add_to_waiting_list(
     """
     Add user to waiting list
     """
-    if not validate_email_deliverability(user_in.email):
+    is_valid, reason = validate_email_deliverability(user_in.email)
+    if not is_valid:
+        # Provide more specific error messages based on the reason
+        error_messages = {
+            "invalid_syntax": "Invalid email format",
+            "dns_error": "Email domain does not exist or has no mail server",
+            "disposable_domain": "Disposable email addresses are not allowed",
+            "role_based": "Role-based email addresses are not allowed",
+            "validation_error": "Email validation failed",
+        }
+        detail = error_messages.get(reason, "This email is not valid")
         raise HTTPException(
             status_code=400,
-            detail="This email is not valid",
+            detail=detail,
         )
 
     existing_user = crud.get_user_by_email(session=session, email=user_in.email)

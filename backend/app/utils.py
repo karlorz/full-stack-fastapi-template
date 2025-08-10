@@ -9,9 +9,10 @@ from pathlib import Path
 from typing import Any, Literal, cast
 
 import emails  # type: ignore
-import httpx
 import jwt
 import logfire
+from disposable_email_domains import blocklist
+from email_validator import EmailNotValidError, validate_email
 from jinja2 import Template
 from jwt.exceptions import InvalidTokenError
 from pydantic import BaseModel, Field
@@ -509,36 +510,115 @@ def authorize_device_code(device_code: str, access_token: str, redis: Redis) -> 
     )
 
 
-def validate_email_deliverability(email: str) -> bool:
+def validate_email_deliverability(email: str) -> tuple[bool, str]:
     """
-    Validate email deliverability using emailable service.
-
-    Returns True if email is deliverable, False otherwise.
+    Validate email deliverability using email_validator for DNS checks
+    and disposable_email_domains for disposable email detection.
     """
-    common_settings = CommonSettings.get_settings()
-
-    if common_settings.ENVIRONMENT != "production":
-        return True
-
-    settings = MainSettings.get_settings()
-
-    response = httpx.get(
-        "https://api.emailable.com/v1/verify",
-        params={"email": email, "smtp": "true", "accept_all": "false"},
-        headers={"Authorization": f"Bearer {settings.EMAILABLE_KEY}"},
-        timeout=30.0,
-    )
-
-    response.raise_for_status()
-
-    data = response.json()
-
-    if "state" not in data:
-        logfire.error(
-            "Unexpected response from Emailable API",
-            response=data,
+    try:
+        # Step 1: Validate email syntax and DNS records using email_validator
+        validation = validate_email(
+            email,
+            check_deliverability=True,  # This performs DNS/MX record checks
         )
 
-        raise ValueError("Unexpected response from Emailable API")
+        # Get the normalized email and domain
+        normalized_email = validation.normalized
+        domain = validation.domain.lower()
+        local_part = normalized_email.split("@")[0].lower()
 
-    return bool(data["state"] == "deliverable")
+        # Step 2: Check if domain is in the disposable email blocklist
+        if domain in blocklist:
+            logfire.info(
+                "Email rejected: disposable domain",
+                email=email,
+                domain=domain,
+            )
+            return False, "disposable_domain"
+
+        # Step 3: Check for role-based email addresses (optional)
+        # These are generic addresses that might not belong to a specific person
+        role_based_prefixes = {
+            "admin",
+            "info",
+            "sales",
+            "support",
+            "contact",
+            "help",
+            "service",
+            "hello",
+            "hi",
+            "team",
+            "no-reply",
+            "noreply",
+            "donotreply",
+            "notifications",
+            "webmaster",
+            "postmaster",
+            "hostmaster",
+            "abuse",
+            "security",
+            "root",
+            "ssl-admin",
+            "marketing",
+            "hr",
+            "recruiting",
+            "jobs",
+            "press",
+            "media",
+            "enquiries",
+            "feedback",
+            "billing",
+            "accounts",
+            "finance",
+        }
+
+        if local_part in role_based_prefixes:
+            logfire.info(
+                "Email warning: role-based address",
+                email=email,
+                local_part=local_part,
+            )
+            # Currently allowing role-based emails but logging them
+            # Uncomment the following line to reject role-based emails:
+            # return False, "role_based"
+
+        # Email passed all checks
+        logfire.debug(
+            "Email validated successfully",
+            email=email,
+            domain=domain,
+        )
+        return True, "valid"
+
+    except EmailNotValidError as e:
+        # Email failed validation (bad syntax, DNS issues, no MX records, etc.)
+        error_msg = str(e).lower()
+
+        # Determine the specific reason based on the error message
+        if "domain" in error_msg or "dns" in error_msg or "mx" in error_msg:
+            reason = "dns_error"
+        elif "syntax" in error_msg or "format" in error_msg or "invalid" in error_msg:
+            reason = "invalid_syntax"
+        else:
+            reason = "validation_error"
+
+        logfire.info(
+            "Email validation failed",
+            email=email,
+            error=str(e),
+            reason=reason,
+        )
+        return False, reason
+
+    except Exception as e:
+        # Log the unexpected error and re-raise it
+        # Don't silently swallow exceptions - let the caller handle them
+        logfire.error(
+            "Unexpected error in email validation",
+            email=email,
+            error=str(e),
+            exc_info=True,
+        )
+        # Re-raise the exception so the caller can handle it appropriately
+        raise

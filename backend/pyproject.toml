@@ -35,6 +35,7 @@ dependencies = [
     "posthog>=3.11.0",
     "alembic-postgresql-enum>=1.7.0",
     "fastapi-auth",
+    "disposable-email-domains>=0.0.130",
 ]
 
 [tool.uv]
