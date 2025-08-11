@@ -540,6 +540,7 @@
 
 ### Internal
 
+* 👷 Add `CLAUDE.md`. PR [#1233](https://github.com/fastapilabs/cloud/pull/1233) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Bump posthog-js from 1.257.0 to 1.259.0 in /frontend. PR [#1238](https://github.com/fastapilabs/cloud/pull/1238) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump typescript from 5.8.3 to 5.9.2 in /frontend. PR [#1236](https://github.com/fastapilabs/cloud/pull/1236) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump axios from 1.10.0 to 1.11.0 in /frontend. PR [#1234](https://github.com/fastapilabs/cloud/pull/1234) by [@dependabot[bot]](https://github.com/apps/dependabot).
