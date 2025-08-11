@@ -540,6 +540,7 @@
 
 ### Internal
 
+* ⬆ Bump @faker-js/faker from 8.4.1 to 9.9.0 in /frontend. PR [#1239](https://github.com/fastapilabs/cloud/pull/1239) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 👷 Add `CLAUDE.md`. PR [#1233](https://github.com/fastapilabs/cloud/pull/1233) by [@tiangolo](https://github.com/tiangolo).
 * ⬆ Bump posthog-js from 1.257.0 to 1.259.0 in /frontend. PR [#1238](https://github.com/fastapilabs/cloud/pull/1238) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump typescript from 5.8.3 to 5.9.2 in /frontend. PR [#1236](https://github.com/fastapilabs/cloud/pull/1236) by [@dependabot[bot]](https://github.com/apps/dependabot).
