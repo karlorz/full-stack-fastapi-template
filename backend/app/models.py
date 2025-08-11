@@ -518,6 +518,11 @@ class WaitingListUser(WaitingListUserBase, table=True):
     )
     allowed_at: datetime | None = Field(default=None, index=True)
     invitation_sent_at: datetime | None = Field(default=None, index=True)
+    newsletter_synced_at: datetime | None = Field(
+        default=None,
+        index=True,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
     registered_from_cli: bool = Field(default=False)
 
     @computed_field(return_type=bool)
