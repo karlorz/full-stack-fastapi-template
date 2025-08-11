@@ -58,6 +58,6 @@ messenger:
 posthog:
   image:
     repository: 961341535962.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-posthog-proxy
-    tag: "development-484e355c4d59d87d79e443fd1116272a4a281529"
+    tag: "development-76ef25d6e4879745814e192e4dd81a676d52e09f"
   domainmapping:
     hostname: ph.fastapicloud.site
