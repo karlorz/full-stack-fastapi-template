@@ -539,6 +539,7 @@
 
 ### Internal
 
+* ⬆ Bump axios from 1.10.0 to 1.11.0 in /frontend. PR [#1234](https://github.com/fastapilabs/cloud/pull/1234) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump dotenv from 17.0.1 to 17.2.1 in /frontend. PR [#1235](https://github.com/fastapilabs/cloud/pull/1235) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🐛 Fix parallel deployments of backend services. PR [#1214](https://github.com/fastapilabs/cloud/pull/1214) by [@siryur](https://github.com/siryur).
 * 🔧 Add Marco to the infra services whitelist. PR [#1212](https://github.com/fastapilabs/cloud/pull/1212) by [@buurro](https://github.com/buurro).
