@@ -91,14 +91,53 @@ jobs:
       run: |
         argocd_file_path="infra/argocd/${{ matrix.environment }}/fastapicloud/fastapicloud.yaml"
 
-        yq -i ".posthog.image.tag = \"$IMAGE_TAG\"" ${argocd_file_path}
-
+        # Configure git
         git config --global user.email "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
         git config --global user.name "github-actions[bot]"
-        git add ${argocd_file_path}
-        git commit -m "⬆ Deploy posthog-proxy to ${{ matrix.environment }}" -m "[skip ci]"
-        git fetch && git rebase origin/master
-        git push
+
+        # Retry loop for concurrent commit handling
+        MAX_RETRIES=5
+        BASE_RETRY_DELAY=5
+
+        for i in $(seq 1 $MAX_RETRIES); do
+          echo "Attempt $i of $MAX_RETRIES"
+
+          # Pull latest changes
+          git fetch origin master
+          git reset --hard origin/master
+
+          # Apply the change
+          yq -i ".posthog.image.tag = \"$IMAGE_TAG\"" ${argocd_file_path}
+
+          # Check if there are actual changes
+          if git diff --quiet; then
+            echo "No changes detected, skipping commit"
+            exit 0
+          fi
+
+          # Commit the change
+          git add ${argocd_file_path}
+          git commit -m "⬆ Deploy posthog-proxy to ${{ matrix.environment }}" -m "[skip ci]"
+
+          # Try to push
+          if git push origin HEAD:master; then
+            echo "Successfully pushed changes"
+            exit 0
+          else
+            echo "Push failed, likely due to concurrent commit"
+
+            if [ $i -eq $MAX_RETRIES ]; then
+              echo "Max retries reached. Failing the job."
+              exit 1
+            fi
+
+            # Add random delay to avoid collision
+            RANDOM_DELAY=$((RANDOM % 10 + 1))
+            TOTAL_DELAY=$((BASE_RETRY_DELAY + RANDOM_DELAY))
+            echo "Waiting $TOTAL_DELAY seconds before retry (base: $BASE_RETRY_DELAY + random: $RANDOM_DELAY)..."
+            sleep $TOTAL_DELAY
+          fi
+        done
 
   # https://github.com/marketplace/actions/alls-green#why
   alls-green-deploy-posthog-proxy:  # This job does nothing and is only used for the branch protection
