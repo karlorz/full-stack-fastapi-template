@@ -493,6 +493,7 @@
 
 ### Infrastructure
 
+* 👷 Handle Argo git commit conflicts with retries. PR [#1226](https://github.com/fastapilabs/cloud/pull/1226) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Add missing helm fastapicloud k8s roles. PR [#1209](https://github.com/fastapilabs/cloud/pull/1209) by [@siryur](https://github.com/siryur).
 * 🚀 Deploy fastapicloud with argo-cd. PR [#1106](https://github.com/fastapilabs/cloud/pull/1106) by [@siryur](https://github.com/siryur).
 * 📦 Switch Pulumi to uv for dependency management. PR [#1189](https://github.com/fastapilabs/cloud/pull/1189) by [@malvex](https://github.com/malvex).
