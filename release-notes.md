@@ -539,6 +539,7 @@
 
 ### Internal
 
+* ⬆ Bump dotenv from 17.0.1 to 17.2.1 in /frontend. PR [#1235](https://github.com/fastapilabs/cloud/pull/1235) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🐛 Fix parallel deployments of backend services. PR [#1214](https://github.com/fastapilabs/cloud/pull/1214) by [@siryur](https://github.com/siryur).
 * 🔧 Add Marco to the infra services whitelist. PR [#1212](https://github.com/fastapilabs/cloud/pull/1212) by [@buurro](https://github.com/buurro).
 * ✅ Re enable GitHub e2e test. PR [#1188](https://github.com/fastapilabs/cloud/pull/1188) by [@patrick91](https://github.com/patrick91).
