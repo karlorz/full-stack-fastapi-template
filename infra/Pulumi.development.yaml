@@ -52,11 +52,11 @@ config:
   k8s-cluster:fastapicloud_smtp_ssl: "False"
   k8s-cluster:infra_domain: dev.madinfra.wtf
   k8s-cluster:eks_cluster_version: "1.33"
-  k8s-cluster:eks_node_ami_id: ami-03db9f32eaa4c3c75
+  k8s-cluster:eks_node_ami_id: ami-00848331bb38314ea
   k8s-cluster:eks_coredns_version: v1.12.2-eksbuild.4
   k8s-cluster:eks_kube_proxy_version: v1.33.0-eksbuild.2
   k8s-cluster:eks_vpc_cni_version: v1.20.0-eksbuild.1
-  k8s-cluster:eks_ebs_csi_version: v1.46.0-eksbuild.1
+  k8s-cluster:eks_ebs_csi_version: v1.47.0-eksbuild.1
   argocd:google_client_id:
     secure: AAABAARH273nS5OHLRF8DTXtORhjQxvS/gl3CG/MV7Mgqdy21HDcvdrYQRanmCFKEiWZNXwx4NX9MHVgW47ztnHFChRtP5rxQwHh6TtJOV732WOwFJvy9K6Z9r948O7xwZgs/vK+ow==
   argocd:google_client_secret:
