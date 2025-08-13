@@ -494,6 +494,7 @@
 
 ### Infrastructure
 
+* ♻️ Reorganize Pulumi infrastructure into dedicated directories. PR [#1248](https://github.com/fastapilabs/cloud/pull/1248) by [@malvex](https://github.com/malvex).
 * ⬆ Update EKS version and addon versions. PR [#1230](https://github.com/fastapilabs/cloud/pull/1230) by [@github-actions[bot]](https://github.com/apps/github-actions).
 * 👷 Handle Argo git commit conflicts with retries. PR [#1226](https://github.com/fastapilabs/cloud/pull/1226) by [@tiangolo](https://github.com/tiangolo).
 * 🐛 Add missing helm fastapicloud k8s roles. PR [#1209](https://github.com/fastapilabs/cloud/pull/1209) by [@siryur](https://github.com/siryur).
