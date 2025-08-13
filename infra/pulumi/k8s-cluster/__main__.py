@@ -621,7 +621,7 @@ for k, sa in sa_map.items():
     sa_map[k]["chart"] = helm.Chart(
         k,
         helm.ChartArgs(
-            chart="./helm/charts/service-account",
+            chart="../../helm/charts/service-account",
             namespace=sa["namespace"],
             values=sa["values"],
         ),

@@ -304,7 +304,7 @@ class ArgoCDComponent(pulumi.ComponentResource):
         self.helm_chart = helm.Chart(
             "argocd",
             helm.ChartArgs(
-                chart="./helm/charts/argo-cd/argo-cd",
+                chart="../../helm/charts/argo-cd/argo-cd",
                 dependency_update=True,
                 namespace=self.config.namespace,
                 values=helm_values,

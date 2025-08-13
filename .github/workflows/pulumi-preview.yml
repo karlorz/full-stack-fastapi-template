@@ -26,12 +26,9 @@ jobs:
         predicate-quantifier: 'every'
         filters: |
           k8s:
-            - 'infra/**'
-            - '!infra/cloudflare/**'
-            - '!infra/argocd/**'
-            - '!infra/helm/**'
+            - 'infra/pulumi/k8s-cluster/**'
           cloudflare:
-            - 'infra/cloudflare/**'
+            - 'infra/pulumi/cloudflare/**'
           workflow:
             - '.github/workflows/pulumi-preview.yml'
 
@@ -60,13 +57,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Install dependencies
         run: uv sync
-        working-directory: infra
+        working-directory: infra/pulumi/k8s-cluster
       - uses: pulumi/actions@v6
         with:
           command: preview
           # stack-name: org-name/stack-name # When using an individual account, only use stack-name.
           stack-name: fastapilabs/staging
-          work-dir: infra
+          work-dir: infra/pulumi/k8s-cluster
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           CLOUDFLARE_API_TOKEN_SSL: ${{ secrets.CLOUDFLARE_API_TOKEN_SSL }}
@@ -91,12 +88,12 @@ jobs:
           enable-cache: true
       - name: Install dependencies
         run: uv sync
-        working-directory: infra/cloudflare
+        working-directory: infra/pulumi/cloudflare
       - uses: pulumi/actions@v6
         with:
           command: preview
           stack-name: fastapilabs/cloudflare-stack/production
-          work-dir: infra/cloudflare
+          work-dir: infra/pulumi/cloudflare
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 

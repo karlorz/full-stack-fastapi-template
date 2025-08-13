@@ -48,12 +48,12 @@ jobs:
 
         # Apply to all environments to ensure consistency
         for env in development staging production; do
-          yq -i ".config.\"k8s-cluster:eks_cluster_version\" = \"$LATEST_EKS\"" infra/Pulumi.$env.yaml
-          yq -i ".config.\"k8s-cluster:eks_node_ami_id\" = \"$LATEST_AMI_ID\"" infra/Pulumi.$env.yaml
-          yq -i ".config.\"k8s-cluster:eks_coredns_version\" = \"$LATEST_COREDNS\"" infra/Pulumi.$env.yaml
-          yq -i ".config.\"k8s-cluster:eks_kube_proxy_version\" = \"$LATEST_KUBE_PROXY\"" infra/Pulumi.$env.yaml
-          yq -i ".config.\"k8s-cluster:eks_vpc_cni_version\" = \"$LATEST_VPC_CNI\"" infra/Pulumi.$env.yaml
-          yq -i ".config.\"k8s-cluster:eks_ebs_csi_version\" = \"$LATEST_EBS_CSI\"" infra/Pulumi.$env.yaml
+          yq -i ".config.\"k8s-cluster:eks_cluster_version\" = \"$LATEST_EKS\"" infra/pulumi/k8s-cluster/Pulumi.$env.yaml
+          yq -i ".config.\"k8s-cluster:eks_node_ami_id\" = \"$LATEST_AMI_ID\"" infra/pulumi/k8s-cluster/Pulumi.$env.yaml
+          yq -i ".config.\"k8s-cluster:eks_coredns_version\" = \"$LATEST_COREDNS\"" infra/pulumi/k8s-cluster/Pulumi.$env.yaml
+          yq -i ".config.\"k8s-cluster:eks_kube_proxy_version\" = \"$LATEST_KUBE_PROXY\"" infra/pulumi/k8s-cluster/Pulumi.$env.yaml
+          yq -i ".config.\"k8s-cluster:eks_vpc_cni_version\" = \"$LATEST_VPC_CNI\"" infra/pulumi/k8s-cluster/Pulumi.$env.yaml
+          yq -i ".config.\"k8s-cluster:eks_ebs_csi_version\" = \"$LATEST_EBS_CSI\"" infra/pulumi/k8s-cluster/Pulumi.$env.yaml
         done
 
         # Only create PR if versions actually changed
