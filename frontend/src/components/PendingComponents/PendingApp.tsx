@@ -21,7 +21,7 @@ const PendingApp = () => {
           <TabsTrigger value="configuration">Configuration</TabsTrigger>
           <TabsTrigger value="logs">Logs</TabsTrigger>
         </TabsList>
-        <TabsContent value={tab}>
+        <TabsContent value="general">
           <CustomCard
             title="General"
             description="Overview of your application."

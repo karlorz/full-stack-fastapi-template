@@ -80,7 +80,7 @@ function AppDetail() {
         </TabsList>
 
         {/* General Information Tab */}
-        <TabsContent value={tab}>
+        <TabsContent value="general">
           <CustomCard
             title="General"
             description="Overview of your application."
