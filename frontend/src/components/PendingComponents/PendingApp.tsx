@@ -7,18 +7,21 @@ import { Section } from "@/components/ui/section"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Route } from "@/routes/_layout/$teamSlug/apps/$appSlug/$tab"
 import DangerZoneAlert from "../Common/DangerZone"
 
 const PendingApp = () => {
+  const { tab } = Route.useParams()
+
   return (
     <Section title="App Details">
-      <Tabs defaultValue="general" className="space-y-12">
+      <Tabs value={tab} className="space-y-12">
         <TabsList className="grid grid-cols-3 w-full">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="configuration">Configuration</TabsTrigger>
           <TabsTrigger value="logs">Logs</TabsTrigger>
         </TabsList>
-        <TabsContent value="general">
+        <TabsContent value={tab}>
           <CustomCard
             title="General"
             description="Overview of your application."
