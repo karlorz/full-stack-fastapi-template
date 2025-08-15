@@ -159,6 +159,7 @@
 
 ### Fixes
 
+* ✅ Update `logged_in_client` to create a new client instead of modifying the existing one. PR [#1259](https://github.com/fastapilabs/cloud/pull/1259) by [@patrick91](https://github.com/patrick91).
 * 🐛 Fix General tab always showing. PR [#1258](https://github.com/fastapilabs/cloud/pull/1258) by [@patrick91](https://github.com/patrick91).
 * 🐛 Fully disable Posthog when running tests. PR [#1157](https://github.com/fastapilabs/cloud/pull/1157) by [@patrick91](https://github.com/patrick91).
 * 🐛 Add missing asChild prop to button components . PR [#1154](https://github.com/fastapilabs/cloud/pull/1154) by [@alejsdev](https://github.com/alejsdev).
