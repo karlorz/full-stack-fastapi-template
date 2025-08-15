@@ -65,6 +65,9 @@ api:
       ALLOW_SIGNUP_TOKEN:
         remoteRef:
           key: FASTAPICLOUD_ALLOW_SIGNUP_TOKEN
+      APPS_SECRETS_ENCRYPTION_KEY:
+        remoteRef:
+          key: FASTAPICLOUD_APPS_SECRETS_ENCRYPTION_KEY
       BACKEND_GITHUB_CLIENT_ID:
         remoteRef:
           key: FASTAPICLOUD_BACKEND_GITHUB_CLIENT_ID
@@ -160,6 +163,9 @@ builder:
   externalSecrets:
     enabled: true
     secrets:
+      APPS_SECRETS_ENCRYPTION_KEY:
+        remoteRef:
+          key: FASTAPICLOUD_APPS_SECRETS_ENCRYPTION_KEY
       BUILDER_API_KEY:
         remoteRef:
           key: FASTAPICLOUD_BUILDER_API_KEY

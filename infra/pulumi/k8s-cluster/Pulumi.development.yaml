@@ -75,3 +75,5 @@ config:
     secure: AAABAN1KfjqwThaqopai3zq5LzBots1a0xvaf8Xj1uaKkDdupMG6A00kW8270LqIhf3+axCIPP4KAF1Jc301cqE1VlAY2WXV
   k8s-cluster:fastapicloud_depot_token:
     secure: AAABAFWiNsRxNYIHffTBPxPrW23UWPfNSq1wNDqlcC8Oor5ac5V83jXGVMI6JRDQFCU1ipXXYKMmRqNxHJ65QcGUDgjYzT6ZF6TjHJMsU8dDpZu8Y82j/GlVmVk5IGQVyjezpOEgfcijEA==
+  k8s-cluster:fastapicloud_apps_secrets_encryption_key:
+    secure: AAABANuf22LSaFEr14W6D4p1X5tLB4f2wLFKXMVDedpJWlfz8zGPKekT89N2lgM77LzdSCYKizPEkaqFzT5gMVbXfkrgs+lb5uEJcw==

@@ -46,6 +46,9 @@ if current_account.account_id != expected_account_id:
 
 ALLOW_SIGNUP_TOKEN = cfg.require_secret("fastapicloud_allow_signup_token")
 API_DOMAIN = cfg.require("fastapicloud_api_domain")
+APPS_SECRETS_ENCRYPTION_KEY = cfg.require_secret(
+    "fastapicloud_apps_secrets_encryption_key"
+)
 AWS_STS_REGIONAL_ENDPOINTS = "regional"
 BACKEND_GITHUB_CLIENT_ID = cfg.require("fastapicloud_backend_github_client_id")
 BACKEND_GITHUB_CLIENT_SECRET = cfg.require_secret(
@@ -736,9 +739,10 @@ argocd_component = ArgoCDComponent(
     opts=pulumi.ResourceOptions(),
 )
 
-fastapicloud_secrets: dict[str, any] = {
+fastapicloud_secrets: dict[str, str] = {
     "ALLOW_SIGNUP_TOKEN": ALLOW_SIGNUP_TOKEN,
     "API_DOMAIN": API_DOMAIN,
+    "APPS_SECRETS_ENCRYPTION_KEY": APPS_SECRETS_ENCRYPTION_KEY,
     "AWS_REGION": region,
     "AWS_ROLE_ARN": fastapicloud_iam_role,
     "AWS_STS_REGIONAL_ENDPOINTS": AWS_STS_REGIONAL_ENDPOINTS,
