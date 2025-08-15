@@ -59,12 +59,13 @@ def client() -> Generator[TestClient, None, None]:
 
 
 @pytest.fixture(scope="module")
-def logged_in_client(client: TestClient, user: User) -> TestClient:
-    access_token = security.create_access_token(user.id, timedelta(minutes=30))
+def logged_in_client(user: User) -> Generator[TestClient, None, None]:
+    with TestClient(app) as client:
+        access_token = security.create_access_token(user.id, timedelta(minutes=30))
 
-    client.headers.update({"Authorization": f"Bearer {access_token}"})
+        client.headers.update({"Authorization": f"Bearer {access_token}"})
 
-    return client
+        yield client
 
 
 @pytest.fixture(scope="module")
