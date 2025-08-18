@@ -1,6 +1,5 @@
 import datetime
 import json
-from urllib.parse import urlencode
 
 import httpx
 import pytest
@@ -142,7 +141,10 @@ async def test_fails_if_the_token_exchange_fails(
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            content="error=incorrect_client_credentials&error_description=The+client_id+and%2For+client_secret+passed+are+incorrect.",
+            json={
+                "error": "incorrect_client_credentials",
+                "error_description": "The client_id and/or client_secret passed are incorrect.",
+            },
         )
     )
 
@@ -192,8 +194,7 @@ async def test_fails_if_there_is_no_email_in_the_user_info_response(
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            headers={"Content-Type": "application/www-form-urlencoded"},
-            content=urlencode(data),
+            json=data,
         )
     )
     respx_mock.get(oauth_provider.user_info_endpoint).mock(
@@ -227,8 +228,7 @@ async def test_fails_if_the_user_info_response_is_not_valid_json(
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            headers={"Content-Type": "application/www-form-urlencoded"},
-            content=urlencode(data),
+            json=data,
         )
     )
 
@@ -263,8 +263,7 @@ async def test_fails_if_the_user_info_response_does_not_have_an_id(
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            headers={"Content-Type": "application/www-form-urlencoded"},
-            content=urlencode(data),
+            json=data,
         )
     )
 
@@ -303,8 +302,7 @@ async def test_create_user_if_it_does_not_exist(
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            headers={"Content-Type": "application/www-form-urlencoded"},
-            content=urlencode(data),
+            json=data,
         )
     )
 
@@ -359,8 +357,7 @@ async def test_stores_the_code_in_the_session(
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            headers={"Content-Type": "application/www-form-urlencoded"},
-            content=urlencode(data),
+            json=data,
         )
     )
 
@@ -432,8 +429,7 @@ async def test_fails_if_there_is_user_with_the_same_email_but_different_provider
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            headers={"Content-Type": "application/www-form-urlencoded"},
-            content=urlencode(data),
+            json=data,
         )
     )
 
@@ -486,8 +482,7 @@ async def test_works_when_there_is_user_with_the_same_email_and_provider(
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            headers={"Content-Type": "application/www-form-urlencoded"},
-            content=urlencode(data),
+            json=data,
         )
     )
 
@@ -545,8 +540,7 @@ async def test_updates_the_social_account_if_it_already_exists(
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            headers={"Content-Type": "application/www-form-urlencoded"},
-            content=urlencode(data),
+            json=data,
         )
     )
 
@@ -593,8 +587,7 @@ async def test_fails_if_the_user_is_not_allowed_to_signup(
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            headers={"Content-Type": "application/www-form-urlencoded"},
-            content=urlencode(data),
+            json=data,
         )
     )
 

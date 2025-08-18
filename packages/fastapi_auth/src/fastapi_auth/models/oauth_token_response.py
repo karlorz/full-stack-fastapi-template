@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from urllib.parse import parse_qs
 
 from pydantic import BaseModel, Field, HttpUrl, RootModel
 
@@ -51,17 +50,6 @@ class TokenErrorResponse(BaseModel):
 
 class OAuth2TokenEndpointResponse(RootModel):
     root: TokenResponse | TokenErrorResponse
-
-    @staticmethod
-    def from_query_string(query_string: str) -> "OAuth2TokenEndpointResponse":
-        params = parse_qs(query_string)
-        query_dict = {}
-
-        # always take the last value
-        for param in params:
-            query_dict[param] = params[param][-1]
-
-        return OAuth2TokenEndpointResponse(**query_dict)
 
     def is_error(self) -> bool:
         return isinstance(self.root, TokenErrorResponse)

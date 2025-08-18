@@ -1,7 +1,5 @@
 import json
 from datetime import datetime, timezone
-from urllib.parse import urlencode
-
 import httpx
 import pytest
 import time_machine
@@ -276,8 +274,7 @@ async def test_fails_if_account_already_exists_on_another_user(
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            headers={"Content-Type": "application/www-form-urlencoded"},
-            content=urlencode(data),
+            json=data,
         )
     )
 
@@ -336,8 +333,7 @@ async def test_links_to_correct_user(
     respx_mock.post(oauth_provider.token_endpoint).mock(
         return_value=httpx.Response(
             status_code=200,
-            headers={"Content-Type": "application/www-form-urlencoded"},
-            content=urlencode(data),
+            json=data,
         )
     )
 

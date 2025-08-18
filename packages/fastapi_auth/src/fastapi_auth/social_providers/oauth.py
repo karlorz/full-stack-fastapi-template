@@ -355,7 +355,12 @@ class OAuth2Provider:
         try:
             response = httpx.post(
                 self.token_endpoint,
+                headers={
+                    "Accept": "application/json",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
                 data={
+                    "grant_type": "authorization_code",
                     "code": code,
                     "redirect_uri": redirect_uri,
                     "client_id": self.client_id,
@@ -365,7 +370,7 @@ class OAuth2Provider:
 
             response.raise_for_status()
 
-            return OAuth2TokenEndpointResponse.from_query_string(response.text)
+            return OAuth2TokenEndpointResponse.model_validate_json(response.text)
         except httpx.HTTPStatusError as e:
             logger.warning(
                 f"HTTP error during token exchange: {e.response.status_code} - {e.response.text}"

@@ -22,12 +22,14 @@ def example_provider() -> ExampleProvider:
 
 @respx.mock
 def test_exchange_code_success(example_provider: ExampleProvider) -> None:
-    token_response = (
-        "access_token=gho_test_token_12345&token_type=bearer&scope=user%3Aemail"
-    )
+    token_response = {
+        "access_token": "gho_test_token_12345",
+        "token_type": "bearer",
+        "scope": "user:email",
+    }
 
     respx.post("https://example.com/login/oauth/access_token").mock(
-        return_value=respx.MockResponse(200, content=token_response)
+        return_value=respx.MockResponse(200, json=token_response)
     )
 
     result = example_provider._exchange_code(
