@@ -553,6 +553,7 @@
 
 ### Internal
 
+* ⬆ Bump actions/checkout from 4 to 5. PR [#1246](https://github.com/fastapilabs/cloud/pull/1246) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⚡️ Make FastAPI Auth test faster by computing test password just once. PR [#1194](https://github.com/fastapilabs/cloud/pull/1194) by [@patrick91](https://github.com/patrick91).
 * ⬆ Bump @faker-js/faker from 8.4.1 to 9.9.0 in /frontend. PR [#1239](https://github.com/fastapilabs/cloud/pull/1239) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 👷 Add `CLAUDE.md`. PR [#1233](https://github.com/fastapilabs/cloud/pull/1233) by [@tiangolo](https://github.com/tiangolo).
