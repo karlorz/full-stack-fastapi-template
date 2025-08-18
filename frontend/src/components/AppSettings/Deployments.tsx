@@ -6,7 +6,6 @@ import { Fragment } from "react"
 import type { DeploymentPublic } from "@/client"
 import { Status } from "@/components/Deployment/Status"
 import { Button } from "@/components/ui/button"
-import { CustomCard } from "@/components/ui/custom-card"
 import { Label } from "@/components/ui/label"
 import EmptyState from "../Common/EmptyState"
 
@@ -50,8 +49,12 @@ export const RecentDeployments = ({
 
 const Deployments = ({
   deployments,
+  teamSlug,
+  appSlug,
 }: {
   deployments: Array<DeploymentPublic>
+  teamSlug: string
+  appSlug: string
 }) => {
   return (
     <div>
@@ -61,28 +64,29 @@ const Deployments = ({
       </div>
 
       {deployments?.length > 0 ? (
-        <CustomCard>
-          {deployments.map((deployment: DeploymentPublic) => (
-            <Fragment key={deployment.id}>
-              <div className="p-4 border-b last:border-b-0">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="font-medium">Deployment {deployment.id}</div>
-                  <Status status={deployment.status} />
-                </div>
-                <div className="text-sm mb-2 text-muted-foreground">
-                  {formatDistanceToNow(new Date(deployment.created_at), {
-                    addSuffix: true,
-                  })}
-                </div>
-                <RouterLink to={`./deployments/${deployment.id}`}>
-                  <Button variant="outline" size="sm">
-                    View Details
-                  </Button>
-                </RouterLink>
+        deployments.map((deployment: DeploymentPublic) => (
+          <Fragment key={deployment.id}>
+            <div className="p-4 border-b last:border-b-0">
+              <div className="flex items-center justify-between mb-2">
+                <div className="font-medium">Deployment {deployment.id}</div>
+                <Status status={deployment.status} />
               </div>
-            </Fragment>
-          ))}
-        </CustomCard>
+              <div className="text-sm mb-2 text-muted-foreground">
+                {formatDistanceToNow(new Date(deployment.created_at), {
+                  addSuffix: true,
+                })}
+              </div>
+              <RouterLink
+                to="/$teamSlug/apps/$appSlug/deployments/$deploymentId"
+                params={{ teamSlug, appSlug, deploymentId: deployment.id }}
+              >
+                <Button variant="outline" size="sm">
+                  View Details
+                </Button>
+              </RouterLink>
+            </div>
+          </Fragment>
+        ))
       ) : (
         <EmptyState
           title="No deployments yet"

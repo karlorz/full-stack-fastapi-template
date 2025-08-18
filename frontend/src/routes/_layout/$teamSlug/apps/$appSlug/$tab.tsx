@@ -189,7 +189,11 @@ function AppDetail() {
                 <Logs logs={logsData?.logs || []} />
               </div>
               <Separator />
-              <Deployments deployments={deployments.data} />
+              <Deployments
+                deployments={deployments.data}
+                teamSlug={teamSlug}
+                appSlug={appSlug}
+              />
             </div>
           </CustomCard>
         </TabsContent>
