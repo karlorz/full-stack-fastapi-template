@@ -220,6 +220,7 @@
 
 ### Refactors
 
+* ♻️ Centralize UI components for improved consistency. PR [#1217](https://github.com/fastapilabs/cloud/pull/1217) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor email templates to improve readability and consistency. PR [#1207](https://github.com/fastapilabs/cloud/pull/1207) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Add `newsletter_synced_at` to `WaitingListUser`. PR [#1237](https://github.com/fastapilabs/cloud/pull/1237) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Refactor email validation to not depend on an external service (Emailable). PR [#1229](https://github.com/fastapilabs/cloud/pull/1229) by [@tiangolo](https://github.com/tiangolo).
