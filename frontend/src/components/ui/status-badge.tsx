@@ -38,7 +38,7 @@ const statusConfig: Record<
   },
   error: {
     variant: "destructive",
-    dotClass: "bg-destructive",
+    dotClass: "bg-red-500",
   },
   warning: {
     variant: "warning",
