@@ -221,6 +221,7 @@
 
 ### Refactors
 
+* 💄 Fix error badge. PR [#1267](https://github.com/fastapilabs/cloud/pull/1267) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor Team Information components. PR [#1227](https://github.com/fastapilabs/cloud/pull/1227) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Centralize UI components for improved consistency. PR [#1217](https://github.com/fastapilabs/cloud/pull/1217) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor email templates to improve readability and consistency. PR [#1207](https://github.com/fastapilabs/cloud/pull/1207) by [@alejsdev](https://github.com/alejsdev).
