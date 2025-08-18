@@ -88,7 +88,7 @@ test.describe("Admin transfer team successfully", () => {
     await page
       .getByPlaceholder(`Type "transfer team ${team.slug}" to confirm`)
       .fill(`transfer team ${team.slug}`)
-    await page.getByRole("button", { name: "Confirm" }).click()
+    await page.getByRole("button", { name: "Transfer Team" }).click()
     await expect(
       page.getByText("The team was transferred successfully"),
     ).toBeVisible()

@@ -5,7 +5,7 @@ import type { TeamPublic } from "@/client"
 import { InvitationsService } from "@/client/sdk.gen"
 import { DataTable } from "../Common/DataTable"
 import EmptyState from "../Common/EmptyState"
-import { PendingTable } from "../PendingComponents/PendingTable"
+import { PendingInvitations } from "../PendingComponents/PendingInvitations"
 import { INVITATIONS_COLUMNS } from "./columns"
 
 function InvitationsContent({ team }: { team: TeamPublic }) {
@@ -35,8 +35,8 @@ function InvitationsContent({ team }: { team: TeamPublic }) {
 
 function Invitations({ team }: { team: TeamPublic }) {
   return (
-    <div className="w-full p-0">
-      <Suspense fallback={<PendingTable columns={INVITATIONS_COLUMNS} />}>
+    <div className="w-full">
+      <Suspense fallback={<PendingInvitations />}>
         <InvitationsContent team={team} />
       </Suspense>
     </div>

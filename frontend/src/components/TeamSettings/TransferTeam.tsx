@@ -4,11 +4,9 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query"
-import { AlertTriangle } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { TeamsService } from "@/client"
-import { Alert, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -39,6 +37,7 @@ import {
 } from "@/components/ui/select"
 import useCustomToast from "@/hooks/useCustomToast"
 import { fetchTeamBySlug, handleError } from "@/utils"
+import { DestructiveAlert } from "../Common/DestructiveAlert"
 
 interface AdminUser {
   user: {
@@ -103,106 +102,135 @@ const TransferTeam = ({ adminUsers, team: teamSlug }: TransferTeamProps) => {
 
   const confirmationValue = form.watch("confirmation")
 
+  if (adminUsers.length === 0) {
+    return (
+      <div>
+        <p className="font-normal">
+          No admin users available to transfer ownership to.
+        </p>
+        <p className="text-muted-foreground mt-1">
+          Promote at least one team member to admin in the Team Members section
+          above.
+        </p>
+      </div>
+    )
+  }
+
   return (
     <Form {...form}>
-      <div className="w-full max-w-lg space-y-2">
-        <FormField
-          control={form.control}
-          name="userId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
-                Select Admin User
-              </FormLabel>
-              <FormControl>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger data-testid="user-select" className="w-full">
-                    <SelectValue placeholder="Select User" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {adminUsers.length > 0 ? (
-                      adminUsers.map((admin) => (
-                        <SelectItem key={admin.user.id} value={admin.user.id}>
-                          {admin.user.email}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="w-full max-w-md">
+          <FormField
+            control={form.control}
+            name="userId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm font-medium mb-2 block">
+                  Select Admin User
+                </FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger
+                      data-testid="user-select"
+                      className="w-full h-10"
+                    >
+                      <SelectValue placeholder="Choose an admin to transfer to..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {adminUsers.map((admin) => (
+                        <SelectItem
+                          key={admin.user.id}
+                          value={admin.user.id}
+                          className="py-2"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                              {admin.user.email.charAt(0).toUpperCase()}
+                            </div>
+                            <span>{admin.user.email}</span>
+                          </div>
                         </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem value="no-option" disabled>
-                        No options available
-                      </SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button disabled={!form.watch("userId")} className="mt-4">
-            Transfer Team
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            data-testid="transfer-confirmation-team"
-          >
-            <DialogHeader className="space-y-2">
-              <DialogTitle>Transfer Team</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Team ownership will be transferred.</AlertTitle>
-              </Alert>
-              <DialogDescription>
-                This team will be{" "}
-                <span className="font-bold">transferred.</span> Type{" "}
-                <span className="font-bold">transfer team {team.slug}</span>{" "}
-                below to confirm and click the confirm button.
-              </DialogDescription>
-              <FormField
-                control={form.control}
-                name="confirmation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder={`Type "transfer team ${team.slug}" to confirm`}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <DialogFooter className="gap-3">
-              <DialogClose asChild>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  disabled={mutation.isPending}
-                  onClick={() => form.reset()}
-                >
-                  Cancel
-                </Button>
-              </DialogClose>
-              <LoadingButton
-                type="submit"
-                loading={mutation.isPending}
-                disabled={confirmationValue !== `transfer team ${teamSlug}`}
+        <div className="flex-shrink-0">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                disabled={!form.watch("userId")}
+                variant="destructive"
+                className="w-full sm:w-auto"
               >
-                Confirm
-              </LoadingButton>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+                Transfer Team
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                data-testid="transfer-confirmation-team"
+              >
+                <DialogHeader className="space-y-2">
+                  <DialogTitle>Transfer Team Ownership</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <DestructiveAlert />
+                  <DialogDescription>
+                    You will{" "}
+                    <span className="font-bold">
+                      permanently transfer ownership
+                    </span>{" "}
+                    of this team. Type{" "}
+                    <span className="font-bold">transfer team {team.slug}</span>{" "}
+                    below to confirm and click the confirm button.
+                  </DialogDescription>
+                  <FormField
+                    control={form.control}
+                    name="confirmation"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder={`Type "transfer team ${team.slug}" to confirm`}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <DialogFooter className="gap-3">
+                  <DialogClose asChild>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      disabled={mutation.isPending}
+                      onClick={() => form.reset()}
+                    >
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <LoadingButton
+                    type="submit"
+                    variant="destructive"
+                    loading={mutation.isPending}
+                    disabled={confirmationValue !== `transfer team ${teamSlug}`}
+                  >
+                    Transfer Team
+                  </LoadingButton>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
     </Form>
   )
 }
