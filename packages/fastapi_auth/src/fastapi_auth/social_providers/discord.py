@@ -30,3 +30,5 @@ class DiscordProvider(OAuth2Provider):
     authorization_endpoint = "https://discord.com/oauth2/authorize"
     token_endpoint = "https://discord.com/api/oauth2/token"
     user_info_endpoint = "https://discord.com/api/users/@me"
+    scopes = ["identify", "email"]
+    supports_pkce = True

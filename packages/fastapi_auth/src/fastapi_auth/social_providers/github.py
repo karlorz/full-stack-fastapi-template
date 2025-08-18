@@ -88,6 +88,7 @@ class GitHubProvider(OAuth2Provider):
     token_endpoint = "https://github.com/login/oauth/access_token"
     user_info_endpoint = "https://api.github.com/user"
     scopes = ["user:email"]
+    supports_pkce = True
 
     def fetch_user_info(self, token: str) -> dict:
         info = super().fetch_user_info(token)

@@ -1,7 +1,5 @@
 import pytest
-
 from fastapi_auth.social_providers.oauth import OAuth2Provider
-
 
 pytestmark = pytest.mark.asyncio
 
@@ -13,6 +11,7 @@ class TestOAuth2Provider(OAuth2Provider):
     token_endpoint = "https://test.com/token"
     user_info_endpoint = "https://test.com/userinfo"
     scopes = ["openid", "email", "profile"]
+    supports_pkce = True
 
     def _generate_code(self) -> str:
         return "a-totally-valid-code"

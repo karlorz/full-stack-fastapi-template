@@ -3,7 +3,7 @@ import logging
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import ClassVar, Literal, TypedDict
+from typing import Any, ClassVar, Literal, TypedDict
 
 import httpx
 from lia import AsyncHTTPRequest
@@ -68,6 +68,7 @@ class OAuth2Provider:
     token_endpoint: ClassVar[str]
     user_info_endpoint: ClassVar[str]
     scopes: ClassVar[list[str]]
+    supports_pkce: ClassVar[bool]
 
     def __init__(self, client_id: str, client_secret: str):
         self.client_id = client_id
@@ -175,14 +176,18 @@ class OAuth2Provider:
 
         proxy_redirect_uri = relative_url(str(request.url), "callback")
 
+        query_params = self.build_authorization_params(
+            state=state,
+            proxy_redirect_uri=proxy_redirect_uri,
+            response_type="code",
+            code_challenge=code_challenge,
+            code_challenge_method=code_challenge_method,
+            login_hint=login_hint,
+        )
+
         return Response.redirect(
             self.authorization_endpoint,
-            query_params={
-                "client_id": self.client_id,
-                "scope": " ".join(self.scopes),
-                "redirect_uri": proxy_redirect_uri,
-                "state": state,
-            },
+            query_params=query_params,
         )
 
     async def callback(self, request: AsyncHTTPRequest, context: Context) -> Response:
@@ -241,7 +246,7 @@ class OAuth2Provider:
         redirect_uri = provider_data.redirect_uri
 
         try:
-            user_info, token_response = self._fetch_user_info(request, code)
+            user_info, token_response = self._fetch_user_info(request, code, context)
         except OAuth2Exception as e:
             return Response.error_redirect(
                 redirect_uri,
@@ -349,45 +354,132 @@ class OAuth2Provider:
             query_params={"link_code": code},
         )
 
+    def build_authorization_params(
+        self,
+        state: str,
+        proxy_redirect_uri: str,
+        response_type: str,
+        code_challenge: str,
+        code_challenge_method: str,
+        login_hint: str | None,
+    ) -> dict:
+        """Build authorization request parameters.
+
+        Override this method to customize authorization parameters.
+        For example, to force a specific response_type or add extra params.
+        """
+        params = {
+            "client_id": self.client_id,
+            "scope": " ".join(self.scopes),
+            "redirect_uri": proxy_redirect_uri,
+            "state": state,
+            "response_type": response_type,
+        }
+
+        # Add PKCE parameters if provider supports them
+        if self.supports_pkce:
+            params["code_challenge"] = code_challenge
+            params["code_challenge_method"] = code_challenge_method
+
+        # Add login_hint if provided
+        if login_hint:
+            params["login_hint"] = login_hint
+
+        return params
+
+    def get_code_verifier(
+        self, request: AsyncHTTPRequest | None, context: Context | None
+    ) -> str | None:
+        """Get code_verifier for PKCE flow.
+
+        Override this method to provide code_verifier for token exchange.
+        """
+        return None
+
+    def build_token_exchange_params(
+        self, code: str, redirect_uri: str, code_verifier: str | None = None
+    ) -> dict:
+        """Build token exchange request parameters.
+
+        Override this method to customize token exchange parameters.
+        """
+        params = {
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": redirect_uri,
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+        }
+
+        if code_verifier:
+            params["code_verifier"] = code_verifier
+
+        return params
+
+    def send_token_request(self, data: dict[str, Any]) -> httpx.Response:
+        """Send token exchange request.
+
+        Override this method to customize how the request is sent
+        """
+        return httpx.post(
+            self.token_endpoint,
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            data=data,
+        )
+
+    def parse_token_response(
+        self, response: httpx.Response
+    ) -> OAuth2TokenEndpointResponse | None:
+        """Parse token exchange response.
+
+        Override this method to handle different response formats
+        (e.g., JSON instead of query string).
+        """
+        try:
+            return OAuth2TokenEndpointResponse.model_validate_json(response.text)
+        except ValidationError as e:
+            logger.error(f"Failed to parse token response: {str(e)}")
+            return None
+
     def _exchange_code(
-        self, code: str, redirect_uri: str
+        self,
+        code: str,
+        redirect_uri: str,
+        request: AsyncHTTPRequest | None = None,
+        context: Context | None = None,
     ) -> OAuth2TokenEndpointResponse | None:
         try:
-            response = httpx.post(
-                self.token_endpoint,
-                headers={
-                    "Accept": "application/json",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                data={
-                    "grant_type": "authorization_code",
-                    "code": code,
-                    "redirect_uri": redirect_uri,
-                    "client_id": self.client_id,
-                    "client_secret": self.client_secret,
-                },
-            )
+            # Get code_verifier if needed
+            code_verifier = self.get_code_verifier(request, context)
 
+            # Build request parameters
+            params = self.build_token_exchange_params(code, redirect_uri, code_verifier)
+
+            # Send the request
+            response = self.send_token_request(params)
             response.raise_for_status()
 
-            return OAuth2TokenEndpointResponse.model_validate_json(response.text)
+            # Parse the response
+            return self.parse_token_response(response)
+
         except httpx.HTTPStatusError as e:
             logger.warning(
                 f"HTTP error during token exchange: {e.response.status_code} - {e.response.text}"
             )
-
             return None
-        except ValidationError as e:
+        except (httpx.RequestError, ValidationError) as e:
             logger.error(f"Failed to exchange code for token: {str(e)}")
-
             return None
 
     def _fetch_user_info(
-        self, request: AsyncHTTPRequest, code: str
+        self, request: AsyncHTTPRequest, code: str, context: Context | None = None
     ) -> tuple[UserInfo, TokenResponse]:
         proxy_redirect_uri = relative_url(str(request.url), "callback")
 
-        token_response = self._exchange_code(code, proxy_redirect_uri)
+        token_response = self._exchange_code(code, proxy_redirect_uri, request, context)
 
         if token_response is None or token_response.is_error():
             if token_response:
@@ -520,7 +612,7 @@ class OAuth2Provider:
 
         try:
             user_info, token_response = self._fetch_user_info(
-                request, link_data.provider_code
+                request, link_data.provider_code, context
             )
         except OAuth2Exception as e:
             return Response.error(
