@@ -553,6 +553,7 @@
 
 ### Internal
 
+* ⬆ Bump @radix-ui/react-dropdown-menu from 2.1.15 to 2.1.16 in /frontend. PR [#1269](https://github.com/fastapilabs/cloud/pull/1269) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump vite from 7.0.4 to 7.1.2 in /frontend. PR [#1268](https://github.com/fastapilabs/cloud/pull/1268) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-tooltip from 1.2.7 to 1.2.8 in /frontend. PR [#1271](https://github.com/fastapilabs/cloud/pull/1271) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump actions/checkout from 4 to 5. PR [#1246](https://github.com/fastapilabs/cloud/pull/1246) by [@dependabot[bot]](https://github.com/apps/dependabot).
