@@ -222,6 +222,7 @@
 
 ### Refactors
 
+* ♻️ Make FastAPI Auth provider easier to customise. PR [#1210](https://github.com/fastapilabs/cloud/pull/1210) by [@patrick91](https://github.com/patrick91).
 * ♻️ Always use json when exchanging tokens. PR [#1260](https://github.com/fastapilabs/cloud/pull/1260) by [@patrick91](https://github.com/patrick91).
 * 💄 Fix error badge. PR [#1267](https://github.com/fastapilabs/cloud/pull/1267) by [@alejsdev](https://github.com/alejsdev).
 * ♻️ Refactor Team Information components. PR [#1227](https://github.com/fastapilabs/cloud/pull/1227) by [@alejsdev](https://github.com/alejsdev).
