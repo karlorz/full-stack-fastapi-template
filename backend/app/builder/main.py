@@ -15,7 +15,7 @@ import redis
 import sentry_sdk
 import stamina
 from asyncer import syncify
-from botocore.exceptions import ClientError, NoCredentialsError
+from botocore.exceptions import ClientError
 from fastapi import Depends, FastAPI, HTTPException
 from kubernetes import client as k8s
 from kubernetes.client.rest import ApiException as K8sApiException
@@ -98,11 +98,8 @@ def get_ecr_token() -> str:
     """
     Get the ECR token for the current AWS account.
     """
-    try:
-        response = ecr.get_authorization_token()
-    except NoCredentialsError:
-        logfire.info("Credentials not available")
-        raise
+
+    response = ecr.get_authorization_token()
 
     token = response["authorizationData"][0].get("authorizationToken")
     assert token, "No authorization token available"
@@ -121,16 +118,14 @@ def create_namespace(namespace: str) -> None:
     except K8sApiException as e:
         if e.status == 404:
             namespace_body = k8s.V1Namespace(metadata=k8s.V1ObjectMeta(name=namespace))
-            try:
-                api_instance.create_namespace(namespace_body)  # type: ignore
-                logfire.info(
-                    f"Namespace '{namespace}' created."
-                )  # if there is no error, the namespace was created
-            except K8sApiException as ex:
-                logfire.info(f"Error creating namespace: {ex}")
-                raise ex
+
+            api_instance.create_namespace(namespace_body)  # type: ignore
+            logfire.info(
+                f"Namespace '{namespace}' created."
+            )  # if there is no error, the namespace was created
         else:
-            logfire.info(f"Error reading namespace: {e}")
+            logfire.error(f"Error reading namespace: {e}")
+
             raise e
 
 
@@ -349,6 +344,12 @@ def deploy_to_kubernetes(
     use_last_updated = last_updated or get_datetime_utc()
     use_env = env or {}
     use_labels = labels or {}
+
+    logfire.info(
+        f"Deploying service '{service_name}' to namespace '{namespace}'",
+        labels=use_labels,
+    )
+
     knative_service: dict[str, Any] = {
         "apiVersion": "serving.knative.dev/v1",
         "kind": "Service",
@@ -587,6 +588,8 @@ def build_and_push_docker_image(
         build_id=build_request.build_id,
         build_token=build_request.build_token,
     )
+
+    logfire.info(f"Build request completed: {build_request.build_id}")
 
     if common_settings.ENVIRONMENT == "local":
         # Save to local registry so Knative can use it

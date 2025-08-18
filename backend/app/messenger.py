@@ -73,10 +73,7 @@ sqs_retry = AsyncRetryingCaller().on(retry_only_on_sqs_errors)
 async def process_message(
     *, message: MessengerMessageBody, receipt_handle: str, client: httpx.AsyncClient
 ) -> None:
-    with logfire.span(
-        "Process message, deployment_id: {deployment_id}",
-        deployment_id=message.deployment_id,
-    ):
+    with logfire.span("Process message: {message}", message=message):
         timeout = httpx.Timeout(connect=5, read=600, write=5, pool=5)
         if message.type == "build":
             response = await client.post(
@@ -126,28 +123,27 @@ async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
                 raw_body = message.get("Body")
                 receipt_handle = message["ReceiptHandle"]
 
-                with logfire.span(
-                    "Handle message {receipt_handle}", receipt_handle=receipt_handle
-                ):
-                    if not raw_body:
-                        logfire.error("No body in message")
-                        sentry_sdk.capture_message("No body in message")
-                        if receipt_handle:
-                            logfire.info("Delete message")
-                            sqs.delete_message(
-                                QueueUrl=queue_url, ReceiptHandle=receipt_handle
-                            )
-                        continue
+                if not raw_body:
+                    logfire.error("No body in message")
+                    sentry_sdk.capture_message("No body in message")
 
-                    message_body = MessengerMessageAdapter.validate_json(raw_body)
+                    if receipt_handle:
+                        logfire.info("Delete message")
+                        sqs.delete_message(
+                            QueueUrl=queue_url, ReceiptHandle=receipt_handle
+                        )
 
-                    # Schedule processing this message concurrently. By the end of the
-                    # async with block for the task group it would have finished
-                    tg.soonify(process_message)(
-                        message=message_body,
-                        receipt_handle=receipt_handle,
-                        client=client,
-                    )
+                    continue
+
+                message_body = MessengerMessageAdapter.validate_json(raw_body)
+
+                # Schedule processing this message concurrently. By the end of the
+                # async with block for the task group it would have finished
+                tg.soonify(process_message)(
+                    message=message_body,
+                    receipt_handle=receipt_handle,
+                    client=client,
+                )
     except Exception as e:
         logfire.error("Error processing messages: {e}", e=e)
         sentry_sdk.capture_exception(e)
