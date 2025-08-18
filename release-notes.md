@@ -502,6 +502,7 @@
 
 ### Infrastructure
 
+* 🔥 Remove Emailable keys from deployment. PR [#1231](https://github.com/fastapilabs/cloud/pull/1231) by [@tiangolo](https://github.com/tiangolo).
 * 🛠️ Add apps secrets encryption key to env vars. PR [#1215](https://github.com/fastapilabs/cloud/pull/1215) by [@tiangolo](https://github.com/tiangolo).
 * ♻️ Reorganize Pulumi infrastructure into dedicated directories. PR [#1248](https://github.com/fastapilabs/cloud/pull/1248) by [@malvex](https://github.com/malvex).
 * ⬆ Update EKS version and addon versions. PR [#1230](https://github.com/fastapilabs/cloud/pull/1230) by [@github-actions[bot]](https://github.com/apps/github-actions).
