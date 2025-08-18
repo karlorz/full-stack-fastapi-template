@@ -136,7 +136,6 @@ jobs:
         FIRST_SUPERUSER_PASSWORD: "${{ secrets.FIRST_SUPERUSER_PASSWORD }}"
         SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
         POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
-        EMAILABLE_KEY: "${{ secrets.EMAILABLE_KEY }}"
         BUILDER_API_KEY: "${{ secrets.BUILDER_API_KEY }}"
         LOGFIRE_TOKEN: "${{ secrets.LOGFIRE_TOKEN }}"
         NATS_HOST_NAME: "${{ vars.NATS_HOST_NAME }}"

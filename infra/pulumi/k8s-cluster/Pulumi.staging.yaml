@@ -20,8 +20,6 @@ config:
   k8s-cluster:cloudflare_api_token_ssl:
     secure: AAABAAGRoolgiaumocHdyH0Xe8A07GXBpK96pWDPcIvlicW3JG55nNVP1cvLVqzLBk7KwHB6Y0DxYscqMz13lIyVKY3ZQHER
   k8s-cluster:fastapicloud_cloudflare_zone_id: 3e31f7601b93ff47ef6ccf03c05d9113
-  k8s-cluster:fastapicloud_emailable_key:
-    secure: AAABAAF20sZibyHzTg300NoZNrwyyBY6s+Shy4ohXtB3KOcqfprvK4ppt6/bulv81lodD1QlvU6E
   k8s-cluster:fastapicloud_logfire_token:
     secure: AAABAD2arF56iG3BPVLNAYtUKlLfEfwaWQvltd7FQtfh6Z6h+jw0lo9ERM87evPPD9sN7/w1sQGCFAxWcUjIjSE6wqtpYrNdRDMVTw==
   k8s-cluster:fastapicloud_messenger_sentry_dsn:

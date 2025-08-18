@@ -52,19 +52,17 @@ APPS_SECRETS_ENCRYPTION_KEY = cfg.require_secret(
 AWS_STS_REGIONAL_ENDPOINTS = "regional"
 BACKEND_GITHUB_CLIENT_ID = cfg.require("fastapicloud_backend_github_client_id")
 BACKEND_GITHUB_CLIENT_SECRET = cfg.require_secret(
-    "fastapicloud_backend_github_client_secret")
+    "fastapicloud_backend_github_client_secret"
+)
 BACKEND_SECRET_KEY = cfg.require_secret("fastapicloud_secret_key")
 BACKEND_SENTRY_DSN = cfg.require("fastapicloud_backend_sentry_dsn")
 BUILDER_API_KEY = cfg.require("fastapicloud_builder_api_key")
 BUILDER_SENTRY_DSN = cfg.require("fastapicloud_builder_sentry_dsn")
 CLOUDFLARE_ACCOUNT_ID = cfg.require("fastapicloud_cloudflare_account_id")
-CLOUDFLARE_API_KEY = cfg.require_secret(
-    "cloudflare_api_token_ssl")
-CLOUDFLARE_FASTAPI_API_KEY = cfg.require_secret(
-    "fastapicloud_cloudflare_api_token_ssl")
+CLOUDFLARE_API_KEY = cfg.require_secret("cloudflare_api_token_ssl")
+CLOUDFLARE_FASTAPI_API_KEY = cfg.require_secret("fastapicloud_cloudflare_api_token_ssl")
 CLOUDFLARE_ZONE_ID = cfg.require("fastapicloud_cloudflare_zone_id")
 DEPOT_TOKEN = cfg.require("fastapicloud_depot_token")
-EMAILABLE_KEY = cfg.require_secret("fastapicloud_emailable_key")
 LOGFIRE_TOKEN = cfg.require_secret("fastapicloud_logfire_token")
 MESSENGER_SENTRY_DSN = cfg.require("fastapicloud_messenger_sentry_dsn")
 NATS_LOGGING_WRITE_CREDS = cfg.require_secret("fastapicloud_nats_logging_write_creds")
@@ -757,7 +755,6 @@ fastapicloud_secrets: dict[str, str] = {
     "CLOUDFLARE_ZONE_ID": CLOUDFLARE_ZONE_ID,
     "DEPOT_TOKEN": DEPOT_TOKEN,
     "DEPLOYMENTS_BUCKET_NAME": s3.deployments_bucket.bucket,
-    "EMAILABLE_KEY": EMAILABLE_KEY,
     "LOGFIRE_TOKEN": LOGFIRE_TOKEN,
     "MESSENGER_SENTRY_DSN": MESSENGER_SENTRY_DSN,
     # "NATS_LOGGING_WRITE_CREDS": NATS_LOGGING_WRITE_CREDS, # ssm.Parameter already set above
@@ -791,7 +788,8 @@ k8s.core.v1.Secret(
         labels={
             "app.kubernetes.io/name": "grafana",
             "app.kubernetes.io/component": "grafana",
-        } | k8s_labels,
+        }
+        | k8s_labels,
     ),
     string_data={
         "clientID": GRAFANA_GOOGLE_CLIENT_ID,

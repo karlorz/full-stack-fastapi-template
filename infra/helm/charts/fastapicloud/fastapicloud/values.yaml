@@ -92,9 +92,6 @@ api:
       DEPLOYMENTS_BUCKET_NAME:
         remoteRef:
           key: FASTAPICLOUD_DEPLOYMENTS_BUCKET_NAME
-      EMAILABLE_KEY:
-        remoteRef:
-          key: FASTAPICLOUD_EMAILABLE_KEY
       LOGFIRE_TOKEN:
         remoteRef:
           key: FASTAPICLOUD_LOGFIRE_TOKEN
