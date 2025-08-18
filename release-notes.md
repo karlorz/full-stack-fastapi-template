@@ -553,6 +553,7 @@
 
 ### Internal
 
+* ⬆ Bump vite from 7.0.4 to 7.1.2 in /frontend. PR [#1268](https://github.com/fastapilabs/cloud/pull/1268) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-tooltip from 1.2.7 to 1.2.8 in /frontend. PR [#1271](https://github.com/fastapilabs/cloud/pull/1271) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump actions/checkout from 4 to 5. PR [#1246](https://github.com/fastapilabs/cloud/pull/1246) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⚡️ Make FastAPI Auth test faster by computing test password just once. PR [#1194](https://github.com/fastapilabs/cloud/pull/1194) by [@patrick91](https://github.com/patrick91).
