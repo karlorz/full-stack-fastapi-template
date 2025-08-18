@@ -17,7 +17,7 @@ jobs:
     outputs:
       changed: ${{ steps.filter.outputs.changed }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     # For pull requests it's not necessary to checkout the code but for the main branch it is
     - uses: dorny/paths-filter@v3
       id: filter
@@ -36,9 +36,9 @@ jobs:
     runs-on: depot-ubuntu-22.04
     steps:
     # For PRs from forks and bots
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     # For PRs from the same repo
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
       with:
         ref: ${{ github.head_ref }}

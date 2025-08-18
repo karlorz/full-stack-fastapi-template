@@ -20,7 +20,7 @@ jobs:
     outputs:
       changed: ${{ steps.filter.outputs.changed }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     # For pull requests it's not necessary to checkout the code but for the main branch it is
     - uses: dorny/paths-filter@v3
       id: filter
@@ -47,7 +47,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: depot/setup-action@v1
       # Enable when testing Knative deployments
       # - uses: ./.github/actions/setup-knative

@@ -18,7 +18,7 @@ jobs:
       cloudflare: ${{ steps.filter.outputs.cloudflare }}
       workflow: ${{ steps.filter.outputs.workflow }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     # For pull requests it's not necessary to checkout the code but for the main branch it is
     - uses: dorny/paths-filter@v3
       id: filter
@@ -40,7 +40,7 @@ jobs:
     name: Pulumi Preview
     runs-on: depot-ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -77,7 +77,7 @@ jobs:
     name: Cloudflare Preview
     runs-on: depot-ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
