@@ -11,7 +11,7 @@ serviceAccount:
 api:
   image:
     repository: 992382821657.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-backend
-    tag: "staging-b33b57a0126244ae642529393397446e7866a2bc"
+    tag: "staging-6e99c160917bc8a9e32c13413bfbde79e071025e"
   environment:
     API_DOMAIN: api.fastapicloud.work
     BACKEND_CORS_ORIGINS: http://localhost/,http://localhost:5173/,https://dashboard.fastapicloud.work/,https://fastapicloud.work/
