@@ -273,7 +273,7 @@ const UserInformationContent = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Badge className="bg-gray-100 text-gray-800">Coming Soon</Badge>
+                <Badge variant="muted">Coming Soon</Badge>
                 <Button variant="outline" size="sm" disabled>
                   Connect
                 </Button>

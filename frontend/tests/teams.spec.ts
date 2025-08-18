@@ -142,7 +142,7 @@ test.describe("User with admin role can update team information", () => {
     await page
       .getByPlaceholder(`Type "delete team ${team.slug}" to confirm`)
       .fill(`delete team ${team.slug}`)
-    await page.getByRole("button", { name: "Confirm" }).click()
+    await page.getByRole("button", { name: "Delete Team" }).click()
     await expect(page.getByText("The team was deleted")).toBeVisible()
   })
 })

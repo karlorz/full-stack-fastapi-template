@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
 import { Link as RouterLink } from "@tanstack/react-router"
-import { Loader2 } from "lucide-react"
 import { useEffect } from "react"
 
 import { UsersService } from "@/client"
@@ -44,8 +43,7 @@ const VerifyEmailUpdate = () => {
         {loading && (
           <CardHeader>
             <CardTitle>Verifying Email</CardTitle>
-            <CardDescription className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
+            <CardDescription>
               Verifying your email, please wait...
             </CardDescription>
           </CardHeader>

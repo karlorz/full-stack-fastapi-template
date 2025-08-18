@@ -129,10 +129,11 @@ const DeleteConfirmation = ({ team }: { team: TeamPublic }) => {
               </DialogClose>
               <LoadingButton
                 type="submit"
+                variant="destructive"
                 loading={mutation.isPending}
                 disabled={confirmationValue !== `delete team ${team.slug}`}
               >
-                Confirm
+                Delete Team
               </LoadingButton>
             </DialogFooter>
           </form>

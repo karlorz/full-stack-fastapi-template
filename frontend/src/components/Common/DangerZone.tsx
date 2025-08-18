@@ -14,7 +14,7 @@ const DangerZoneAlert = ({ description, children }: DangerZoneAlertProps) => {
       className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-0 px-0"
     >
       <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/50">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10 text-destructive">
           <TriangleAlert className="h-4 w-4" />
         </div>
         <div>

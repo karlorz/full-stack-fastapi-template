@@ -150,7 +150,7 @@ function AppDetail() {
         </TabsContent>
 
         {/* Configuration Tab */}
-        <TabsContent value="configuration">
+        <TabsContent value="configuration" className="min-h-[70vh]">
           <CustomCard
             title="Configuration"
             description="Application configuration and resource settings."

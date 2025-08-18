@@ -130,10 +130,11 @@ const DeleteConfirmation = ({ appId, appSlug }: DeleteProps) => {
               </DialogClose>
               <LoadingButton
                 type="submit"
+                variant="destructive"
                 loading={mutation.isPending}
                 disabled={confirmationValue !== `delete app ${appSlug}`}
               >
-                Confirm
+                Delete App
               </LoadingButton>
             </DialogFooter>
           </form>

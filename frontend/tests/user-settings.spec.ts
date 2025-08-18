@@ -269,7 +269,7 @@ test.describe("Delete account successfully", () => {
     await page
       .getByPlaceholder('Type "delete my account" to confirm')
       .fill("delete my account")
-    await page.getByRole("button", { name: "Confirm" }).click()
+    await page.getByRole("button", { name: "Delete Account" }).click()
 
     await page.waitForURL("/login")
   })

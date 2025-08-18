@@ -170,10 +170,11 @@ const DeleteConfirmation = () => {
                 </DialogClose>
                 <LoadingButton
                   type="submit"
+                  variant="destructive"
                   loading={mutation.isPending}
                   disabled={confirmationValue !== "delete my account"}
                 >
-                  Confirm
+                  Delete Account
                 </LoadingButton>
               </DialogFooter>
             </form>
