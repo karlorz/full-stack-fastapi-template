@@ -2,7 +2,7 @@
 if [ -f requirements.txt ]; then
     uv venv && uv pip install -r requirements.txt
 elif [ -f uv.lock ]; then
-    uv venv && uv sync
+    uv venv && uv sync --no-install-project
 elif [ -f pyproject.toml ]; then
     uv venv && uv pip install .
 else
