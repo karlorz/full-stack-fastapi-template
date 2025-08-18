@@ -11,7 +11,7 @@ serviceAccount:
 api:
   image:
     repository: 471112862740.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-backend
-    tag: "production-06fe35038c466e25d641c9e18fcf9f0f16e07541"
+    tag: "production-c1a06582314b93399da94d11cb2b35166a6c9185"
   environment:
     API_DOMAIN: api.fastapicloud.com
     BACKEND_CORS_ORIGINS: http://localhost/,http://localhost:5173/,https://dashboard.fastapicloud.com/,https://fastapicloud.com/
