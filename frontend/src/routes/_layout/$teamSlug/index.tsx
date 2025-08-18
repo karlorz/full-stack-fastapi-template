@@ -6,7 +6,6 @@ import {
 } from "@tanstack/react-router"
 import { LayoutGrid, Rocket } from "lucide-react"
 
-import QuickStart from "@/components/Common/QuickStart"
 import PendingDashboard from "@/components/PendingComponents/PendingDashboard"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -129,23 +128,6 @@ function Dashboard() {
           </div>
         </CustomCard>
       </div>
-
-      {/* Quick Actions */}
-      {totalApps === 0 && (
-        <div className="max-w-sm">
-          <CustomCard
-            title={
-              <span className="flex items-center gap-2">
-                <Rocket className="h-5 w-5" />
-                Quickstart
-              </span>
-            }
-            description="Deploy your first app."
-          >
-            <QuickStart />
-          </CustomCard>
-        </div>
-      )}
     </Section>
   )
 }

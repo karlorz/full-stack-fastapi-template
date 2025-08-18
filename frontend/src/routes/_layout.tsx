@@ -1,7 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
+import { ExternalLink } from "lucide-react"
 import posthog from "posthog-js"
 import { useEffect } from "react"
+import { Button } from "@/components/ui/button"
 import {
   SidebarInset,
   SidebarProvider,
@@ -58,7 +60,20 @@ function Layout() {
               <div className="md:hidden flex items-center gap-2 px-4">
                 <SidebarTrigger className="-ml-1" />
               </div>
-              <div className="ml-auto flex items-center pr-4">
+              <div className="ml-auto flex items-center pr-4 gap-4">
+                <a
+                  href="https://fastapicloud.com/docs/getting-started"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <Button
+                    className="flex gap-4 text-sm hover:underline"
+                    variant="outline"
+                  >
+                    <span>Docs</span>
+                    <ExternalLink className="h-[1.2rem] w-[1.2rem]" />
+                  </Button>
+                </a>
                 <Appearance />
               </div>
             </header>

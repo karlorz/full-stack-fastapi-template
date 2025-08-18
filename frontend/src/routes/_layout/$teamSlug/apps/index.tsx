@@ -7,7 +7,6 @@ import {
 import { formatDistanceToNow } from "date-fns"
 import { Link, Rocket } from "lucide-react"
 
-import QuickStart from "@/components/Common/QuickStart"
 import { Status } from "@/components/Deployment/Status"
 import PendingApps from "@/components/PendingComponents/PendingApps"
 import { Badge } from "@/components/ui/badge"
@@ -72,7 +71,7 @@ function Apps() {
               header={
                 <>
                   <Rocket className="h-8 w-8 text-foreground mb-2" />
-                  <CardTitle className="text-base">QuickStart</CardTitle>
+                  <CardTitle className="text-base">Quick Start</CardTitle>
                   <CardDescription>
                     Learn how to create and deploy your first app
                   </CardDescription>
@@ -83,7 +82,15 @@ function Apps() {
                 Follow our step-by-step guide to get your first application up
                 and running in minutes.
               </p>
-              <QuickStart />
+              <a
+                href="https://fastapicloud.com/docs/getting-started"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" size="sm">
+                  View Guide
+                </Button>
+              </a>
             </CustomCard>
           </div>
         </div>
