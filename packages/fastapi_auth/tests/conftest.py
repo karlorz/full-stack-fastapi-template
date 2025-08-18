@@ -16,6 +16,10 @@ pytestmark = pytest.mark.asyncio
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# Pre-hash the test password once to avoid repeated bcrypt operations
+TEST_PASSWORD = "password123"
+TEST_PASSWORD_HASH = pwd_context.hash(TEST_PASSWORD)
+
 
 @dataclass
 class SocialAccount:
@@ -58,7 +62,7 @@ class MemoryAccountsStorage:
             "test": User(
                 id="test",
                 email="test@example.com",
-                hashed_password=pwd_context.hash("password123"),
+                hashed_password=TEST_PASSWORD_HASH,
                 social_accounts=[],
             )
         }
@@ -82,7 +86,7 @@ class MemoryAccountsStorage:
         user = User(
             id=user_info["id"],
             email=user_info["email"],
-            hashed_password=pwd_context.hash(user_info.get("password", "")),
+            hashed_password=TEST_PASSWORD_HASH,
             social_accounts=[],
         )
 
