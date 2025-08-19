@@ -12,6 +12,7 @@ from pydantic import BaseModel, HttpUrl, TypeAdapter, ValidationError
 from fastapi_auth.exceptions import FastAPIAuthException
 from fastapi_auth.utils._pkce import validate_pkce
 from fastapi_auth.utils._response import Response
+from fastapi_auth.utils._url import construct_relative_url
 
 from .._context import Context
 from .._issuer import AuthorizationCodeGrantData
@@ -53,13 +54,6 @@ class OAuth2LinkCodeData(BaseModel):
     code_challenge: str
     code_challenge_method: Literal["S256"]
     provider_code: str
-
-
-def relative_url(url: str, path: str) -> str:
-    parts = url.split("/")
-    parts.pop()
-    parts.append(path)
-    return "/".join(parts)
 
 
 class OAuth2Provider:
@@ -174,7 +168,9 @@ class OAuth2Provider:
             # TODO: ttl
         )
 
-        proxy_redirect_uri = relative_url(str(request.url), "callback")
+        proxy_redirect_uri = construct_relative_url(
+            str(request.url), "callback", context.base_url
+        )
 
         query_params = self.build_authorization_params(
             state=state,
@@ -475,9 +471,11 @@ class OAuth2Provider:
             return None
 
     def _fetch_user_info(
-        self, request: AsyncHTTPRequest, code: str, context: Context | None = None
+        self, request: AsyncHTTPRequest, code: str, context: Context
     ) -> tuple[UserInfo, TokenResponse]:
-        proxy_redirect_uri = relative_url(str(request.url), "callback")
+        proxy_redirect_uri = construct_relative_url(
+            str(request.url), "callback", context.base_url
+        )
 
         token_response = self._exchange_code(code, proxy_redirect_uri, request, context)
 

@@ -160,6 +160,9 @@ class MainSettings(SettingsEnv):
         "dashboard.fastapicloud.work",
         "dashboard.fastapicloud.com",
     ]
+    # Base URL for OAuth callbacks (e.g., "http://localhost:8000" or "https://api.example.com")
+    # If not set, the request URL will be used
+    AUTH_BASE_URL: str | None = None
 
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str,

@@ -24,6 +24,7 @@ class AuthRouter(APIRouter):
         get_user_from_request: Callable[[AsyncHTTPRequest], User | None],
         create_token: Callable[[str], tuple[str, int]],
         trusted_origins: list[str],
+        base_url: str | None = None,
     ):
         super().__init__()
 
@@ -35,6 +36,7 @@ class AuthRouter(APIRouter):
         self._create_token = create_token
         self._trusted_origins = trusted_origins
         self._get_user_from_request = get_user_from_request
+        self._base_url = base_url
 
         provider_routes = list(chain.from_iterable(p.routes for p in providers))
 
@@ -47,6 +49,7 @@ class AuthRouter(APIRouter):
             create_token=self._create_token,
             trusted_origins=self._trusted_origins,
             get_user_from_request=self._get_user_from_request,
+            base_url=self._base_url,
         )
 
         for route in routes:

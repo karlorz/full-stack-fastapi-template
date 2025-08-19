@@ -16,12 +16,14 @@ class Context:
         # TODO: this doesn't allow to use the library as an Identity Provider
         trusted_origins: list[str],
         get_user_from_request: Callable[[AsyncHTTPRequest], User | None],
+        base_url: str | None = None,
     ):
         self.secondary_storage = secondary_storage
         self.accounts_storage = accounts_storage
         self.create_token = create_token
         self.trusted_origins = trusted_origins
         self.get_user_from_request = get_user_from_request
+        self.base_url = base_url
 
     def is_valid_redirect_uri(self, redirect_uri: str) -> bool:
         host = urlparse(redirect_uri).netloc

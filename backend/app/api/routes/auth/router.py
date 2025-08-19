@@ -52,4 +52,5 @@ router = AuthRouter(
         )
     ],
     trusted_origins=settings.TRUSTED_ORIGINS,
+    base_url=settings.AUTH_BASE_URL,
 )

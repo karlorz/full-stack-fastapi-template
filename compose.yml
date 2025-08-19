@@ -120,6 +120,7 @@ services:
       - SMTP_HOST=mailcatcher
       - LOCALSTACK_HOST_NAME=localstack
       - BUILDER_API_URL=http://builder:8001
+
     develop:
       watch:
         - path: ./backend
