@@ -485,6 +485,7 @@
 
 ### Docs
 
+* 📝 Update Staging API URL in `README` and change frontend start command in `development.md`. PR [#1287](https://github.com/fastapilabs/cloud/pull/1287) by [@alejsdev](https://github.com/alejsdev).
 * 📝 Replace deprecated references to Chakra UI. PR [#1284](https://github.com/fastapilabs/cloud/pull/1284) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ✨ Multi-chart deployment with ArgoCD. PR [#1074](https://github.com/fastapilabs/cloud/pull/1074) by [@siryur](https://github.com/siryur).
 * 📝 Fix typos in `infra/README.md`. PR [#1031](https://github.com/fastapilabs/cloud/pull/1031) by [@alejsdev](https://github.com/alejsdev).
