@@ -223,6 +223,7 @@
 
 ### Refactors
 
+* ⚰️  Remove left over chakra-ui-based code. PR [#1280](https://github.com/fastapilabs/cloud/pull/1280) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️ Improve logs for builder. PR [#1201](https://github.com/fastapilabs/cloud/pull/1201) by [@patrick91](https://github.com/patrick91).
 * ♻️ Make FastAPI Auth provider easier to customise. PR [#1210](https://github.com/fastapilabs/cloud/pull/1210) by [@patrick91](https://github.com/patrick91).
 * ♻️ Always use json when exchanging tokens. PR [#1260](https://github.com/fastapilabs/cloud/pull/1260) by [@patrick91](https://github.com/patrick91).
