@@ -155,7 +155,7 @@ Then you can run the frontend development server with:
 
 ```bash
 cd frontend
-npm run start
+npm run dev
 ```
 
 ### Develop the Backend

@@ -6,7 +6,7 @@ Development frontend dashboard: https://dashboard.fastapicloud.site
 Development API: https://api.fastapicloud.site
 
 Staging frontend dashboard: https://dashboard.fastapicloud.work
-Staging API: https://api.fastapicloud.dev
+Staging API: https://api.fastapicloud.work
 
 Production frontend dashboard: https://dashboard.fastapicloud.com
 Production API: https://api.fastapicloud.com
