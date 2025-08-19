@@ -655,6 +655,7 @@ allowed_emails = [
     "martin@fastapilabs.com",
     "patrick@fastapilabs.com",
     "marco@fastapilabs.com",
+    "jonathan@fastapilabs.com",
 ]
 
 # Create wildcard ACM certificate for infrastructure domain

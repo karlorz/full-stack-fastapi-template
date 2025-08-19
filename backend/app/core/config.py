@@ -229,6 +229,7 @@ class MainSettings(SettingsEnv):
         "testing@fastapilabs.com",
         "marco@fastapilabs.com",
         "martin@fastapilabs.com",
+        "jonathan@fastapilabs.com",
     ]
 
     ALLOWED_EMAIL_RECIPIENT_DOMAINS: list[str] = ["fastapilabs.com"]

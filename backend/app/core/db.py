@@ -47,6 +47,7 @@ def init_db(session: Session) -> None:
         "patrick@fastapilabs.com",
         "sebastian@fastapilabs.com",
         "martin@fastapilabs.com",
+        "jonathan@fastapilabs.com",
     ]:
         if session.exec(select(User).where(User.email == email)).first():
             continue
