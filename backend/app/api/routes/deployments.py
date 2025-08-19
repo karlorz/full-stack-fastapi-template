@@ -16,10 +16,10 @@ from app.api.deps import (
     PosthogDep,
     PosthogProperties,
     SessionDep,
+    SQSDep,
 )
 from app.api.utils.aws_s3 import generate_presigned_url_post
 from app.api.utils.stream import stream_with_heartbeat
-from app.aws_utils import get_sqs_client
 from app.builder.models import BuildLog, BuildLogComplete, BuildLogFailed
 from app.core.config import CommonSettings, MainSettings
 from app.crud import get_user_team_link
@@ -42,7 +42,6 @@ from app.nats import (
 )
 from app.utils import get_datetime_utc
 
-sqs = get_sqs_client()
 router = APIRouter()
 
 
@@ -268,6 +267,7 @@ def redeploy(
     session: SessionDep,
     current_user: CurrentUser,
     deployment_id: uuid.UUID,
+    sqs: SQSDep,
 ) -> Any:
     """
     Send to builder to redeploy the deployment.
@@ -313,6 +313,7 @@ def upload_complete(
     session: SessionDep,
     current_user: CurrentUser,
     deployment_id: uuid.UUID,
+    sqs: SQSDep,
 ) -> Any:
     """
     Notify the builder backend that the deployment artifact has been uploaded.

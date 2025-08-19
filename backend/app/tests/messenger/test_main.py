@@ -1,6 +1,6 @@
 import uuid
 from collections.abc import Generator
-from unittest.mock import ANY, MagicMock, patch
+from unittest.mock import ANY, MagicMock, Mock, patch
 
 import httpx
 import pytest
@@ -20,13 +20,14 @@ def mock_process_message() -> Generator[MagicMock, None, None]:
 
 @pytest.mark.asyncio
 async def test_process_messages_with_no_messages(
-    mock_sqs: MagicMock, mock_process_message: MagicMock
+    mock_process_message: MagicMock,
 ) -> None:
     queue_url = "test_queue_url"
+    mock_sqs = Mock()
     mock_sqs.receive_message.return_value = {"Messages": []}
 
     async with httpx.AsyncClient() as client:
-        await _process_messages(queue_url, client)
+        await _process_messages(queue_url, client, mock_sqs)
 
     assert mock_sqs.receive_message.call_count == 1
     mock_sqs.receive_message.assert_called_with(
@@ -38,7 +39,6 @@ async def test_process_messages_with_no_messages(
 
 @pytest.mark.asyncio
 async def test_process_messages_with_messages(
-    mock_sqs: MagicMock,
     mock_process_message: MagicMock,
 ) -> None:
     deployment_id = uuid.uuid4()
@@ -46,12 +46,13 @@ async def test_process_messages_with_messages(
     message = BuildMessage(deployment_id=deployment_id, type="build")
 
     queue_url = "test_queue_url"
+    mock_sqs = Mock()
     mock_sqs.receive_message.return_value = {
         "Messages": [{"Body": message.model_dump_json(), "ReceiptHandle": "456"}]
     }
 
     async with httpx.AsyncClient() as client:
-        await _process_messages(queue_url, client)
+        await _process_messages(queue_url, client, mock_sqs)
 
     assert mock_sqs.receive_message.call_count == 1
     mock_sqs.receive_message.assert_called_with(
@@ -61,21 +62,23 @@ async def test_process_messages_with_messages(
         message=message,
         receipt_handle="456",
         client=ANY,
+        sqs=ANY,
     )
 
 
 @pytest.mark.asyncio
 async def test_process_messages_with_message_but_no_body(
-    mock_sqs: MagicMock,
     mock_process_message: MagicMock,
 ) -> None:
     queue_url = "test_queue_url"
+
+    mock_sqs = Mock()
     mock_sqs.receive_message.return_value = {
         "Messages": [{"Body": None, "ReceiptHandle": "456"}]
     }
 
     async with httpx.AsyncClient() as client:
-        await _process_messages(queue_url, client)
+        await _process_messages(queue_url, client, mock_sqs)
 
     mock_sqs.delete_message.assert_called_once_with(
         QueueUrl=queue_url, ReceiptHandle="456"

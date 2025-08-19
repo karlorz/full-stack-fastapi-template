@@ -1,12 +1,12 @@
 import json
 import uuid
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from fastapi.testclient import TestClient
 from redis import Redis
 from sqlmodel import Session, select
 
-from app.api.routes.deployments import sqs
+from app.aws_utils import get_sqs_client
 from app.core.config import CommonSettings, MainSettings
 from app.crud import add_user_to_team
 from app.models import Deployment, Role, get_datetime_utc
@@ -223,6 +223,12 @@ def test_read_deployment(client: TestClient, db: Session) -> None:
 
 
 def test_upload_complete(client: TestClient, db: Session) -> None:
+    sqs_mock = Mock()
+    sqs_mock.get_queue_url.return_value = {
+        "QueueUrl": common_settings.BUILDER_QUEUE_NAME
+    }
+    client.app.dependency_overrides = {get_sqs_client: lambda: sqs_mock}  # type: ignore
+
     user = create_user(
         session=db,
         email=random_email(),
@@ -242,15 +248,20 @@ def test_upload_complete(client: TestClient, db: Session) -> None:
         password="password12345",
     )
 
-    with patch.object(sqs, "send_message") as mock:
-        response = client.post(
-            f"{settings.API_V1_STR}/deployments/{deployment.id}/upload-complete",
-            headers=user_auth_headers,
-        )
-    assert mock.called
+    response = client.post(
+        f"{settings.API_V1_STR}/deployments/{deployment.id}/upload-complete",
+        headers=user_auth_headers,
+    )
+
+    sqs_mock.send_message.assert_called_once_with(
+        QueueUrl=common_settings.BUILDER_QUEUE_NAME,
+        MessageBody=f'{{"type":"build","deployment_id":"{str(deployment.id)}"}}',
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "OK"
+
+    client.app.dependency_overrides = {}  # type: ignore
 
 
 def test_upload_complete_returns_404_if_deployment_not_found(

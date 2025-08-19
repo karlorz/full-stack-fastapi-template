@@ -1,5 +1,5 @@
 import uuid
-from unittest.mock import MagicMock
+from unittest.mock import Mock
 
 import httpx
 import pytest
@@ -15,10 +15,11 @@ common_settings = CommonSettings.get_settings()
 
 @pytest.mark.respx(base_url=common_settings.BUILDER_API_URL)
 @pytest.mark.asyncio
-async def test_process_message_success(
-    respx_mock: respx.Router, mock_sqs: MagicMock
-) -> None:
+async def test_process_message_success(respx_mock: respx.Router) -> None:
+    mock_sqs = Mock()
+
     deployment_id = uuid.uuid4()
+
     receipt_handle = "456"
 
     respx_mock.post(
@@ -29,6 +30,7 @@ async def test_process_message_success(
         message=BuildMessage(deployment_id=deployment_id),
         receipt_handle=receipt_handle,
         client=httpx.AsyncClient(),
+        sqs=mock_sqs,
     )
 
     mock_sqs.delete_message.assert_called_once_with(
@@ -38,9 +40,9 @@ async def test_process_message_success(
 
 @pytest.mark.respx(base_url=common_settings.BUILDER_API_URL)
 @pytest.mark.asyncio
-async def test_does_not_delete_message_on_http_error(
-    respx_mock: respx.Router, mock_sqs: MagicMock
-) -> None:
+async def test_does_not_delete_message_on_http_error(respx_mock: respx.Router) -> None:
+    mock_sqs = Mock()
+
     deployment_id = uuid.uuid4()
     receipt_handle = "456"
 
@@ -53,6 +55,7 @@ async def test_does_not_delete_message_on_http_error(
             message=BuildMessage(deployment_id=deployment_id),
             receipt_handle=receipt_handle,
             client=httpx.AsyncClient(),
+            sqs=mock_sqs,
         )
 
     mock_sqs.delete_message.assert_not_called()
@@ -60,9 +63,9 @@ async def test_does_not_delete_message_on_http_error(
 
 @pytest.mark.respx(base_url=common_settings.BUILDER_API_URL)
 @pytest.mark.asyncio
-async def test_process_message_retries_on_http_error(
-    respx_mock: respx.Router, mock_sqs: MagicMock
-) -> None:
+async def test_process_message_retries_on_http_error(respx_mock: respx.Router) -> None:
+    mock_sqs = Mock()
+
     deployment_id = uuid.uuid4()
     receipt_handle = "456"
 
@@ -74,6 +77,7 @@ async def test_process_message_retries_on_http_error(
         message=BuildMessage(deployment_id=deployment_id),
         receipt_handle=receipt_handle,
         client=httpx.AsyncClient(),
+        sqs=mock_sqs,
     )
 
     mock_sqs.delete_message.assert_called_once_with(
@@ -85,9 +89,9 @@ async def test_process_message_retries_on_http_error(
 
 @pytest.mark.respx(base_url=common_settings.BUILDER_API_URL)
 @pytest.mark.asyncio
-async def test_process_message_retries_on_sqs_error(
-    respx_mock: respx.Router, mock_sqs: MagicMock
-) -> None:
+async def test_process_message_retries_on_sqs_error(respx_mock: respx.Router) -> None:
+    mock_sqs = Mock()
+
     deployment_id = uuid.uuid4()
     receipt_handle = "456"
 
@@ -107,6 +111,7 @@ async def test_process_message_retries_on_sqs_error(
         message=BuildMessage(deployment_id=deployment_id),
         receipt_handle=receipt_handle,
         client=httpx.AsyncClient(),
+        sqs=mock_sqs,
     )
 
     mock_sqs.delete_message.assert_called_with(

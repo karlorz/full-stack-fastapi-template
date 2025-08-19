@@ -6,6 +6,7 @@ import logfire
 import sentry_sdk
 import stamina
 from asyncer import asyncify
+from mypy_boto3_sqs import SQSClient
 from pydantic import TypeAdapter
 from stamina import AsyncRetryingCaller
 
@@ -15,7 +16,6 @@ from app.models import MessengerMessageBody
 
 common_settings = CommonSettings.get_settings()
 messenger_settings = MessengerSettings.get_settings()
-sqs = get_sqs_client()
 
 
 if messenger_settings.MESSENGER_SENTRY_DSN and common_settings.ENVIRONMENT != "local":
@@ -71,7 +71,11 @@ sqs_retry = AsyncRetryingCaller().on(retry_only_on_sqs_errors)
 
 @stamina.retry(on=retry_only_on_real_errors)
 async def process_message(
-    *, message: MessengerMessageBody, receipt_handle: str, client: httpx.AsyncClient
+    *,
+    message: MessengerMessageBody,
+    receipt_handle: str,
+    client: httpx.AsyncClient,
+    sqs: SQSClient,
 ) -> None:
     with logfire.span("Process message: {message}", message=message):
         timeout = httpx.Timeout(connect=5, read=600, write=5, pool=5)
@@ -103,7 +107,9 @@ async def process_message(
             )
 
 
-async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
+async def _process_messages(
+    queue_url: str, client: httpx.AsyncClient, sqs: SQSClient
+) -> None:
     # Run in asyncify to not block the event loop
     messages = await sqs_retry(
         asyncify(sqs.receive_message),
@@ -143,6 +149,7 @@ async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
                     message=message_body,
                     receipt_handle=receipt_handle,
                     client=client,
+                    sqs=sqs,
                 )
     except Exception as e:
         logfire.error("Error processing messages: {e}", e=e)
@@ -150,9 +157,12 @@ async def _process_messages(queue_url: str, client: httpx.AsyncClient) -> None:
 
 
 async def main() -> None:
+    logfire.info("Process queue: {name}", name=common_settings.BUILDER_QUEUE_NAME)
+
+    sqs = get_sqs_client()
+
     # Run in asyncify to not block the event loop, in case we call this function
     # concurrently later
-    logfire.info("Process queue: {name}", name=common_settings.BUILDER_QUEUE_NAME)
     queue_url_response = await asyncify(sqs.get_queue_url)(
         QueueName=common_settings.BUILDER_QUEUE_NAME
     )
@@ -162,7 +172,7 @@ async def main() -> None:
     # Create a single HTTPX client that we can reuse
     async with httpx.AsyncClient() as client:
         while True:
-            await _process_messages(queue_url, client)
+            await _process_messages(queue_url, client, sqs)
 
 
 if __name__ == "__main__":

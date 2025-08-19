@@ -7,10 +7,14 @@ import redis.asyncio
 from fastapi import Depends, Header, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
+from mypy_boto3_ecr import ECRClient
+from mypy_boto3_s3 import S3Client
+from mypy_boto3_sqs import SQSClient
 from posthog import Posthog
 from pydantic import ValidationError
 from sqlmodel import Session
 
+from app import aws_utils
 from app.core import security
 from app.core.config import CommonSettings, MainSettings
 from app.core.db import engine
@@ -165,3 +169,7 @@ def posthog_properties(
 
 
 PosthogProperties = Annotated[dict[str, str], Depends(posthog_properties)]
+
+S3Dep = Annotated[S3Client, Depends(aws_utils.get_s3_client)]
+ECRDep = Annotated[ECRClient, Depends(aws_utils.get_ecr_client)]
+SQSDep = Annotated[SQSClient, Depends(aws_utils.get_sqs_client)]

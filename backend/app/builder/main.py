@@ -19,12 +19,14 @@ from botocore.exceptions import ClientError
 from fastapi import Depends, FastAPI, HTTPException
 from kubernetes import client as k8s
 from kubernetes.client.rest import ApiException as K8sApiException
+from mypy_boto3_ecr import ECRClient
+from mypy_boto3_s3 import S3Client
 from pydantic import BaseModel
 from sqlalchemy.orm import joinedload
 from sqlmodel import select
 
 from app import depot_client
-from app.aws_utils import get_ecr_client, get_s3_client
+from app.api.deps import ECRDep, S3Dep
 from app.builder.builder_utils import (
     SessionDep,
     get_app_namespace,
@@ -59,12 +61,6 @@ builder_settings = BuilderSettings.get_settings()
 common_settings = CommonSettings.get_settings()
 
 
-# AWS S3 client
-s3 = get_s3_client()
-
-# AWS ECR client
-ecr = get_ecr_client()
-
 root_path = Path(__file__).parents[2].resolve()
 
 # Sentry
@@ -94,7 +90,7 @@ logfire.instrument_sqlalchemy(engine=engine)
 logfire.instrument_redis()
 
 
-def get_ecr_token() -> str:
+def get_ecr_token(ecr: ECRClient) -> str:
     """
     Get the ECR token for the current AWS account.
     """
@@ -412,7 +408,7 @@ def deploy_to_kubernetes(
     )
 
 
-def repository_exists(repository_name: str) -> bool:
+def repository_exists(repository_name: str, ecr: ECRClient) -> bool:
     try:
         response = ecr.describe_repositories(repositoryNames=[repository_name])
         return len(response["repositories"]) > 0
@@ -423,7 +419,7 @@ def repository_exists(repository_name: str) -> bool:
         raise
 
 
-def create_ecr_repository(app_id: uuid.UUID) -> None:
+def create_ecr_repository(app_id: uuid.UUID, ecr: ECRClient) -> None:
     """
     Creates an ECR repository for the app if it doesn't exist.
 
@@ -431,7 +427,7 @@ def create_ecr_repository(app_id: uuid.UUID) -> None:
     """
     repository_name = str(app_id)
 
-    if not repository_exists(repository_name):
+    if not repository_exists(repository_name, ecr):
         ecr.create_repository(repositoryName=repository_name)
 
 
@@ -451,7 +447,7 @@ def get_full_image_name(image_tag: str) -> str:
 
 
 def download_and_extract_tar(
-    *, bucket_name: str, object_key: str, object_id: str, extract_to: str
+    *, bucket_name: str, object_key: str, object_id: str, extract_to: str, s3: S3Client
 ) -> None:
     with tempfile.TemporaryDirectory(prefix=f"download-tar-{object_id}-") as tar_dir:
         logfire.info(f"Download directory: {tar_dir}")
@@ -502,6 +498,7 @@ def depot_build_exec(
     project_id: str,
     build_id: str,
     build_token: str,
+    ecr: ECRClient,
 ) -> Generator[str, None, None]:
     additional_flags = (
         ["--load"]
@@ -518,7 +515,7 @@ def depot_build_exec(
     }
 
     if CommonSettings.get_settings().ENVIRONMENT != "local":
-        ecr_token = get_ecr_token()
+        ecr_token = get_ecr_token(ecr)
 
         env["DEPOT_PUSH_REGISTRY_AUTH"] = ecr_token
 
@@ -572,7 +569,7 @@ def _cleanup_line(line: str) -> str:
 
 
 def build_and_push_docker_image(
-    *, full_image_tag: str, docker_context_path: str
+    *, full_image_tag: str, docker_context_path: str, ecr: ECRClient
 ) -> Generator[str, None, None]:
     depot_settings = DepotSettings.get_settings()
 
@@ -587,6 +584,7 @@ def build_and_push_docker_image(
         project_id=depot_settings.DEPOT_PROJECT_ID,
         build_id=build_request.build_id,
         build_token=build_request.build_token,
+        ecr=ecr,
     )
 
     logfire.info(f"Build request completed: {build_request.build_id}")
@@ -619,7 +617,9 @@ def _send_build_log(
     )
 
 
-def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None:
+def _app_process_build(
+    *, deployment_id: uuid.UUID, session: SessionDep, ecr: ECRClient, s3: S3Client
+) -> None:
     redis_client = redis.Redis.from_url(CommonSettings.get_settings().REDIS_URI)
 
     bucket_name = CommonSettings.get_settings().DEPLOYMENTS_BUCKET_NAME
@@ -661,11 +661,12 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
                 object_id=str(deployment_with_team.id),
                 object_key=object_key,
                 extract_to=build_context,
+                s3=s3,
             )
 
             # Create ECR repository if it doesn't exist
             if builder_settings.ECR_REGISTRY_URL:
-                create_ecr_repository(deployment_with_team.app_id)
+                create_ecr_repository(deployment_with_team.app_id, ecr=ecr)
 
             shutil.copytree(
                 root_path / "builder-context", build_context, dirs_exist_ok=True
@@ -679,6 +680,7 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
             for line in build_and_push_docker_image(
                 full_image_tag=full_image_tag,
                 docker_context_path=build_context,
+                ecr=ecr,
             ):
                 line = _cleanup_line(line)
 
@@ -724,7 +726,9 @@ def _app_process_build(*, deployment_id: uuid.UUID, session: SessionDep) -> None
 
 
 @app.post("/apps/depot/build", dependencies=[Depends(validate_api_key)])
-def app_depot_build(message: DeployMessage, session: SessionDep) -> Message:
+def app_depot_build(
+    message: DeployMessage, session: SessionDep, ecr: ECRDep, s3: S3Dep
+) -> Message:
     smt = select(Deployment).where(Deployment.id == message.deployment_id)
     deployment = session.exec(smt).first()
     if not deployment:
@@ -738,7 +742,9 @@ def app_depot_build(message: DeployMessage, session: SessionDep) -> Message:
         return Message(message="Already being processed")
 
     # TODO: we could pass the deployment directly instead of the id
-    _app_process_build(deployment_id=message.deployment_id, session=session)
+    _app_process_build(
+        deployment_id=message.deployment_id, session=session, ecr=ecr, s3=s3
+    )
 
     return Message(message="OK")
 
