@@ -38,7 +38,7 @@ api:
 builder:
   image:
     repository: 471112862740.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-builder
-    tag: "production-0363d57f6bb73c57fb8fef7a1b9ebcb63616990b"
+    tag: "production-36a75e64a45a3f099b188367d216c43594fe5dcb"
   environment:
     DEPLOYMENTS_DOMAIN: fastapicloud.dev
     DEPOT_PROJECT_ID: 5bmzsq3lt9
