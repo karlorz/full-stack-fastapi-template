@@ -53,7 +53,7 @@ builder:
 messenger:
   image:
     repository: 471112862740.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-messenger
-    tag: "production-7aa24c961111957c15af64e3bde314c6f3615fbf"
+    tag: "production-0363d57f6bb73c57fb8fef7a1b9ebcb63616990b"
   environment: {}
 posthog:
   image:
