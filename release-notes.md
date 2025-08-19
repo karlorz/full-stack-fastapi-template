@@ -223,6 +223,7 @@
 
 ### Refactors
 
+* 🔨 Make the format and lint scripts work in tandem. PR [#1290](https://github.com/fastapilabs/cloud/pull/1290) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️ Create SQS, S3 and ECR clients only when needed. PR [#1247](https://github.com/fastapilabs/cloud/pull/1247) by [@patrick91](https://github.com/patrick91).
 * ⚰️  Remove left over chakra-ui-based code. PR [#1280](https://github.com/fastapilabs/cloud/pull/1280) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️ Improve logs for builder. PR [#1201](https://github.com/fastapilabs/cloud/pull/1201) by [@patrick91](https://github.com/patrick91).
