@@ -21,6 +21,7 @@
 
 ### Features
 
+* ✨ Delete resources when app is deleted. PR [#1040](https://github.com/fastapilabs/cloud/pull/1040) by [@patrick91](https://github.com/patrick91).
 * ✨ Allow to pass a base url to FastAPI Auth. PR [#1184](https://github.com/fastapilabs/cloud/pull/1184) by [@patrick91](https://github.com/patrick91).
 * ✨ Add docs section. PR [#1181](https://github.com/fastapilabs/cloud/pull/1181) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Allow to navigate between app section using browser navigation. PR [#1257](https://github.com/fastapilabs/cloud/pull/1257) by [@patrick91](https://github.com/patrick91).
