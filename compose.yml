@@ -247,14 +247,24 @@ services:
         - NODE_ENV=production
     ipc: host
     depends_on:
-      - backend
-      - mailcatcher
+      backend:
+        condition: service_started
+      mailcatcher:
+        condition: service_started
+      localstack:
+        condition: service_healthy
+      aws-cli:
+        condition: service_completed_successfully
     environment:
       - VITE_API_URL=http://backend:8000
       - MAILCATCHER_HOST=http://mailcatcher:1080
       # For the reports when run locally
       - PLAYWRIGHT_HTML_HOST=0.0.0.0
       - CI=${CI}
+      # LocalStack and SQS configuration
+      - LOCALSTACK_HOST_NAME=localstack
+      - BUILDER_QUEUE_NAME=${BUILDER_QUEUE_NAME}
+      - AWS_ENDPOINT_URL=http://localstack:4566
     volumes:
       - ./frontend/blob-report:/app/blob-report
       - ./frontend/test-results:/app/test-results

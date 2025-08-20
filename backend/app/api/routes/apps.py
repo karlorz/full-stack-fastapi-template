@@ -7,12 +7,15 @@ from sqlmodel import col, func, select
 
 from app.api.deps import CurrentUser, PosthogDep, PosthogProperties, SessionDep
 from app.api.utils.teams import generate_app_slug_name
+from app.aws_utils import get_sqs_client
+from app.core.config import CommonSettings
 from app.crud import get_user_team_link
 from app.models import (
     App,
     AppCreate,
     AppPublic,
     AppsPublic,
+    DeleteAppMessage,
     Message,
     get_datetime_utc,
 )
@@ -25,6 +28,7 @@ from app.nats import (
 
 from .environment_variables import router as environment_variables_router
 
+sqs = get_sqs_client()
 router = APIRouter()
 router.include_router(environment_variables_router)
 
@@ -213,6 +217,12 @@ def delete_app(
     app.deleted_at = get_datetime_utc()
     session.add(app)
     session.commit()
+
+    message = DeleteAppMessage(app_id=str(app.id))
+    queue_url = sqs.get_queue_url(
+        QueueName=CommonSettings.get_settings().BUILDER_QUEUE_NAME
+    )["QueueUrl"]
+    sqs.send_message(QueueUrl=queue_url, MessageBody=message.model_dump_json())
 
     background_tasks.add_task(
         posthog.capture,

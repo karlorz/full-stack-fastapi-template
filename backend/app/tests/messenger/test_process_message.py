@@ -8,7 +8,7 @@ from botocore.exceptions import ClientError
 
 from app.core.config import CommonSettings
 from app.messenger import process_message
-from app.models import BuildMessage
+from app.models import BuildMessage, DeleteAppMessage
 
 common_settings = CommonSettings.get_settings()
 
@@ -102,7 +102,7 @@ async def test_process_message_retries_on_sqs_error(respx_mock: respx.Router) ->
     mock_sqs.delete_message.side_effect = [
         ClientError(
             {"Error": {"Code": "Something", "Message": "Something"}},
-            "DeleteMessage",
+            "DeleteAppMessage",
         ),
         None,
     ]
@@ -121,3 +121,51 @@ async def test_process_message_retries_on_sqs_error(respx_mock: respx.Router) ->
     assert mock_sqs.delete_message.call_count == 2
 
     assert request_mock.call_count == 1
+
+
+@pytest.mark.respx(base_url=common_settings.BUILDER_API_URL)
+@pytest.mark.asyncio
+async def test_process_delete_message_success(respx_mock: respx.Router) -> None:
+    """Test processing delete message calls cleanup endpoint."""
+    sqs_mock = Mock()
+
+    app_id = "123e4567-e89b-12d3-a456-426614174000"
+    receipt_handle = "456"
+
+    respx_mock.post("/cleanup", json={"app_id": app_id}).mock(
+        return_value=httpx.Response(200)
+    )
+
+    await process_message(
+        message=DeleteAppMessage(app_id=app_id),
+        receipt_handle=receipt_handle,
+        client=httpx.AsyncClient(),
+        sqs=sqs_mock,
+    )
+
+    sqs_mock.delete_message.assert_called_once_with(
+        QueueUrl=common_settings.BUILDER_QUEUE_NAME, ReceiptHandle=receipt_handle
+    )
+
+
+@pytest.mark.respx(base_url=common_settings.BUILDER_API_URL)
+@pytest.mark.asyncio
+async def test_process_delete_message_error(respx_mock: respx.Router) -> None:
+    """Test delete message processing handles cleanup endpoint errors."""
+    app_id = "123e4567-e89b-12d3-a456-426614174000"
+    receipt_handle = "456"
+    sqs_mock = Mock()
+
+    respx_mock.post("/cleanup", json={"app_id": app_id}).mock(
+        return_value=httpx.Response(500)
+    )
+
+    with pytest.raises(httpx.HTTPStatusError):
+        await process_message(
+            message=DeleteAppMessage(app_id=app_id),
+            receipt_handle=receipt_handle,
+            client=httpx.AsyncClient(),
+            sqs=sqs_mock,
+        )
+
+    sqs_mock.delete_message.assert_not_called()

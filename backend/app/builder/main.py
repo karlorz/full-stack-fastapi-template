@@ -47,6 +47,7 @@ from app.core.db import engine
 from app.depot_py.depot.build import v1 as depot_build
 from app.models import (
     App,
+    CleanupMessage,
     Deployment,
     DeploymentStatus,
     DeployMessage,
@@ -419,13 +420,17 @@ def repository_exists(repository_name: str, ecr: ECRClient) -> bool:
         raise
 
 
+def get_repository_name(app_id: uuid.UUID) -> str:
+    return str(app_id)
+
+
 def create_ecr_repository(app_id: uuid.UUID, ecr: ECRClient) -> None:
     """
     Creates an ECR repository for the app if it doesn't exist.
 
     The repository name is the app id.
     """
-    repository_name = str(app_id)
+    repository_name = get_repository_name(app_id)
 
     if not repository_exists(repository_name, ecr):
         ecr.create_repository(repositoryName=repository_name)
@@ -617,6 +622,46 @@ def _send_build_log(
     )
 
 
+def cleanup_app_kubernetes_resources(app: App) -> None:
+    """Clean up all Kubernetes resources for an app using label selectors."""
+    namespace = get_app_namespace(app)
+
+    with logfire.span(
+        "Cleanup Kubernetes resources for app {app_id}",
+        app_id=app.id,
+    ):
+        api_instance = get_kubernetes_client_custom_objects()
+
+        label_selector = f"fastapicloud.com/app={app.id}"
+
+        logfire.info(f"Deleting Knative Services for app {app.id}")
+
+        services = api_instance.list_namespaced_custom_object(  # type: ignore[no-untyped-call]
+            group="serving.knative.dev",
+            version="v1",
+            namespace=namespace,
+            plural="services",
+            label_selector=label_selector,
+        )
+
+        for item in services.get("items", []):
+            name = item["metadata"]["name"]
+
+            logfire.info(f"Deleting Knative service: {name}")
+
+            api_instance.delete_namespaced_custom_object(  # type: ignore[no-untyped-call]
+                group="serving.knative.dev",
+                version="v1",
+                namespace=namespace,
+                plural="services",
+                name=name,
+            )
+
+        knative_services_deleted = len(services.get("items", []))
+
+        logfire.info(f"Deleted {knative_services_deleted} Knative services")
+
+
 def _app_process_build(
     *, deployment_id: uuid.UUID, session: SessionDep, ecr: ECRClient, s3: S3Client
 ) -> None:
@@ -788,6 +833,29 @@ def deploy(
     session.commit()
 
     return Message(message="OK")
+
+
+@app.post("/cleanup", dependencies=[Depends(validate_api_key)])
+def cleanup_app(message: CleanupMessage, session: SessionDep) -> Message:
+    """
+    Clean up app resources (kubernetes). This doesn't delete the app from the database.
+    """
+    app_with_deployments = session.exec(
+        select(App)
+        .options(joinedload(App.deployments))  # type: ignore
+        .where(App.id == message.app_id)
+    ).first()
+
+    if not app_with_deployments:
+        raise HTTPException(status_code=404, detail="App not found")
+
+    cleanup_app_kubernetes_resources(app_with_deployments)
+
+    app_with_deployments.cleaned_up_at = get_datetime_utc()
+    session.add(app_with_deployments)
+    session.commit()
+
+    return Message(message="Cleanup completed")
 
 
 class HealthCheckResponse(BaseModel):

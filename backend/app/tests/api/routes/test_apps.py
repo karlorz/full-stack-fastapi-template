@@ -1,20 +1,32 @@
 import re
 import uuid
+from collections.abc import Generator
 from datetime import UTC, datetime, timedelta
+from unittest.mock import MagicMock, patch
 
+import pytest
 import time_machine
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 from app.core.config import MainSettings
 from app.crud import add_user_to_team
-from app.models import App, Role, get_datetime_utc
+from app.models import App, DeleteAppMessage, Role, get_datetime_utc
 from app.tests.utils.apps import create_deployment_for_app, create_random_app
 from app.tests.utils.team import create_random_team
 from app.tests.utils.user import create_user, user_authentication_headers
 from app.tests.utils.utils import random_email
 
 settings = MainSettings.get_settings()
+
+
+@pytest.fixture
+def mock_sqs() -> Generator[MagicMock, None, None]:
+    """Mock SQS client for testing."""
+    with patch("app.api.routes.apps.sqs") as mock_sqs:
+        mock_sqs.get_queue_url.return_value = {"QueueUrl": "test-queue-url"}
+        mock_sqs.send_message.return_value = {}
+        yield mock_sqs
 
 
 def test_read_apps(client: TestClient, db: Session) -> None:
@@ -565,7 +577,7 @@ def test_read_app_invalid_uuid(client: TestClient, db: Session) -> None:
 
 
 @time_machine.travel("2025-07-24 12:00:00+00:00", tick=False)
-def test_delete_app(client: TestClient, db: Session) -> None:
+def test_delete_app(client: TestClient, db: Session, mock_sqs: MagicMock) -> None:
     user = create_user(
         session=db,
         email=random_email(),
@@ -595,6 +607,11 @@ def test_delete_app(client: TestClient, db: Session) -> None:
 
     db.refresh(app)
     assert app.deleted_at == datetime.now(UTC)
+
+    mock_sqs.send_message.assert_called_once_with(
+        QueueUrl="test-queue-url",
+        MessageBody=DeleteAppMessage(app_id=str(app.id)).model_dump_json(),
+    )
 
 
 def test_delete_app_user_not_in_team(client: TestClient, db: Session) -> None:

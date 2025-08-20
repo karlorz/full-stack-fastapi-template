@@ -548,6 +548,10 @@ class DeployMessage(SQLModel):
     deployment_id: uuid.UUID
 
 
+class CleanupMessage(SQLModel):
+    app_id: uuid.UUID
+
+
 class SocialAccount(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
@@ -593,7 +597,12 @@ class RedeployMessage(SQLModel):
     deployment_id: uuid.UUID
 
 
+class DeleteAppMessage(SQLModel):
+    type: Literal["delete_app"] = "delete_app"
+    app_id: uuid.UUID
+
+
 MessengerMessageBody = Annotated[
-    BuildMessage | RedeployMessage,
+    BuildMessage | RedeployMessage | DeleteAppMessage,
     Field(discriminator="type"),
 ]

@@ -93,6 +93,13 @@ async def process_message(
                 json={"deployment_id": str(message.deployment_id)},
                 timeout=timeout,
             )
+        elif message.type == "delete_app":
+            response = await client.post(
+                f"{common_settings.BUILDER_API_URL}/cleanup",
+                headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
+                json={"app_id": str(message.app_id)},
+                timeout=timeout,
+            )
         logfire.info(
             "Response status code: {status_code}", status_code=response.status_code
         )
