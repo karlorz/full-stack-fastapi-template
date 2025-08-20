@@ -21,6 +21,7 @@
 
 ### Features
 
+* ♿️ Make the theme toggle available on auth screens. PR [#1328](https://github.com/fastapilabs/cloud/pull/1328) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ✨ Add HelpDropdown component. PR [#1304](https://github.com/fastapilabs/cloud/pull/1304) by [@alejsdev](https://github.com/alejsdev).
 * ✨ Delete resources when app is deleted. PR [#1040](https://github.com/fastapilabs/cloud/pull/1040) by [@patrick91](https://github.com/patrick91).
 * ✨ Allow to pass a base url to FastAPI Auth. PR [#1184](https://github.com/fastapilabs/cloud/pull/1184) by [@patrick91](https://github.com/patrick91).
