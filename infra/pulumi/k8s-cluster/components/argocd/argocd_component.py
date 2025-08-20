@@ -11,6 +11,7 @@ from dataclasses import dataclass
 @dataclass
 class RepositoryConfig:
     """Configuration for a single repository"""
+
     name: str
     url: str
     type: str = "git"  # git, helm
@@ -132,7 +133,7 @@ class ArgoCDComponent(pulumi.ComponentResource):
                     opts=pulumi.ResourceOptions(
                         parent=self,
                         provider=self.k8s_provider,
-                        depends_on=[self.namespace]
+                        depends_on=[self.namespace],
                     ),
                 )
             elif repo.password:
@@ -159,15 +160,14 @@ class ArgoCDComponent(pulumi.ComponentResource):
                     opts=pulumi.ResourceOptions(
                         parent=self,
                         provider=self.k8s_provider,
-                        depends_on=[self.namespace]
+                        depends_on=[self.namespace],
                     ),
                 )
 
     def _create_oauth_secret(self):
         """Create OAuth secrets for both ALB and ArgoCD"""
         if not self.config.google_client_id or not self.config.google_client_secret:
-            raise ValueError(
-                "Google OAuth credentials required when oauth is enabled")
+            raise ValueError("Google OAuth credentials required when oauth is enabled")
 
         # Create secret for ArgoCD internal OAuth
         self.oauth_secret = k8s.core.v1.Secret(
@@ -187,8 +187,7 @@ class ArgoCDComponent(pulumi.ComponentResource):
                 "oidc.google.clientSecret": self.config.google_client_secret,
             },
             opts=pulumi.ResourceOptions(
-                parent=self, provider=self.k8s_provider, depends_on=[
-                    self.namespace]
+                parent=self, provider=self.k8s_provider, depends_on=[self.namespace]
             ),
         )
 
@@ -209,8 +208,7 @@ class ArgoCDComponent(pulumi.ComponentResource):
                 "clientSecret": self.config.google_client_secret,
             },
             opts=pulumi.ResourceOptions(
-                parent=self, provider=self.k8s_provider, depends_on=[
-                    self.namespace]
+                parent=self, provider=self.k8s_provider, depends_on=[self.namespace]
             ),
         )
 
@@ -234,8 +232,7 @@ class ArgoCDComponent(pulumi.ComponentResource):
                 )
             ],
             opts=pulumi.ResourceOptions(
-                parent=self, provider=self.k8s_provider, depends_on=[
-                    self.namespace]
+                parent=self, provider=self.k8s_provider, depends_on=[self.namespace]
             ),
         )
 
@@ -291,8 +288,7 @@ class ArgoCDComponent(pulumi.ComponentResource):
                 "auth": pulumi.Output.secret("argocd-redis-password"),
             },
             opts=pulumi.ResourceOptions(
-                parent=self, provider=self.k8s_provider, depends_on=[
-                    self.namespace]
+                parent=self, provider=self.k8s_provider, depends_on=[self.namespace]
             ),
         )
 
@@ -459,7 +455,8 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
 
         if not repo_url:
             raise ValueError(
-                "No repository URL available for root application. Either provide root_app_repo_url or configure at least one repository.")
+                "No repository URL available for root application. Either provide root_app_repo_url or configure at least one repository."
+            )
 
         # Create the root ArgoCD Application
         self.root_application = k8s.apiextensions.CustomResource(
@@ -518,7 +515,8 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
 
         if not repo_url:
             raise ValueError(
-                "No repository URL available for root application. Either provide root_app_repo_url or configure at least one repository.")
+                "No repository URL available for root application. Either provide root_app_repo_url or configure at least one repository."
+            )
 
         # Create the root ArgoCD Application
         self.multi_chart_apps_application_set = k8s.apiextensions.CustomResource(
@@ -565,9 +563,7 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                     "metadata": {
                         "name": "{{path.basename}}",
                         # Prevent App deletion when AppSet is deleted
-                        "finalizers": [
-                            "resources-finalizer.argocd.argoproj.io"
-                        ]
+                        "finalizers": ["resources-finalizer.argocd.argoproj.io"],
                     },
                     "spec": {
                         "project": self.config.root_app_project,
@@ -580,12 +576,12 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                                 "valueFiles": [
                                     # relative path from Helm Chart location
                                     f"../../../../argocd/{self.config.environment}/{{{{path[3]}}}}/{{{{path[4]}}}}.yaml",
-                                ]
-                            }
+                                ],
+                            },
                         },
                         "destination": {
                             "server": "https://kubernetes.default.svc",
-                            "namespace": '{{path[3]}}',
+                            "namespace": "{{path[3]}}",
                         },
                         # temporarily disabled during heavy development
                         # "syncPolicy": {
@@ -594,12 +590,12 @@ requestedIDTokenClaims: {"groups": {"essential": true}}""",
                         #         "selfHeal": True,
                         #     },
                         # },
-                    }
+                    },
                 },
                 "syncPolicy": {
                     # Prevent appset controller from deleting App
                     "applicationsSync": "create-update"
-                }
+                },
             },
             opts=pulumi.ResourceOptions(
                 parent=self,

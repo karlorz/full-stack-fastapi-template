@@ -51,7 +51,7 @@ domains = {
                 "value": "k8s-monitori-grafana-776bb1cfa4-214158257.us-east-1.elb.amazonaws.com",
                 "proxied": False,
             },
-        ]
+        ],
     }
 }
 
@@ -61,7 +61,7 @@ for domain_name, domain_config in domains.items():
     dns_domain = DNSDomain(
         name=domain_name.replace(".", "-"),
         zone_id=domain_config["zone_id"],
-        records=domain_config["records"]
+        records=domain_config["records"],
     )
     created_domains[domain_name] = dns_domain
 

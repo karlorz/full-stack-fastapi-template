@@ -18,7 +18,7 @@ class DNSDomain(pulumi.ComponentResource):
         name: str,
         zone_id: str,
         records: List[Dict[str, Any]],
-        opts: Optional[pulumi.ResourceOptions] = None
+        opts: Optional[pulumi.ResourceOptions] = None,
     ):
         """
         Create a new DNS domain component.
@@ -50,29 +50,32 @@ class DNSDomain(pulumi.ComponentResource):
                 name=record_name,
                 type=record_type,
                 content=record_value,
-                ttl=record_config.get("ttl", 1 if record_config.get("proxied", False) else 300),
+                ttl=record_config.get(
+                    "ttl", 1 if record_config.get("proxied", False) else 300
+                ),
                 proxied=record_config.get("proxied", False),
                 priority=record_config.get("priority"),  # For MX records
-                opts=pulumi.ResourceOptions(parent=self)
+                opts=pulumi.ResourceOptions(parent=self),
             )
 
             self.dns_records.append(dns_record)
 
         # Register outputs
-        self.register_outputs({
-            "zone_id": zone_id,
-            "record_count": len(self.dns_records),
-            "record_names": [r.name for r in self.dns_records]
-        })
+        self.register_outputs(
+            {
+                "zone_id": zone_id,
+                "record_count": len(self.dns_records),
+                "record_names": [r.name for r in self.dns_records],
+            }
+        )
 
-    def _generate_resource_name(self, record_name: str, record_type: str, index: int) -> str:
+    def _generate_resource_name(
+        self, record_name: str, record_type: str, index: int
+    ) -> str:
         """Generate a valid Pulumi resource name from DNS record details."""
         # Clean up special characters
         clean_name = (
-            record_name
-            .replace("*", "wildcard")
-            .replace(".", "-")
-            .replace("@", "root")
+            record_name.replace("*", "wildcard").replace(".", "-").replace("@", "root")
         )
 
         return f"{self._name}-{clean_name}-{record_type.lower()}-{index}"
