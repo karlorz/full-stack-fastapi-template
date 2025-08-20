@@ -39,7 +39,7 @@ api:
 builder:
   image:
     repository: 992382821657.dkr.ecr.us-east-1.amazonaws.com/fastapicloud-builder
-    tag: "staging-b079e97c33f5c11ac11a865712bcbee9579e6dde"
+    tag: "staging-66b57de1db55fbf29793e5d0f5ab8eb394ad8a15"
   environment:
     DEPLOYMENTS_DOMAIN: fastapicloud.club
     DEPOT_PROJECT_ID: 5bmzsq3lt9
