@@ -7,6 +7,7 @@ repos:
       - id: check-added-large-files
       - id: check-toml
       - id: check-yaml
+        exclude: ^infra/.*/templates/.*
         args:
           - --unsafe
       - id: end-of-file-fixer
