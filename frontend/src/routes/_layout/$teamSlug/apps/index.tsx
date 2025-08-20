@@ -110,8 +110,9 @@ function Apps() {
     >
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
         {appsData.data.map((app) => (
-          <RouterLink to={app.slug} key={app.id} className="block">
+          <RouterLink to={app.slug} key={app.id} className="flex">
             <CustomCard
+              className="flex flex-col justify-between"
               header={
                 <>
                   <div className="flex justify-between">

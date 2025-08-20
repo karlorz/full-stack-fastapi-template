@@ -1,4 +1,5 @@
 import { HTMLAttributes, ReactNode } from "react"
+import { cn } from "@/lib/utils"
 import {
   Card,
   CardContent,
@@ -19,13 +20,17 @@ export function CustomCard({
   description,
   header,
   children,
+  className,
   ...props
 }: AppCardProps) {
   const hasHeader = title || description || header
 
   return (
     <Card
-      className="w-full border border-black/5 dark:border-white/5 shadow-md shadow-black/[0.03] dark:shadow-black/30 bg-white dark:bg-zinc-900"
+      className={cn(
+        "w-full border border-black/5 dark:border-white/5 shadow-md shadow-black/[0.03] dark:shadow-black/30 bg-white dark:bg-zinc-900",
+        className,
+      )}
       {...props}
     >
       {hasHeader && (
