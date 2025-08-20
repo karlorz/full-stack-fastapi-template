@@ -225,6 +225,7 @@
 
 ### Refactors
 
+* ♻️  refactor route to only hit the db once. PR [#1323](https://github.com/fastapilabs/cloud/pull/1323) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🔥 Remove unused dependencies . PR [#1282](https://github.com/fastapilabs/cloud/pull/1282) by [@alejsdev](https://github.com/alejsdev).
 * 🔨 Make the format and lint scripts work in tandem. PR [#1290](https://github.com/fastapilabs/cloud/pull/1290) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️ Create SQS, S3 and ECR clients only when needed. PR [#1247](https://github.com/fastapilabs/cloud/pull/1247) by [@patrick91](https://github.com/patrick91).
