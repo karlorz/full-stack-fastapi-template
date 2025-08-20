@@ -568,6 +568,7 @@
 
 ### Internal
 
+* ⬆️ Bump mypy from 1.16.1 to 1.17.1. PR [#1324](https://github.com/fastapilabs/cloud/pull/1324) by [@buurro](https://github.com/buurro).
 * 🚨 Fix pre-commit complained about helm templates. PR [#1293](https://github.com/fastapilabs/cloud/pull/1293) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ⬆ Bump sonner from 2.0.5 to 2.0.7 in /frontend. PR [#1316](https://github.com/fastapilabs/cloud/pull/1316) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-dialog from 1.1.14 to 1.1.15 in /frontend. PR [#1315](https://github.com/fastapilabs/cloud/pull/1315) by [@dependabot[bot]](https://github.com/apps/dependabot).
