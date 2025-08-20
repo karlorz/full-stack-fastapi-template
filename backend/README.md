@@ -174,6 +174,43 @@ $ alembic revision --autogenerate -m "Add column last_name to User model"
 $ alembic upgrade head
 ```
 
+## Email Templates with MJML
+
+The backend uses MJML for responsive email templates. Email templates are located in `./backend/app/email-templates/`.
+
+### Structure
+
+```
+email-templates/
+├── src/           # MJML source files (.mjml)
+└── build/         # Compiled HTML files
+```
+
+### Development Workflow
+
+1. Edit MJML templates in the `src/` directory.
+2. Compile MJML files to HTML using the [MJML VS Code extension](https://marketplace.visualstudio.com/items?itemName=attilabuti.vscode-mjml).
+3. The backend loads the compiled HTML files from the `build/` directory.
+4. Test emails locally using MailCatcher.
+
+### Testing Email Templates
+
+Use MailCatcher to test email templates during development:
+
+1. Ensure MailCatcher is running (it should be started with Docker Compose). If not, start it with:
+
+```bash
+docker compose up -d mailcatcher
+```
+
+2. Access MailCatcher at <http://localhost:1080>.
+3. Trigger email actions in the application to see rendered emails.
+
+### MJML Resources
+
+- [MJML Documentation](https://documentation.mjml.io/).
+- [MJML VS Code Extension](https://marketplace.visualstudio.com/items?itemName=attilabuti.vscode-mjml).
+
 ## Lint and Format
 
 There are two scripts you can use to manually lint and format the backend code.
