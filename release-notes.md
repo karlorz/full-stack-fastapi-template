@@ -566,6 +566,7 @@
 
 ### Internal
 
+* 👷 Configure Renovate. PR [#1303](https://github.com/fastapilabs/cloud/pull/1303) by [@renovate[bot]](https://github.com/apps/renovate).
 * 🚨 Run pre-commit on all files. PR [#1292](https://github.com/fastapilabs/cloud/pull/1292) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🔧 Add Jonathan to the default user lists. PR [#1291](https://github.com/fastapilabs/cloud/pull/1291) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ⬆ Bump @tailwindcss/vite from 4.1.11 to 4.1.12 in /frontend. PR [#1275](https://github.com/fastapilabs/cloud/pull/1275) by [@dependabot[bot]](https://github.com/apps/dependabot).
