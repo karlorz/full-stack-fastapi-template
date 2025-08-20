@@ -225,6 +225,7 @@
 
 ### Refactors
 
+* 💄 Make app cards uniform in height. PR [#1331](https://github.com/fastapilabs/cloud/pull/1331) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 💄 Use the intended size for icon buttons. PR [#1329](https://github.com/fastapilabs/cloud/pull/1329) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️  refactor route to only hit the db once. PR [#1323](https://github.com/fastapilabs/cloud/pull/1323) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🔥 Remove unused dependencies . PR [#1282](https://github.com/fastapilabs/cloud/pull/1282) by [@alejsdev](https://github.com/alejsdev).
