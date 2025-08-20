@@ -663,33 +663,28 @@ def cleanup_app_kubernetes_resources(app: App) -> None:
 
 
 def _app_process_build(
-    *, deployment_id: uuid.UUID, session: SessionDep, ecr: ECRClient, s3: S3Client
+    *,
+    deployment_with_team: Deployment,
+    session: SessionDep,
+    ecr: ECRClient,
+    s3: S3Client,
 ) -> None:
     redis_client = redis.Redis.from_url(CommonSettings.get_settings().REDIS_URI)
 
     bucket_name = CommonSettings.get_settings().DEPLOYMENTS_BUCKET_NAME
-
-    deployment_with_team = session.exec(
-        select(Deployment)
-        .options(joinedload(Deployment.app).joinedload(App.team))  # type: ignore
-        .where(Deployment.id == deployment_id)
-    ).first()
-    if deployment_with_team is None:
-        raise HTTPException(status_code=404, detail="Deployment not found")
 
     # Update status to building
     deployment_with_team.status = DeploymentStatus.building
     session.commit()
 
     try:
-        team = deployment_with_team.app.team
         image_tag = get_image_name(
             app_id=deployment_with_team.app.id, deployment_id=deployment_with_team.id
         )
 
         # TODO: this should maybe live in the model
         object_key = f"{deployment_with_team.app.id}/{deployment_with_team.id}.tar"
-        env_vars = get_env_vars(deployment_with_team.app_id, session)
+        env_vars = get_env_vars(deployment_with_team.app.id, session)
         app_name = deployment_with_team.slug
 
         context_name_prefix = f"build-context-{deployment_with_team.id}-"
@@ -711,7 +706,7 @@ def _app_process_build(
 
             # Create ECR repository if it doesn't exist
             if builder_settings.ECR_REGISTRY_URL:
-                create_ecr_repository(deployment_with_team.app_id, ecr=ecr)
+                create_ecr_repository(deployment_with_team.app.id, ecr=ecr)
 
             shutil.copytree(
                 root_path / "builder-context", build_context, dirs_exist_ok=True
@@ -744,13 +739,13 @@ def _app_process_build(
                 namespace=get_app_namespace(deployment_with_team.app),
                 env=env_vars,
                 labels={
-                    "fastapicloud.com/team": str(team.id),
-                    "fastapicloud.com/team-slug": team.slug,
+                    "fastapicloud.com/team": str(deployment_with_team.app.team.id),
+                    "fastapicloud.com/team-slug": deployment_with_team.app.team.slug,
                     "fastapicloud.com/app": str(deployment_with_team.app.id),
                     "fastapicloud.com/app-slug": deployment_with_team.app.slug,
                     "fastapicloud.com/deployment": str(deployment_with_team.id),
                     # legacy for vector, to remove once we remove vector
-                    "fastapicloud_team": team.slug,
+                    "fastapicloud_team": deployment_with_team.app.team.slug,
                     "fastapicloud_app": deployment_with_team.app.slug,
                     "fastapicloud_deployment": str(deployment_with_team.id),
                 },
@@ -774,21 +769,26 @@ def _app_process_build(
 def app_depot_build(
     message: DeployMessage, session: SessionDep, ecr: ECRDep, s3: S3Dep
 ) -> Message:
-    smt = select(Deployment).where(Deployment.id == message.deployment_id)
-    deployment = session.exec(smt).first()
-    if not deployment:
+    deployment_with_team = session.exec(
+        select(Deployment)
+        .options(joinedload(Deployment.app).joinedload(App.team))  # type: ignore
+        .where(Deployment.id == message.deployment_id)
+    ).first()
+
+    if deployment_with_team is None:
         raise HTTPException(status_code=404, detail="Deployment not found")
-    if deployment.status == DeploymentStatus.waiting_upload:
+
+    if deployment_with_team.status == DeploymentStatus.waiting_upload:
         raise HTTPException(
             status_code=500,
             detail="Deployment is waiting for upload, the build should have not been triggered",
         )
-    if deployment.status != DeploymentStatus.ready_for_build:
+
+    if deployment_with_team.status != DeploymentStatus.ready_for_build:
         return Message(message="Already being processed")
 
-    # TODO: we could pass the deployment directly instead of the id
     _app_process_build(
-        deployment_id=message.deployment_id, session=session, ecr=ecr, s3=s3
+        deployment_with_team=deployment_with_team, session=session, ecr=ecr, s3=s3
     )
 
     return Message(message="OK")
