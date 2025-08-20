@@ -1,15 +1,14 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
-import { ExternalLink } from "lucide-react"
 import posthog from "posthog-js"
 import { useEffect } from "react"
-import { Button } from "@/components/ui/button"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { getTeamsQueryOptions } from "@/queries/teams"
+import { HelpDropdown } from "../components/HelpDropdown"
 import TeamInvitation from "../components/Invitations/TeamInvitation"
 import { AppSidebar } from "../components/Sidebar/AppSidebar"
 import Appearance from "../components/UserSettings/Appearance"
@@ -61,19 +60,7 @@ function Layout() {
                 <SidebarTrigger className="-ml-1" />
               </div>
               <div className="ml-auto flex items-center pr-4 gap-4">
-                <a
-                  href="https://fastapicloud.com/docs/getting-started"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <Button
-                    className="flex gap-4 text-sm hover:underline"
-                    variant="outline"
-                  >
-                    <span>Docs</span>
-                    <ExternalLink className="h-[1.2rem] w-[1.2rem]" />
-                  </Button>
-                </a>
+                <HelpDropdown />
                 <Appearance />
               </div>
             </header>
