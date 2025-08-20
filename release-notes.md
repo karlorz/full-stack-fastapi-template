@@ -567,6 +567,7 @@
 
 ### Internal
 
+* ⬆ Bump @types/node from 24.1.0 to 24.3.0 in /frontend. PR [#1309](https://github.com/fastapilabs/cloud/pull/1309) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump vite from 7.1.2 to 7.1.3 in /frontend. PR [#1310](https://github.com/fastapilabs/cloud/pull/1310) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 👷 Configure Renovate. PR [#1303](https://github.com/fastapilabs/cloud/pull/1303) by [@renovate[bot]](https://github.com/apps/renovate).
 * 🚨 Run pre-commit on all files. PR [#1292](https://github.com/fastapilabs/cloud/pull/1292) by [@DoctorJohn](https://github.com/DoctorJohn).
