@@ -28,6 +28,11 @@ repos:
         language: system
         types: [text]
         files: ^frontend/
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 41.81.5
+    hooks:
+      - id: renovate-config-validator
+        args: [--strict]
 
 ci:
   autofix_commit_msg: 🎨 [pre-commit.ci] Auto format from pre-commit.com hooks
