@@ -567,6 +567,7 @@
 
 ### Internal
 
+* 🚨 Fix pre-commit complained about helm templates. PR [#1293](https://github.com/fastapilabs/cloud/pull/1293) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ⬆ Bump sonner from 2.0.5 to 2.0.7 in /frontend. PR [#1316](https://github.com/fastapilabs/cloud/pull/1316) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @radix-ui/react-dialog from 1.1.14 to 1.1.15 in /frontend. PR [#1315](https://github.com/fastapilabs/cloud/pull/1315) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump @types/node from 24.1.0 to 24.3.0 in /frontend. PR [#1309](https://github.com/fastapilabs/cloud/pull/1309) by [@dependabot[bot]](https://github.com/apps/dependabot).
