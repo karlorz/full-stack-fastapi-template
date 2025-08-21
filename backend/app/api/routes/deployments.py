@@ -402,6 +402,8 @@ def get_build_logs(
 
             for _, messages in stream_data:
                 for message_id, message_data in messages:
+                    last_id = message_id
+
                     try:
                         log = build_log_adapter.validate_python(message_data)
                     except ValidationError:
@@ -421,8 +423,6 @@ def get_build_logs(
                             return
                         case _:
                             pass
-
-                    last_id = message_id
 
     return StreamingResponse(
         _stream_logs(deployment_id), media_type="application/x-ndjson"
