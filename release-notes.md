@@ -572,6 +572,7 @@
 
 ### Internal
 
+* ⬆️ Update dependency gunicorn to v23. PR [#1306](https://github.com/fastapilabs/cloud/pull/1306) by [@renovate[bot]](https://github.com/apps/renovate).
 * ⬆️ Update dependency tenacity to v9. PR [#1321](https://github.com/fastapilabs/cloud/pull/1321) by [@renovate[bot]](https://github.com/apps/renovate).
 * ⬆️ Update dependency pytest to v8. PR [#1318](https://github.com/fastapilabs/cloud/pull/1318) by [@renovate[bot]](https://github.com/apps/renovate).
 * 👷 Update Renovate bot to use gitmoji for upgrades. PR [#1319](https://github.com/fastapilabs/cloud/pull/1319) by [@tiangolo](https://github.com/tiangolo).
