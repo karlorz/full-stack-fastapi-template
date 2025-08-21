@@ -9,7 +9,7 @@ common_settings = CommonSettings.get_settings()
 
 
 def generate_presigned_url_post(
-    bucket_name: str, object_name: str, expiration: int = 600
+    bucket_name: str, object_key: str, expiration: int = 600
 ) -> dict[str, Any]:
     """
     Generate a presigned POST URL to upload a file to an S3 bucket
@@ -18,7 +18,7 @@ def generate_presigned_url_post(
     s3_client = get_s3_client()
     response = s3_client.generate_presigned_post(
         Bucket=bucket_name,
-        Key=object_name,
+        Key=object_key,
         ExpiresIn=expiration,
     )
     if common_settings.is_local_stack_enabled:

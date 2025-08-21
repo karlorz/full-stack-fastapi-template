@@ -248,11 +248,9 @@ def upload_deployment_artifact(
             status_code=404, detail="Team not found for the current user"
         )
 
-    object_name = f"{app.id}/{deployment.id}.tar"
-
     presigned_url = generate_presigned_url_post(
         bucket_name=CommonSettings.get_settings().DEPLOYMENTS_BUCKET_NAME,
-        object_name=object_name,
+        object_key=deployment.s3_object_key,
     )
 
     deployment_url = DeploymentUploadOut(

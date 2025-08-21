@@ -717,8 +717,6 @@ def _app_process_build(
             app_id=deployment_with_team.app.id, deployment_id=deployment_with_team.id
         )
 
-        # TODO: this should maybe live in the model
-        object_key = f"{deployment_with_team.app.id}/{deployment_with_team.id}.tar"
         env_vars = get_env_vars(deployment_with_team.app.id, session)
         app_name = deployment_with_team.slug
 
@@ -734,7 +732,7 @@ def _app_process_build(
             download_and_extract_tar(
                 bucket_name=bucket_name,
                 object_id=str(deployment_with_team.id),
-                object_key=object_key,
+                object_key=deployment_with_team.s3_object_key,
                 extract_to=build_context,
                 s3=s3,
             )

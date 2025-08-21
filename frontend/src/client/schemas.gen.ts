@@ -121,7 +121,7 @@ export const AppPublicSchema = {
     latest_deployment: {
       anyOf: [
         {
-          $ref: "#/components/schemas/Deployment",
+          $ref: "#/components/schemas/DeploymentPublic",
         },
         {
           type: "null",
@@ -378,65 +378,6 @@ export const CreateUserSchema = {
   type: "object",
   required: ["email", "full_name"],
   title: "CreateUser",
-} as const
-
-export const DeploymentSchema = {
-  properties: {
-    id: {
-      type: "string",
-      format: "uuid",
-      title: "Id",
-    },
-    image_hash: {
-      anyOf: [
-        {
-          type: "string",
-          maxLength: 255,
-        },
-        {
-          type: "null",
-        },
-      ],
-      title: "Image Hash",
-    },
-    app_id: {
-      type: "string",
-      format: "uuid",
-      title: "App Id",
-    },
-    slug: {
-      type: "string",
-      maxLength: 255,
-      title: "Slug",
-    },
-    created_at: {
-      type: "string",
-      format: "date-time",
-      title: "Created At",
-    },
-    updated_at: {
-      type: "string",
-      format: "date-time",
-      title: "Updated At",
-    },
-    status: {
-      $ref: "#/components/schemas/DeploymentStatus",
-      default: "waiting_upload",
-    },
-    url: {
-      type: "string",
-      title: "Url",
-      readOnly: true,
-    },
-    dashboard_url: {
-      type: "string",
-      title: "Dashboard Url",
-      readOnly: true,
-    },
-  },
-  type: "object",
-  required: ["app_id", "slug", "url", "dashboard_url"],
-  title: "Deployment",
 } as const
 
 export const DeploymentPublicSchema = {

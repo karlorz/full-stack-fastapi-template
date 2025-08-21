@@ -383,7 +383,7 @@ class AppPublic(AppBase):
     updated_at: datetime
     url: str
     is_fresh: bool | None
-    latest_deployment: "Deployment | None"
+    latest_deployment: "DeploymentPublic | None"
 
 
 class AppsPublic(SQLModel):
@@ -425,6 +425,11 @@ class Deployment(SQLModel, table=True):
     @computed_field
     def dashboard_url(self) -> str:
         return f"{MainSettings.get_settings().FRONTEND_HOST}/{self.app.team.slug}/apps/{self.app.slug}/deployments/{self.id}"
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def s3_object_key(self) -> str:
+        return f"{self.app.id}/{self.id}.tar"
 
 
 class DeploymentPublic(SQLModel):
