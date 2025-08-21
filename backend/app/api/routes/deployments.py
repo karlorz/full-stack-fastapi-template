@@ -419,6 +419,8 @@ def get_build_logs(
                     match log:
                         case BuildLogComplete() | BuildLogFailed():
                             return
+                        case _:
+                            pass
 
                     last_id = message_id
 

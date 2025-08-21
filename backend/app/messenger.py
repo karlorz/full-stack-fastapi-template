@@ -79,27 +79,30 @@ async def process_message(
 ) -> None:
     with logfire.span("Process message: {message}", message=message):
         timeout = httpx.Timeout(connect=5, read=600, write=5, pool=5)
-        if message.type == "build":
-            response = await client.post(
-                f"{common_settings.BUILDER_API_URL}/apps/depot/build",
-                headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
-                json={"deployment_id": str(message.deployment_id)},
-                timeout=timeout,
-            )
-        elif message.type == "redeploy":
-            response = await client.post(
-                f"{common_settings.BUILDER_API_URL}/deploy",
-                headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
-                json={"deployment_id": str(message.deployment_id)},
-                timeout=timeout,
-            )
-        elif message.type == "delete_app":
-            response = await client.post(
-                f"{common_settings.BUILDER_API_URL}/cleanup",
-                headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
-                json={"app_id": str(message.app_id)},
-                timeout=timeout,
-            )
+
+        match message.type:
+            case "build":
+                response = await client.post(
+                    f"{common_settings.BUILDER_API_URL}/apps/depot/build",
+                    headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
+                    json={"deployment_id": str(message.deployment_id)},
+                    timeout=timeout,
+                )
+            case "redeploy":
+                response = await client.post(
+                    f"{common_settings.BUILDER_API_URL}/deploy",
+                    headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
+                    json={"deployment_id": str(message.deployment_id)},
+                    timeout=timeout,
+                )
+            case "delete_app":
+                response = await client.post(
+                    f"{common_settings.BUILDER_API_URL}/cleanup",
+                    headers={"X-API-KEY": common_settings.BUILDER_API_KEY},
+                    json={"app_id": str(message.app_id)},
+                    timeout=timeout,
+                )
+
         logfire.info(
             "Response status code: {status_code}", status_code=response.status_code
         )
