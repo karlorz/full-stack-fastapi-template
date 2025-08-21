@@ -228,6 +228,7 @@
 
 ### Refactors
 
+* ♻️ Add single source of truth for s3 object key. PR [#1326](https://github.com/fastapilabs/cloud/pull/1326) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️  Refactor deps into multiple files. PR [#1333](https://github.com/fastapilabs/cloud/pull/1333) by [@patrick91](https://github.com/patrick91).
 * 💄 Make app cards uniform in height. PR [#1331](https://github.com/fastapilabs/cloud/pull/1331) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 💄 Use the intended size for icon buttons. PR [#1329](https://github.com/fastapilabs/cloud/pull/1329) by [@DoctorJohn](https://github.com/DoctorJohn).
