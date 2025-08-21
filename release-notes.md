@@ -497,6 +497,7 @@
 
 ### Docs
 
+* 📝 Clarify how to run tests in venv from scratch. PR [#1299](https://github.com/fastapilabs/cloud/pull/1299) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 📝 Add MJML email templates section to `README`. PR [#1288](https://github.com/fastapilabs/cloud/pull/1288) by [@alejsdev](https://github.com/alejsdev).
 * 📝 Update Staging API URL in `README` and change frontend start command in `development.md`. PR [#1287](https://github.com/fastapilabs/cloud/pull/1287) by [@alejsdev](https://github.com/alejsdev).
 * 📝 Replace deprecated references to Chakra UI. PR [#1284](https://github.com/fastapilabs/cloud/pull/1284) by [@DoctorJohn](https://github.com/DoctorJohn).
