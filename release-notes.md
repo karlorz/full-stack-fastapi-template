@@ -580,6 +580,7 @@
 
 ### Internal
 
+* 🐛 Fix invalid messages were reported repeatedly. PR [#1351](https://github.com/fastapilabs/cloud/pull/1351) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ✅ Test build logs route skips invalid messages. PR [#1350](https://github.com/fastapilabs/cloud/pull/1350) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ✨ Use Tilt for local development. PR [#650](https://github.com/fastapilabs/cloud/pull/650) by [@patrick91](https://github.com/patrick91).
 * 🔧 Add biome config for zed and pyright config. PR [#1322](https://github.com/fastapilabs/cloud/pull/1322) by [@patrick91](https://github.com/patrick91).
