@@ -572,6 +572,7 @@
 
 ### Internal
 
+* ⬆️ Update dependency pytest to v8. PR [#1318](https://github.com/fastapilabs/cloud/pull/1318) by [@renovate[bot]](https://github.com/apps/renovate).
 * 👷 Update Renovate bot to use gitmoji for upgrades. PR [#1319](https://github.com/fastapilabs/cloud/pull/1319) by [@tiangolo](https://github.com/tiangolo).
 * ⬆️ Bump mypy from 1.16.1 to 1.17.1. PR [#1324](https://github.com/fastapilabs/cloud/pull/1324) by [@buurro](https://github.com/buurro).
 * 🚨 Fix pre-commit complained about helm templates. PR [#1293](https://github.com/fastapilabs/cloud/pull/1293) by [@DoctorJohn](https://github.com/DoctorJohn).
