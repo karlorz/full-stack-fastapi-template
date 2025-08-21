@@ -572,6 +572,7 @@
 
 ### Internal
 
+* 🔧 Add biome config for zed and pyright config. PR [#1322](https://github.com/fastapilabs/cloud/pull/1322) by [@patrick91](https://github.com/patrick91).
 * ⬆️ Update dependency pre-commit to v4. PR [#1312](https://github.com/fastapilabs/cloud/pull/1312) by [@renovate[bot]](https://github.com/apps/renovate).
 * ⬆️ Update dependency gunicorn to v23. PR [#1306](https://github.com/fastapilabs/cloud/pull/1306) by [@renovate[bot]](https://github.com/apps/renovate).
 * ⬆️ Update dependency tenacity to v9. PR [#1321](https://github.com/fastapilabs/cloud/pull/1321) by [@renovate[bot]](https://github.com/apps/renovate).
