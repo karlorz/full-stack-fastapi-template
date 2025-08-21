@@ -2,6 +2,7 @@ import json
 import uuid
 from unittest.mock import Mock, patch
 
+import pytest
 from fastapi.testclient import TestClient
 from redis import Redis
 from sqlmodel import Session, select
@@ -321,7 +322,10 @@ def test_upload_complete_not_member_of_team(client: TestClient, db: Session) -> 
     assert data["detail"] == "Team not found for the current user"
 
 
-def test_get_build_logs(client: TestClient, db: Session, redis: Redis) -> None:
+@pytest.mark.parametrize("build_log_type", ["complete", "failed"])
+def test_get_build_logs_streams_until_completion_or_failure(
+    client: TestClient, db: Session, redis: Redis, build_log_type: str
+) -> None:
     user = create_user(
         session=db,
         email=random_email(),
@@ -344,8 +348,13 @@ def test_get_build_logs(client: TestClient, db: Session, redis: Redis) -> None:
     )
     redis.xadd(
         redis_key,
-        {"type": "complete", "status": "success"},
+        {"type": build_log_type},
         id="1234567891",
+    )
+    redis.xadd(
+        redis_key,
+        {"type": "message", "message": "This message should not be streamed"},
+        id="1234567892",
     )
 
     user_auth_headers = user_authentication_headers(
@@ -364,14 +373,17 @@ def test_get_build_logs(client: TestClient, db: Session, redis: Redis) -> None:
     logs = [json.loads(log) for log in response.content.decode().strip().split("\n")]
     assert len(logs) == 2
 
+    assert logs[0]["type"] == "message"
     assert logs[0]["message"] == "Building image..."
-    assert logs[1]["type"] == "complete"
+    assert logs[1]["type"] == build_log_type
 
     # Clean up Redis after test
     redis.delete(redis_key)
 
 
-def test_get_build_logs_failed(client: TestClient, db: Session, redis: Redis) -> None:
+def test_get_build_logs_skips_invalid_messages(
+    client: TestClient, db: Session, redis: Redis
+) -> None:
     user = create_user(
         session=db,
         email=random_email(),
@@ -389,13 +401,18 @@ def test_get_build_logs_failed(client: TestClient, db: Session, redis: Redis) ->
     redis_key = f"build_logs:{deployment.id}"
     redis.xadd(
         redis_key,
-        {"type": "message", "message": "Building image..."},
+        {"type": "message", "message": "Valid build log message"},
         id="1234567890",
     )
     redis.xadd(
         redis_key,
-        {"type": "failed"},
+        {"type": "Not a valid build log message"},
         id="1234567891",
+    )
+    redis.xadd(
+        redis_key,
+        {"type": "complete"},
+        id="1234567892",
     )
 
     user_auth_headers = user_authentication_headers(
@@ -410,12 +427,12 @@ def test_get_build_logs_failed(client: TestClient, db: Session, redis: Redis) ->
     )
 
     assert response.status_code == 200
-    # Convert bytes to string and split by newlines to get individual log entries
     logs = [json.loads(log) for log in response.content.decode().strip().split("\n")]
     assert len(logs) == 2
 
-    assert logs[0]["message"] == "Building image..."
-    assert logs[1]["type"] == "failed"
+    assert logs[0]["type"] == "message"
+    assert logs[0]["message"] == "Valid build log message"
+    assert logs[1]["type"] == "complete"
 
     # Clean up Redis after test
     redis.delete(redis_key)
