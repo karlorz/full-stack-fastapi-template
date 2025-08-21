@@ -5,7 +5,7 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.api.deps import SessionDep
+from app.api.deps.db import SessionDep
 from app.core import security
 from app.core.config import MainSettings
 from app.core.security import get_password_hash

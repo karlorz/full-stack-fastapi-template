@@ -10,14 +10,14 @@ from pydantic import Field, TypeAdapter, ValidationError
 from sqlalchemy import func
 from sqlmodel import and_, col, select
 
-from app.api.deps import (
-    AsyncRedisDep,
-    CurrentUser,
+from app.api.deps.auth import CurrentUser
+from app.api.deps.aws import SQSDep
+from app.api.deps.db import SessionDep
+from app.api.deps.posthog import (
     PosthogDep,
     PosthogProperties,
-    SessionDep,
-    SQSDep,
 )
+from app.api.deps.redis import AsyncRedisDep
 from app.api.utils.aws_s3 import generate_presigned_url_post
 from app.api.utils.stream import stream_with_heartbeat
 from app.builder.models import BuildLog, BuildLogComplete, BuildLogFailed

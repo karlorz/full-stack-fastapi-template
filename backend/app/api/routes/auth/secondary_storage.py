@@ -1,6 +1,6 @@
 import contextlib
 
-from app.api.deps import get_redis as _get_redis
+from app.api.deps.redis import get_redis as _get_redis
 
 get_redis = contextlib.contextmanager(_get_redis)
 

@@ -6,7 +6,9 @@ from pydantic import BaseModel
 from sqlalchemy.orm import selectinload
 from sqlmodel import col, func, select
 
-from app.api.deps import CurrentUser, PosthogDep, SessionDep, get_current_user
+from app.api.deps.auth import CurrentUser, get_current_user
+from app.api.deps.db import SessionDep
+from app.api.deps.posthog import PosthogDep
 from app.api.utils.teams import generate_team_slug_name
 from app.crud import get_user_team_link
 from app.models import (

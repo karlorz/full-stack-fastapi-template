@@ -4,12 +4,9 @@ from typing import Any
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from sqlmodel import col, func, select
 
-from app.api.deps import (
-    CurrentUser,
-    PosthogDep,
-    PosthogProperties,
-    SessionDep,
-)
+from app.api.deps.auth import CurrentUser
+from app.api.deps.db import SessionDep
+from app.api.deps.posthog import PosthogDep, PosthogProperties
 from app.crud import get_user_team_link
 from app.models import (
     App,

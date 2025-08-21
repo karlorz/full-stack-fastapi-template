@@ -14,15 +14,11 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 
 from app import crud
-from app.api.deps import (
-    CurrentUser,
-    PosthogDep,
-    PosthogProperties,
-    RedisDep,
-    SessionDep,
-    rate_limit_5_per_minute,
-    rate_limit_20_per_minute,
-)
+from app.api.deps.auth import CurrentUser
+from app.api.deps.db import SessionDep
+from app.api.deps.posthog import PosthogDep, PosthogProperties
+from app.api.deps.rate_limit import rate_limit_5_per_minute, rate_limit_20_per_minute
+from app.api.deps.redis import RedisDep
 from app.core import security
 from app.core.config import MainSettings
 from app.core.exceptions import OAuth2Exception

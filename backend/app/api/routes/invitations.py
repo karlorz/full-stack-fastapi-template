@@ -6,7 +6,8 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import col, func, select
 from sqlmodel.sql.expression import SelectOfScalar
 
-from app.api.deps import CurrentUser, SessionDep
+from app.api.deps.auth import CurrentUser
+from app.api.deps.db import SessionDep
 from app.api.utils.invitations import (
     send_invitation_email,
     verify_invitation_token,

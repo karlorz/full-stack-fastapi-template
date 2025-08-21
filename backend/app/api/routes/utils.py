@@ -3,7 +3,7 @@ from typing import cast
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.api.deps import RedisDep
+from app.api.deps.redis import RedisDep
 
 router = APIRouter()
 

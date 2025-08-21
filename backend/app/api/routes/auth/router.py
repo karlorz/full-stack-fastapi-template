@@ -5,7 +5,7 @@ from fastapi_auth.social_providers.github import GitHubProvider
 from lia import AsyncHTTPRequest
 from sqlmodel import Session
 
-from app.api.deps import get_current_user
+from app.api.deps.auth import get_current_user
 from app.core import security
 from app.core.config import MainSettings
 from app.core.db import engine

@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from redis import Redis
 from sqlmodel import Session, delete
 
-from app.api.deps import get_redis
+from app.api.deps.redis import get_redis
 from app.core import security
 from app.core.config import CommonSettings, MainSettings
 from app.core.db import engine, init_db, initialize_user

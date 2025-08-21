@@ -5,7 +5,9 @@ import logfire
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from sqlmodel import col, func, select
 
-from app.api.deps import CurrentUser, PosthogDep, PosthogProperties, SessionDep
+from app.api.deps.auth import CurrentUser
+from app.api.deps.db import SessionDep
+from app.api.deps.posthog import PosthogDep, PosthogProperties
 from app.api.utils.teams import generate_app_slug_name
 from app.aws_utils import get_sqs_client
 from app.core.config import CommonSettings

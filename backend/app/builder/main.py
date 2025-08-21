@@ -26,7 +26,7 @@ from sqlalchemy.orm import joinedload
 from sqlmodel import select
 
 from app import depot_client
-from app.api.deps import ECRDep, S3Dep
+from app.api.deps.aws import ECRDep, S3Dep
 from app.builder.builder_utils import (
     SessionDep,
     get_app_namespace,

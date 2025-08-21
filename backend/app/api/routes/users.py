@@ -8,11 +8,9 @@ from pydantic.networks import EmailStr
 from sqlmodel import select
 
 from app import crud
-from app.api.deps import (
-    CurrentUser,
-    SessionDep,
-    rate_limit_5_per_minute,
-)
+from app.api.deps.auth import CurrentUser
+from app.api.deps.db import SessionDep
+from app.api.deps.rate_limit import rate_limit_5_per_minute
 from app.api.utils.teams import generate_team_slug_name
 from app.core.config import MainSettings
 from app.core.security import get_password_hash, verify_password
