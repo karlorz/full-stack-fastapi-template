@@ -40,7 +40,7 @@ dependencies = [
 
 [tool.uv]
 dev-dependencies = [
-    "pytest<8.0.0,>=7.4.3",
+    "pytest<8.5.0,>=8.4.1",
     "mypy<2.0.0,>=1.8.0",
     "ruff<1.0.0,>=0.2.2",
     "pre-commit<4.0.0,>=3.6.2",
