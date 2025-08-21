@@ -3,9 +3,15 @@ import {
   type ToOptions,
   useRouterState,
 } from "@tanstack/react-router"
-import { Home, LayoutGrid, type LucideIcon, Settings } from "lucide-react"
-import { useEffect } from "react"
-
+import {
+  Home,
+  LayoutGrid,
+  type LucideIcon,
+  Puzzle,
+  Settings,
+} from "lucide-react"
+import { useFeatureFlagEnabled } from "posthog-js/react"
+import { useEffect, useMemo } from "react"
 import logo from "@/assets/logo.svg"
 import type { TeamsPublic } from "@/client"
 import {
@@ -24,35 +30,6 @@ export type Item = {
   title: string
 } & ToOptions
 
-const getSidebarItems = ({ teamSlug }: { teamSlug: string }): Array<Item> => {
-  return [
-    {
-      icon: Home,
-      title: "Dashboard",
-      ...linkOptions({
-        to: "/$teamSlug/",
-        params: { teamSlug },
-      }),
-    },
-    {
-      icon: LayoutGrid,
-      title: "Apps",
-      ...linkOptions({
-        to: "/$teamSlug/apps",
-        params: { teamSlug },
-      }),
-    },
-    {
-      icon: Settings,
-      title: "Team Settings",
-      ...linkOptions({
-        to: "/$teamSlug/settings",
-        params: { teamSlug },
-      }),
-    },
-  ]
-}
-
 export function AppSidebar({ teams }: { teams: TeamsPublic }) {
   const currentUser = useCurrentUser()
   const matches = useRouterState({ select: (s) => s.matches })
@@ -63,13 +40,52 @@ export function AppSidebar({ teams }: { teams: TeamsPublic }) {
   const currentTeamSlug =
     team || localStorage.getItem("current_team") || personalTeam?.slug || ""
 
+  const integrationsEnabled = useFeatureFlagEnabled("integrations-enabled")
+
   useEffect(() => {
     if (currentTeamSlug) {
       localStorage.setItem("current_team", currentTeamSlug)
     }
   }, [currentTeamSlug])
 
-  const items = getSidebarItems({ teamSlug: currentTeamSlug })
+  const items = useMemo(() => {
+    return [
+      {
+        icon: Home,
+        title: "Dashboard",
+        ...linkOptions({
+          to: "/$teamSlug/",
+          params: { teamSlug: currentTeamSlug },
+        }),
+      },
+      {
+        icon: LayoutGrid,
+        title: "Apps",
+        ...linkOptions({
+          to: "/$teamSlug/apps",
+          params: { teamSlug: currentTeamSlug },
+        }),
+      },
+      integrationsEnabled
+        ? {
+            icon: Puzzle,
+            title: "Integrations",
+            ...linkOptions({
+              to: "/$teamSlug/integrations",
+              params: { teamSlug: currentTeamSlug },
+            }),
+          }
+        : null,
+      {
+        icon: Settings,
+        title: "Team Settings",
+        ...linkOptions({
+          to: "/$teamSlug/settings",
+          params: { teamSlug: currentTeamSlug },
+        }),
+      },
+    ].filter((x) => x !== null)
+  }, [currentTeamSlug, integrationsEnabled])
 
   return (
     <Sidebar collapsible="icon">

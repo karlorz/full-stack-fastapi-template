@@ -26,6 +26,7 @@ import { Route as LayoutTeamsNewRouteImport } from './routes/_layout/teams/new'
 import { Route as LayoutTeamsAllRouteImport } from './routes/_layout/teams/all'
 import { Route as LayoutTeamSlugSettingsRouteImport } from './routes/_layout/$teamSlug/settings'
 import { Route as LayoutTeamSlugNewAppRouteImport } from './routes/_layout/$teamSlug/new-app'
+import { Route as LayoutTeamSlugIntegrationsRouteImport } from './routes/_layout/$teamSlug/integrations'
 import { Route as LayoutTeamSlugAppsIndexRouteImport } from './routes/_layout/$teamSlug/apps/index'
 import { Route as LayoutTeamSlugAppsAppSlugIndexRouteImport } from './routes/_layout/$teamSlug/apps/$appSlug/index'
 import { Route as LayoutTeamSlugAppsAppSlugTabRouteImport } from './routes/_layout/$teamSlug/apps/$appSlug/$tab'
@@ -115,6 +116,12 @@ const LayoutTeamSlugNewAppRoute = LayoutTeamSlugNewAppRouteImport.update({
   path: '/$teamSlug/new-app',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutTeamSlugIntegrationsRoute =
+  LayoutTeamSlugIntegrationsRouteImport.update({
+    id: '/$teamSlug/integrations',
+    path: '/$teamSlug/integrations',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 const LayoutTeamSlugAppsIndexRoute = LayoutTeamSlugAppsIndexRouteImport.update({
   id: '/$teamSlug/apps/',
   path: '/$teamSlug/apps/',
@@ -151,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/verify-update-email': typeof VerifyUpdateEmailRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
+  '/$teamSlug/integrations': typeof LayoutTeamSlugIntegrationsRoute
   '/$teamSlug/new-app': typeof LayoutTeamSlugNewAppRoute
   '/$teamSlug/settings': typeof LayoutTeamSlugSettingsRoute
   '/teams/all': typeof LayoutTeamsAllRoute
@@ -173,6 +181,7 @@ export interface FileRoutesByTo {
   '/verify-update-email': typeof VerifyUpdateEmailRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
+  '/$teamSlug/integrations': typeof LayoutTeamSlugIntegrationsRoute
   '/$teamSlug/new-app': typeof LayoutTeamSlugNewAppRoute
   '/$teamSlug/settings': typeof LayoutTeamSlugSettingsRoute
   '/teams/all': typeof LayoutTeamsAllRoute
@@ -197,6 +206,7 @@ export interface FileRoutesById {
   '/verify-update-email': typeof VerifyUpdateEmailRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/$teamSlug/integrations': typeof LayoutTeamSlugIntegrationsRoute
   '/_layout/$teamSlug/new-app': typeof LayoutTeamSlugNewAppRoute
   '/_layout/$teamSlug/settings': typeof LayoutTeamSlugSettingsRoute
   '/_layout/teams/all': typeof LayoutTeamsAllRoute
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/verify-update-email'
     | '/settings'
     | '/'
+    | '/$teamSlug/integrations'
     | '/$teamSlug/new-app'
     | '/$teamSlug/settings'
     | '/teams/all'
@@ -243,6 +254,7 @@ export interface FileRouteTypes {
     | '/verify-update-email'
     | '/settings'
     | '/'
+    | '/$teamSlug/integrations'
     | '/$teamSlug/new-app'
     | '/$teamSlug/settings'
     | '/teams/all'
@@ -266,6 +278,7 @@ export interface FileRouteTypes {
     | '/verify-update-email'
     | '/_layout/settings'
     | '/_layout/'
+    | '/_layout/$teamSlug/integrations'
     | '/_layout/$teamSlug/new-app'
     | '/_layout/$teamSlug/settings'
     | '/_layout/teams/all'
@@ -411,6 +424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutTeamSlugNewAppRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/$teamSlug/integrations': {
+      id: '/_layout/$teamSlug/integrations'
+      path: '/$teamSlug/integrations'
+      fullPath: '/$teamSlug/integrations'
+      preLoaderRoute: typeof LayoutTeamSlugIntegrationsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/$teamSlug/apps/': {
       id: '/_layout/$teamSlug/apps/'
       path: '/$teamSlug/apps'
@@ -445,6 +465,7 @@ declare module '@tanstack/react-router' {
 interface LayoutRouteChildren {
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutTeamSlugIntegrationsRoute: typeof LayoutTeamSlugIntegrationsRoute
   LayoutTeamSlugNewAppRoute: typeof LayoutTeamSlugNewAppRoute
   LayoutTeamSlugSettingsRoute: typeof LayoutTeamSlugSettingsRoute
   LayoutTeamsAllRoute: typeof LayoutTeamsAllRoute
@@ -459,6 +480,7 @@ interface LayoutRouteChildren {
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
+  LayoutTeamSlugIntegrationsRoute: LayoutTeamSlugIntegrationsRoute,
   LayoutTeamSlugNewAppRoute: LayoutTeamSlugNewAppRoute,
   LayoutTeamSlugSettingsRoute: LayoutTeamSlugSettingsRoute,
   LayoutTeamsAllRoute: LayoutTeamsAllRoute,

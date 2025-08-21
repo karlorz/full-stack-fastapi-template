@@ -20,6 +20,12 @@ const posthogOptions: Partial<PostHogConfig> = {
   api_host: import.meta.env.VITE_APP_PUBLIC_POSTHOG_HOST,
   disable_session_recording: true,
   persistence: "memory",
+  bootstrap: {
+    featureFlags: {
+      "team-creation-enabled": false,
+      "integrations-enabled": false,
+    },
+  },
 }
 
 OpenAPI.BASE = import.meta.env.VITE_API_URL
