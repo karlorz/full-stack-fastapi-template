@@ -129,10 +129,10 @@ The tests run with Pytest, modify and add tests to `./backend/app/tests/`.
 
 If your stack is already up and you just want to run the tests, you can:
 
-* Run the DB migrations:
+Run the DB migrations:
 
 ```bash
-docker compose run backend bash scripts/prestart.sh
+docker compose exec backend bash scripts/prestart-local.sh
 ```
 
 Then run the tests:
