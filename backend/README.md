@@ -7,10 +7,10 @@
 
 ## Local Development
 
-* Start the stack with Docker Compose, everything minus the backend:
+Start the stack with Docker Compose, everything minus the backend:
 
 ```bash
-docker compose up -d db redis adminer mailcatcher
+docker compose up -d db redis nats adminer mailcatcher
 ```
 
 You can also start the frontend if you want:
@@ -114,11 +114,12 @@ If there's a syntax error, it will just stop with an error. But as the container
 
 ### Backend tests
 
-To test the backend run:
+To test the backend in your Python virtual environment run:
 
 ```bash
 source .venv/bin/activate
 cd backend
+bash scripts/prestart-local.sh
 bash scripts/test.sh
 ```
 
