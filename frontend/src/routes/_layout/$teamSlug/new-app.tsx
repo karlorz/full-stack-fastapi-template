@@ -5,38 +5,31 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import Lottie from "lottie-react"
-import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import confetti from "@/assets/confetti.json"
-import warning from "@/assets/failed.json"
-import { type ApiError, type AppCreate, AppsService } from "@/client"
-import { Button } from "@/components/ui/button"
+import { type AppCreate, AppsService } from "@/client"
 import { CustomCard } from "@/components/ui/custom-card"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { Section } from "@/components/ui/section"
+import useCustomToast from "@/hooks/useCustomToast"
 import { getTeamQueryOptions } from "@/queries/teams"
-import { extractErrorMessage } from "@/utils"
+import { handleError } from "@/utils"
 
 const formSchema = z.object({
-  name: z.string().nonempty("Name is required").min(3).max(50),
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .min(3, "Name must be at least 3 characters")
+    .max(50, "Name must be less than 50 characters"),
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -51,7 +44,7 @@ function NewApp() {
   const { teamSlug } = Route.useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [isOpen, setIsOpen] = useState(false)
+  const { showSuccessToast, showErrorToast } = useCustomToast()
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -65,13 +58,22 @@ function NewApp() {
   const mutation = useMutation({
     mutationFn: (data: AppCreate) =>
       AppsService.createApp({ requestBody: data }),
-    onSuccess: () => {
+    onSuccess: (data) => {
       form.reset()
-      setIsOpen(true)
+      showSuccessToast(
+        `App "${data.name}" created successfully! You can now start deploying your application.`,
+      )
+      setTimeout(() => {
+        navigate({
+          to: "/$teamSlug/apps/$appSlug",
+          params: {
+            teamSlug,
+            appSlug: data.slug,
+          },
+        })
+      }, 500)
     },
-    onError: () => {
-      setIsOpen(true)
-    },
+    onError: handleError.bind(showErrorToast),
     onSettled: () => queryClient.invalidateQueries(),
   })
 
@@ -79,13 +81,9 @@ function NewApp() {
     mutation.mutate({ ...data, team_id: team.id })
   }
 
-  const handleClose = () => {
-    setIsOpen(false)
-  }
-
   return (
     <Section title="New App" description="Create a new app in your team.">
-      <CustomCard title="App Name">
+      <CustomCard title="App Information">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -96,13 +94,18 @@ function NewApp() {
               name="name"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300">
+                    Name
+                  </FormLabel>
                   <FormControl>
                     <div className="flex gap-2">
                       <Input
-                        placeholder="App 1"
+                        placeholder="My Awesome App"
                         data-testid="app-name-input"
                         {...field}
                         className="w-full"
+                        autoFocus
+                        disabled={mutation.isPending}
                       />
                       <LoadingButton type="submit" loading={mutation.isPending}>
                         Create App
@@ -116,74 +119,6 @@ function NewApp() {
           </form>
         </Form>
       </CustomCard>
-
-      <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
-        <DialogContent>
-          {mutation.isSuccess ? (
-            <>
-              <DialogHeader data-testid="app-created-success">
-                <DialogTitle>App Created!</DialogTitle>
-              </DialogHeader>
-              <div className="flex justify-center">
-                <Lottie
-                  animationData={confetti}
-                  loop={false}
-                  style={{ width: 75, height: 75 }}
-                />
-              </div>
-              <DialogDescription>
-                Your app{" "}
-                <span className="font-bold">{mutation.variables?.name}</span>{" "}
-                has been created successfully. Now you can start deploying your
-                app.
-              </DialogDescription>
-              <DialogFooter>
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    setIsOpen(false)
-                    navigate({
-                      to: "/$teamSlug/apps/$appSlug",
-                      params: {
-                        teamSlug,
-                        appSlug: mutation.data?.slug,
-                      },
-                    })
-                  }}
-                >
-                  Go to App
-                </Button>
-              </DialogFooter>
-            </>
-          ) : mutation.isError ? (
-            <>
-              <DialogHeader>
-                <DialogTitle>App Creation Failed</DialogTitle>
-              </DialogHeader>
-              <div className="flex justify-center">
-                <Lottie
-                  animationData={warning}
-                  loop={false}
-                  style={{ width: 75, height: 75 }}
-                />
-              </div>
-              {mutation.error && (
-                <p className="text-destructive font-bold text-center mt-4">
-                  {extractErrorMessage(mutation.error as ApiError)}
-                </p>
-              )}
-              <DialogDescription>
-                Oops! An error occurred while creating the app. Please try again
-                later. If the issue persists, contact our support team for
-                assistance.
-              </DialogDescription>
-              <DialogFooter>
-                <Button onClick={handleClose}>Ok</Button>
-              </DialogFooter>
-            </>
-          ) : null}
-        </DialogContent>
-      </Dialog>
     </Section>
   )
 }

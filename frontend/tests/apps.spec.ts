@@ -61,7 +61,10 @@ test.describe("User can manage apps succesfully", () => {
     await page.goto(`/${team.slug}/new-app`)
     await page.getByTestId("app-name-input").fill(appName)
     await page.getByRole("button", { name: "Create App" }).click()
-    await expect(page.getByText("App created")).toBeVisible()
+    await page
+      .getByText(`App "${appName}" created successfully`)
+      .waitFor({ state: "visible" })
+    await page.waitForURL(`**/${team.slug}/apps/**`, { timeout: 5000 })
   })
 
   test("User can read all apps", async ({ page }) => {

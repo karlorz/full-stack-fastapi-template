@@ -1,17 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import Lottie from "lottie-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import emailSent from "@/assets/email.json"
-import warning from "@/assets/failed.json"
-import {
-  type ApiError,
-  type InvitationCreate,
-  InvitationsService,
-} from "@/client"
+import { type InvitationCreate, InvitationsService } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -32,13 +25,11 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
-import { extractErrorMessage } from "@/utils"
+import useCustomToast from "@/hooks/useCustomToast"
+import { handleError } from "@/utils"
 
 const invitationSchema = z.object({
-  email: z
-    .string()
-    .nonempty("Email is required")
-    .email("Invalid email address"),
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
 })
 
 type FormData = z.infer<typeof invitationSchema>
@@ -50,6 +41,7 @@ interface NewInvitationProps {
 const NewInvitation = ({ teamId }: NewInvitationProps) => {
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
+  const { showSuccessToast, showErrorToast } = useCustomToast()
 
   const form = useForm<FormData>({
     resolver: zodResolver(invitationSchema),
@@ -63,9 +55,14 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
   const mutation = useMutation({
     mutationFn: (data: InvitationCreate) =>
       InvitationsService.createInvitation({ requestBody: data }),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["invitations"] })
+      showSuccessToast(
+        `Invitation sent to ${data.email}. They just need to accept it to join your team.`,
+      )
+      handleClose()
     },
+    onError: handleError.bind(showErrorToast),
   })
 
   const onSubmit = (data: FormData) => {
@@ -87,98 +84,40 @@ const NewInvitation = ({ teamId }: NewInvitationProps) => {
       <DialogContent className="sm:max-w-md">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            {mutation.isPending || mutation.isIdle ? (
-              <>
-                <DialogHeader>
-                  <DialogTitle>Team Invitation</DialogTitle>
-                  <DialogDescription>
-                    Fill in the email address to invite someone to your team.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="email"
-                            placeholder="Email address"
-                            data-testid="invitation-email"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <DialogFooter>
-                  <LoadingButton loading={mutation.isPending} type="submit">
-                    Send Invitation
-                  </LoadingButton>
-                </DialogFooter>
-              </>
-            ) : mutation.isSuccess ? (
-              <>
-                <DialogHeader>
-                  <DialogTitle>Invitation Sent!</DialogTitle>
-                </DialogHeader>
-                <div className="flex justify-center">
-                  <Lottie
-                    animationData={emailSent}
-                    loop={false}
-                    style={{ width: 75, height: 75 }}
-                  />
-                </div>
-                <DialogDescription className="space-y-2">
-                  <p>
-                    The invitation has been sent to{" "}
-                    <span className="font-bold">{mutation.data?.email}.</span>
-                    They just need to accept it to join your team.
-                  </p>
-                  <p>
-                    You can manage invitations from your team dashboard or send
-                    another one.
-                  </p>
-                </DialogDescription>
-                <DialogFooter>
-                  <Button onClick={handleClose}>Ok</Button>
-                </DialogFooter>
-              </>
-            ) : (
-              <>
-                <DialogHeader>
-                  <DialogTitle>Invitation Failed</DialogTitle>
-                </DialogHeader>
-                <div className="flex justify-center">
-                  <Lottie
-                    animationData={warning}
-                    loop={false}
-                    style={{ width: 75, height: 75 }}
-                  />
-                </div>
-                <DialogDescription className="space-y-2">
-                  {mutation.error && (
-                    <p className="font-bold text-destructive">
-                      {extractErrorMessage(mutation.error as ApiError)}
-                    </p>
-                  )}
-                  <p>
-                    Oops! Something went wrong while sending the invitation.
-                  </p>
-                  <p className="text-sm">
-                    Please try again or double-check the information. If the
-                    problem continues, please contact our support team.
-                  </p>
-                </DialogDescription>
-                <DialogFooter>
-                  <Button onClick={handleClose}>Ok</Button>
-                </DialogFooter>
-              </>
-            )}
+            <DialogHeader>
+              <DialogTitle>Team Invitation</DialogTitle>
+              <DialogDescription>
+                Fill in the email address to invite someone to your team.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="email"
+                        placeholder="trinity@matrix.io"
+                        data-testid="invitation-email"
+                        className="w-full"
+                        autoFocus
+                        disabled={mutation.isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <DialogFooter>
+              <LoadingButton loading={mutation.isPending} type="submit">
+                Send Invitation
+              </LoadingButton>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>

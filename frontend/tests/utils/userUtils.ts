@@ -58,5 +58,8 @@ export async function createApp(page: Page, teamSlug: string, appName: string) {
   await page.goto(`/${teamSlug}/new-app`)
   await page.getByTestId("app-name-input").fill(appName)
   await page.getByRole("button", { name: "Create App" }).click()
-  await expect(page.getByTestId("app-created-success")).toBeVisible()
+  await page
+    .getByText(`App "${appName}" created successfully`)
+    .waitFor({ state: "visible" })
+  await page.waitForURL(`**/${teamSlug}/apps/**`, { timeout: 5000 })
 }

@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import Lottie from "lottie-react"
 import { useState } from "react"
 
-import group from "@/assets/group.json"
 import { type InvitationPublic, InvitationsService } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
@@ -75,11 +73,6 @@ const AcceptInvitation = ({ token, invitation }: AcceptInvitationProps) => {
               <DialogTitle>Invitation Accepted!</DialogTitle>
             </DialogHeader>
             <div className="flex flex-col items-center space-y-4">
-              <Lottie
-                animationData={group}
-                loop={false}
-                style={{ width: 75, height: 75 }}
-              />
               <DialogDescription>
                 You are now a member of{" "}
                 <span className="font-bold">{invitation?.team.name}</span>. Now

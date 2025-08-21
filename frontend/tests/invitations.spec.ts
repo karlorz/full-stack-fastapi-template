@@ -22,9 +22,9 @@ test.describe("User with role admin can manage team invitations", () => {
     })
     await sendInvitation(page, team.slug, email)
 
-    await expect(
-      page.getByText(`The invitation has been sent to ${email}`),
-    ).toBeVisible()
+    await page
+      .getByText(`Invitation sent to ${email}`)
+      .waitFor({ state: "visible" })
   })
 
   test("User can see the invitation in the invitations list", async ({
@@ -39,7 +39,11 @@ test.describe("User with role admin can manage team invitations", () => {
     })
 
     await sendInvitation(page, team.slug, email)
-    await page.getByRole("button", { name: "Ok" }).click()
+
+    await page.getByText(/Invitation sent to/).waitFor({ state: "visible" })
+    await page
+      .getByText(/Invitation sent to/)
+      .waitFor({ state: "hidden", timeout: 10000 })
     await page.getByRole("tab", { name: "Pending" }).click()
     await expect(page.getByRole("cell", { name: email })).toBeVisible()
     await expect(page.getByRole("cell", { name: "pending" })).toBeVisible()
@@ -54,7 +58,11 @@ test.describe("User with role admin can manage team invitations", () => {
       ownerId: process.env.USER_ID!,
     })
     await sendInvitation(page, team.slug, email)
-    await page.getByRole("button", { name: "Ok" }).click()
+
+    await page.getByText(/Invitation sent to/).waitFor({ state: "visible" })
+    await page
+      .getByText(/Invitation sent to/)
+      .waitFor({ state: "hidden", timeout: 10000 })
     await page.getByRole("tab", { name: "Pending" }).click()
     await page.getByTestId("cancel-invitation").click()
     await expect(page.getByText("The invitation was cancelled")).toBeVisible()
@@ -125,7 +133,11 @@ test.describe("User can accept invitations to a team", () => {
     await logInUser(page, user1Email, "password")
     await page.goto(`/${team.slug}`)
     await sendInvitation(page, team.slug, user2Email)
-    await page.getByRole("button", { name: "Ok" }).click()
+
+    await page.getByText(/Invitation sent to/).waitFor({ state: "visible" })
+    await page
+      .getByText(/Invitation sent to/)
+      .waitFor({ state: "hidden", timeout: 10000 })
     await logOutUser(page)
 
     // user 2 logs in and accepts the invitation
@@ -184,7 +196,11 @@ test.describe("Different scenarios for viewing invitations", () => {
     await logInUser(page, user1Email, "password")
     await page.goto(`/${team.slug}`)
     await sendInvitation(page, team.slug, user2Email)
-    await page.getByRole("button", { name: "Ok" }).click()
+
+    await page.getByText(/Invitation sent to/).waitFor({ state: "visible" })
+    await page
+      .getByText(/Invitation sent to/)
+      .waitFor({ state: "hidden", timeout: 10000 })
     await logOutUser(page)
 
     // view invitation logged out
@@ -209,7 +225,11 @@ test.describe("Different scenarios for viewing invitations", () => {
     await logInUser(page, user1Email, "password")
     await page.goto(`/${team.slug}`)
     await sendInvitation(page, team.slug, user2Email)
-    await page.getByRole("button", { name: "Ok" }).click()
+
+    await page.getByText(/Invitation sent to/).waitFor({ state: "visible" })
+    await page
+      .getByText(/Invitation sent to/)
+      .waitFor({ state: "hidden", timeout: 10000 })
     await logOutUser(page)
 
     // user 3 logs in and tries to view the invitation
