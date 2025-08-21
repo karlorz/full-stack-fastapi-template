@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react"
 
 type Theme = "dark" | "light" | "system"
 
@@ -30,12 +36,12 @@ export function ThemeProvider({
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme,
   )
 
-  useEffect(() => {
+  const updateTheme = useCallback((newTheme: Theme) => {
     const root = window.document.documentElement
 
     root.classList.remove("light", "dark")
 
-    if (theme === "system") {
+    if (newTheme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
         ? "dark"
@@ -45,8 +51,26 @@ export function ThemeProvider({
       return
     }
 
-    root.classList.add(theme)
-  }, [theme])
+    root.classList.add(newTheme)
+  }, [])
+
+  useEffect(() => {
+    updateTheme(theme)
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+
+    const handleChange = () => {
+      if (theme === "system") {
+        updateTheme("system")
+      }
+    }
+
+    mediaQuery.addEventListener("change", handleChange)
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange)
+    }
+  }, [theme, updateTheme])
 
   const value = {
     theme,
