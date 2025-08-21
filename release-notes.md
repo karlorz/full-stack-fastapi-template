@@ -228,6 +228,7 @@
 
 ### Refactors
 
+* ♻️ Simplify creation flow for better UX. PR [#1300](https://github.com/fastapilabs/cloud/pull/1300) by [@alejsdev](https://github.com/alejsdev).
 * ♻️  Guarantee exhaustive literal value handling. PR [#1340](https://github.com/fastapilabs/cloud/pull/1340) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️ Add single source of truth for s3 object key. PR [#1326](https://github.com/fastapilabs/cloud/pull/1326) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️  Refactor deps into multiple files. PR [#1333](https://github.com/fastapilabs/cloud/pull/1333) by [@patrick91](https://github.com/patrick91).
