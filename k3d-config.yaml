@@ -1,0 +1,30 @@
+apiVersion: k3d.io/v1alpha3
+kind: Simple
+name: knative
+# servers: 1
+# agents: 3
+image: rancher/k3s:v1.33.3-k3s1
+ports:
+  - port: 80:80 # same as `--port '8080:80@loadbalancer'`
+  - port: 443:443
+#     nodeFilters:
+#       - loadbalancer
+# env:
+#   - envVar: bar=baz # same as `--env 'bar=baz@server:0'`
+#     nodeFilters:
+#       - server:0
+registries:
+  create:
+    name: registry.kind.local
+    hostPort: "5000"
+  config: |
+    mirrors:
+      "localhost:5000":
+        endpoint:
+          - "http://registry.kind.local:5000"
+options:
+  k3s:
+    extraArgs:
+      - arg: --disable=traefik
+        nodeFilters:
+          - server:0

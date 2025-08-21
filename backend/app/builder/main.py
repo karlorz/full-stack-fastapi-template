@@ -8,7 +8,7 @@ from collections.abc import Generator
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, assert_never
 
 import logfire
 import redis
@@ -447,7 +447,7 @@ def get_full_image_name(image_tag: str) -> str:
     if builder_settings.ECR_REGISTRY_URL:
         return f"{builder_settings.ECR_REGISTRY_URL}/{image_tag}"
     if common_settings.ENVIRONMENT == "local":
-        return f"localhost:5001/{image_tag}"
+        return f"registry.kind.local:5000/{image_tag}"
     return image_tag
 
 
@@ -494,6 +494,31 @@ def _subprocess_stream(
 
     if status is not None and status != 0:
         raise subprocess.CalledProcessError(status, process.args)
+
+
+def buildkit_build_exec(
+    *,
+    context_dir: Path,
+    image_full_name: str,
+) -> Generator[str, None, None]:
+    if not builder_settings.BUILDKIT_URL:
+        raise ValueError("BUILDKIT_URL must be set when BUILD_TOOL is buildkit")
+    yield from _subprocess_stream(
+        [
+            "buildctl",
+            "--addr",
+            builder_settings.BUILDKIT_URL,
+            "build",
+            "--frontend",
+            "dockerfile.v0",
+            "--local",
+            f"context={context_dir}",
+            "--local",
+            f"dockerfile={context_dir}",
+            "--output",
+            f"type=image,name={image_full_name},push=true,registry.insecure=true",  # TODO: use certificate
+        ]
+    )
 
 
 def depot_build_exec(
@@ -576,32 +601,42 @@ def _cleanup_line(line: str) -> str:
 def build_and_push_docker_image(
     *, full_image_tag: str, docker_context_path: str, ecr: ECRClient
 ) -> Generator[str, None, None]:
-    depot_settings = DepotSettings.get_settings()
-
-    build_request = _create_build(depot_client.build(), depot_settings)
-
-    logfire.info(f"Build request created: {build_request.build_id}")
-
-    yield from depot_build_exec(
-        context_dir=Path(docker_context_path),
-        image_full_name=full_image_tag,
-        # TODO: one project per app
-        project_id=depot_settings.DEPOT_PROJECT_ID,
-        build_id=build_request.build_id,
-        build_token=build_request.build_token,
-        ecr=ecr,
-    )
-
-    logfire.info(f"Build request completed: {build_request.build_id}")
-
-    if common_settings.ENVIRONMENT == "local":
-        # Save to local registry so Knative can use it
-        local_result = subprocess.run(
-            ["docker", "push", full_image_tag],
-            check=True,
-            capture_output=True,
+    if builder_settings.BUILD_TOOL == "buildkit":
+        yield from buildkit_build_exec(
+            context_dir=Path(docker_context_path),
+            image_full_name=full_image_tag,
         )
-        print(local_result.stdout)  # noqa: T201 - this is only for local development
+
+    elif builder_settings.BUILD_TOOL == "depot":
+        depot_settings = DepotSettings.get_settings()
+        build_request = _create_build(depot_client.build(), depot_settings)
+
+        logfire.info(f"Build request created: {build_request.build_id}")
+
+        yield from depot_build_exec(
+            context_dir=Path(docker_context_path),
+            image_full_name=full_image_tag,
+            # TODO: one project per app
+            project_id=depot_settings.DEPOT_PROJECT_ID,
+            build_id=build_request.build_id,
+            build_token=build_request.build_token,
+            ecr=ecr,
+        )
+
+        logfire.info(f"Build request completed: {build_request.build_id}")
+
+        if common_settings.ENVIRONMENT == "local":
+            # Save to local registry so Knative can use it
+            local_result = subprocess.run(
+                ["docker", "push", full_image_tag],
+                check=True,
+                capture_output=True,
+            )
+
+            print(local_result.stdout.decode("utf-8"))  # noqa: T201
+
+    else:
+        assert_never(builder_settings.BUILD_TOOL)
 
 
 def get_env_vars(app_id: uuid.UUID, session: SessionDep) -> dict[str, str]:

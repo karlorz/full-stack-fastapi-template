@@ -1,0 +1,28 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: fastapicloud
+  labels:
+    networking.knative.dev/visibility: cluster-local
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "1"
+    spec:
+      containers:
+        - name: frontend
+          image: frontend
+          ports:
+            - containerPort: 5173
+          # securityContext:
+          #   runAsUser: 1000
+          #   runAsGroup: 1000
+          #   readOnlyRootFilesystem: false
+          env:
+            - name: VITE_API_URL
+              value: https://api.localfastapicloud.com
+            - name: __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS
+              value: dashboard.localfastapicloud.com

@@ -114,6 +114,21 @@ class CommonSettings(SettingsEnv):
             return f"http://{self.LOCALSTACK_HOST_NAME}:4566"
         return None
 
+    @property
+    def is_local_stack_enabled(self) -> bool:
+        return bool(self.ENABLE_LOCALSTACK and self.LOCALSTACK_HOST_NAME)
+
+    @property
+    def nats_credentials(self) -> dict[str, str | UserString | None]:
+        if self.ENVIRONMENT == "local":
+            return {
+                "token": "logging",
+            }
+
+        return {
+            "user_credentials": self.NATS_CREDS,
+        }
+
 
 class DBSettings(SettingsEnv):
     POSTGRES_SERVER: str
@@ -152,7 +167,7 @@ class MainSettings(SettingsEnv):
     DEVICE_AUTH_TTL_MINUTES: int = 5
     DEVICE_AUTH_POLL_INTERVAL_SECONDS: int = 5
 
-    FRONTEND_HOST: str = "http://localhost:5173"
+    FRONTEND_HOST: str = "https://dashboard.localfastapicloud.com"
     API_DOMAIN: str = "api.fastapicloud.site"
     TRUSTED_ORIGINS: list[str] = [
         "localhost:5173",
@@ -255,6 +270,8 @@ class BuilderSettings(SettingsEnv):
     AWS_REGION: str
     BUILDER_SENTRY_DSN: HttpUrl | None = None
     KUBERNETES_HOST: str | None = None
+    BUILDKIT_URL: str | None = None
+    BUILD_TOOL: Literal["depot", "buildkit"] = "depot"
 
 
 class MessengerSettings(SettingsEnv):

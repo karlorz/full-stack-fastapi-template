@@ -21,15 +21,13 @@ def generate_presigned_url_post(
         Key=object_name,
         ExpiresIn=expiration,
     )
-    if common_settings.ENVIRONMENT == "local":
+    if common_settings.is_local_stack_enabled:
         # LocalStack returns the URL based on its own endpoint that could be
         # inside of Docker, we need the localhost version
         url = Url(response["url"])
         assert url.host
         assert url.path
-        use_host = url.host
-        if use_host == "localstack":
-            use_host = "localhost.localstack.cloud"
+        use_host = "localhost.localstack.cloud"
         new_path = url.path.lstrip("/")
         new_url = Url.build(
             scheme=url.scheme,

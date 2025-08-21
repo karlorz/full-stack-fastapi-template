@@ -1,0 +1,19 @@
+# PostgreSQL configuration
+primary:
+  persistence:
+    size: 1Gi
+  resources:
+    limits:
+      memory: 512Mi
+      cpu: 500m
+    requests:
+      memory: 256Mi
+      cpu: 250m
+
+auth:
+  enablePostgresUser: true
+  postgresPassword: postgres  # Don't use this in production!
+  database: fastapicloud
+
+# For development environment
+architecture: standalone

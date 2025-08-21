@@ -1,0 +1,94 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: builder
+  namespace: fastapicloud
+  labels:
+    networking.knative.dev/visibility: cluster-local
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "1"
+    spec:
+      serviceAccountName: fastapicloud
+      containers:
+      - image: builder
+        ports:
+        - containerPort: 8001
+          protocol: TCP
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          readOnlyRootFilesystem: false
+          # privileged: true
+          # runAsUser: 0
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+        env:
+          - name: POSTGRES_SERVER
+            value: postgresql.services.svc.cluster.local
+          - name: REDIS_SERVER
+            value: redis-master.services.svc.cluster.local
+          - name: LOCALSTACK_HOST_NAME
+            value: localstack.services.svc.cluster.local
+          - name: BUILDER_API_URL
+            value: http://builder.fastapicloud.svc.cluster.local
+          - name: KUBERNETES_HOST
+            value: https://kubernetes.default.svc
+          - name: AWS_ACCESS_KEY_ID
+            value: "test"
+          - name: AWS_SECRET_ACCESS_KEY
+            value: "test"
+          - name: AWS_REGION
+            value: "us-east-1"
+          - name: LOCALSTACK_ENDPOINT
+            value: "http://localstack.services.svc.cluster.local:4566"
+          - name: BUILDER_API_KEY
+            value: "test"
+          - name: DEPLOYMENTS_BUCKET_NAME
+            value: "fastapicloud-deployments-local"
+          - name: POSTGRES_USER
+            value: "postgres"
+          - name: POSTGRES_PASSWORD
+            value: "postgres"
+          - name: POSTGRES_DB
+            value: "fastapicloud"
+          - name: AWS_DEFAULT_REGION
+            value: "us-east-1"
+          - name: AWS_ENDPOINT_URL
+            value: "http://localstack.services.svc.cluster.local:4566"
+          - name: AWS_S3_ENDPOINT_URL
+            value: "http://localstack.services.svc.cluster.local:4566"
+          - name: AWS_USE_PATH_STYLE_ENDPOINT
+            value: "true"
+          - name: DEPOT_PROJECT_ID
+            value: "test"
+          - name: DEPOT_TOKEN
+            value: "test"
+          - name: DEPLOYMENTS_DOMAIN
+            value: "localfastapicloud.space"
+          - name: BUILD_TOOL
+            value: "buildkit"
+          - name: BUILDKIT_URL
+            value: "tcp://buildkitd.services.svc.cluster.local:1234"
+        readinessProbe:
+          httpGet:
+            path: /health-check/
+            port: 8001
+      #   volumeMounts:
+      #     - mountPath: /var/lib/docker
+      #       name: docker-graph-storage
+      #     - mountPath: /var/run/docker.sock
+      #       name: docker-socket
+      # volumes:
+      #   - name: docker-graph-storage
+      #     emptyDir: {}
+      #   - name: docker-socket
+      #     hostPath:
+      #       path: /var/run/docker.sock

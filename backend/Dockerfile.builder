@@ -33,6 +33,10 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y docker-ce-cli
 
+# Install BuildKit CLI
+RUN curl -L "https://github.com/moby/buildkit/releases/latest/download/buildkit-v0.23.2.linux-$(dpkg --print-architecture).tar.gz" \
+    | tar -xz -C /usr/local
+
 # Set up user
 RUN useradd --create-home -r user -u 1000
 # Set user by non-root ID for Knative security compatibility

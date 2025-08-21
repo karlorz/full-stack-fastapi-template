@@ -15,14 +15,18 @@ class Env(str, Enum):
 
 def main(env: Env):
     print(f"using env: {env}")
-    url = "http://localhost:8000/api/v1"
 
-    if env.value == "development":
+    if env.value == "local":
+        url = "https://api.localfastapicloud.com/api/v1"
+    elif env.value == "development":
         url = "https://api.fastapicloud.site/api/v1"
     elif env.value == "staging":
         url = "https://api.fastapicloud.work/api/v1"
     elif env.value == "production":
         url = "https://api.fastapicloud.com/api/v1"
+    else:
+        print(f"Unknown environment: {env}")
+        raise typer.Exit(1)
     new_data = {"base_api_url": url}
     new_data_json_str = json.dumps(new_data)
     config_path.write_text(new_data_json_str)

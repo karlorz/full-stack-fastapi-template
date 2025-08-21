@@ -1,0 +1,26 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: adminer
+  namespace: services
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "1"
+    spec:
+      containers:
+        - name: adminer
+          image: adminer:latest
+          ports:
+            - containerPort: 8080
+          env:
+          - name: ADMINER_DESIGN
+            value: "pepa-linha-dark"
+          # securityContext:
+          #   runAsUser: 1000
+          #   runAsGroup: 1000
+          #   readOnlyRootFilesystem: false
+          #   # privileged: true
+          #   # runAsUser: 0

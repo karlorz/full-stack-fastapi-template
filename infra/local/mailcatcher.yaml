@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailcatcher
+  namespace: services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mailcatcher
+  template:
+    metadata:
+      labels:
+        app: mailcatcher
+    spec:
+      containers:
+      - name: mailcatcher
+        image: schickling/mailcatcher:latest
+        ports:
+        - containerPort: 1080
+          name: web
+        - containerPort: 1025
+          name: smtp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailcatcher
+  namespace: services
+spec:
+  selector:
+    app: mailcatcher
+  ports:
+  - name: web
+    port: 1080
+    targetPort: 1080
+  - name: smtp
+    port: 1025
+    targetPort: 1025

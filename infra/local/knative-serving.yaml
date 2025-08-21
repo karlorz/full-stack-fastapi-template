@@ -1,0 +1,60 @@
+apiVersion: operator.knative.dev/v1beta1
+kind: KnativeServing
+metadata:
+  name: knative-serving
+  namespace: knative-serving
+spec:
+  version: "1.19.0"
+
+  # high-availability:
+  #   replicas: 3
+
+  ingress:
+    kourier:
+      enabled: true
+  config:
+    kourier:
+      disable-envoy-server-header: "true"
+      # configure default TLS cert
+      certs-secret-name: "localfastapicloud.space-tls"
+      certs-secret-namespace: "knative-serving"
+
+    network:
+      ingress-class: "kourier.ingress.networking.knative.dev"
+      domain-template: "{{.Name}}.{{.Domain}}"
+      # Configure HTTP -> HTTPS redirect
+      http-protocol: "Redirected"
+
+    domain:
+      localfastapicloud.space: ""
+
+    features:
+      # secure-pod-defaults: enabled
+      kubernetes.podspec-init-containers: enabled
+
+    # autoscaler:
+    #   stable-window: "60s"
+
+    defaults:
+      enable-service-links: "false"
+      # revision-timeout-seconds: "300"
+      # max-revision-timeout-seconds: "600"
+      # revision-response-start-timeout-seconds: "300"
+      # revision-idle-timeout-seconds: "0"  # infinite
+      # revision-cpu-request: "400m"
+      # revision-memory-request: "100M"
+      # revision-ephemeral-storage-request: "500M"
+      # revision-cpu-limit: "1000m"
+      # revision-memory-limit: "200M"
+      # revision-ephemeral-storage-limit: "750M"
+      # container-name-template: "user-container"
+      # container-concurrency: "0"
+      # container-concurrency-max-limit: "1000"
+      # allow-container-concurrency-zero: "true"
+
+    # immediately clean up any inactive Revisions
+    gc:
+      min-non-active-revisions: "0"
+      max-non-active-revisions: "0"
+      retain-since-create-time: "disabled"
+      retain-since-last-active-time: "disabled"

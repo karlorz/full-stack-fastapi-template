@@ -19,7 +19,7 @@ common_settings = CommonSettings.get_settings()
 
 
 def load_kube_config() -> None:
-    if common_settings.ENVIRONMENT == "local" or os.getenv("CI"):
+    if os.getenv("CI"):
         client_config = Configuration()
         contexts = config.list_kube_config_contexts()[0]
         knative_kind_context_name = "kind-knative"

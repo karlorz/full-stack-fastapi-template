@@ -1,0 +1,42 @@
+---
+apiVersion: networking.internal.knative.dev/v1alpha1
+kind: ClusterDomainClaim
+metadata:
+  name: api.localfastapicloud.com
+spec:
+  namespace: fastapicloud
+
+---
+apiVersion: serving.knative.dev/v1beta1
+kind: DomainMapping
+metadata:
+  name: api.localfastapicloud.com
+  namespace: fastapicloud
+spec:
+  ref:
+    name: api
+    kind: Service
+    apiVersion: serving.knative.dev/v1
+  tls:
+    secretName: localfastapicloud.com-tls
+---
+apiVersion: networking.internal.knative.dev/v1alpha1
+kind: ClusterDomainClaim
+metadata:
+  name: dashboard.localfastapicloud.com
+spec:
+  namespace: fastapicloud
+
+---
+apiVersion: serving.knative.dev/v1beta1
+kind: DomainMapping
+metadata:
+  name: dashboard.localfastapicloud.com
+  namespace: fastapicloud
+spec:
+  ref:
+    name: frontend
+    kind: Service
+    apiVersion: serving.knative.dev/v1
+  tls:
+    secretName: localfastapicloud.com-tls

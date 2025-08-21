@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messenger
+  namespace: fastapicloud
+spec:
+  selector:
+    matchLabels:
+      app: messenger
+  template:
+    metadata:
+      labels:
+        app: messenger
+    spec:
+      initContainers:
+        - name: create-sqs-queue
+          image: amazon/aws-cli:2.13.0
+          command:
+            - "/bin/bash"
+            - "-c"
+            # TODO: this as exec command?
+            - |
+              aws --endpoint-url=http://localstack.services.svc.cluster.local:4566 s3api create-bucket --bucket fastapicloud-deployments-local --region us-east-1 \
+              && aws --endpoint-url=http://localstack.services.svc.cluster.local:4566 sqs create-queue --queue-name builder-queue --attributes VisibilityTimeout=600
+          env:
+            - name: AWS_REGION
+              value: "us-east-1"
+            - name: BUILDER_QUEUE_NAME
+              value: "builder-queue"
+            - name: AWS_ACCESS_KEY_ID
+              value: "test"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "test"
+      containers:
+        - name: messenger
+          image: messenger
+          command: ["python", "-m", "app.messenger"]
+          env:
+            - name: LOGFIRE_CONSOLE
+              value: "true"
+            - name: ENABLE_LOCALSTACK
+              value: "true"
+            - name: POSTGRES_SERVER
+              value: postgresql.services.svc.cluster.local
+            - name: REDIS_SERVER
+              value: redis-master.services.svc.cluster.local
+            - name: SMTP_HOST
+              value: mailcatcher
+            - name: LOCALSTACK_HOST_NAME
+              value: localstack.services.svc.cluster.local
+            - name: BUILDER_API_URL
+              value: http://builder.fastapicloud.svc.cluster.local
+            - name: AWS_ACCESS_KEY_ID
+              value: "test"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "test"
+            - name: AWS_REGION
+              value: "us-east-1"
+            - name: AWS_DEFAULT_REGION
+              value: "us-east-1"
+            - name: BUILDER_API_KEY
+              value: "test"
+            - name: DEPLOYMENTS_BUCKET_NAME
+              value: "deployments"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "fastapicloud"
+            - name: BUILDER_QUEUE_NAME
+              value: "builder-queue"
+          envFrom:
+            - configMapRef:
+                name: messenger-config
+                optional: true
+            - secretRef:
+                name: messenger-secrets
+                optional: true
