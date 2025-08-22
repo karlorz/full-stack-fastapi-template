@@ -580,6 +580,7 @@
 
 ### Internal
 
+* ⬆️ Update dependency redis to v6. PR [#1320](https://github.com/fastapilabs/cloud/pull/1320) by [@renovate[bot]](https://github.com/apps/renovate).
 * 🐛 Fix invalid messages were reported repeatedly. PR [#1351](https://github.com/fastapilabs/cloud/pull/1351) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ✅ Test build logs route skips invalid messages. PR [#1350](https://github.com/fastapilabs/cloud/pull/1350) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ✨ Use Tilt for local development. PR [#650](https://github.com/fastapilabs/cloud/pull/650) by [@patrick91](https://github.com/patrick91).
