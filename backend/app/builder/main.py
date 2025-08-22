@@ -473,26 +473,24 @@ def download_and_extract_tar(
                     )
 
 
-def _subprocess_stream(
+def _stream_subprocess_stderr(
     command: list[str], env: dict[str, str] | None = None
 ) -> Generator[str, None, None]:
     process = subprocess.Popen(
         command,
         env=env,
-        stdout=subprocess.PIPE,
+        stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,
         text=True,
         bufsize=1,
-        universal_newlines=True,
     )
 
     if process.stderr:
         yield from process.stderr
 
-    process.wait()
-    status = process.poll()
+    status = process.wait()
 
-    if status is not None and status != 0:
+    if status != 0:
         raise subprocess.CalledProcessError(status, process.args)
 
 
@@ -503,7 +501,9 @@ def buildkit_build_exec(
 ) -> Generator[str, None, None]:
     if not builder_settings.BUILDKIT_URL:
         raise ValueError("BUILDKIT_URL must be set when BUILD_TOOL is buildkit")
-    yield from _subprocess_stream(
+
+    # The `buildctl build` command sends build logs to stderr
+    yield from _stream_subprocess_stderr(
         [
             "buildctl",
             "--addr",
@@ -549,7 +549,8 @@ def depot_build_exec(
 
         env["DEPOT_PUSH_REGISTRY_AUTH"] = ecr_token
 
-    yield from _subprocess_stream(
+    # The `depot build` command sends build logs to stderr
+    yield from _stream_subprocess_stderr(
         [
             "depot",
             "build",
