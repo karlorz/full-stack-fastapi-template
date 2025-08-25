@@ -29,7 +29,7 @@
     "@tailwindcss/vite": "^4.1.12",
     "@tanstack/react-query": "^5.80.6",
     "@tanstack/react-query-devtools": "^5.80.7",
-    "@tanstack/react-router": "^1.120.3",
+    "@tanstack/react-router": "^1.131.27",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.11.2",
     "axios": "1.11.0",
