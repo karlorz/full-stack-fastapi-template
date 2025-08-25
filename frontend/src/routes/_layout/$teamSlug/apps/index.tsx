@@ -115,13 +115,11 @@ function Apps() {
               className="flex flex-col justify-between"
               header={
                 <>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center gap-2 min-w-0">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <CardTitle className="truncate max-w-[200px] cursor-default">
-                            {app.name}
-                          </CardTitle>
+                          <CardTitle className="truncate">{app.name}</CardTitle>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="text-sm">{app.name}</p>
@@ -133,18 +131,17 @@ function Apps() {
                   {app.latest_deployment ? (
                     <Badge
                       variant="outline"
-                      className="flex my-2 w-full max-w-full text-xs items-center"
+                      className="flex my-2 w-full text-xs items-center overflow-hidden"
                     >
                       <a
                         href={app.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-2 w-full min-w-0 text-xs font-mono text-primary hover:underline"
-                        style={{ minWidth: 0 }}
+                        className="flex items-center gap-2 min-w-0 text-xs font-mono text-primary hover:underline"
                       >
                         <Link className="h-3 w-3 shrink-0" />
-                        <span className="truncate w-full">{app.url}</span>
+                        <span className="truncate">{app.url}</span>
                       </a>
                     </Badge>
                   ) : (

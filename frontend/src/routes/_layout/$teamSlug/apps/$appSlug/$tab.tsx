@@ -93,14 +93,12 @@ function AppDetail() {
                 </div>
 
                 <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                  <div className="space-y-2 p-4 rounded-lg border ">
+                  <div className="space-y-2 p-4 rounded-lg border">
                     <Label className="uppercase font-normal text-xs tracking-wide text-zinc-700 dark:text-zinc-300 mb-6">
                       App Name
                     </Label>
                     <div className="text-muted-foreground flex items-center">
-                      <span className="truncate overflow-hidden whitespace-nowrap w-full pr-2">
-                        {app.name}
-                      </span>
+                      <span className="truncate pr-2">{app.name}</span>
                     </div>
                   </div>
                   <div className="space-y-2 p-4 rounded-lg border group">
@@ -113,10 +111,10 @@ function AppDetail() {
                           href={app.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-xs font-mono text-primary hover:underline"
+                          className="flex items-center gap-2 min-w-0 text-xs font-mono text-primary hover:underline"
                         >
-                          <Link className="h-3.5 w-3.5 text-muted-foreground" />
-                          {app.url}
+                          <Link className="h-3 w-3 shrink-0 text-muted-foreground" />
+                          <span className="truncate">{app.url}</span>
                         </a>
                       </div>
                     ) : (
