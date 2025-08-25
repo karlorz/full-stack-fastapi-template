@@ -228,6 +228,7 @@
 
 ### Refactors
 
+* 🚸 Improve email invitation signup. PR [#1395](https://github.com/fastapilabs/cloud/pull/1395) by [@alejsdev](https://github.com/alejsdev).
 * ♻️  Simplify subprocess stderr streaming. PR [#1335](https://github.com/fastapilabs/cloud/pull/1335) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️ Simplify creation flow for better UX. PR [#1300](https://github.com/fastapilabs/cloud/pull/1300) by [@alejsdev](https://github.com/alejsdev).
 * ♻️  Guarantee exhaustive literal value handling. PR [#1340](https://github.com/fastapilabs/cloud/pull/1340) by [@DoctorJohn](https://github.com/DoctorJohn).
