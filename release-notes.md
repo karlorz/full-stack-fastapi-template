@@ -229,6 +229,7 @@
 
 ### Refactors
 
+* ♻️  Fix .tsx files were not type-checked. PR [#1396](https://github.com/fastapilabs/cloud/pull/1396) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 💄 Improve responsiveness and small tweaks. PR [#1393](https://github.com/fastapilabs/cloud/pull/1393) by [@alejsdev](https://github.com/alejsdev).
 * 🚸 Improve email invitation signup. PR [#1395](https://github.com/fastapilabs/cloud/pull/1395) by [@alejsdev](https://github.com/alejsdev).
 * ♻️  Simplify subprocess stderr streaming. PR [#1335](https://github.com/fastapilabs/cloud/pull/1335) by [@DoctorJohn](https://github.com/DoctorJohn).
