@@ -33,7 +33,7 @@ export const Route = createFileRoute(
         getDeploymentQueryOptions(app.id, deploymentId),
       )
     } catch (_error) {
-      throw notFound({ routeId: "/" })
+      throw notFound({ routeId: "__root__" })
     }
   },
   pendingComponent: PendingDeployment,

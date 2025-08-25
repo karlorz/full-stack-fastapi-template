@@ -36,7 +36,7 @@ export const Route = createFileRoute("/_layout/$teamSlug/apps/$appSlug/$tab")({
         getAppQueryOptions(team.id, appSlug),
       )
     } catch (_error) {
-      throw notFound({ routeId: "/" })
+      throw notFound({ routeId: "__root__" })
     }
   },
   pendingComponent: PendingApp,

@@ -71,7 +71,11 @@ export function TeamSwitcher({
               Teams
             </DropdownMenuLabel>
             {otherTeams.slice(0, 3).map((team) => (
-              <RouterLink to={`/${team.slug}`} key={team.id}>
+              <RouterLink
+                key={team.id}
+                to="/$teamSlug"
+                params={{ teamSlug: team.slug }}
+              >
                 <DropdownMenuItem className="gap-2 p-2">
                   <div className="flex items-center gap-2">
                     <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">

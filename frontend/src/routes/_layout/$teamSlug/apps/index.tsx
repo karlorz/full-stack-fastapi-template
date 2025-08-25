@@ -37,7 +37,7 @@ export const Route = createFileRoute("/_layout/$teamSlug/apps/")({
       )
       return { showEmptyState: apps.data.length === 0 }
     } catch (_error) {
-      throw notFound({ routeId: "/" })
+      throw notFound({ routeId: "__root__" })
     }
   },
   pendingComponent: PendingApps,
@@ -61,7 +61,7 @@ function Apps() {
               Get started by creating your first application. Applications are
               where you'll deploy and manage your projects.
             </p>
-            <RouterLink to="/$teamSlug/new-app">
+            <RouterLink to="/$teamSlug/new-app" params={{ teamSlug }}>
               <Button>Create Your First App</Button>
             </RouterLink>
           </div>
@@ -103,7 +103,7 @@ function Apps() {
       title="Apps"
       description="View and manage all your applications."
       action={
-        <RouterLink to="/$teamSlug/new-app">
+        <RouterLink to="/$teamSlug/new-app" params={{ teamSlug }}>
           <Button>Create App</Button>
         </RouterLink>
       }

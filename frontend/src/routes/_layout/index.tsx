@@ -17,7 +17,7 @@ function Index() {
 
   return (
     <Navigate
-      to="/$teamSlug/"
+      to="/$teamSlug"
       params={{
         teamSlug:
           localStorage.getItem("current_team") ||

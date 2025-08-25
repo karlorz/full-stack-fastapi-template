@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_layout/$teamSlug/")({
     try {
       await context.queryClient.ensureQueryData(getTeamQueryOptions(teamSlug))
     } catch {
-      throw notFound({ routeId: "/" })
+      throw notFound({ routeId: "__root__" })
     }
   },
   pendingComponent: PendingDashboard,
@@ -71,7 +71,7 @@ function Dashboard() {
               )}
             </div>
             {totalApps > 0 ? (
-              <RouterLink to={"/$teamSlug/apps"}>
+              <RouterLink to="/$teamSlug/apps" params={{ teamSlug }}>
                 <div className="h-12 w-12 rounded-full bg-gray-400/10 hover:bg-gray-400/20 transition-colors flex items-center justify-center cursor-pointer">
                   <LayoutGrid className="h-6 w-6" />
                 </div>
@@ -84,7 +84,7 @@ function Dashboard() {
           </div>
           <div className="mt-4">
             {totalApps > 0 && (
-              <RouterLink to={"/$teamSlug/apps"}>
+              <RouterLink to="/$teamSlug/apps" params={{ teamSlug }}>
                 <Button variant="outline" size="sm">
                   View Apps
                 </Button>
@@ -106,7 +106,10 @@ function Dashboard() {
               </p>
             </div>
             {lastApp ? (
-              <RouterLink to={`/$teamSlug/apps/${lastApp?.slug}`}>
+              <RouterLink
+                to="/$teamSlug/apps/$appSlug"
+                params={{ teamSlug, appSlug: lastApp.slug }}
+              >
                 <div className="h-12 w-12 rounded-full bg-gray-400/10 hover:bg-gray-400/20 transition-colors flex items-center justify-center cursor-pointer">
                   <Rocket className="h-6 w-6" />
                 </div>
@@ -119,7 +122,10 @@ function Dashboard() {
           </div>
           <div className="mt-4 flex items-center text-sm">
             {lastApp && (
-              <RouterLink to={`/$teamSlug/apps/${lastApp?.slug}`}>
+              <RouterLink
+                to="/$teamSlug/apps/$appSlug"
+                params={{ teamSlug, appSlug: lastApp.slug }}
+              >
                 <Button variant="outline" size="sm">
                   View App
                 </Button>

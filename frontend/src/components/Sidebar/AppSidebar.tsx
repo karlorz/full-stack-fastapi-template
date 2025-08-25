@@ -1,8 +1,5 @@
-import {
-  linkOptions,
-  type ToOptions,
-  useRouterState,
-} from "@tanstack/react-router"
+import type { ToOptions } from "@tanstack/react-router"
+import { linkOptions, useParams } from "@tanstack/react-router"
 import {
   Home,
   LayoutGrid,
@@ -32,13 +29,11 @@ export type Item = {
 
 export function AppSidebar({ teams }: { teams: TeamsPublic }) {
   const currentUser = useCurrentUser()
-  const matches = useRouterState({ select: (s) => s.matches })
-  const lastMatch = matches[matches.length - 1]
-  const team = lastMatch?.params.teamSlug
+  const { teamSlug } = useParams({ strict: false })
 
   const personalTeam = teams?.data.find((t) => t.is_personal_team)
   const currentTeamSlug =
-    team || localStorage.getItem("current_team") || personalTeam?.slug || ""
+    teamSlug || localStorage.getItem("current_team") || personalTeam?.slug || ""
 
   const integrationsEnabled = useFeatureFlagEnabled("integrations-enabled")
 
@@ -54,7 +49,7 @@ export function AppSidebar({ teams }: { teams: TeamsPublic }) {
         icon: Home,
         title: "Dashboard",
         ...linkOptions({
-          to: "/$teamSlug/",
+          to: "/$teamSlug",
           params: { teamSlug: currentTeamSlug },
         }),
       },
