@@ -4,6 +4,7 @@ import {
   createFileRoute,
   Link as RouterLink,
   redirect,
+  useSearch,
 } from "@tanstack/react-router"
 import { Lock, Mail, User } from "lucide-react"
 import { useState } from "react"
@@ -48,8 +49,13 @@ const formSchema = z
 
 type FormData = z.infer<typeof formSchema>
 
+const searchSchema = z.object({
+  email: z.string().optional(),
+})
+
 export const Route = createFileRoute("/signup")({
   component: SignUp,
+  validateSearch: searchSchema,
   beforeLoad: async () => {
     if (isLoggedIn()) {
       throw redirect({
@@ -60,6 +66,7 @@ export const Route = createFileRoute("/signup")({
 })
 
 function SignUp() {
+  const search = useSearch({ from: "/signup" })
   const [userEmail, setUserEmail] = useState("")
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const { signUpMutation } = useAuth()
@@ -69,7 +76,7 @@ function SignUp() {
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      email: "",
+      email: search.email || "",
       full_name: "",
       password: "",
       confirm_password: "",

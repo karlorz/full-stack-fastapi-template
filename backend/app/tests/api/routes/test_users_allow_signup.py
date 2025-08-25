@@ -73,11 +73,17 @@ def test_creates_user_when_not_found(
         email_to=email, subject=ANY, html_content=ANY
     )
 
+    call_args = send_email_mock.call_args
+    html_content = call_args.kwargs["html_content"]
+    expected_param = "signup?email=testing%40fastapilabs.com"
+    assert expected_param in html_content
+
 
 def test_succeeds_when_user_is_found(
     client: TestClient, db: Session, send_email_mock: MagicMock
 ) -> None:
-    user_in = WaitingListUserCreate(email=random_email())
+    email = "testing2@fastapilabs.com"
+    user_in = WaitingListUserCreate(email=email)
     user = crud.add_to_waiting_list(session=db, user_in=user_in)
     db.add(user)
     db.commit()
@@ -98,6 +104,11 @@ def test_succeeds_when_user_is_found(
     send_email_mock.assert_called_once_with(
         email_to=user.email, subject=ANY, html_content=ANY
     )
+
+    call_args = send_email_mock.call_args
+    html_content = call_args.kwargs["html_content"]
+    expected_param = "signup?email=testing2%40fastapilabs.com"
+    assert expected_param in html_content
 
 
 def test_fails_when_user_is_already_allowed(

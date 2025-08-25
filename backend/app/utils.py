@@ -7,6 +7,7 @@ from datetime import UTC, datetime, timedelta
 from enum import Enum
 from pathlib import Path
 from typing import Any, Literal, cast
+from urllib.parse import urlencode
 
 import emails  # type: ignore
 import jwt
@@ -382,12 +383,13 @@ def generate_waiting_list_update_email(email_to: str) -> EmailData:
 def generate_invitation_email_for_waiting_list_user(email_to: str) -> EmailData:
     settings = MainSettings.get_settings()
     subject = "Join FastAPI Cloud, you have been invited 🎉"
+    query_params = urlencode({"email": email_to})
     html_content = render_email_template(
         template_name="invited_from_waiting_list.html",
         context={
             "server_host": settings.FRONTEND_HOST,
             "email": email_to,
-            "link": f"{settings.FRONTEND_HOST}/signup",
+            "link": f"{settings.FRONTEND_HOST}/signup?{query_params}",
         },
     )
     return EmailData(html_content=html_content, subject=subject)
