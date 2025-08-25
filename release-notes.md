@@ -582,6 +582,7 @@
 
 ### Internal
 
+* ⬆ Bump @tanstack/router-vite-plugin from 1.124.0 to 1.131.27 in /frontend. PR [#1403](https://github.com/fastapilabs/cloud/pull/1403) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🔧 Let biome ignore build output files. PR [#1402](https://github.com/fastapilabs/cloud/pull/1402) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ⬆ Bump @sentry/vite-plugin from 3.5.0 to 4.1.1 in /frontend. PR [#1401](https://github.com/fastapilabs/cloud/pull/1401) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆️ Update dependency redis to v6. PR [#1320](https://github.com/fastapilabs/cloud/pull/1320) by [@renovate[bot]](https://github.com/apps/renovate).
