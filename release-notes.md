@@ -166,6 +166,7 @@
 
 ### Fixes
 
+* 🐛 Fix favicon was not showing in firefox. PR [#1405](https://github.com/fastapilabs/cloud/pull/1405) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🐛 Fix deployment details navigation. PR [#1274](https://github.com/fastapilabs/cloud/pull/1274) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Add `--no-install-project` flag to `uv sync`. PR [#858](https://github.com/fastapilabs/cloud/pull/858) by [@buurro](https://github.com/buurro).
 * ✅ Update `logged_in_client` to create a new client instead of modifying the existing one. PR [#1259](https://github.com/fastapilabs/cloud/pull/1259) by [@patrick91](https://github.com/patrick91).
