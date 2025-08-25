@@ -581,6 +581,7 @@
 
 ### Internal
 
+* ⬆ Bump @sentry/vite-plugin from 3.5.0 to 4.1.1 in /frontend. PR [#1401](https://github.com/fastapilabs/cloud/pull/1401) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆️ Update dependency redis to v6. PR [#1320](https://github.com/fastapilabs/cloud/pull/1320) by [@renovate[bot]](https://github.com/apps/renovate).
 * 🐛 Fix invalid messages were reported repeatedly. PR [#1351](https://github.com/fastapilabs/cloud/pull/1351) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ✅ Test build logs route skips invalid messages. PR [#1350](https://github.com/fastapilabs/cloud/pull/1350) by [@DoctorJohn](https://github.com/DoctorJohn).
