@@ -8,6 +8,21 @@ import {
 import { randomEmail } from "./utils/random"
 import { logInUser, logOutUser } from "./utils/userUtils"
 
+test.describe("Route Metadata", () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test("User settings route title", async ({ page }) => {
+    const email = randomEmail()
+    const password = "password"
+
+    await createUser({ email, password })
+    await logInUser(page, email, password)
+
+    await page.goto("/settings")
+    await expect(page).toHaveTitle("User Settings - FastAPI Cloud")
+  })
+})
+
 // User Information
 
 test.describe("Edit user full name and email successfully", () => {

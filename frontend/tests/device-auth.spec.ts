@@ -1,6 +1,13 @@
 import { expect, test } from "@playwright/test"
 import { requestDeviceCode } from "./utils/device"
 
+test.describe("Route Metadata", () => {
+  test("Device authorization route title", async ({ page }) => {
+    await page.goto("/device?code=12-34-56")
+    await expect(page).toHaveTitle("Device Authorization - FastAPI Cloud")
+  })
+})
+
 test("Error when code is wrong", async ({ page }) => {
   await page.goto("/device?code=12-34-56")
 

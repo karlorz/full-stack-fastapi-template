@@ -2,6 +2,13 @@ import { expect, test } from "@playwright/test"
 import { createTeam } from "./utils/privateApi"
 import { randomTeamName } from "./utils/random"
 
+test.describe("Route Metadata", () => {
+  test("Teams list route title", async ({ page }) => {
+    await page.goto("/teams/all")
+    await expect(page).toHaveTitle("All Teams - FastAPI Cloud")
+  })
+})
+
 test("All teams is visible", async ({ page }) => {
   await page.goto("/teams/all")
   await expect(page.getByRole("heading", { name: "Teams" })).toBeVisible()

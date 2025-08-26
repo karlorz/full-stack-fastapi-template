@@ -32,6 +32,13 @@ type FormData = z.infer<typeof formSchema>
 
 export const Route = createFileRoute("/_layout/teams/new")({
   component: NewTeam,
+  head: () => ({
+    meta: [
+      {
+        title: "New Team - FastAPI Cloud",
+      },
+    ],
+  }),
 })
 
 function NewTeam() {

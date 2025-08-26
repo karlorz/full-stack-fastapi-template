@@ -35,12 +35,19 @@ export const Route = createFileRoute("/_layout/$teamSlug/apps/")({
       const apps = await context.queryClient.ensureQueryData(
         getAppsQueryOptions(team.id),
       )
-      return { showEmptyState: apps.data.length === 0 }
+      return { team, showEmptyState: apps.data.length === 0 }
     } catch (_error) {
       throw notFound({ routeId: "__root__" })
     }
   },
   pendingComponent: PendingApps,
+  head: (ctx) => ({
+    meta: [
+      {
+        title: `Apps - ${ctx.loaderData?.team.name} - FastAPI Cloud`,
+      },
+    ],
+  }),
 })
 
 function Apps() {

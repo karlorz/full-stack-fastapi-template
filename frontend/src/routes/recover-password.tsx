@@ -46,6 +46,13 @@ export const Route = createFileRoute("/recover-password")({
       })
     }
   },
+  head: () => ({
+    meta: [
+      {
+        title: "Recover Password - FastAPI Cloud",
+      },
+    ],
+  }),
 })
 function RecoverPassword() {
   const { showErrorToast } = useCustomToast()

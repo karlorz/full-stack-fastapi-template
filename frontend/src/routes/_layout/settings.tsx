@@ -5,6 +5,13 @@ import { Section } from "@/components/ui/section"
 
 export const Route = createFileRoute("/_layout/settings")({
   component: UserSettings,
+  head: () => ({
+    meta: [
+      {
+        title: "User Settings - FastAPI Cloud",
+      },
+    ],
+  }),
 })
 
 function UserSettings() {

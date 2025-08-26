@@ -49,6 +49,13 @@ export const Route = createFileRoute("/login")({
       })
     }
   },
+  head: () => ({
+    meta: [
+      {
+        title: "Login - FastAPI Cloud",
+      },
+    ],
+  }),
 })
 
 function Login() {

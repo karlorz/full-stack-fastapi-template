@@ -29,14 +29,23 @@ export const Route = createFileRoute(
         getAppQueryOptions(team.id, appSlug),
       )
 
-      await context.queryClient.ensureQueryData(
+      const deployment = await context.queryClient.ensureQueryData(
         getDeploymentQueryOptions(app.id, deploymentId),
       )
+
+      return { team, app, deployment }
     } catch (_error) {
       throw notFound({ routeId: "__root__" })
     }
   },
   pendingComponent: PendingDeployment,
+  head: (ctx) => ({
+    meta: [
+      {
+        title: `Deployments - ${ctx.loaderData?.app.name} - ${ctx.loaderData?.team.name} - FastAPI Cloud`,
+      },
+    ],
+  }),
 })
 
 function DeploymentBuildLogs({ deployment }: { deployment: { id: string } }) {

@@ -20,12 +20,22 @@ export const Route = createFileRoute("/_layout/$teamSlug/")({
   component: Dashboard,
   loader: async ({ context, params: { teamSlug } }) => {
     try {
-      await context.queryClient.ensureQueryData(getTeamQueryOptions(teamSlug))
+      const team = await context.queryClient.ensureQueryData(
+        getTeamQueryOptions(teamSlug),
+      )
+      return { team }
     } catch {
       throw notFound({ routeId: "__root__" })
     }
   },
   pendingComponent: PendingDashboard,
+  head: (ctx) => ({
+    meta: [
+      {
+        title: `Dashboard - ${ctx.loaderData?.team.name} - FastAPI Cloud`,
+      },
+    ],
+  }),
 })
 
 const CurrentUser = () => {

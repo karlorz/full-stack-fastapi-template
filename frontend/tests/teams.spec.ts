@@ -3,6 +3,38 @@ import { addUserToTeam, createTeam, createUser } from "./utils/privateApi"
 import { randomEmail, randomTeamName } from "./utils/random"
 import { logInUser } from "./utils/userUtils"
 
+test.describe("Route Metadata", () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test("Team details route title", async ({ page }) => {
+    const email = randomEmail()
+    const password = "password"
+
+    const user = await createUser({ email, password })
+    await logInUser(page, email, password)
+
+    const teamName = "My Team"
+    const team = await createTeam({ name: teamName, ownerId: user.id })
+
+    await page.goto(`/${team.slug}`)
+    await expect(page).toHaveTitle("Dashboard - My Team - FastAPI Cloud")
+  })
+
+  test("Team settings route title", async ({ page }) => {
+    const email = randomEmail()
+    const password = "password"
+
+    const user = await createUser({ email, password })
+    await logInUser(page, email, password)
+
+    const teamName = "My Team"
+    const team = await createTeam({ name: teamName, ownerId: user.id })
+
+    await page.goto(`/${team.slug}/settings`)
+    await expect(page).toHaveTitle("Team Settings - My Team - FastAPI Cloud")
+  })
+})
+
 test.describe("Select and change team successfully", () => {
   test.use({ storageState: { cookies: [], origins: [] } })
 
@@ -73,7 +105,11 @@ test.describe("Admin transfer team successfully", () => {
 
     const newOwnerEmail = randomEmail()
     const newOwner = await createUser({ email: newOwnerEmail, password })
-    await addUserToTeam({ teamId: team.id, userId: newOwner.id, role: "admin" })
+    await addUserToTeam({
+      teamId: team.id,
+      userId: newOwner.id,
+      role: "admin",
+    })
 
     await logInUser(page, ownerEmail, password)
 

@@ -14,6 +14,13 @@ const verifyInput = async (page: Page, placeholder: string) => {
   await expect(input).toBeEditable()
 }
 
+test.describe("Route Metadata", () => {
+  test("Login route title", async ({ page }) => {
+    await page.goto("/login")
+    await expect(page).toHaveTitle("Login - FastAPI Cloud")
+  })
+})
+
 test("Title is visible", async ({ page }) => {
   await page.goto("/login")
 

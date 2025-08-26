@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test"
-import { createTeam, createUser } from "./utils/privateApi"
+import type { AppPublic, TeamPublic } from "@/client"
+import {
+  createApp as createAppViaApi,
+  createTeam,
+  createUser,
+} from "./utils/privateApi"
 import {
   randomAppName,
   randomEmail,
@@ -7,6 +12,61 @@ import {
   slugify,
 } from "./utils/random"
 import { createApp, logInUser } from "./utils/userUtils"
+
+test.describe("Route Metadata", () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+  let team: TeamPublic
+  let app: AppPublic
+
+  test.beforeEach(async ({ page }) => {
+    const email = randomEmail()
+    const password = "password"
+    const teamName = "My Team"
+
+    const user = await createUser({
+      email,
+      password,
+      createPersonalTeam: false,
+    })
+    team = await createTeam({
+      name: teamName,
+      ownerId: user.id,
+      isPersonalTeam: true,
+    })
+    app = await createAppViaApi({ teamId: team.id, name: "Test App" })
+
+    await logInUser(page, email, password)
+  })
+
+  test("App details general tab route title", async ({ page }) => {
+    await page.goto(`/${team.slug}/apps/${app.slug}/general`)
+    await expect(page).toHaveTitle(
+      "General - Test App - My Team - FastAPI Cloud",
+    )
+  })
+
+  test("App details configuration tab route title", async ({ page }) => {
+    await page.goto(`/${team.slug}/apps/${app.slug}/configuration`)
+    await expect(page).toHaveTitle(
+      "Configuration - Test App - My Team - FastAPI Cloud",
+    )
+  })
+
+  test("App details logs tab route title", async ({ page }) => {
+    await page.goto(`/${team.slug}/apps/${app.slug}/logs`)
+    await expect(page).toHaveTitle("Logs - Test App - My Team - FastAPI Cloud")
+  })
+
+  test("New app route title", async ({ page }) => {
+    await page.goto(`/${team.slug}/new-app`)
+    await expect(page).toHaveTitle("New App - My Team - FastAPI Cloud")
+  })
+
+  test("App list route title", async ({ page }) => {
+    await page.goto(`/${team.slug}/apps`)
+    await expect(page).toHaveTitle("Apps - My Team - FastAPI Cloud")
+  })
+})
 
 test.describe("Apps empty states", () => {
   test.use({ storageState: { cookies: [], origins: [] } })

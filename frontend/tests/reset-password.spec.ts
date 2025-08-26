@@ -6,6 +6,18 @@ import { logInUser } from "./utils/userUtils"
 
 test.use({ storageState: { cookies: [], origins: [] } })
 
+test.describe("Route Metadata", () => {
+  test("Recover password route title", async ({ page }) => {
+    await page.goto("/recover-password")
+    await expect(page).toHaveTitle("Recover Password - FastAPI Cloud")
+  })
+
+  test("Reset password route title", async ({ page }) => {
+    await page.goto("/reset-password")
+    await expect(page).toHaveTitle("Reset Password - FastAPI Cloud")
+  })
+})
+
 test("Recover Password title is visible", async ({ page }) => {
   await page.goto("/recover-password")
 

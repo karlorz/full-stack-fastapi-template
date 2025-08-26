@@ -9,6 +9,13 @@ import { Button } from "@/components/ui/button"
 
 export const Route = createFileRoute("/verify-email")({
   component: VerifyEmail,
+  head: () => ({
+    meta: [
+      {
+        title: "Verifying Email - FastAPI Cloud",
+      },
+    ],
+  }),
 })
 
 function VerifyEmail() {

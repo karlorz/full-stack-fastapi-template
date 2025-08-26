@@ -32,14 +32,28 @@ export const Route = createFileRoute("/_layout/$teamSlug/apps/$appSlug/$tab")({
         getTeamQueryOptions(teamSlug),
       )
 
-      await context.queryClient.ensureQueryData(
+      const app = await context.queryClient.ensureQueryData(
         getAppQueryOptions(team.id, appSlug),
       )
+
+      return { team, app }
     } catch (_error) {
       throw notFound({ routeId: "__root__" })
     }
   },
   pendingComponent: PendingApp,
+  head: (ctx) => {
+    const { tab } = ctx.params
+    const prettyTabName = tab.charAt(0).toUpperCase() + tab.slice(1)
+
+    return {
+      meta: [
+        {
+          title: `${prettyTabName} - ${ctx.loaderData?.app.name} - ${ctx.loaderData?.team.name} - FastAPI Cloud`,
+        },
+      ],
+    }
+  },
 })
 
 function AppDetail() {

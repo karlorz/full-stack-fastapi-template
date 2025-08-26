@@ -11,6 +11,13 @@ import { isLoggedIn } from "@/hooks/useAuth"
 export const Route = createFileRoute("/_layout/teams/all")({
   component: AllTeams,
   pendingComponent: PendingTeams,
+  head: () => ({
+    meta: [
+      {
+        title: "All Teams - FastAPI Cloud",
+      },
+    ],
+  }),
 })
 
 function AllTeams() {

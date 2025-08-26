@@ -36,8 +36,19 @@ type FormData = z.infer<typeof formSchema>
 
 export const Route = createFileRoute("/_layout/$teamSlug/new-app")({
   component: NewApp,
-  loader: ({ context, params: { teamSlug } }) =>
-    context.queryClient.ensureQueryData(getTeamQueryOptions(teamSlug)),
+  loader: async ({ context, params: { teamSlug } }) => {
+    const team = await context.queryClient.ensureQueryData(
+      getTeamQueryOptions(teamSlug),
+    )
+    return { team }
+  },
+  head: (ctx) => ({
+    meta: [
+      {
+        title: `New App - ${ctx.loaderData?.team.name} - FastAPI Cloud`,
+      },
+    ],
+  }),
 })
 
 function NewApp() {

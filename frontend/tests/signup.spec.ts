@@ -24,6 +24,23 @@ const verifyInput = async (page: Page, testID: string) => {
   await expect(input).toBeEditable()
 }
 
+test.describe("Route Metadata", () => {
+  test("Sign up route title", async ({ page }) => {
+    await page.goto("/signup")
+    await expect(page).toHaveTitle("Sign Up - FastAPI Cloud")
+  })
+
+  test("Verify email route title", async ({ page }) => {
+    await page.goto("/verify-email")
+    await expect(page).toHaveTitle("Verifying Email - FastAPI Cloud")
+  })
+
+  test("Verify update email route title", async ({ page }) => {
+    await page.goto("/verify-update-email")
+    await expect(page).toHaveTitle("Verifying Email Update - FastAPI Cloud")
+  })
+})
+
 test("Sign Up title is visible", async ({ page }) => {
   await page.goto("/signup")
 

@@ -63,6 +63,13 @@ export const Route = createFileRoute("/device")({
   loader: async ({ context, deps: { code } }) => {
     await context.queryClient.ensureQueryData(getDeviceQueryOptions(code))
   },
+  head: () => ({
+    meta: [
+      {
+        title: "Device Authorization - FastAPI Cloud",
+      },
+    ],
+  }),
 })
 
 function GoToDashboardButton() {

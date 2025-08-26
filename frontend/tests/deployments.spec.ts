@@ -10,6 +10,35 @@ import { logInUser } from "./utils/userUtils"
 
 test.use({ storageState: { cookies: [], origins: [] } })
 
+test.describe("Route Metadata", () => {
+  test("Deployment details route title", async ({ page }) => {
+    const email = randomEmail()
+    const password = "password"
+
+    const user = await createUser({
+      email,
+      password,
+      createPersonalTeam: false,
+    })
+    const team = await createTeam({
+      name: "My Team",
+      ownerId: user.id,
+      isPersonalTeam: true,
+    })
+    const app = await createApp({ teamId: team.id, name: "Test App" })
+    const deployment = await createDeployment({ appId: app.id })
+
+    await logInUser(page, email, password)
+
+    await page.goto(
+      `/${team.slug}/apps/${app.slug}/deployments/${deployment.id}`,
+    )
+    await expect(page).toHaveTitle(
+      "Deployments - Test App - My Team - FastAPI Cloud",
+    )
+  })
+})
+
 test.describe("View single deployment", () => {
   test("Shows basic info", async ({ page }) => {
     const email = randomEmail()
