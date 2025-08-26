@@ -5,6 +5,7 @@ on:
     types:
     - opened
     - synchronize
+    - ready_for_review
 
 jobs:
   changes:
@@ -30,7 +31,7 @@ jobs:
   format-frontend:
     needs:
       - changes
-    if: ${{ needs.changes.outputs.changed == 'true' }}
+    if: ${{ needs.changes.outputs.changed == 'true' && github.event.pull_request.draft == false }}
     permissions:
       contents: write
     runs-on: depot-ubuntu-22.04
