@@ -189,11 +189,6 @@ test.describe("App environment variables", () => {
     await navigateToConfiguration(page, team.slug, app.slug)
     await page.getByRole("button", { name: "Edit" }).click()
 
-    await expect(page.getByRole("button", { name: "Save Only" })).toBeVisible()
-
-    await page.getByTestId("arrow-down").click()
-    await page.getByRole("menuitem", { name: "Save and Redeploy" }).click()
-
     await expect(
       page.getByRole("button", { name: "Save and Redeploy" }),
     ).toBeVisible()
@@ -202,5 +197,12 @@ test.describe("App environment variables", () => {
     await page.getByRole("menuitem", { name: "Save Only" }).click()
 
     await expect(page.getByRole("button", { name: "Save Only" })).toBeVisible()
+
+    await page.getByTestId("arrow-down").click()
+    await page.getByRole("menuitem", { name: "Save and Redeploy" }).click()
+
+    await expect(
+      page.getByRole("button", { name: "Save and Redeploy" }),
+    ).toBeVisible()
   })
 })

@@ -226,7 +226,7 @@ const EnvironmentVariables = ({
   })
 
   const [isEditing, setIsEditing] = useState(false)
-  const [saveOption, setSaveOption] = useState<"save" | "redeploy">("save")
+  const [saveOption, setSaveOption] = useState<"save" | "redeploy">("redeploy")
 
   const initialEnvironmentVariablesCount = environmentVariables.length
   const hasEnvironmentVariables =
