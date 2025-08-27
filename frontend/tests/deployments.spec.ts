@@ -90,9 +90,7 @@ test.describe("View single deployment", () => {
 
     await page.goto(`/${team.slug}/apps/${app.slug}/logs`)
 
-    await expect(
-      page.getByRole("tab", { name: "Logs", selected: true }),
-    ).toBeVisible()
+    await expect(page.getByRole("link", { name: "Logs" })).toHaveClass(/active/)
 
     await expect(
       page.getByRole("heading", { name: "Deployments Logs" }),

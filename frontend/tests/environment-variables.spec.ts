@@ -15,9 +15,10 @@ async function navigateToConfiguration(
   teamSlug: string,
   appSlug: string,
 ) {
-  await page.goto(`/${teamSlug}/apps/${appSlug}`)
-  await expect(page.getByTestId("tabs")).toBeVisible()
-  await page.getByRole("tab", { name: "Configuration" }).click()
+  await page.goto(`/${teamSlug}/apps/${appSlug}/configuration`)
+  await expect(page.getByRole("link", { name: "Configuration" })).toHaveClass(
+    /active/,
+  )
 }
 
 async function clickSave(page: Page) {

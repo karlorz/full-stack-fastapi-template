@@ -28,8 +28,11 @@ import { Route as LayoutTeamSlugSettingsRouteImport } from './routes/_layout/$te
 import { Route as LayoutTeamSlugNewAppRouteImport } from './routes/_layout/$teamSlug/new-app'
 import { Route as LayoutTeamSlugIntegrationsRouteImport } from './routes/_layout/$teamSlug/integrations'
 import { Route as LayoutTeamSlugAppsIndexRouteImport } from './routes/_layout/$teamSlug/apps/index'
+import { Route as LayoutTeamSlugAppsAppSlugRouteImport } from './routes/_layout/$teamSlug/apps/$appSlug'
 import { Route as LayoutTeamSlugAppsAppSlugIndexRouteImport } from './routes/_layout/$teamSlug/apps/$appSlug/index'
-import { Route as LayoutTeamSlugAppsAppSlugTabRouteImport } from './routes/_layout/$teamSlug/apps/$appSlug/$tab'
+import { Route as LayoutTeamSlugAppsAppSlugLogsRouteImport } from './routes/_layout/$teamSlug/apps/$appSlug/logs'
+import { Route as LayoutTeamSlugAppsAppSlugGeneralRouteImport } from './routes/_layout/$teamSlug/apps/$appSlug/general'
+import { Route as LayoutTeamSlugAppsAppSlugConfigurationRouteImport } from './routes/_layout/$teamSlug/apps/$appSlug/configuration'
 import { Route as LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRouteImport } from './routes/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId'
 
 const VerifyUpdateEmailRoute = VerifyUpdateEmailRouteImport.update({
@@ -127,23 +130,41 @@ const LayoutTeamSlugAppsIndexRoute = LayoutTeamSlugAppsIndexRouteImport.update({
   path: '/$teamSlug/apps/',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutTeamSlugAppsAppSlugIndexRoute =
-  LayoutTeamSlugAppsAppSlugIndexRouteImport.update({
-    id: '/$teamSlug/apps/$appSlug/',
-    path: '/$teamSlug/apps/$appSlug/',
+const LayoutTeamSlugAppsAppSlugRoute =
+  LayoutTeamSlugAppsAppSlugRouteImport.update({
+    id: '/$teamSlug/apps/$appSlug',
+    path: '/$teamSlug/apps/$appSlug',
     getParentRoute: () => LayoutRoute,
   } as any)
-const LayoutTeamSlugAppsAppSlugTabRoute =
-  LayoutTeamSlugAppsAppSlugTabRouteImport.update({
-    id: '/$teamSlug/apps/$appSlug/$tab',
-    path: '/$teamSlug/apps/$appSlug/$tab',
-    getParentRoute: () => LayoutRoute,
+const LayoutTeamSlugAppsAppSlugIndexRoute =
+  LayoutTeamSlugAppsAppSlugIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => LayoutTeamSlugAppsAppSlugRoute,
+  } as any)
+const LayoutTeamSlugAppsAppSlugLogsRoute =
+  LayoutTeamSlugAppsAppSlugLogsRouteImport.update({
+    id: '/logs',
+    path: '/logs',
+    getParentRoute: () => LayoutTeamSlugAppsAppSlugRoute,
+  } as any)
+const LayoutTeamSlugAppsAppSlugGeneralRoute =
+  LayoutTeamSlugAppsAppSlugGeneralRouteImport.update({
+    id: '/general',
+    path: '/general',
+    getParentRoute: () => LayoutTeamSlugAppsAppSlugRoute,
+  } as any)
+const LayoutTeamSlugAppsAppSlugConfigurationRoute =
+  LayoutTeamSlugAppsAppSlugConfigurationRouteImport.update({
+    id: '/configuration',
+    path: '/configuration',
+    getParentRoute: () => LayoutTeamSlugAppsAppSlugRoute,
   } as any)
 const LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute =
   LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRouteImport.update({
-    id: '/$teamSlug/apps/$appSlug/deployments/$deploymentId',
-    path: '/$teamSlug/apps/$appSlug/deployments/$deploymentId',
-    getParentRoute: () => LayoutRoute,
+    id: '/deployments/$deploymentId',
+    path: '/deployments/$deploymentId',
+    getParentRoute: () => LayoutTeamSlugAppsAppSlugRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -164,9 +185,12 @@ export interface FileRoutesByFullPath {
   '/teams/all': typeof LayoutTeamsAllRoute
   '/teams/new': typeof LayoutTeamsNewRoute
   '/$teamSlug': typeof LayoutTeamSlugIndexRoute
+  '/$teamSlug/apps/$appSlug': typeof LayoutTeamSlugAppsAppSlugRouteWithChildren
   '/$teamSlug/apps': typeof LayoutTeamSlugAppsIndexRoute
-  '/$teamSlug/apps/$appSlug/$tab': typeof LayoutTeamSlugAppsAppSlugTabRoute
-  '/$teamSlug/apps/$appSlug': typeof LayoutTeamSlugAppsAppSlugIndexRoute
+  '/$teamSlug/apps/$appSlug/configuration': typeof LayoutTeamSlugAppsAppSlugConfigurationRoute
+  '/$teamSlug/apps/$appSlug/general': typeof LayoutTeamSlugAppsAppSlugGeneralRoute
+  '/$teamSlug/apps/$appSlug/logs': typeof LayoutTeamSlugAppsAppSlugLogsRoute
+  '/$teamSlug/apps/$appSlug/': typeof LayoutTeamSlugAppsAppSlugIndexRoute
   '/$teamSlug/apps/$appSlug/deployments/$deploymentId': typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute
 }
 export interface FileRoutesByTo {
@@ -188,7 +212,9 @@ export interface FileRoutesByTo {
   '/teams/new': typeof LayoutTeamsNewRoute
   '/$teamSlug': typeof LayoutTeamSlugIndexRoute
   '/$teamSlug/apps': typeof LayoutTeamSlugAppsIndexRoute
-  '/$teamSlug/apps/$appSlug/$tab': typeof LayoutTeamSlugAppsAppSlugTabRoute
+  '/$teamSlug/apps/$appSlug/configuration': typeof LayoutTeamSlugAppsAppSlugConfigurationRoute
+  '/$teamSlug/apps/$appSlug/general': typeof LayoutTeamSlugAppsAppSlugGeneralRoute
+  '/$teamSlug/apps/$appSlug/logs': typeof LayoutTeamSlugAppsAppSlugLogsRoute
   '/$teamSlug/apps/$appSlug': typeof LayoutTeamSlugAppsAppSlugIndexRoute
   '/$teamSlug/apps/$appSlug/deployments/$deploymentId': typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute
 }
@@ -212,8 +238,11 @@ export interface FileRoutesById {
   '/_layout/teams/all': typeof LayoutTeamsAllRoute
   '/_layout/teams/new': typeof LayoutTeamsNewRoute
   '/_layout/$teamSlug/': typeof LayoutTeamSlugIndexRoute
+  '/_layout/$teamSlug/apps/$appSlug': typeof LayoutTeamSlugAppsAppSlugRouteWithChildren
   '/_layout/$teamSlug/apps/': typeof LayoutTeamSlugAppsIndexRoute
-  '/_layout/$teamSlug/apps/$appSlug/$tab': typeof LayoutTeamSlugAppsAppSlugTabRoute
+  '/_layout/$teamSlug/apps/$appSlug/configuration': typeof LayoutTeamSlugAppsAppSlugConfigurationRoute
+  '/_layout/$teamSlug/apps/$appSlug/general': typeof LayoutTeamSlugAppsAppSlugGeneralRoute
+  '/_layout/$teamSlug/apps/$appSlug/logs': typeof LayoutTeamSlugAppsAppSlugLogsRoute
   '/_layout/$teamSlug/apps/$appSlug/': typeof LayoutTeamSlugAppsAppSlugIndexRoute
   '/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId': typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute
 }
@@ -237,9 +266,12 @@ export interface FileRouteTypes {
     | '/teams/all'
     | '/teams/new'
     | '/$teamSlug'
-    | '/$teamSlug/apps'
-    | '/$teamSlug/apps/$appSlug/$tab'
     | '/$teamSlug/apps/$appSlug'
+    | '/$teamSlug/apps'
+    | '/$teamSlug/apps/$appSlug/configuration'
+    | '/$teamSlug/apps/$appSlug/general'
+    | '/$teamSlug/apps/$appSlug/logs'
+    | '/$teamSlug/apps/$appSlug/'
     | '/$teamSlug/apps/$appSlug/deployments/$deploymentId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -261,7 +293,9 @@ export interface FileRouteTypes {
     | '/teams/new'
     | '/$teamSlug'
     | '/$teamSlug/apps'
-    | '/$teamSlug/apps/$appSlug/$tab'
+    | '/$teamSlug/apps/$appSlug/configuration'
+    | '/$teamSlug/apps/$appSlug/general'
+    | '/$teamSlug/apps/$appSlug/logs'
     | '/$teamSlug/apps/$appSlug'
     | '/$teamSlug/apps/$appSlug/deployments/$deploymentId'
   id:
@@ -284,8 +318,11 @@ export interface FileRouteTypes {
     | '/_layout/teams/all'
     | '/_layout/teams/new'
     | '/_layout/$teamSlug/'
+    | '/_layout/$teamSlug/apps/$appSlug'
     | '/_layout/$teamSlug/apps/'
-    | '/_layout/$teamSlug/apps/$appSlug/$tab'
+    | '/_layout/$teamSlug/apps/$appSlug/configuration'
+    | '/_layout/$teamSlug/apps/$appSlug/general'
+    | '/_layout/$teamSlug/apps/$appSlug/logs'
     | '/_layout/$teamSlug/apps/$appSlug/'
     | '/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId'
   fileRoutesById: FileRoutesById
@@ -438,29 +475,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutTeamSlugAppsIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/$teamSlug/apps/$appSlug/': {
-      id: '/_layout/$teamSlug/apps/$appSlug/'
+    '/_layout/$teamSlug/apps/$appSlug': {
+      id: '/_layout/$teamSlug/apps/$appSlug'
       path: '/$teamSlug/apps/$appSlug'
       fullPath: '/$teamSlug/apps/$appSlug'
-      preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugIndexRouteImport
+      preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/$teamSlug/apps/$appSlug/$tab': {
-      id: '/_layout/$teamSlug/apps/$appSlug/$tab'
-      path: '/$teamSlug/apps/$appSlug/$tab'
-      fullPath: '/$teamSlug/apps/$appSlug/$tab'
-      preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugTabRouteImport
-      parentRoute: typeof LayoutRoute
+    '/_layout/$teamSlug/apps/$appSlug/': {
+      id: '/_layout/$teamSlug/apps/$appSlug/'
+      path: '/'
+      fullPath: '/$teamSlug/apps/$appSlug/'
+      preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugIndexRouteImport
+      parentRoute: typeof LayoutTeamSlugAppsAppSlugRoute
+    }
+    '/_layout/$teamSlug/apps/$appSlug/logs': {
+      id: '/_layout/$teamSlug/apps/$appSlug/logs'
+      path: '/logs'
+      fullPath: '/$teamSlug/apps/$appSlug/logs'
+      preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugLogsRouteImport
+      parentRoute: typeof LayoutTeamSlugAppsAppSlugRoute
+    }
+    '/_layout/$teamSlug/apps/$appSlug/general': {
+      id: '/_layout/$teamSlug/apps/$appSlug/general'
+      path: '/general'
+      fullPath: '/$teamSlug/apps/$appSlug/general'
+      preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugGeneralRouteImport
+      parentRoute: typeof LayoutTeamSlugAppsAppSlugRoute
+    }
+    '/_layout/$teamSlug/apps/$appSlug/configuration': {
+      id: '/_layout/$teamSlug/apps/$appSlug/configuration'
+      path: '/configuration'
+      fullPath: '/$teamSlug/apps/$appSlug/configuration'
+      preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugConfigurationRouteImport
+      parentRoute: typeof LayoutTeamSlugAppsAppSlugRoute
     }
     '/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId': {
       id: '/_layout/$teamSlug/apps/$appSlug/deployments/$deploymentId'
-      path: '/$teamSlug/apps/$appSlug/deployments/$deploymentId'
+      path: '/deployments/$deploymentId'
       fullPath: '/$teamSlug/apps/$appSlug/deployments/$deploymentId'
       preLoaderRoute: typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRouteImport
-      parentRoute: typeof LayoutRoute
+      parentRoute: typeof LayoutTeamSlugAppsAppSlugRoute
     }
   }
 }
+
+interface LayoutTeamSlugAppsAppSlugRouteChildren {
+  LayoutTeamSlugAppsAppSlugConfigurationRoute: typeof LayoutTeamSlugAppsAppSlugConfigurationRoute
+  LayoutTeamSlugAppsAppSlugGeneralRoute: typeof LayoutTeamSlugAppsAppSlugGeneralRoute
+  LayoutTeamSlugAppsAppSlugLogsRoute: typeof LayoutTeamSlugAppsAppSlugLogsRoute
+  LayoutTeamSlugAppsAppSlugIndexRoute: typeof LayoutTeamSlugAppsAppSlugIndexRoute
+  LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute: typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute
+}
+
+const LayoutTeamSlugAppsAppSlugRouteChildren: LayoutTeamSlugAppsAppSlugRouteChildren =
+  {
+    LayoutTeamSlugAppsAppSlugConfigurationRoute:
+      LayoutTeamSlugAppsAppSlugConfigurationRoute,
+    LayoutTeamSlugAppsAppSlugGeneralRoute:
+      LayoutTeamSlugAppsAppSlugGeneralRoute,
+    LayoutTeamSlugAppsAppSlugLogsRoute: LayoutTeamSlugAppsAppSlugLogsRoute,
+    LayoutTeamSlugAppsAppSlugIndexRoute: LayoutTeamSlugAppsAppSlugIndexRoute,
+    LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute:
+      LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute,
+  }
+
+const LayoutTeamSlugAppsAppSlugRouteWithChildren =
+  LayoutTeamSlugAppsAppSlugRoute._addFileChildren(
+    LayoutTeamSlugAppsAppSlugRouteChildren,
+  )
 
 interface LayoutRouteChildren {
   LayoutSettingsRoute: typeof LayoutSettingsRoute
@@ -471,10 +554,8 @@ interface LayoutRouteChildren {
   LayoutTeamsAllRoute: typeof LayoutTeamsAllRoute
   LayoutTeamsNewRoute: typeof LayoutTeamsNewRoute
   LayoutTeamSlugIndexRoute: typeof LayoutTeamSlugIndexRoute
+  LayoutTeamSlugAppsAppSlugRoute: typeof LayoutTeamSlugAppsAppSlugRouteWithChildren
   LayoutTeamSlugAppsIndexRoute: typeof LayoutTeamSlugAppsIndexRoute
-  LayoutTeamSlugAppsAppSlugTabRoute: typeof LayoutTeamSlugAppsAppSlugTabRoute
-  LayoutTeamSlugAppsAppSlugIndexRoute: typeof LayoutTeamSlugAppsAppSlugIndexRoute
-  LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute: typeof LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
@@ -486,11 +567,8 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutTeamsAllRoute: LayoutTeamsAllRoute,
   LayoutTeamsNewRoute: LayoutTeamsNewRoute,
   LayoutTeamSlugIndexRoute: LayoutTeamSlugIndexRoute,
+  LayoutTeamSlugAppsAppSlugRoute: LayoutTeamSlugAppsAppSlugRouteWithChildren,
   LayoutTeamSlugAppsIndexRoute: LayoutTeamSlugAppsIndexRoute,
-  LayoutTeamSlugAppsAppSlugTabRoute: LayoutTeamSlugAppsAppSlugTabRoute,
-  LayoutTeamSlugAppsAppSlugIndexRoute: LayoutTeamSlugAppsAppSlugIndexRoute,
-  LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute:
-    LayoutTeamSlugAppsAppSlugDeploymentsDeploymentIdRoute,
 }
 
 const LayoutRouteWithChildren =
