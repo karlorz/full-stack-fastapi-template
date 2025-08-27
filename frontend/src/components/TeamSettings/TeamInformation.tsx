@@ -33,7 +33,10 @@ import DeleteConfirmation from "./DeleteConfirmation"
 import TransferTeam from "./TransferTeam"
 
 const formSchema = z.object({
-  name: z.string().nonempty("Name is required").min(3).max(50),
+  name: z
+    .string()
+    .min(3, { error: "Name must be at least 3 characters" })
+    .max(50, { error: "Name must be less than 50 characters" }),
 })
 
 type FormData = z.infer<typeof formSchema>

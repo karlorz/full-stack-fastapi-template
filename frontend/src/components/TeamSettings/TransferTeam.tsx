@@ -53,12 +53,12 @@ interface TransferTeamProps {
 
 const formSchema = (teamSlug: string) =>
   z.object({
-    userId: z.string().min(1, "Please select a user"),
+    userId: z.string().min(1, { error: "Please select a user" }),
     confirmation: z
       .string()
-      .min(1, "Field is required")
+      .min(1, { error: "Field is required" })
       .refine((value) => value === `transfer team ${teamSlug}`, {
-        message: "Confirmation does not match",
+        error: "Confirmation does not match",
       }),
   })
 

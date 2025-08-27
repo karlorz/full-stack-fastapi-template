@@ -27,9 +27,8 @@ import { handleError } from "@/utils"
 const formSchema = z.object({
   name: z
     .string()
-    .min(1, "Name is required")
-    .min(3, "Name must be at least 3 characters")
-    .max(50, "Name must be less than 50 characters"),
+    .min(3, { error: "Name must be at least 3 characters" })
+    .max(50, { error: "Name must be less than 50 characters" }),
 })
 
 type FormData = z.infer<typeof formSchema>

@@ -38,9 +38,9 @@ const formSchema = (appSlug: string) =>
   z.object({
     confirmation: z
       .string()
-      .min(1, "Field is required")
+      .min(1, { error: "Field is required" })
       .refine((value) => value === `delete app ${appSlug}`, {
-        message: "Confirmation does not match",
+        error: "Confirmation does not match",
       }),
   })
 

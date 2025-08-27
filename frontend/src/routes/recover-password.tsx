@@ -29,10 +29,7 @@ import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 
 const formSchema = z.object({
-  email: z
-    .string()
-    .nonempty("Email is required")
-    .email("Invalid email address"),
+  email: z.email(),
 })
 
 type FormData = z.infer<typeof formSchema>

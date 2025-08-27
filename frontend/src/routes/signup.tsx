@@ -31,19 +31,18 @@ import { handleError } from "@/utils"
 
 const formSchema = z
   .object({
-    full_name: z.string().nonempty("Name is required"),
-    email: z
-      .string()
-      .nonempty("Email is required")
-      .email("Invalid email address"),
+    full_name: z.string().min(1, "Name is required"),
+    email: z.email(),
     password: z
       .string()
-      .nonempty("Password is required")
-      .min(8, "Password must be at least 8 characters"),
-    confirm_password: z.string().nonempty("Password confirmation is required"),
+      .min(1, { error: "Password is required" })
+      .min(8, { error: "Password must be at least 8 characters" }),
+    confirm_password: z
+      .string()
+      .min(1, { error: "Password confirmation is required" }),
   })
   .refine((data) => data.password === data.confirm_password, {
-    message: "Passwords do not match",
+    error: "Passwords do not match",
     path: ["confirm_password"],
   })
 

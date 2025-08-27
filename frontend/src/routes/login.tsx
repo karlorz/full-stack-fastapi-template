@@ -28,14 +28,11 @@ import { Separator } from "@/components/ui/separator"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
 
 const formSchema = z.object({
-  username: z
-    .string()
-    .nonempty("Email is required")
-    .email("Invalid email address"),
+  username: z.email(),
   password: z
     .string()
-    .nonempty("Password is required")
-    .min(8, "Password must be at least 8 characters"),
+    .min(1, { error: "Password is required" })
+    .min(8, { error: "Password must be at least 8 characters" }),
 }) satisfies z.ZodType<AccessToken>
 
 type FormData = z.infer<typeof formSchema>

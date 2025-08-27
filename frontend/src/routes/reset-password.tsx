@@ -30,9 +30,9 @@ const formSchema = z
   .object({
     new_password: z
       .string()
-      .nonempty("Password is required")
+      .min(1, "Password is required")
       .min(8, "Password must be at least 8 characters"),
-    confirm_password: z.string().nonempty("Password confirmation is required"),
+    confirm_password: z.string().min(1, "Password confirmation is required"),
   })
   .refine((data) => data.new_password === data.confirm_password, {
     message: "Passwords don't match",

@@ -33,9 +33,9 @@ const formSchema = (teamSlug: string) =>
   z.object({
     confirmation: z
       .string()
-      .min(1, "Field is required")
+      .min(1, { error: "Field is required" })
       .refine((value) => value === `delete team ${teamSlug}`, {
-        message: "Confirmation does not match",
+        error: "Confirmation does not match",
       }),
   })
 
@@ -49,7 +49,6 @@ const DeleteConfirmation = ({ team }: { team: TeamPublic }) => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema(team.slug)),
     mode: "onBlur",
-    criteriaMode: "all",
     defaultValues: {
       confirmation: "",
     },

@@ -161,7 +161,9 @@ test.describe("User with admin role can update team information", () => {
     await page.getByRole("button", { name: "Edit" }).click()
     await page.getByTestId("team-name-input").fill("")
     await page.getByRole("button", { name: "Save" }).click()
-    await expect(page.getByText("Name is required")).toBeVisible()
+    await expect(
+      page.getByText("Name must be at least 3 characters"),
+    ).toBeVisible()
   })
 
   test("User can delete a team", async ({ page }) => {

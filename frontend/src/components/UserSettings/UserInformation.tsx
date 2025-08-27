@@ -31,11 +31,14 @@ import ChangePassword from "./ChangePassword"
 import DeleteConfirmation from "./DeleteConfirmation"
 
 const nameSchema = z.object({
-  full_name: z.string().nonempty("Name is required").max(50),
+  full_name: z
+    .string()
+    .min(3, { error: "Name must be at least 3 characters" })
+    .max(50, { error: "Name must be less than 50 characters" }),
 })
 
 const emailSchema = z.object({
-  email: z.string().nonempty("Email is required").email(),
+  email: z.email(),
 })
 
 type NameFormValues = z.infer<typeof nameSchema>

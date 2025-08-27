@@ -157,19 +157,18 @@ const formSchema = z.object({
     .array(
       z.object({
         name: z
-          .string({
-            required_error: "Environment variable name is required",
-            invalid_type_error: "Environment variable name must be a string",
+          .string()
+          .min(1, { error: "Environment variable name must not be empty" })
+          .max(255, {
+            error: "Environment variable name must not exceed 255 characters",
           })
-          .regex(
-            /^[a-zA-Z][a-zA-Z0-9_]*$/,
-            "Environment variable name must start with a letter and contain only letters, numbers, or underscores",
-          )
-          .min(1, "Environment variable name must not be empty")
-          .max(255, "Environment variable name must not exceed 255 characters"),
+          .regex(/^[a-zA-Z][a-zA-Z0-9_]*$/, {
+            error:
+              "Environment variable name must start with a letter and contain only letters, numbers, or underscores",
+          }),
         value: z
           .string()
-          .min(1, "Environment variable value must not be empty"),
+          .min(1, { error: "Environment variable value must not be empty" }),
         deleted: z.boolean().optional(),
         new: z.boolean().optional(),
       }),
@@ -192,7 +191,7 @@ const formSchema = z.object({
 
       for (const index of indexesOfDuplicates) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "Environment variable name must be unique",
           path: [index, "name"],
         })
