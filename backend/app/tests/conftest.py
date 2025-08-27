@@ -2,6 +2,7 @@ from collections.abc import Generator
 from datetime import timedelta
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from redis import Redis
 from sqlmodel import Session, delete
@@ -53,14 +54,19 @@ def user(db: Session) -> User:
 
 
 @pytest.fixture(scope="module")
-def client() -> Generator[TestClient, None, None]:
-    with TestClient(app) as c:
+def api_app() -> Generator[FastAPI, None, None]:
+    yield app
+
+
+@pytest.fixture(scope="module")
+def client(api_app: FastAPI) -> Generator[TestClient, None, None]:
+    with TestClient(api_app) as c:
         yield c
 
 
 @pytest.fixture(scope="module")
-def logged_in_client(user: User) -> Generator[TestClient, None, None]:
-    with TestClient(app) as client:
+def logged_in_client(api_app: FastAPI, user: User) -> Generator[TestClient, None, None]:
+    with TestClient(api_app) as client:
         access_token = security.create_access_token(user.id, timedelta(minutes=30))
 
         client.headers.update({"Authorization": f"Bearer {access_token}"})

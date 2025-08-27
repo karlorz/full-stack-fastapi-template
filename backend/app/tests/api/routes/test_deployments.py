@@ -1,8 +1,10 @@
 import json
 import uuid
+from collections.abc import Generator
 from unittest.mock import Mock, patch
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from logfire.testing import CaptureLogfire
 from redis import Redis
@@ -19,6 +21,16 @@ from app.tests.utils.utils import random_email
 
 settings = MainSettings.get_settings()
 common_settings = CommonSettings.get_settings()
+
+
+@pytest.fixture
+def sqs_mock(api_app: FastAPI) -> Generator[Mock, None, None]:
+    mock = Mock()
+    mock.get_queue_url.return_value = {"QueueUrl": common_settings.BUILDER_QUEUE_NAME}
+
+    api_app.dependency_overrides = {get_sqs_client: lambda: mock}
+    yield mock
+    api_app.dependency_overrides = {}
 
 
 def test_read_deployments(client: TestClient, db: Session) -> None:
@@ -224,13 +236,7 @@ def test_read_deployment(client: TestClient, db: Session) -> None:
     assert data["dashboard_url"] == deployment.dashboard_url
 
 
-def test_upload_complete(client: TestClient, db: Session) -> None:
-    sqs_mock = Mock()
-    sqs_mock.get_queue_url.return_value = {
-        "QueueUrl": common_settings.BUILDER_QUEUE_NAME
-    }
-    client.app.dependency_overrides = {get_sqs_client: lambda: sqs_mock}  # type: ignore
-
+def test_upload_complete(client: TestClient, db: Session, sqs_mock: Mock) -> None:
     user = create_user(
         session=db,
         email=random_email(),
@@ -262,8 +268,6 @@ def test_upload_complete(client: TestClient, db: Session) -> None:
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "OK"
-
-    client.app.dependency_overrides = {}  # type: ignore
 
 
 def test_upload_complete_returns_404_if_deployment_not_found(
