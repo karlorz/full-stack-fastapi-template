@@ -32,23 +32,24 @@ export function NavMain({ items }: { items: Item[] }) {
 
           return (
             <SidebarMenuItem key={item.title} className="px-3 py-1.5">
-              <RouterLink
-                to={item.to}
-                params={item.params}
-                onClick={handleMenuClick}
+              <SidebarMenuButton
+                tooltip={item.title}
+                className={cn(
+                  "flex gap-2 items-center w-full rounded-md px-2 py-2 transition-colors duration-200",
+                  isActive
+                    ? [
+                        "bg-primary/15 text-primary font-medium",
+                        "dark:bg-primary/25",
+                        "hover:bg-primary/15 hover:text-primary dark:hover:bg-primary/25",
+                      ]
+                    : ["hover:bg-muted dark:hover:bg-muted"],
+                )}
+                asChild
               >
-                <SidebarMenuButton
-                  tooltip={item.title}
-                  className={cn(
-                    "flex gap-2 items-center w-full rounded-md px-2 py-2 transition-colors duration-200",
-                    isActive
-                      ? [
-                          "bg-primary/15 text-primary font-medium",
-                          "dark:bg-primary/25",
-                          "hover:bg-primary/15 hover:text-primary dark:hover:bg-primary/25",
-                        ]
-                      : ["hover:bg-muted dark:hover:bg-muted"],
-                  )}
+                <RouterLink
+                  to={item.to}
+                  params={item.params}
+                  onClick={handleMenuClick}
                 >
                   {item.icon && (
                     <item.icon
@@ -59,8 +60,8 @@ export function NavMain({ items }: { items: Item[] }) {
                     />
                   )}
                   <span className="ml-1">{item.title}</span>
-                </SidebarMenuButton>
-              </RouterLink>
+                </RouterLink>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           )
         })}
