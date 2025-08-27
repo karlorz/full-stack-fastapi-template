@@ -590,6 +590,7 @@
 
 ### Internal
 
+* ♻️  Reset sqs dependency overrides reliably. PR [#1411](https://github.com/fastapilabs/cloud/pull/1411) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 👷 Skip deploy-ui and format-frontend when PRs are draft. PR [#1334](https://github.com/fastapilabs/cloud/pull/1334) by [@patrick91](https://github.com/patrick91).
 * 📌 Pin @hey-api/openapi-ts to exact version. PR [#1407](https://github.com/fastapilabs/cloud/pull/1407) by [@alejsdev](https://github.com/alejsdev).
 * ⬆ Bump @tanstack/react-router from 1.130.12 to 1.131.27 in /frontend. PR [#1406](https://github.com/fastapilabs/cloud/pull/1406) by [@dependabot[bot]](https://github.com/apps/dependabot).
