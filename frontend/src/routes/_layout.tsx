@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 import posthog from "posthog-js"
 import { useEffect } from "react"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   SidebarInset,
   SidebarProvider,
@@ -50,7 +51,7 @@ function Layout() {
 
   return (
     <>
-      <div className="relative min-h-screen flex flex-col">
+      <ScrollArea className="relative h-screen flex flex-col">
         <div className="fixed inset-0 -z-10 bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
         <SidebarProvider>
           <AppSidebar teams={teams} />
@@ -99,7 +100,7 @@ function Layout() {
             </footer>
           </SidebarInset>
         </SidebarProvider>
-      </div>
+      </ScrollArea>
       <TeamInvitation />
     </>
   )
