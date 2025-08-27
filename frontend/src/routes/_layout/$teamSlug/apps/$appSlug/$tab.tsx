@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router"
 import { Code2, Globe, Link, Terminal } from "lucide-react"
+import { useState } from "react"
 
 import DeleteConfirmation from "@/components/AppSettings/DeleteConfirmation"
 import Deployments, {
@@ -10,6 +11,7 @@ import EnvironmentVariables from "@/components/AppSettings/EnvironmentVariables"
 import DangerZoneAlert from "@/components/Common/DangerZone"
 import Logs from "@/components/Deployment/Logs"
 import { Status } from "@/components/Deployment/Status"
+import FirstDeploymentGuide from "@/components/Onboarding/FirstDeploymentGuide"
 import PendingApp from "@/components/PendingComponents/PendingApp"
 import { CustomCard } from "@/components/ui/custom-card"
 import { Label } from "@/components/ui/label"
@@ -59,6 +61,7 @@ export const Route = createFileRoute("/_layout/$teamSlug/apps/$appSlug/$tab")({
 function AppDetail() {
   const { teamSlug, appSlug, tab } = Route.useParams()
   const navigate = useNavigate()
+  const [showOnboarding, setShowOnboarding] = useState(true)
 
   const { data: team } = useSuspenseQuery(getTeamQueryOptions(teamSlug))
   const { data: app } = useSuspenseQuery(getAppQueryOptions(team.id, appSlug))
@@ -69,6 +72,8 @@ function AppDetail() {
     getEnvVarQueryOptions(app.id),
   )
   const { data: logsData } = useSuspenseQuery(getAppLogsQueryOptions(app.id))
+
+  const hasNoDeployments = deployments.data.length === 0
 
   const handleTabChange = (newTab: string) => {
     if (newTab !== tab) {
@@ -81,6 +86,15 @@ function AppDetail() {
 
   return (
     <Section title="App Details">
+      {hasNoDeployments && showOnboarding && (
+        <div className="mb-6">
+          <FirstDeploymentGuide
+            appName={app.name}
+            onDismiss={() => setShowOnboarding(false)}
+          />
+        </div>
+      )}
+
       <Tabs
         className="space-y-12"
         data-testid="tabs"

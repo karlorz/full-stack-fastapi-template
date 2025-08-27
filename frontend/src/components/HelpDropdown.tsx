@@ -19,76 +19,65 @@ export function HelpDropdown() {
           <span>Help</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-72">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              Need help with your project?
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              Explore our resources for assistance and support.
-            </p>
-          </div>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel className="text-xs text-muted-foreground">
+          Resources
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
 
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem asChild className="cursor-pointer">
           <a
             href="https://fastapicloud.com/docs/getting-started"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 cursor-pointer"
           >
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-            <div className="flex flex-col gap-0.5">
-              <span className="text-sm">Documentation</span>
-              <span className="text-xs text-muted-foreground">
-                Read our guides and tutorials
-              </span>
+            <BookOpen className="h-4 w-4" />
+            <div>
+              <div className="text-sm">Documentation</div>
+              <div className="text-xs text-muted-foreground">
+                Guides and tutorials
+              </div>
             </div>
-            <ExternalLink className="h-3 w-3 ml-auto text-muted-foreground" />
+            <ExternalLink className="h-3 w-3 ml-auto" />
           </a>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuLabel className="font-normal">
-          <p className="text-xs text-muted-foreground">
-            Reach out to the community
-          </p>
+        <DropdownMenuLabel className="text-xs text-muted-foreground">
+          Community
         </DropdownMenuLabel>
 
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem asChild className="cursor-pointer">
           <a
             href="https://join.slack.com/t/fastapicloud/shared_invite/zt-393v7lizn-w95~VtDGXJ0IsvtqLW~afQ"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 cursor-pointer"
           >
-            <FiSlack className="h-4 w-4 text-muted-foreground" />
-            <div className="flex flex-col gap-0.5">
-              <span className="text-sm">Join Slack Workspace</span>
-              <span className="text-xs text-muted-foreground">
-                Connect and chat with other users
-              </span>
+            <FiSlack className="h-4 w-4" />
+            <div>
+              <div className="text-sm">Slack Workspace</div>
+              <div className="text-xs text-muted-foreground">
+                Chat with other users
+              </div>
             </div>
-            <ExternalLink className="h-3 w-3 ml-auto text-muted-foreground" />
+            <ExternalLink className="h-3 w-3 ml-auto" />
           </a>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem asChild>
-          <a
-            href="mailto:support@fastapicloud.com"
-            className="flex items-center gap-3 cursor-pointer"
-          >
-            <LifeBuoy className="h-4 w-4 text-muted-foreground" />
-            <div className="flex flex-col gap-0.5">
-              <span className="text-sm">Contact Support</span>
-              <span className="text-xs text-muted-foreground">
-                Get help from our support team
-              </span>
+        <DropdownMenuLabel className="text-xs text-muted-foreground">
+          Support
+        </DropdownMenuLabel>
+
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <a href="mailto:support@fastapicloud.com">
+            <LifeBuoy className="h-4 w-4" />
+            <div>
+              <div className="text-sm">Contact Support</div>
+              <div className="text-xs text-muted-foreground">
+                Get help from our team
+              </div>
             </div>
           </a>
         </DropdownMenuItem>
