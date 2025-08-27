@@ -94,8 +94,8 @@ def read_team(
     return team
 
 
-def is_team_creation_allowed(posthog: PosthogDep, user_id: str) -> bool | None:
-    return posthog.feature_enabled("team-creation-enabled", user_id)  # type: ignore
+def is_team_creation_allowed(posthog: PosthogDep, user_id: uuid.UUID) -> bool | None:
+    return posthog.feature_enabled("team-creation-enabled", str(user_id))  # type: ignore
 
 
 @router.post("/", response_model=TeamPublic)
@@ -108,14 +108,13 @@ def create_team(
     """
     Create a new team with the provided details.
     """
-    user_id_str = str(current_user.id)
 
     # Block creation if 'team-creation-enabled' flag is not enabled
-    if not is_team_creation_allowed(posthog, user_id_str):
-        posthog.capture(  # type: ignore
-            user_id_str,
+    if not is_team_creation_allowed(posthog, current_user.id):
+        posthog.capture(
             "team_creation_blocked",
-            {
+            distinct_id=current_user.id,
+            properties={
                 "reason": "team-creation-enabled flag not active",
             },
         )
