@@ -230,6 +230,7 @@
 
 ### Refactors
 
+* 🎨 Separate test from app code imports. PR [#1417](https://github.com/fastapilabs/cloud/pull/1417) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🚚 Refactor the messenger into a package. PR [#1372](https://github.com/fastapilabs/cloud/pull/1372) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️ Add FirstDeploymentGuide component to make onboard easier. PR [#1397](https://github.com/fastapilabs/cloud/pull/1397) by [@alejsdev](https://github.com/alejsdev).
 * ♻️  Default to redeployment when saving env vars. PR [#1373](https://github.com/fastapilabs/cloud/pull/1373) by [@DoctorJohn](https://github.com/DoctorJohn).
