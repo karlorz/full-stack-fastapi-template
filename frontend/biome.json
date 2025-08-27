@@ -6,10 +6,10 @@
     "includes": [
       "**",
       "!**/dist/**/*",
-      "!**/node_modules/**",
+      "!**/node_modules/**/*",
       "!**/src/routeTree.gen.ts",
       "!**/playwright.config.ts",
-      "!**/playwright-report/**"
+      "!**/playwright-report/**/*"
     ]
   },
   "linter": {
