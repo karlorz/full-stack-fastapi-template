@@ -7,7 +7,7 @@ import respx
 from botocore.exceptions import ClientError
 
 from app.core.config import CommonSettings
-from app.messenger import process_message
+from app.messenger.processing import process_message
 from app.models import BuildMessage, DeleteAppMessage
 
 common_settings = CommonSettings.get_settings()

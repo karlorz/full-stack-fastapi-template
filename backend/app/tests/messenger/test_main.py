@@ -6,7 +6,7 @@ import httpx
 import pytest
 
 from app.core.config import CommonSettings
-from app.messenger import _process_messages
+from app.messenger.processing import process_messages
 from app.models import BuildMessage
 
 common_settings = CommonSettings.get_settings()
@@ -14,7 +14,7 @@ common_settings = CommonSettings.get_settings()
 
 @pytest.fixture
 def mock_process_message() -> Generator[MagicMock, None, None]:
-    with patch("app.messenger.process_message") as mock:
+    with patch("app.messenger.processing.process_message") as mock:
         yield mock
 
 
@@ -27,7 +27,7 @@ async def test_process_messages_with_no_messages(
     mock_sqs.receive_message.return_value = {"Messages": []}
 
     async with httpx.AsyncClient() as client:
-        await _process_messages(queue_url, client, mock_sqs)
+        await process_messages(queue_url, client, mock_sqs)
 
     assert mock_sqs.receive_message.call_count == 1
     mock_sqs.receive_message.assert_called_with(
@@ -52,7 +52,7 @@ async def test_process_messages_with_messages(
     }
 
     async with httpx.AsyncClient() as client:
-        await _process_messages(queue_url, client, mock_sqs)
+        await process_messages(queue_url, client, mock_sqs)
 
     assert mock_sqs.receive_message.call_count == 1
     mock_sqs.receive_message.assert_called_with(
@@ -78,7 +78,7 @@ async def test_process_messages_with_message_but_no_body(
     }
 
     async with httpx.AsyncClient() as client:
-        await _process_messages(queue_url, client, mock_sqs)
+        await process_messages(queue_url, client, mock_sqs)
 
     mock_sqs.delete_message.assert_called_once_with(
         QueueUrl=queue_url, ReceiptHandle="456"
