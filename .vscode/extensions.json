@@ -12,6 +12,7 @@
 		"ms-python.python",
 		"redhat.vscode-yaml",
 		"tamasfe.even-better-toml",
+		"tilt-dev.tiltfile",
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": []
