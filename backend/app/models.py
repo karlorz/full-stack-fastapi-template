@@ -1,12 +1,13 @@
 import uuid
 from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, cast
 
 from pydantic import AfterValidator, EmailStr, computed_field
 from sqlalchemy import ColumnElement, DateTime
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlmodel import Field, Relationship, SQLModel, and_, col, func
+from sqlalchemy.orm import InstrumentedAttribute
+from sqlmodel import Field, Relationship, SQLModel, and_, func
 
 from app.core.config import CommonSettings, MainSettings
 
@@ -356,18 +357,20 @@ class App(AppBase, table=True):
 
         return get_datetime_utc() > (self.deleted_at + soft_deleted_app_retention_days)
 
-    @computed_field(return_type=bool)  # type: ignore[no-redef]
-    @is_deletable.expression
-    def is_deletable(cls) -> ColumnElement[bool]:
+    @is_deletable.inplace.expression
+    @classmethod
+    def _is_deletable_expression(cls) -> ColumnElement[bool]:
         soft_deleted_app_retention_days = timedelta(
             days=CommonSettings.get_settings().SOFT_DELETED_APP_RETENTION_DAYS
         )
 
+        cleaned_up_at = cast(InstrumentedAttribute[datetime], cls.cleaned_up_at)
+        deleted_at = cast(InstrumentedAttribute[datetime], cls.deleted_at)
+
         return and_(
-            col(cls.__class__.cleaned_up_at).is_not(None),
-            col(cls.__class__.deleted_at).is_not(None),
-            func.now()
-            > (col(cls.__class__.deleted_at) + soft_deleted_app_retention_days),
+            cleaned_up_at.is_not(None),
+            deleted_at.is_not(None),
+            func.now() > (deleted_at + soft_deleted_app_retention_days),
         )
 
 

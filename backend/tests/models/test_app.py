@@ -75,11 +75,7 @@ def test_app_is_deletable_only_after_the_retention_period_ends(
     assert app.is_deletable == is_deletable
 
 
-@time_machine.travel("2025-06-01 12:00:00+00:00", tick=False)
 @patch.object(CommonSettings.get_settings(), "SOFT_DELETED_APP_RETENTION_DAYS", 30)
-@pytest.mark.xfail(
-    reason="SQLModel does not support class hybrid properties yet, it needs also Pydantic black magic"
-)
 def test_query_deletable_apps_from_database(db: Session) -> None:
     team = create_random_team(db)
     team_id = team.id
