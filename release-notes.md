@@ -167,6 +167,7 @@
 
 ### Fixes
 
+* 🐛 Fix error screens could overflow in light mode. PR [#1420](https://github.com/fastapilabs/cloud/pull/1420) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🐛 Fix favicon was not showing in firefox. PR [#1405](https://github.com/fastapilabs/cloud/pull/1405) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🐛 Fix deployment details navigation. PR [#1274](https://github.com/fastapilabs/cloud/pull/1274) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Add `--no-install-project` flag to `uv sync`. PR [#858](https://github.com/fastapilabs/cloud/pull/858) by [@buurro](https://github.com/buurro).
