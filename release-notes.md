@@ -596,6 +596,7 @@
 
 ### Internal
 
+* 🐛 Fix App.is_deletable expression generation. PR [#1415](https://github.com/fastapilabs/cloud/pull/1415) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🔧 Fix faulty biome exclude glob patterns. PR [#1404](https://github.com/fastapilabs/cloud/pull/1404) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🚚 Move backend tests to conventional location. PR [#1414](https://github.com/fastapilabs/cloud/pull/1414) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️  Reset sqs dependency overrides reliably. PR [#1411](https://github.com/fastapilabs/cloud/pull/1411) by [@DoctorJohn](https://github.com/DoctorJohn).
