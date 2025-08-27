@@ -11,13 +11,13 @@ from app import crud
 from app.core.config import MainSettings
 from app.core.security import verify_password
 from app.models import Role, User, UserCreate, WaitingListUser, WaitingListUserCreate
-from app.tests.utils.team import create_random_team
-from app.tests.utils.user import create_user, user_authentication_headers
-from app.tests.utils.utils import random_email, random_lower_string
 from app.utils import (
     generate_verification_email_token,
     generate_verification_update_email_token,
 )
+from tests.utils.team import create_random_team
+from tests.utils.user import create_user, user_authentication_headers
+from tests.utils.utils import random_email, random_lower_string
 
 settings = MainSettings.get_settings()
 

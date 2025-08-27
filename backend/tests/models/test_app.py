@@ -8,7 +8,7 @@ from sqlmodel import Session, select
 
 from app.core.config import CommonSettings
 from app.models import App
-from app.tests.utils.team import create_random_team
+from tests.utils.team import create_random_team
 
 
 def test_app_is_not_deletable_if_neither_soft_deleted_nor_cleaned_up() -> None:

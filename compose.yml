@@ -120,7 +120,6 @@ services:
       - SMTP_HOST=mailcatcher
       - LOCALSTACK_HOST_NAME=localstack
       - BUILDER_API_URL=http://builder:8001
-
     develop:
       watch:
         - path: ./backend
@@ -131,9 +130,10 @@ services:
             - .venv
         - path: ./backend/pyproject.toml
           action: rebuild
-    # TODO: remove once coverage is done locally
     volumes:
+      # TODO: remove once coverage is done locally
       - ./backend/htmlcov:/app/htmlcov
+      - ./backend/tests:/app/backend/tests
     extra_hosts:
       - host.docker.internal:host-gateway
 

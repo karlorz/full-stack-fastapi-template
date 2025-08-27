@@ -1,3 +1,5 @@
+import random
+import string
 import uuid
 from datetime import timedelta
 from typing import Any
@@ -24,9 +26,12 @@ from app.models import (
     UserTeamLink,
     UserTeamLinkPublic,
 )
-from app.tests.utils.utils import random_lower_string
 
 router = APIRouter(tags=["private"])
+
+
+def random_lower_string() -> str:
+    return "".join(random.choices(string.ascii_lowercase, k=32))
 
 
 class CreateUser(BaseModel):

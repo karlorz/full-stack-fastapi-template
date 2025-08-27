@@ -4,8 +4,8 @@ from sqlmodel import Session
 from app import crud
 from app.core.config import MainSettings
 from app.models import Role, User, UserCreate, UserUpdate
-from app.tests.utils.team import create_random_team
-from app.tests.utils.utils import random_email, random_lower_string
+from tests.utils.team import create_random_team
+from tests.utils.utils import random_email, random_lower_string
 
 settings = MainSettings.get_settings()
 

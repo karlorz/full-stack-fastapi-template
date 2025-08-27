@@ -14,10 +14,10 @@ from app.aws_utils import get_sqs_client
 from app.core.config import CommonSettings, MainSettings
 from app.crud import add_user_to_team
 from app.models import Deployment, Role, get_datetime_utc
-from app.tests.utils.apps import create_deployment_for_app, create_random_app
-from app.tests.utils.team import create_random_team
-from app.tests.utils.user import create_user, user_authentication_headers
-from app.tests.utils.utils import random_email
+from tests.utils.apps import create_deployment_for_app, create_random_app
+from tests.utils.team import create_random_team
+from tests.utils.user import create_user, user_authentication_headers
+from tests.utils.utils import random_email
 
 settings = MainSettings.get_settings()
 common_settings = CommonSettings.get_settings()

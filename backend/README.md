@@ -123,7 +123,7 @@ bash scripts/prestart-local.sh
 bash scripts/test.sh
 ```
 
-The tests run with Pytest, modify and add tests to `./backend/app/tests/`.
+The tests run with Pytest, modify and add tests to `./backend/tests/`.
 
 #### Test running stack
 

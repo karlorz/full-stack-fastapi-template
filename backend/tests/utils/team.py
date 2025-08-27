@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlmodel import Session
 
 from app.models import Team
-from app.tests.utils.utils import random_lower_string
+from tests.utils.utils import random_lower_string
 
 
 def create_random_team(
@@ -14,7 +14,7 @@ def create_random_team(
     is_personal_team: bool = False,
     created_at: datetime | None = None,
 ) -> Team:
-    from app.tests.utils.user import create_random_user
+    from tests.utils.user import create_random_user
 
     owner_id = owner_id or create_random_user(db).id
     name = random_lower_string()

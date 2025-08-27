@@ -7,8 +7,8 @@ from sqlmodel import Session
 
 from app.core.config import CommonSettings, MainSettings
 from app.models import DeploymentStatus
-from app.tests.utils.apps import create_deployment_for_app, create_random_app
-from app.tests.utils.team import create_random_team
+from tests.utils.apps import create_deployment_for_app, create_random_app
+from tests.utils.team import create_random_team
 
 settings = MainSettings.get_settings()
 common_settings = CommonSettings.get_settings()

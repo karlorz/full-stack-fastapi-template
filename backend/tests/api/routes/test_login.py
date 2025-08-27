@@ -4,8 +4,8 @@ from sqlmodel import Session
 from app.core.config import MainSettings
 from app.core.security import verify_password
 from app.models import User
-from app.tests.utils.user import create_user
 from app.utils import generate_password_reset_token
+from tests.utils.user import create_user
 
 settings = MainSettings.get_settings()
 

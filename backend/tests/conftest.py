@@ -21,7 +21,7 @@ from app.models import (
     UserTeamLink,
     WaitingListUser,
 )
-from app.tests.utils.user import authentication_token_from_email
+from tests.utils.user import authentication_token_from_email
 
 settings = MainSettings.get_settings()
 

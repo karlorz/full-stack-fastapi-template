@@ -11,10 +11,10 @@ from app.api.utils.invitations import generate_invitation_token
 from app.core.config import MainSettings
 from app.crud import add_user_to_team
 from app.models import Invitation, InvitationCreate, InvitationStatus, Role
-from app.tests.crud.invitations import create_invitation
-from app.tests.utils.team import create_random_team
-from app.tests.utils.user import create_user, user_authentication_headers
 from app.utils import get_datetime_utc
+from tests.crud.invitations import create_invitation
+from tests.utils.team import create_random_team
+from tests.utils.user import create_user, user_authentication_headers
 
 settings = MainSettings.get_settings()
 
