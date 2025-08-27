@@ -230,6 +230,7 @@
 
 ### Refactors
 
+* ♻️ Split app route in 3 files. PR [#1409](https://github.com/fastapilabs/cloud/pull/1409) by [@patrick91](https://github.com/patrick91).
 * 🎨 Separate test from app code imports. PR [#1417](https://github.com/fastapilabs/cloud/pull/1417) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🚚 Refactor the messenger into a package. PR [#1372](https://github.com/fastapilabs/cloud/pull/1372) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️ Add FirstDeploymentGuide component to make onboard easier. PR [#1397](https://github.com/fastapilabs/cloud/pull/1397) by [@alejsdev](https://github.com/alejsdev).
