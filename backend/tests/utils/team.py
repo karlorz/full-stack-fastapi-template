@@ -5,6 +5,7 @@ from datetime import datetime
 from sqlmodel import Session
 
 from app.models import Team
+
 from tests.utils.utils import random_lower_string
 
 

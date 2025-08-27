@@ -9,6 +9,7 @@ from app import crud
 from app.core.config import MainSettings
 from app.models import WaitingListUser, WaitingListUserCreate
 from app.utils import get_datetime_utc
+
 from tests.utils.utils import random_email
 
 settings = MainSettings.get_settings()

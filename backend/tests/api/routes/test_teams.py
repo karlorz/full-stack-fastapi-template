@@ -9,6 +9,7 @@ from sqlmodel import Session, select
 from app.core.config import MainSettings
 from app.crud import add_user_to_team
 from app.models import Role, Team, UserTeamLink
+
 from tests.utils.team import create_random_team
 from tests.utils.user import (
     create_random_user,

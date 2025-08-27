@@ -8,6 +8,7 @@ from sqlmodel import Session, select
 
 from app.core.config import CommonSettings
 from app.models import App
+
 from tests.utils.team import create_random_team
 
 

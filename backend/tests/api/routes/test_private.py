@@ -11,6 +11,7 @@ from app.models import (
     User,
     UserTeamLink,
 )
+
 from tests.utils.apps import create_random_app
 from tests.utils.team import create_random_team
 from tests.utils.user import create_random_user
