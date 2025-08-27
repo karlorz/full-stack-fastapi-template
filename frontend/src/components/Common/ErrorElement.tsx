@@ -8,7 +8,7 @@ const ErrorElement = () => {
 
   return (
     <div
-      className="relative flex h-screen flex-col items-center justify-center p-4 text-primary dark:overflow-hidden bg-gradient-to-br from-background to-secondary"
+      className="relative flex h-screen flex-col items-center justify-center p-4 text-primary overflow-hidden bg-gradient-to-br from-background to-secondary"
       data-testid="error-element"
     >
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
