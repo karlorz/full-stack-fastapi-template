@@ -230,6 +230,7 @@
 
 ### Refactors
 
+* 💄 Unify scrollbar styles across browsers. PR [#1418](https://github.com/fastapilabs/cloud/pull/1418) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️ Split app route in 3 files. PR [#1409](https://github.com/fastapilabs/cloud/pull/1409) by [@patrick91](https://github.com/patrick91).
 * 🎨 Separate test from app code imports. PR [#1417](https://github.com/fastapilabs/cloud/pull/1417) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🚚 Refactor the messenger into a package. PR [#1372](https://github.com/fastapilabs/cloud/pull/1372) by [@DoctorJohn](https://github.com/DoctorJohn).
