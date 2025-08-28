@@ -20,7 +20,7 @@ const Plans = () => {
           <div className="p-4 w-full text-center">
             <p className="uppercase font-bold">{title}</p>
           </div>
-          <p className="text-md">{description}</p>
+          <p>{description}</p>
           <div className="text-center flex flex-col">
             <p className="text-4xl font-bold">$ {price}</p>
             <p className="text-sm">per month</p>

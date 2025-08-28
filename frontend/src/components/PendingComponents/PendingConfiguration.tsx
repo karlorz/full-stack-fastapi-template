@@ -13,7 +13,7 @@ const PendingConfiguration = () => {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Code2 className="h-5 w-5 text-muted-foreground" />
-            <h3 className="text-md font-medium">Environment Variables</h3>
+            <h3 className="font-medium">Environment Variables</h3>
           </div>
 
           <div className="space-y-4">

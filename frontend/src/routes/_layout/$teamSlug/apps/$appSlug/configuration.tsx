@@ -48,7 +48,7 @@ function Configuration() {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Code2 className="h-5 w-5" />
-            <h3 className="text-md font-medium">Environment Variables</h3>
+            <h3 className="font-medium">Environment Variables</h3>
           </div>
 
           <div>

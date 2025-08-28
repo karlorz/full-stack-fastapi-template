@@ -13,7 +13,7 @@ const PendingGeneral = () => {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Globe className="h-4 w-4 text-muted-foreground" />
-            <h3 className="text-md font-medium">App Information</h3>
+            <h3 className="font-medium">App Information</h3>
           </div>
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-2 p-4 rounded-lg border">

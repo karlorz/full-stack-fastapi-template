@@ -106,7 +106,7 @@ export const IntegrationsView = () => {
       <div>
         <div className="flex items-center gap-2 mb-4">
           <Plug className="h-5 w-5" />
-          <h3 className="text-md font-medium">Browse Integrations</h3>
+          <h3 className="font-medium">Browse Integrations</h3>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-6">

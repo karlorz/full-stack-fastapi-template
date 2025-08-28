@@ -50,7 +50,7 @@ function LogsComponent() {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Terminal className="h-5 w-5" />
-            <h3 className="text-md font-medium">Real-time Logs</h3>
+            <h3 className="font-medium">Real-time Logs</h3>
           </div>
           <Logs logs={logsData?.logs || []} />
         </div>

@@ -14,7 +14,7 @@ const PendingLogs = () => {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Terminal className="h-5 w-5 text-muted-foreground" />
-            <h3 className="text-md font-medium">Real-time Logs</h3>
+            <h3 className="font-medium">Real-time Logs</h3>
           </div>
 
           {/* Loading skeleton for logs viewer */}
@@ -34,7 +34,7 @@ const PendingLogs = () => {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Server className="h-5 w-5 text-muted-foreground" />
-            <h3 className="text-md font-medium">Deployments Logs</h3>
+            <h3 className="font-medium">Deployments Logs</h3>
           </div>
 
           {/* Loading skeleton for deployment logs */}

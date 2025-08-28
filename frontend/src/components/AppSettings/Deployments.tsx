@@ -60,7 +60,7 @@ const Deployments = ({
     <div>
       <div className="flex items-center gap-2 mb-4">
         <Server className="h-5 w-5" />
-        <h3 className="text-md font-medium">Deployments Logs</h3>
+        <h3 className="font-medium">Deployments Logs</h3>
       </div>
 
       {deployments?.length > 0 ? (

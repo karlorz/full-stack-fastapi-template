@@ -51,7 +51,7 @@ function General() {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Globe className="h-4 w-4" />
-            <h3 className="text-md font-medium">App Information</h3>
+            <h3 className="font-medium">App Information</h3>
           </div>
 
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
