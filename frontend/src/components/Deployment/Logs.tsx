@@ -28,12 +28,14 @@ const LogLine = ({ time, message }: LogLineProps) => {
   )
 }
 
-const LogContainer = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+const LogContainer = ({
+  className,
+  ...props
+}: React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLDivElement>,
+  HTMLDivElement
+>) => (
   <div
-    ref={ref}
     className={cn(
       "h-[400px] px-6 overflow-y-auto rounded-md bg-black text-white",
       "font-mono text-sm",
@@ -46,8 +48,7 @@ const LogContainer = React.forwardRef<
     )}
     {...props}
   />
-))
-LogContainer.displayName = "LogContainer"
+)
 
 const Logs = ({ logs }: LogsProps) => {
   const parentRef = React.useRef(null)
