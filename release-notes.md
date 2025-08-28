@@ -167,6 +167,7 @@
 
 ### Fixes
 
+* 🐛 Fix sqs messages were not correctly deleted. PR [#1428](https://github.com/fastapilabs/cloud/pull/1428) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🐛 Fix user menu not clickable when using the mobile sidebar. PR [#1424](https://github.com/fastapilabs/cloud/pull/1424) by [@patrick91](https://github.com/patrick91).
 * 🐛 Fixed ScrollArea in BackgroundPanel component . PR [#1425](https://github.com/fastapilabs/cloud/pull/1425) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix posthog capture args didn't match signature. PR [#1419](https://github.com/fastapilabs/cloud/pull/1419) by [@DoctorJohn](https://github.com/DoctorJohn).
