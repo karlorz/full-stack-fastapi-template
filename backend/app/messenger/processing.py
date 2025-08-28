@@ -33,19 +33,22 @@ async def process_messages(
     # Create an async task group so all messages are processed concurrently
     try:
         async with asyncer.create_task_group() as tg:
-            for message in messages.get("Messages", []):
+            for message in messages["Messages"]:
+                receipt_handle = message.get("ReceiptHandle")
+
+                if not receipt_handle:
+                    logfire.error("No receipt handle in message")
+                    sentry_sdk.capture_message("No receipt handle in message")
+                    continue
+
                 raw_body = message.get("Body")
-                receipt_handle = message["ReceiptHandle"]
 
                 if not raw_body:
                     logfire.error("No body in message")
                     sentry_sdk.capture_message("No body in message")
 
-                    if receipt_handle:
-                        logfire.info("Delete message")
-                        sqs.delete_message(
-                            QueueUrl=queue_url, ReceiptHandle=receipt_handle
-                        )
+                    logfire.info("Delete message")
+                    sqs.delete_message(QueueUrl=queue_url, ReceiptHandle=receipt_handle)
 
                     continue
 
