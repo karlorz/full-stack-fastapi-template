@@ -51,7 +51,7 @@ function Layout() {
 
   return (
     <>
-      <ScrollArea className="relative h-screen flex flex-col">
+      <ScrollArea className="h-screen">
         <div className="fixed inset-0 -z-10 bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
         <SidebarProvider>
           <AppSidebar teams={teams} />
