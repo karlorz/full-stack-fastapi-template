@@ -1,6 +1,6 @@
 import uuid
 from collections.abc import Generator
-from unittest.mock import ANY, MagicMock, Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import httpx
 import pytest
@@ -42,7 +42,6 @@ async def test_process_messages_with_messages(
     mock_process_message: MagicMock,
 ) -> None:
     deployment_id = uuid.uuid4()
-
     message = BuildMessage(deployment_id=deployment_id, type="build")
 
     queue_url = "test_queue_url"
@@ -58,11 +57,13 @@ async def test_process_messages_with_messages(
     mock_sqs.receive_message.assert_called_with(
         QueueUrl=queue_url, MaxNumberOfMessages=10, WaitTimeSeconds=20
     )
+
     mock_process_message.assert_called_once_with(
         message=message,
         receipt_handle="456",
-        client=ANY,
-        sqs=ANY,
+        queue_url=queue_url,
+        client=client,
+        sqs=mock_sqs,
     )
 
 

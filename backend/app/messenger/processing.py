@@ -56,6 +56,7 @@ async def process_messages(
                 tg.soonify(process_message)(
                     message=message_body,
                     receipt_handle=receipt_handle,
+                    queue_url=queue_url,
                     client=client,
                     sqs=sqs,
                 )
@@ -69,6 +70,7 @@ async def process_message(
     *,
     message: MessengerMessageBody,
     receipt_handle: str,
+    queue_url: str,
     client: httpx.AsyncClient,
     sqs: SQSClient,
 ) -> None:
@@ -107,6 +109,6 @@ async def process_message(
         with logfire.span("Delete message"):
             await sqs_retry(
                 asyncify(sqs.delete_message),
-                QueueUrl=common_settings.BUILDER_QUEUE_NAME,
+                QueueUrl=queue_url,
                 ReceiptHandle=receipt_handle,
             )
