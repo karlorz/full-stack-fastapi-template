@@ -167,6 +167,7 @@
 
 ### Fixes
 
+* 🐛 Fixed ScrollArea in BackgroundPanel component . PR [#1425](https://github.com/fastapilabs/cloud/pull/1425) by [@alejsdev](https://github.com/alejsdev).
 * 🐛 Fix posthog capture args didn't match signature. PR [#1419](https://github.com/fastapilabs/cloud/pull/1419) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🐛 Fix error screens could overflow in light mode. PR [#1420](https://github.com/fastapilabs/cloud/pull/1420) by [@DoctorJohn](https://github.com/DoctorJohn).
 * 🐛 Fix favicon was not showing in firefox. PR [#1405](https://github.com/fastapilabs/cloud/pull/1405) by [@DoctorJohn](https://github.com/DoctorJohn).
