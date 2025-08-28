@@ -42,10 +42,15 @@ function UserInfo({ fullName, email }: UserInfoProps) {
 
 export function NavUser({ user }: { user: any }) {
   const { logout } = useAuth()
-  const { isMobile } = useSidebar()
+  const { isMobile, setOpenMobile } = useSidebar()
 
   if (!user) return null
 
+  const handleMenuClick = () => {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
   const handleLogout = async () => {
     logout()
   }
@@ -53,7 +58,7 @@ export function NavUser({ user }: { user: any }) {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu modal={false}>
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
@@ -65,7 +70,7 @@ export function NavUser({ user }: { user: any }) {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -74,7 +79,7 @@ export function NavUser({ user }: { user: any }) {
               <UserInfo fullName={user?.full_name} email={user?.email} />
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <RouterLink to="/settings">
+            <RouterLink to="/settings" onClick={handleMenuClick}>
               <DropdownMenuItem>
                 <Settings />
                 User Settings
