@@ -235,6 +235,7 @@
 
 ### Refactors
 
+* ♻️  Fix missing receipt handles were not handled. PR [#1429](https://github.com/fastapilabs/cloud/pull/1429) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️ Remove unnecessary `text-md`. PR [#1423](https://github.com/fastapilabs/cloud/pull/1423) by [@patrick91](https://github.com/patrick91).
 * ♻️  Migrate away from the deprecated forwardRef API. PR [#1422](https://github.com/fastapilabs/cloud/pull/1422) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♿️ Change links from buttons to just links. PR [#1421](https://github.com/fastapilabs/cloud/pull/1421) by [@patrick91](https://github.com/patrick91).
