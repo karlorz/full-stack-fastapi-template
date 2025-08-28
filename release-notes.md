@@ -233,6 +233,7 @@
 
 ### Refactors
 
+* ♻️  Migrate away from the deprecated forwardRef API. PR [#1422](https://github.com/fastapilabs/cloud/pull/1422) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♿️ Change links from buttons to just links. PR [#1421](https://github.com/fastapilabs/cloud/pull/1421) by [@patrick91](https://github.com/patrick91).
 * 💄 Unify scrollbar styles across browsers. PR [#1418](https://github.com/fastapilabs/cloud/pull/1418) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ♻️ Split app route in 3 files. PR [#1409](https://github.com/fastapilabs/cloud/pull/1409) by [@patrick91](https://github.com/patrick91).
