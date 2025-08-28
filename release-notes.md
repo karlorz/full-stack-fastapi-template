@@ -497,6 +497,7 @@
 
 ### Upgrades
 
+* ⬆️  Upgrade to Playwright 1.55.0. PR [#1426](https://github.com/fastapilabs/cloud/pull/1426) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ⬆️ Upgrade Zod to the latest version. PR [#1410](https://github.com/fastapilabs/cloud/pull/1410) by [@alejsdev](https://github.com/alejsdev).
 * 🔧 Migrate outdated biomejs config. PR [#1281](https://github.com/fastapilabs/cloud/pull/1281) by [@DoctorJohn](https://github.com/DoctorJohn).
 * ⬆️ Upgrade FastAPI to latest. PR [#1041](https://github.com/fastapilabs/cloud/pull/1041) by [@patrick91](https://github.com/patrick91).
