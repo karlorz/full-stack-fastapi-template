@@ -48,6 +48,7 @@
 
 ### Docs
 
+* Feat/caddy. PR [#1](https://github.com/karlorz/full-stack-fastapi-template/pull/1) by [@karlorz](https://github.com/karlorz).
 * ✏️ Fix small typo in `deployment.md`. PR [#1679](https://github.com/fastapi/full-stack-fastapi-template/pull/1679) by [@cassmtnr](https://github.com/cassmtnr).
 
 ### Internal
