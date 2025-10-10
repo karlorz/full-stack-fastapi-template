@@ -14,9 +14,10 @@ jobs:
     steps:
     # For PRs from forks
     - uses: actions/checkout@v5
+      if: github.event.pull_request.head.repo.fork == true
     # For PRs from the same repo
     - uses: actions/checkout@v5
-      if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
+      if: github.event.pull_request.head.repo.fork != true
       with:
         ref: ${{ github.head_ref }}
         token: ${{ secrets.FULL_STACK_FASTAPI_TEMPLATE_REPO_TOKEN }}
@@ -49,12 +50,12 @@ jobs:
         git add frontend/src/client
     # Same repo PRs
     - name: Push changes
-      if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
+      if: github.event.pull_request.head.repo.fork != true
       run: |
         git diff --staged --quiet || git commit -m "✨ Autogenerate frontend client"
         git push
     # Fork PRs
     - name: Check changes
-      if: ( github.event_name == 'pull_request' && github.secret_source != 'Actions' )
+      if: github.event.pull_request.head.repo.fork == true
       run: |
         git diff --staged --quiet || (echo "Changes detected in generated client, run scripts/generate-client.sh and commit the changes" && exit 1)
