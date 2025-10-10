@@ -121,6 +121,39 @@ alembic revision --autogenerate -m "Description of change"
 alembic upgrade head
 ```
 
+### Production Preview
+
+Rebuild the production frontend image and recreate the stack with Caddy routing (subdomain mode):
+```bash
+docker compose -f docker-compose.yml build frontend
+docker compose -f docker-compose.yml up -d --force-recreate
+```
+
+Stop the production stack when finished:
+```bash
+docker compose -f docker-compose.yml down
+```
+
+To preview the single-domain `/api` routing, load the base and override env files when rebuilding:
+```bash
+docker compose --env-file .env --env-file .env.path-based-api -f docker-compose.yml build frontend
+docker compose --env-file .env --env-file .env.path-based-api -f docker-compose.yml up -d --force-recreate
+```
+
+Stop the single-domain preview stack when finished:
+```bash
+docker compose --env-file .env --env-file .env.path-based-api -f docker-compose.yml down
+```
+
+> **Tip:** If your shell session still exports `BACKEND_CORS_ORIGINS`, prefix any of the above commands with `env -u BACKEND_CORS_ORIGINS` (see Troubleshooting).
+
+### Troubleshooting
+
+If Compose ignores `.env` updates and keeps old values, clear the shell override:
+```bash
+env -u BACKEND_CORS_ORIGINS docker compose up -d
+```
+
 ## Project Layout
 
 ```text
@@ -129,6 +162,10 @@ alembic upgrade head
 │   ├── app/
 │   ├── scripts/
 │   └── tests/
+├── caddy/
+│   ├── Caddyfile
+│   ├── routing.subdomain.caddy
+│   └── routing.path.caddy
 ├── frontend/
 │   ├── src/
 │   ├── tests/
@@ -137,13 +174,17 @@ alembic upgrade head
 ├── hooks/
 ├── img/
 ├── docker-compose*.yml
+├── .env
+├── .env.path-based-api
 └── *.md, copier.yml, LICENSE
 ```
 
 - `backend/app/` highlights the FastAPI project with `api/`, `core/`, `models.py`, and Alembic migrations under `alembic/`.
+- `caddy/` contains the base `Caddyfile` plus routing imports for subdomain and path-based deployments.
 - `frontend/src/` contains generated API client (`client/`), Chakra-based UI components, routing definitions, and theming utilities.
 - `scripts/` at the root complements backend scripts by wrapping build, deploy, and client generation workflows.
 - Supporting assets (`hooks/`, `img/`, configuration YAMLs, and Markdown guides) provide template automation, visuals, and operational documentation.
+- Environment overrides live in `.env` (default) and `.env.path-based-api` (single-domain preview).
 
 
 ## Project Overview

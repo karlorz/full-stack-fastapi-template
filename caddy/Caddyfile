@@ -3,18 +3,5 @@
     admin off
 }
 
-http://api.{$DOMAIN} {
-    reverse_proxy backend:8000
-}
-
-http://dashboard.{$DOMAIN} {
-    reverse_proxy frontend:80
-}
-
-http://adminer.{$DOMAIN} {
-    reverse_proxy adminer:8080
-}
-
-http://{$DOMAIN} {
-    redir http://dashboard.{$DOMAIN}{uri} permanent
-}
+import routing.{$ROUTING_MODE:subdomain}.caddy
+import adminer.{$ENABLE_ADMINER:false}.caddy

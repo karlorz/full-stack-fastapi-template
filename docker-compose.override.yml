@@ -2,6 +2,9 @@ services:
 
   caddy:
     restart: "no"
+    depends_on:
+      - backend
+      - frontend
     ports:
       - "80:80"
       - "443:443"
@@ -15,9 +18,15 @@ services:
       - "5433:5432"
 
   adminer:
+    profiles: ["adminer"]
+    image: adminer
     restart: "no"
+    depends_on:
+      - db
     ports:
       - "8080:8080"
+    environment:
+      ADMINER_DESIGN: pepa-linha-dark
 
   backend:
     restart: "no"
@@ -51,6 +60,7 @@ services:
       EMAILS_FROM_EMAIL: "noreply@example.com"
 
   mailcatcher:
+    profiles: ["mailcatcher", "playwright"]
     image: schickling/mailcatcher
     ports:
       - "1080:1080"
@@ -67,6 +77,7 @@ services:
         - NODE_ENV=development
 
   playwright:
+    profiles: ["playwright"]
     build:
       context: ./frontend
       dockerfile: Dockerfile.playwright
@@ -79,6 +90,7 @@ services:
       - mailcatcher
     env_file:
       - .env
+      - ${COMPOSE_ENV_FILE:-.env}
     environment:
       - VITE_API_URL=http://backend:8000
       - MAILCATCHER_HOST=http://mailcatcher:1080
