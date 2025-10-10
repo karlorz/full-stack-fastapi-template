@@ -67,28 +67,31 @@ Navigate to frontend directory first:
 cd frontend
 ```
 
-Install Node.js version (using fnm or nvm):
+Install dependencies (Bun 1.2.22 preferred):
 ```bash
-fnm install && fnm use  # or: nvm install && nvm use
-```
-
-Install dependencies:
-```bash
+bun install
+# or
 npm install
 ```
 
 Run frontend locally:
 ```bash
+bun dev
+# or
 npm run dev
 ```
 
 Build frontend:
 ```bash
+bun run build
+# or
 npm run build
 ```
 
 Lint/format frontend:
 ```bash
+bun run lint
+# or
 npm run lint
 ```
 
@@ -150,7 +153,7 @@ Full-stack web application template with FastAPI backend and React frontend, des
 **Tech Stack:**
 - Backend: FastAPI + SQLModel + PostgreSQL
 - Frontend: React + TypeScript + Vite + Chakra UI + TanStack Query/Router
-- Infrastructure: Docker Compose + Traefik
+- Infrastructure: Docker Compose + Caddy (Traefik compose kept as legacy reference)
 - Testing: Pytest (backend), Playwright (E2E)
 
 ## Architecture
@@ -211,19 +214,25 @@ FastAPI uses dependency injection for database sessions:
 
 ### Docker Compose Files
 
-- `docker-compose.yml`: Base configuration for all environments
-- `docker-compose.override.yml`: Local development overrides (volume mounts, hot-reload)
-- `docker-compose.traefik.yml`: Production Traefik configuration
+- `docker-compose.yml`: Base configuration for all environments with Caddy reverse proxy
+- `docker-compose.override.yml`: Local development overrides (volume mounts, hot-reload, exposes Caddy on 80/443)
+- `caddy/Caddyfile`: Caddy v2 site definitions for backend, frontend, adminer
+- `docker-compose.legacy-traefik.yml` and `docker-compose.traefik.yml`: Archived Traefik configuration retained for backward compatibility
 
 ### Local Development URLs
 
+Default port exposures:
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:8000
 - API Docs (Swagger): http://localhost:8000/docs
 - API Docs (ReDoc): http://localhost:8000/redoc
 - Adminer (DB UI): http://localhost:8080
-- Traefik UI: http://localhost:8090
 - MailCatcher: http://localhost:1080
+
+Via Caddy subdomains (DOMAIN defaults to `localhost`):
+- Frontend: http://dashboard.localhost
+- Backend API: http://api.localhost
+- Adminer: http://adminer.localhost
 
 ### Pre-commit Hooks
 
