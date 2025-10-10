@@ -1,0 +1,7 @@
+{
+    auto_https off
+    admin off
+}
+
+import routing.{$ROUTING_MODE:subdomain}.caddy
+import adminer.{$ENABLE_ADMINER:false}.caddy

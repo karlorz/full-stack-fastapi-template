@@ -1,0 +1,11 @@
+http://api.{$DOMAIN} {
+    reverse_proxy backend:8000
+}
+
+http://dashboard.{$DOMAIN} {
+    reverse_proxy frontend:80
+}
+
+http://{$DOMAIN} {
+    redir http://dashboard.{$DOMAIN}{uri} permanent
+}

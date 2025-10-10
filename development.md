@@ -18,7 +18,10 @@ Automatic interactive documentation with Swagger UI (from the OpenAPI backend): 
 
 Adminer, database web administration: http://localhost:8080
 
-Traefik UI, to see how the routes are being handled by the proxy: http://localhost:8090
+Caddy reverse proxy exposes subdomains that mirror production routing:
+- Frontend dashboard: http://dashboard.localhost
+- Backend API: http://api.localhost
+- Adminer: http://adminer.localhost
 
 **Note**: The first time you start your stack, it might take a minute for it to be ready. While the backend waits for the database to be ready and configures everything. You can check the logs to monitor it.
 
@@ -68,33 +71,31 @@ cd backend
 fastapi dev app/main.py
 ```
 
-## Docker Compose in `localhost.tiangolo.com`
+## Caddy subdomain routing
 
-When you start the Docker Compose stack, it uses `localhost` by default, with different ports for each service (backend, frontend, adminer, etc).
+When you deploy the stack (even locally) each service is available on its native port (8000, 5173, 8080, etc.), and Caddy also listens on ports 80/443 to provide the same subdomain pattern you would use in production.
 
-When you deploy it to production (or staging), it will deploy each service in a different subdomain, like `api.example.com` for the backend and `dashboard.example.com` for the frontend.
+The base domain comes from the `.env` variable `DOMAIN` (default: `localhost`). With that default, Caddy maps:
 
-In the guide about [deployment](deployment.md) you can read about Traefik, the configured proxy. That's the component in charge of transmitting traffic to each service based on the subdomain.
+- `http://dashboard.localhost` → frontend
+- `http://api.localhost` → backend
+- `http://adminer.localhost` → Adminer
 
-If you want to test that it's all working locally, you can edit the local `.env` file, and change:
+Any subdomain of `localhost` resolves to `127.0.0.1`, so no extra host configuration is required.
+
+If you prefer to test with another suffix (for example `localhost.tiangolo.com` or `example.test`), update the `.env` value:
 
 ```dotenv
-DOMAIN=localhost.tiangolo.com
+DOMAIN=example.test
 ```
 
-That will be used by the Docker Compose files to configure the base domain for the services.
-
-Traefik will use this to transmit traffic at `api.localhost.tiangolo.com` to the backend, and traffic at `dashboard.localhost.tiangolo.com` to the frontend.
-
-The domain `localhost.tiangolo.com` is a special domain that is configured (with all its subdomains) to point to `127.0.0.1`. This way you can use that for your local development.
-
-After you update it, run again:
+and then restart the stack:
 
 ```bash
 docker compose watch
 ```
 
-When deploying, for example in production, the main Traefik is configured outside of the Docker Compose files. For local development, there's an included Traefik in `docker-compose.override.yml`, just to let you test that the domains work as expected, for example with `api.localhost.tiangolo.com` and `dashboard.localhost.tiangolo.com`.
+For real domains you can reuse the same Caddy service defined in `docker-compose.yml`, customizing `caddy/Caddyfile` (e.g. enable automatic HTTPS and set `CADDY_ADMIN_EMAIL`). Legacy Traefik configurations remain in `docker-compose.legacy-traefik.yml` if you need to reuse them.
 
 ## Docker Compose files and env vars
 
@@ -172,36 +173,21 @@ The production or staging URLs would use these same paths, but with your own dom
 
 ### Development URLs
 
-Development URLs, for local development.
+Local development via direct service ports:
 
-Frontend: http://localhost:5173
+- Frontend: http://localhost:5173
+- Backend: http://localhost:8000
+- Automatic Interactive Docs (Swagger UI): http://localhost:8000/docs
+- Automatic Alternative Docs (ReDoc): http://localhost:8000/redoc
+- Adminer: http://localhost:8080
+- MailCatcher: http://localhost:1080
 
-Backend: http://localhost:8000
+### Development URLs via Caddy
 
-Automatic Interactive Docs (Swagger UI): http://localhost:8000/docs
+Using the Caddy proxy and the configured `DOMAIN` (defaults to `localhost`):
 
-Automatic Alternative Docs (ReDoc): http://localhost:8000/redoc
-
-Adminer: http://localhost:8080
-
-Traefik UI: http://localhost:8090
-
-MailCatcher: http://localhost:1080
-
-### Development URLs with `localhost.tiangolo.com` Configured
-
-Development URLs, for local development.
-
-Frontend: http://dashboard.localhost.tiangolo.com
-
-Backend: http://api.localhost.tiangolo.com
-
-Automatic Interactive Docs (Swagger UI): http://api.localhost.tiangolo.com/docs
-
-Automatic Alternative Docs (ReDoc): http://api.localhost.tiangolo.com/redoc
-
-Adminer: http://localhost.tiangolo.com:8080
-
-Traefik UI: http://localhost.tiangolo.com:8090
-
-MailCatcher: http://localhost.tiangolo.com:1080
+- Frontend: http://dashboard.localhost
+- Backend: http://api.localhost
+- Automatic Interactive Docs (Swagger UI): http://api.localhost/docs
+- Automatic Alternative Docs (ReDoc): http://api.localhost/redoc
+- Adminer: http://adminer.localhost

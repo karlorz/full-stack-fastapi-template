@@ -1,0 +1,3 @@
+http://adminer.{$DOMAIN} {
+    reverse_proxy adminer:8080
+}
