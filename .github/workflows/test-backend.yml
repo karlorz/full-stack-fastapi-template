@@ -29,6 +29,8 @@ jobs:
       - name: Migrate DB
         run: uv run bash scripts/prestart.sh
         working-directory: backend
+        env:
+          POSTGRES_PORT: 5433
       - name: Run tests
         run: uv run bash scripts/tests-start.sh "Coverage for ${{ github.sha }}"
         working-directory: backend
